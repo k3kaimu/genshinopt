@@ -24,6 +24,24 @@ $(function(){
 
             return list;
         }, this);
+
+
+        this.weapons = genshinData.weapons;
+        this.selWeaponRarity = ko.observable();
+        this.selectedWeapon = ko.observable();
+        this.selWeaponList = ko.computed(function(){
+            var list = [];
+            var rarity = this.selWeaponRarity();
+
+            this.weapons.forEach(e => {
+                if(!(rarity == "ALL" || e.rarity == rarity))
+                    return;
+
+                list.push(e);
+            });
+
+            return list;
+        }, this);
     }
 
     viewModel = new ViewModel;

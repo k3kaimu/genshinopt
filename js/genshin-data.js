@@ -1,10 +1,19 @@
 class CharacterData
 {
-    constructor(id, name, rarity, elem, bAtt, bDef, bHP, bBonusType, bBonusValue) {
+    constructor(id, name, rarity, elem, weaponType, bAtt, bDef, bHP, bBonusType, bBonusValue) {
         this.id = id;
         this.name = name;
-        this.rarity = rarity;
+        this.rarity = rarity;   // 5 or 4
+
+        /*
+        Anemo, Cryo, Dendro, Electro, Geo, Hydro, Pyro
+        */
         this.elem = elem;
+
+        /*
+        Sword, Claymore, Polearm, Catalyst, Bow
+        */
+        this.weaponType = weaponType;
         
         this.baseAtt = bAtt;
         this.rateAtt = 0;
@@ -39,6 +48,7 @@ class TravelerAnemo extends CharacterData
             "旅人(風)",
             5,
             "Anemo",
+            "Sword",
             213,        /* bAtt */
             682,        /* bDef */
             10875,      /* bHP */
@@ -59,6 +69,7 @@ class TravelerGeo extends CharacterData
             "旅人(岩)",
             5,
             "Geo",
+            "Sword",
             213,        /* bAtt */
             682,        /* bDef */
             10875,      /* bHP */
@@ -79,6 +90,7 @@ class TravelerElectro extends CharacterData
             "旅人(雷)",
             5,
             "Electro",
+            "Sword",
             213,        /* bAtt */
             682,        /* bDef */
             10875,      /* bHP */
@@ -89,10 +101,84 @@ class TravelerElectro extends CharacterData
 }
 
 
+
+class WeaponData
+{
+    constructor(id, name, rarity, weaponType, bAtt, bBonusType, bBonusValue) {
+        this.id = id;
+        this.name = name;
+        this.rarity = rarity;
+
+        /*
+        Sword, Claymore, Polearm, Catalyst, Bow
+        */
+        this.weaponType = weaponType;
+
+        this.baseAtt = bAtt;
+        this.rateAtt = 0;
+        this.baseDef = 0;
+        this.rateDef = 0;
+        this.baseHP = 0;
+        this.rateHP = 0;
+
+        this.baseCrtRate = 0;
+        this.baseCrtDmg = 0;
+
+        this.baseAnemoDmg = 0;
+        this.baseGeoDmg = 0;
+        this.baseElectroDmg = 0;
+        this.basePyroDmg = 0;
+        this.baseHydroDmg = 0;
+        this.baseCryoDmg = 0;
+        this.baseDendroDmg = 0;
+
+        this[bBonusType] += bBonusValue;
+    }
+}
+
+
+class StaffOfHoma extends WeaponData
+{
+    constructor()
+    {
+        super(
+            "staff_of_homa",
+            "護摩の杖",
+            5,
+            "Polearm",
+            608,
+            "baseCrtDmg",
+            0.662
+        );
+    }
+}
+
+
+class PrimordialJadeCutter extends WeaponData
+{
+    constructor()
+    {
+        super(
+            "primordial_jade_cutter",
+            "磐岩結緑",
+            5,
+            "Sword",
+            542,
+            "baseCrtRate",
+            0.441
+        );
+    }
+}
+
 genshinData = {
     characters: [
         new TravelerAnemo(),
         new TravelerGeo(),
         new TravelerElectro(),
     ],
+
+    weapons: [
+        new StaffOfHoma(),
+        new PrimordialJadeCutter(),
+    ]
 };

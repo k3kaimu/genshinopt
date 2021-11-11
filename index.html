@@ -36,7 +36,7 @@ additional_js: ["/js/page/index.js"]
         <select data-bind="options: selCharList,
                            optionsText: 'name',
                            value: selectedChar,
-                           optionsCaption: '-選択してください-'"
+                           optionsCaption: '-キャラ選択-'"
                            class="custom-select" aria-label="キャラクター選択"></select>
       </div>
     </div>
@@ -108,17 +108,22 @@ additional_js: ["/js/page/index.js"]
       <label for="select-character">武器</label>
       <div class="input-group" id="select-weapon">
         <div class="input-group-prepend">
-          <select class="custom-select" id="selectCharacterRank" >
-            <option selected>星5/星4/星3</option>
-            <option value="1">星5</option>
-            <option value="2">星4</option>
-            <option value="2">星3</option>
+          <select class="custom-select" id="selectCharacterRank" data-bind="value: selWeaponRarity">
+            <option selected value="ALL">星5/星4/星3</option>
+            <option value="5">星5</option>
+            <option value="4">星4</option>
+            <option value="3">星3</option>
           </select>
         </div>
-        <select class="custom-select" aria-label="武器選択">
+        <!-- <select class="custom-select" aria-label="武器選択">
           <option selected>武器選択...</option>
           <option value="1">護摩の杖</option>
-        </select>
+        </select> -->
+        <select data-bind="options: selWeaponList,
+                           optionsText: 'name',
+                           value: selectedWeapon,
+                           optionsCaption: '-武器選択-'"
+                           class="custom-select" aria-label="武器選択"></select>
       </div>
     </div>
 
