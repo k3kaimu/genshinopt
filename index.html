@@ -1,0 +1,283 @@
+---
+layout: default
+additional_js: ["/js/page/index.js"]
+---
+
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+  <h1 class="h2">最適化ツール</h1>
+</div>
+
+
+<div class="row">
+  <div class="col-xl-6">
+
+    <h4 class="h4">キャラ・武器設定</h4>
+    <div class="mb-3">
+      <label for="select-character">キャラクター</label>
+      <div class="input-group" id="select-character">
+        <div class="input-group-prepend">
+          <select class="custom-select" id="selectCharacterElement" data-bind="value: selCharElem">
+            <option selected value="ALL">全属性</option>
+            <option value="Anemo">風</option>
+            <option value="Geo">岩</option>
+            <option value="Pyro">火</option>
+            <option value="Hydro">水</option>
+            <option value="Cryo">氷</option>
+            <option value="Electro">雷</option>
+          </select>
+        </div>
+        <div class="input-group-prepend">
+          <select class="custom-select" id="selectCharacterRarity" data-bind="value: selCharRarity">
+            <option selected value="ALL">星5/星4</option>
+            <option value="5">星5</option>
+            <option value="4">星4</option>
+          </select>
+        </div>
+        <select data-bind="options: selCharList,
+                           optionsText: 'name',
+                           value: selectedChar,
+                           optionsCaption: '-選択してください-'"
+                           class="custom-select" aria-label="キャラクター選択"></select>
+      </div>
+    </div>
+
+    <div class="mb-3 row">
+      <div class="col-4">
+        <label for="select-tarent-normal">通常天賦</label>
+        <select class="custom-select" id="select-tarent-normal" aria-label="通常天賦">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option selected value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="15">15</option>
+        </select>
+      </div>
+      <div class="col-4">
+        <label for="select-tarent-normal">スキル天賦</label>
+        <select class="custom-select" id="select-tarent-normal" aria-label="スキル天賦">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option selected value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="15">15</option>
+        </select>
+      </div>
+      <div class="col-4">
+        <label for="select-tarent-normal">爆発天賦</label>
+        <select class="custom-select" id="select-tarent-normal" aria-label="爆発天賦">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option selected value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="15">15</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="select-character">武器</label>
+      <div class="input-group" id="select-weapon">
+        <div class="input-group-prepend">
+          <select class="custom-select" id="selectCharacterRank" >
+            <option selected>星5/星4/星3</option>
+            <option value="1">星5</option>
+            <option value="2">星4</option>
+            <option value="2">星3</option>
+          </select>
+        </div>
+        <select class="custom-select" aria-label="武器選択">
+          <option selected>武器選択...</option>
+          <option value="1">護摩の杖</option>
+        </select>
+      </div>
+    </div>
+
+    
+    <h4 class="h4">キャラ・武器サブ効果設定</h4>
+    <div class="mb-3 row">
+      <div class="col-sm-6">
+
+        <div class="form-group">
+          <label id="character-option-1">胡桃：血のかまど</label>
+          <div class="form-check" id="character-option-1">
+            <input class="form-check-input" type="checkbox" value="" id="character-option-1-1" checked>
+            <label class="form-check-label" for="character-option-1-1">
+              +33%炎ダメ
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <label id="character-option-1">護摩の杖：攻撃力上昇効果</label>
+        <div class="form-group" id="character-option-2">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="character-option-2-radio" id="character-option-2-1" value="option1" checked>
+            <label class="form-check-label" for="character-option-2-1">
+              HP上限の0.8%分攻撃力上昇
+            </label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="character-option-2-radio" id="character-option-2-2" value="option2">
+            <label class="form-check-label" for="character-option-2-2">
+              HP上限の1.8%分攻撃力上昇
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <h4 class="h4">探索する聖遺物セット</h4>
+    <div class="row">
+      <div class="col-6">
+        <label for="select-artifact-1">聖遺物セット1</label>
+        <select id="select-artifact-1" class="multiselect" multiple="multiple">
+          <option selected value="cheese">Cheese</option>
+          <option selected value="tomatoes">Tomatoes</option>
+          <option selected value="mozarella">Mozzarella</option>
+          <option selected value="mushrooms">Mushrooms</option>
+          <option selected value="pepperoni">Pepperoni</option>
+          <option selected value="onions">Onions</option>
+        </select>
+      </div>
+      <div class="col-6">
+        <label for="select-artifact-2">聖遺物セット2</label>
+        <select id="select-artifact-2" class="multiselect" multiple="multiple">
+          <option selected value="cheese">Cheese</option>
+          <option selected value="tomatoes">Tomatoes</option>
+          <option selected value="mozarella">Mozzarella</option>
+          <option selected value="mushrooms">Mushrooms</option>
+          <option selected value="pepperoni">Pepperoni</option>
+          <option selected value="onions">Onions</option>
+        </select>
+      </div>
+    </div>
+    
+
+  </div>
+
+  <div class="col-xl-6">
+    <label>聖遺物を除いた基礎ステータス</label>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th scope="col"></th>
+          <th scope="col">キャラ</th>
+          <th scope="col">武器</th>
+          <th scope="col">その他</th>
+          <th scope="col">計</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th scope="row">基礎HP</th>
+          <td>15552</td>
+          <td></td>
+          <td></td>
+          <td>15552</td>
+        </tr>
+        <tr>
+          <th scope="row">HP%</th>
+          <td></td>
+          <td>20%</td>
+          <td></td>
+          <td>20%（+3110）</td>
+        </tr>
+        <tr>
+          <th scope="row">基礎攻撃力</th>
+          <td>106</td>
+          <td>608</td>
+          <td></td>
+          <td>714</td>
+        </tr>
+        <tr>
+          <th scope="row">攻撃力%</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>0%（+0）</td>
+        </tr>
+        <tr>
+          <th scope="row">基礎防御力</th>
+          <td>876</td>
+          <td></td>
+          <td></td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <th scope="row">防御力%</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>0%（+0）</td>
+        </tr>
+        <tr>
+          <th scope="row">会心率</th>
+          <td>5%</td>
+          <td></td>
+          <td></td>
+          <td>5%</td>
+        </tr>
+        <tr>
+          <th scope="row">会心ダメージ</th>
+          <td>38.4%</td>
+          <td>66.2%</td>
+          <td></td>
+          <td>104.6%</td>
+        </tr>
+        <tr>
+          <th scope="row">与える治療効果</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>0%</td>
+        </tr>
+        <tr>
+          <th scope="row">受ける治療効果</th>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>0%</td>
+        </tr>
+        <tr>
+          <th scope="row">炎元素ダメージ</th>
+          <td>33%</td>
+          <td></td>
+          <td></td>
+          <td>33%</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
