@@ -207,10 +207,11 @@ additional_js: ["/js/page/index.js"]
       <tbody>
         <tr>
           <th scope="row">基礎HP</th>
-          <td>15552</td>
+          <!-- <td data-bind="text: selectedChar() ? selectedChar().baseHP : null"></td> -->
+          <td data-bind="text: zeroToNull(tryAndDefault(() => selectedChar().baseHP, 0))"></td>
+          <td data-bind="text: zeroToNull(tryAndDefault(() => selectedWeapon().baseHP, 0))"></td>
           <td></td>
-          <td></td>
-          <td>15552</td>
+          <td data-bind="text: totalBaseHP"></td>
         </tr>
         <tr>
           <th scope="row">HP%</th>
