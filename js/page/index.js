@@ -32,9 +32,13 @@ $(function(){
         this.selWeaponList = ko.computed(function(){
             var list = [];
             var rarity = this.selWeaponRarity();
+            var ch = this.selectedChar();
 
             this.weapons.forEach(e => {
                 if(!(rarity == "ALL" || e.rarity == rarity))
+                    return;
+
+                if(ch != undefined && ch.weaponType != e.weaponType)
                     return;
 
                 list.push(e);
