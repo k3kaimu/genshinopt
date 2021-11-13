@@ -146,6 +146,43 @@ additional_js: ["/js/page/index.js"]
         </div>
       </div>
       <button type="button" class="btn btn-outline-primary" data-bind="click: addComparingWeapon()">+追加</button>
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#weaponAdderModal">
+        一括追加
+      </button>
+
+      <!-- Modal -->
+      <div class="modal fade" id="weaponAdderModal" data-bind="with: multiWeaponAdderModal" tabindex="-1" role="dialog" aria-labelledby="weaponAdderModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="weaponAdderModalLabel">比較武器一括追加</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <select class="custom-select" data-bind="value: selWeaponRarity">
+                <option selected value="ALL">星5/星4/星3</option>
+                <option value="5">星5</option>
+                <option value="4">星4</option>
+                <option value="3">星3</option>
+              </select>
+              <div class="mb-3" data-bind="foreach: selWeaponList">
+                <div class="form-group form-check">
+                  <input type="checkbox" class="form-check-input" data-bind="checked: $data.checked">
+                  <label class="form-check-label" data-bind="text: $data.weapon.name"></label>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn" data-bind="click: checkALL">全選択</button>
+              <button type="button" class="btn" data-bind="click: uncheckALL">全解除</button>
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+              <button type="button" class="btn btn-primary" data-bind="click: addWeapons">追加</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 
     
@@ -204,7 +241,7 @@ additional_js: ["/js/page/index.js"]
 
   </div>
 
-  <div class="col-xl-6">
+  <div class="col-xl-6" hidden>
     <label>聖遺物を除いた基礎ステータス</label>
     <table class="table table-bordered">
       <thead>
@@ -219,7 +256,6 @@ additional_js: ["/js/page/index.js"]
       <tbody>
         <tr>
           <th scope="row">基礎HP</th>
-          <!-- <td data-bind="text: selectedChar() ? selectedChar().baseHP : null"></td> -->
           <td data-bind="text: zeroToNull(tryAndDefault(() => selectedChar().baseHP, 0))"></td>
           <td data-bind="text: zeroToNull(tryAndDefault(() => selectedWeapon().baseHP, 0))"></td>
           <td></td>
@@ -297,5 +333,11 @@ additional_js: ["/js/page/index.js"]
         </tr>
       </tbody>
     </table>
+  </div>
+
+
+  <div class="col-xs-6">
+    <h4 class="h4">探索するパターン数</h4>
+    <div data-bind="text: comparingWeaponList().length"></div>
   </div>
 </div>
