@@ -1,6 +1,33 @@
 $(function(){
 
 
+    function CharacterSelector(selectedChar)
+    {
+        this.selectedChar = selectedChar;
+        this.characters = genshinData.characters;
+        this.selCharElem = ko.observable();
+        this.selCharRarity = ko.observable();
+        this.selCharList = ko.computed(function(){
+            var list = [];
+            var elem = this.selCharElem();
+            var rarity = this.selCharRarity();
+            
+
+            this.characters.forEach(e => {
+                if(!(elem == "ALL" || e.elem == elem))
+                    return;
+                
+                if(!(rarity == "ALL" || e.rarity == rarity))
+                    return;
+
+                list.push(e);
+            });
+
+            return list;
+        }, this);
+    }
+
+
     function ComparingWeaponData(selectedChar)
     {
         this.weapons = genshinData.weapons;
@@ -91,31 +118,10 @@ $(function(){
 
 
     function ViewModel() {
-        this.characters = genshinData.characters;
-        this.selCharElem = ko.observable();
-        this.selCharRarity = ko.observable();
         this.selectedChar = ko.observable();
-        // selCharList: ko.observableArray(genshinData.characters)
-        this.selCharList = ko.computed(function(){
-            var list = [];
-            var elem = this.selCharElem();
-            var rarity = this.selCharRarity();
-            
+        this.characterSelector = new CharacterSelector(this.selectedChar);
 
-            this.characters.forEach(e => {
-                if(!(elem == "ALL" || e.elem == elem))
-                    return;
-                
-                if(!(rarity == "ALL" || e.rarity == rarity))
-                    return;
-
-                list.push(e);
-            });
-
-            return list;
-        }, this);
-
-
+        this.selConstellation = ko.observable();
         this.selNormalTalentRank = ko.observable();
         this.selSkillTalentRank = ko.observable();
         this.selBurstTalentRank = ko.observable();

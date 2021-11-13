@@ -12,7 +12,7 @@ additional_js: ["/js/page/index.js"]
   <div class="col-xl-6">
 
     <h4 class="h4">キャラ設定</h4>
-    <div class="mb-3">
+    <div class="mb-3" data-bind="with: characterSelector">
       <label for="select-character">キャラクター</label>
       <div class="input-group" id="select-character">
         <div class="input-group-prepend">
@@ -42,7 +42,19 @@ additional_js: ["/js/page/index.js"]
     </div>
 
     <div class="mb-3 row">
-      <div class="col-4">
+      <div class="col-3">
+        <label for="select-constellation">凸数</label>
+        <select class="custom-select" id="select-constellation" aria-label="凸数" data-bind="value: selConstellation">
+          <option value="0">無凸</option>
+          <option value="1">1凸</option>
+          <option value="2">2凸</option>
+          <option value="3">3凸</option>
+          <option value="4">4凸</option>
+          <option value="5">5凸</option>
+          <option value="6">6凸</option>
+        </select>
+      </div>
+      <div class="col-3">
         <label for="select-tarent-normal">通常天賦</label>
         <select class="custom-select" id="select-tarent-normal" aria-label="通常天賦" data-bind="value: selNormalTalentRank">
           <option value="1">1</option>
@@ -62,7 +74,7 @@ additional_js: ["/js/page/index.js"]
           <option value="15">15</option>
         </select>
       </div>
-      <div class="col-4">
+      <div class="col-3">
         <label for="select-tarent-normal">スキル天賦</label>
         <select class="custom-select" id="select-tarent-normal" aria-label="スキル天賦" data-bind="value: selSkillTalentRank">
           <option value="1">1</option>
@@ -82,7 +94,7 @@ additional_js: ["/js/page/index.js"]
           <option value="15">15</option>
         </select>
       </div>
-      <div class="col-4">
+      <div class="col-3">
         <label for="select-tarent-normal">爆発天賦</label>
         <select class="custom-select" id="select-tarent-normal" aria-label="爆発天賦" data-bind="value: selBurstTalentRank">
           <option value="1">1</option>
