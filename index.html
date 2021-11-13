@@ -11,7 +11,7 @@ additional_js: ["/js/page/index.js"]
 <div class="row">
   <div class="col-xl-6">
 
-    <h4 class="h4">キャラ・武器設定</h4>
+    <h4 class="h4">キャラ設定</h4>
     <div class="mb-3">
       <label for="select-character">キャラクター</label>
       <div class="input-group" id="select-character">
@@ -44,7 +44,7 @@ additional_js: ["/js/page/index.js"]
     <div class="mb-3 row">
       <div class="col-4">
         <label for="select-tarent-normal">通常天賦</label>
-        <select class="custom-select" id="select-tarent-normal" aria-label="通常天賦">
+        <select class="custom-select" id="select-tarent-normal" aria-label="通常天賦" data-bind="value: selNormalTalentRank">
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -64,7 +64,7 @@ additional_js: ["/js/page/index.js"]
       </div>
       <div class="col-4">
         <label for="select-tarent-normal">スキル天賦</label>
-        <select class="custom-select" id="select-tarent-normal" aria-label="スキル天賦">
+        <select class="custom-select" id="select-tarent-normal" aria-label="スキル天賦" data-bind="value: selSkillTalentRank">
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -84,7 +84,7 @@ additional_js: ["/js/page/index.js"]
       </div>
       <div class="col-4">
         <label for="select-tarent-normal">爆発天賦</label>
-        <select class="custom-select" id="select-tarent-normal" aria-label="爆発天賦">
+        <select class="custom-select" id="select-tarent-normal" aria-label="爆発天賦" data-bind="value: selBurstTalentRank">
           <option value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -104,62 +104,77 @@ additional_js: ["/js/page/index.js"]
       </div>
     </div>
 
-    <div class="mb-3">
-      <label for="select-character">武器</label>
-      <div class="input-group" id="select-weapon">
-        <div class="input-group-prepend">
-          <select class="custom-select" id="selectCharacterRank" data-bind="value: selWeaponRarity">
-            <option selected value="ALL">星5/星4/星3</option>
-            <option value="5">星5</option>
-            <option value="4">星4</option>
-            <option value="3">星3</option>
-          </select>
+    <div class="mb-3 row">
+      <div class="col-sm-6 card">
+
+        <div class="card-body">
+          <label id="character-option-1">血のかまど</label>
+          <div class="form-group" id="character-option-1">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="character-option-1-1" checked>
+              <label class="form-check-label" for="character-option-1-1">
+                +33%炎ダメ（HP50%以下）
+              </label>
+            </div>
+          </div>
         </div>
-        <!-- <select class="custom-select" aria-label="武器選択">
-          <option selected>武器選択...</option>
-          <option value="1">護摩の杖</option>
-        </select> -->
-        <select data-bind="options: selWeaponList,
-                           optionsText: 'name',
-                           value: selectedWeapon,
-                           optionsCaption: '-武器選択-'"
-                           class="custom-select" aria-label="武器選択"></select>
+
       </div>
+    </div>
+
+
+    <h4 class="h4">比較する武器設定</h4>
+    <div class="mb-3">
+      <div data-bind="foreach: comparingWeaponList">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <select class="custom-select" id="selectCharacterRank" data-bind="value: $data.selWeaponRarity">
+              <option selected value="ALL">星5/星4/星3</option>
+              <option value="5">星5</option>
+              <option value="4">星4</option>
+              <option value="3">星3</option>
+            </select>
+          </div>
+          <select data-bind="options: $data.selWeaponList,
+                            optionsText: 'name',
+                            value: $data.selectedWeapon,
+                            optionsCaption: '-武器選択-'"
+                            class="custom-select" aria-label="武器選択"></select>
+          <div class="input-group-prepend">
+            <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.comparingWeaponList.remove($data)">-削除</button>
+          </div>
+        </div>
+      </div>
+      <!-- <div>
+        <span data-bind="click: addComparingWeapon()" data-feather="plus-circle"></span>
+      </div> -->
+      <button type="button" class="btn btn-outline-primary" data-bind="click: addComparingWeapon()">+追加</button>
     </div>
 
     
     <h4 class="h4">キャラ・武器サブ効果設定</h4>
     <div class="mb-3 row">
-      <div class="col-sm-6">
 
-        <div class="form-group">
-          <label id="character-option-1">胡桃：血のかまど</label>
-          <div class="form-check" id="character-option-1">
-            <input class="form-check-input" type="checkbox" value="" id="character-option-1-1" checked>
-            <label class="form-check-label" for="character-option-1-1">
-              +33%炎ダメ
-            </label>
+      <div class="col-sm-6 card">
+        <div class="card-body">
+          <label id="character-option-2">護摩の杖：攻撃力上昇効果</label>
+          <div class="form-group" id="character-option-2">
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="character-option-2-radio" id="character-option-2-1" value="option1" checked>
+              <label class="form-check-label" for="character-option-2-1">
+                HP上限の0.8%分攻撃力上昇
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="character-option-2-radio" id="character-option-2-2" value="option2">
+              <label class="form-check-label" for="character-option-2-2">
+                HP上限の1.8%分攻撃力上昇
+              </label>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="col-sm-6">
-        <label id="character-option-1">護摩の杖：攻撃力上昇効果</label>
-        <div class="form-group" id="character-option-2">
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="character-option-2-radio" id="character-option-2-1" value="option1" checked>
-            <label class="form-check-label" for="character-option-2-1">
-              HP上限の0.8%分攻撃力上昇
-            </label>
-          </div>
-          <div class="form-check">
-            <input class="form-check-input" type="radio" name="character-option-2-radio" id="character-option-2-2" value="option2">
-            <label class="form-check-label" for="character-option-2-2">
-              HP上限の1.8%分攻撃力上昇
-            </label>
-          </div>
-        </div>
-      </div>
     </div>
 
 
