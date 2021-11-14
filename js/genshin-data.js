@@ -53,7 +53,7 @@ class CharacterViewModel
 
 
     // typeof(return): string[]
-    viewHTMLList(){
+    viewHTMLList(target){
         return [];
     }
 }
@@ -160,7 +160,7 @@ class HuTaoViewModel extends CharacterViewModel
     }
 
 
-    viewHTMLList()
+    viewHTMLList(target)
     {
         return [
             `
@@ -168,7 +168,7 @@ class HuTaoViewModel extends CharacterViewModel
                 <div class="card-header p-2">血のかまど</div>
                 <div class="card-body p-2">
                     <div class="form-group m-0">
-                        <div class="form-check" data-bind="with: $root.characterViewModel">
+                        <div class="form-check" data-bind="with: ` + target + `">
                             <input class="form-check-input" type="checkbox" data-bind="checked: hpLowerThan50" checked>
                             <label class="form-check-label">
                             +33%炎ダメ（HP50%以下）
@@ -184,7 +184,7 @@ class HuTaoViewModel extends CharacterViewModel
                     <div class="card-header p-2">冥蝶の抱擁（6凸効果）</div>
                         <div class="card-body p-2">
                             <div class="form-group m-0">
-                                <div class="form-check" data-bind="with: $root.characterViewModel">
+                                <div class="form-check" data-bind="with: ` + target + `">
                                     <input class="form-check-input" type="checkbox" data-bind="checked: useC6Effect" checked>
                                     <label class="form-check-label">
                                     会心率+100%

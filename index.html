@@ -120,7 +120,7 @@ additional_js: ["/js/page/index.js"]
     
     <div class="mb-3 row">
       <!-- ko if: characterViewModel() != undefined -->
-      <!-- ko foreach: characterViewModel().viewHTMLList() -->
+      <!-- ko foreach: characterViewModel().viewHTMLList('$root.characterViewModel') -->
       <div class="col-sm-6">
         <div data-bind="htmlWithBinding: $data"></div>
       </div>
