@@ -35,6 +35,27 @@ class CharacterData
         
         this[bBonusType] += bBonusValue;
     }
+
+
+    newViewModel()
+    {
+        return new CharacterViewModel(this);
+    }
+}
+
+
+class CharacterViewModel
+{
+    constructor(ch)
+    {
+        this.character = ch;
+    }
+
+
+    // typeof(return): string[]
+    viewHTMLList(){
+        return [];
+    }
 }
 
 
@@ -97,6 +118,85 @@ class TravelerElectro extends CharacterData
             "rateAtt",  /* bBonusType */
             0.24        /* bBonusValue */
             );
+    }
+}
+
+
+
+// 胡桃
+class HuTao extends CharacterData
+{
+    constructor()
+    {
+        super(
+            "hu_tao",
+            "胡桃",
+            5,
+            "Pyro",
+            "Polearm",
+            106,            /* bAtt */
+            876,            /* bDef */
+            15552,          /* bHP */
+            "baseCrtDmg",   /* bBonusType */
+            0.384           /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new HuTaoViewModel(this);
+    }
+}
+
+
+class HuTaoViewModel extends CharacterViewModel
+{
+    constructor(ch)
+    {
+        super(ch);
+        this.hpLowerThan50 = ko.observable();
+        this.useC6Effect = ko.observable();
+    }
+
+
+    viewHTMLList()
+    {
+        return [
+            `
+            <div class="card">
+                <div class="card-header p-2">血のかまど</div>
+                <div class="card-body p-2">
+                    <div class="form-group m-0">
+                        <div class="form-check" data-bind="with: $root.characterViewModel">
+                            <input class="form-check-input" type="checkbox" data-bind="checked: hpLowerThan50" checked>
+                            <label class="form-check-label">
+                            +33%炎ダメ（HP50%以下）
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `,
+            `
+            <div data-bind="if: $root.selConstellation() >= 6">
+                <div class="card">
+                    <div class="card-header p-2">冥蝶の抱擁（6凸効果）</div>
+                        <div class="card-body p-2">
+                            <div class="form-group m-0">
+                                <div class="form-check" data-bind="with: $root.characterViewModel">
+                                    <input class="form-check-input" type="checkbox" data-bind="checked: useC6Effect" checked>
+                                    <label class="form-check-label">
+                                    会心率+100%
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `
+        ];
     }
 }
 
@@ -175,6 +275,7 @@ genshinData = {
         new TravelerAnemo(),
         new TravelerGeo(),
         new TravelerElectro(),
+        new HuTao(),
     ],
 
     weapons: [

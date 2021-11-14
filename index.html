@@ -116,22 +116,16 @@ additional_js: ["/js/page/index.js"]
       </div>
     </div>
 
+
+    
     <div class="mb-3 row">
-      <div class="col-sm-6 card">
-
-        <div class="card-body">
-          <label id="character-option-1">血のかまど</label>
-          <div class="form-group" id="character-option-1">
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" value="" id="character-option-1-1" checked>
-              <label class="form-check-label" for="character-option-1-1">
-                +33%炎ダメ（HP50%以下）
-              </label>
-            </div>
-          </div>
-        </div>
-
+      <!-- ko if: characterViewModel() != undefined -->
+      <!-- ko foreach: characterViewModel().viewHTMLList() -->
+      <div class="col-sm-6">
+        <div data-bind="htmlWithBinding: $data"></div>
       </div>
+      <!-- /ko -->
+      <!-- /ko -->
     </div>
 
 
@@ -140,7 +134,7 @@ additional_js: ["/js/page/index.js"]
       <div data-bind="foreach: comparingWeaponList">
         <div class="input-group">
           <div class="input-group-prepend">
-            <select class="custom-select" id="selectCharacterRank" data-bind="value: $data.selWeaponRarity">
+            <select class="custom-select" data-bind="value: $data.selWeaponRarity">
               <option selected value="ALL">星5/星4/星3</option>
               <option value="5">星5</option>
               <option value="4">星4</option>
@@ -151,7 +145,18 @@ additional_js: ["/js/page/index.js"]
                             optionsText: 'name',
                             value: $data.selectedWeapon,
                             optionsCaption: '-武器選択-'"
-                            class="custom-select" aria-label="武器選択"></select>
+                            class="custom-select" aria-label="武器選択">
+          </select>
+          <div class="input-group-prepend">
+            <select class="custom-select" data-bind="value: $data.selWeaponRank">
+              <option selected value="0">無凸</option>
+              <option value="1">1凸</option>
+              <option value="2">2凸</option>
+              <option value="3">3凸</option>
+              <option value="4">4凸</option>
+              <option value="5">5凸</option>
+            </select>
+          </div>
           <div class="input-group-prepend">
             <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.comparingWeaponList.remove($data)">-削除</button>
           </div>

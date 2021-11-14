@@ -33,6 +33,7 @@ $(function(){
         this.weapons = genshinData.weapons;
         this.selWeaponRarity = ko.observable();
         this.selectedWeapon = ko.observable();
+        this.selWeaponRank = ko.observable();
         this.selWeaponList = ko.computed(function(){
             var list = [];
             var rarity = this.selWeaponRarity();
@@ -120,6 +121,14 @@ $(function(){
     function ViewModel() {
         this.selectedChar = ko.observable();
         this.characterSelector = new CharacterSelector(this.selectedChar);
+        this.characterViewModel = ko.observable(new CharacterViewModel(undefined));
+
+        this.selectedChar.subscribe(function(newCharacter){
+            if(newCharacter == undefined)
+                this.characterViewModel(undefined);
+            else
+                this.characterViewModel(newCharacter.newViewModel());
+        }.bind(this));
 
         this.selConstellation = ko.observable();
         this.selNormalTalentRank = ko.observable();

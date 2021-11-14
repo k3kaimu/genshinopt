@@ -3,6 +3,18 @@
   
     feather.replace();
 
+    
+    // https://stackoverflow.com/a/31402450
+    ko.bindingHandlers.htmlWithBinding = {
+          'init': function() {
+            return { 'controlsDescendantBindings': true };
+          },
+          'update': function (element, valueAccessor, allBindings, viewModel, bindingContext) {
+              element.innerHTML = valueAccessor();
+              ko.applyBindingsToDescendants(bindingContext, element);
+          }
+    };
+
     $(document).ready(function() {
         $(".multiselect").each(function(){
             $(this).multiselect();
