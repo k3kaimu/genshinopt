@@ -504,6 +504,7 @@ genshinData = {
     ],
 
     artifacts: [
+        new CrimsonWitchOfFlames(),
         new ShimenawaReminiscence(),
     ],
 };
