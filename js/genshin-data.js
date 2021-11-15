@@ -169,9 +169,9 @@ class HuTaoViewModel extends CharacterViewModel
                 <div class="card-body p-2">
                     <div class="form-group m-0">
                         <div class="form-check" data-bind="with: ` + target + `">
-                            <input class="form-check-input" type="checkbox" data-bind="checked: hpLowerThan50" checked>
                             <label class="form-check-label">
-                            +33%炎ダメ（HP50%以下）
+                                <input class="form-check-input" type="checkbox" data-bind="checked: hpLowerThan50" checked>
+                                +33%炎ダメ（HP50%以下）
                             </label>
                         </div>
                     </div>
@@ -185,9 +185,9 @@ class HuTaoViewModel extends CharacterViewModel
                         <div class="card-body p-2">
                             <div class="form-group m-0">
                                 <div class="form-check" data-bind="with: ` + target + `">
-                                    <input class="form-check-input" type="checkbox" data-bind="checked: useC6Effect" checked>
                                     <label class="form-check-label">
-                                    会心率+100%
+                                        <input class="form-check-input" type="checkbox" data-bind="checked: useC6Effect" checked>
+                                        会心率+100%
                                     </label>
                                 </div>
                             </div>
@@ -301,14 +301,14 @@ class StaffOfHomaViewModel extends WeaponViewModel
                 <div class="card-body p-2">
                 <div class="form-group" data-bind="with: `+target+`">
                     <div class="form-check">
-                    <input class="form-check-input" type="radio" name="`+target+uid+`" value="highHP" data-bind="checked: selLowHighHP">
                     <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="`+target+uid+`" value="highHP" data-bind="checked: selLowHighHP">
                         HP上限の0.8%分攻撃力上昇
                     </label>
                     </div>
                     <div class="form-check">
-                    <input class="form-check-input" type="radio" name="`+target+uid+`" value="lowHP" data-bind="checked: selLowHighHP">
                     <label class="form-check-label">
+                        <input class="form-check-input" type="radio" name="`+target+uid+`" value="lowHP" data-bind="checked: selLowHighHP">
                         HP上限の1.8%分攻撃力上昇
                     </label>
                     </div>
