@@ -24,6 +24,10 @@
 })()
 
 
+// for nlopt-js
+window.global = window;
+
+
 genUniqueId = (function(){
     var i=0;
     return function() {
