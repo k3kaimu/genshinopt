@@ -42,7 +42,7 @@ additional_js: ["/js/page/index.js"]
     </div>
 
     <div class="mb-3 row">
-      <div class="col-3">
+      <div class="col-3 p-2">
         <label for="select-constellation">凸数</label>
         <select class="custom-select" id="select-constellation" aria-label="凸数" data-bind="value: selConstellation">
           <option value="0">無凸</option>
@@ -54,7 +54,7 @@ additional_js: ["/js/page/index.js"]
           <option value="6">6凸</option>
         </select>
       </div>
-      <div class="col-3">
+      <div class="col-3 p-2">
         <label for="select-tarent-normal">通常天賦</label>
         <select class="custom-select" id="select-tarent-normal" aria-label="通常天賦" data-bind="value: selNormalTalentRank">
           <option value="1">1</option>
@@ -74,7 +74,7 @@ additional_js: ["/js/page/index.js"]
           <option value="15">15</option>
         </select>
       </div>
-      <div class="col-3">
+      <div class="col-3 p-2">
         <label for="select-tarent-normal">スキル天賦</label>
         <select class="custom-select" id="select-tarent-normal" aria-label="スキル天賦" data-bind="value: selSkillTalentRank">
           <option value="1">1</option>
@@ -94,7 +94,7 @@ additional_js: ["/js/page/index.js"]
           <option value="15">15</option>
         </select>
       </div>
-      <div class="col-3">
+      <div class="col-3 p-2">
         <label for="select-tarent-normal">爆発天賦</label>
         <select class="custom-select" id="select-tarent-normal" aria-label="爆発天賦" data-bind="value: selBurstTalentRank">
           <option value="1">1</option>
@@ -132,33 +132,40 @@ additional_js: ["/js/page/index.js"]
     <h4 class="h4">比較する武器設定</h4>
     <div class="mb-3">
       <div data-bind="foreach: comparingWeaponList">
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <select class="custom-select" data-bind="value: $data.selWeaponRarity">
-              <option selected value="ALL">星5/星4/星3</option>
-              <option value="5">星5</option>
-              <option value="4">星4</option>
-              <option value="3">星3</option>
+        <div class="mb-3">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <select class="custom-select" data-bind="value: $data.selWeaponRarity">
+                <option selected value="ALL">星5/星4/星3</option>
+                <option value="5">星5</option>
+                <option value="4">星4</option>
+                <option value="3">星3</option>
+              </select>
+            </div>
+            <select data-bind="options: $data.selWeaponList,
+                              optionsText: 'name',
+                              value: $data.selectedWeapon,
+                              optionsCaption: '-武器選択-'"
+                              class="custom-select" aria-label="武器選択">
             </select>
+            <div class="input-group-prepend">
+              <select class="custom-select" data-bind="value: $data.selWeaponRank">
+                <option selected value="0">無凸</option>
+                <option value="1">1凸</option>
+                <option value="2">2凸</option>
+                <option value="3">3凸</option>
+                <option value="4">4凸</option>
+                <option value="5">5凸</option>
+              </select>
+            </div>
+            <div class="input-group-prepend">
+              <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.comparingWeaponList.remove($data)">-削除</button>
+            </div>
           </div>
-          <select data-bind="options: $data.selWeaponList,
-                            optionsText: 'name',
-                            value: $data.selectedWeapon,
-                            optionsCaption: '-武器選択-'"
-                            class="custom-select" aria-label="武器選択">
-          </select>
-          <div class="input-group-prepend">
-            <select class="custom-select" data-bind="value: $data.selWeaponRank">
-              <option selected value="0">無凸</option>
-              <option value="1">1凸</option>
-              <option value="2">2凸</option>
-              <option value="3">3凸</option>
-              <option value="4">4凸</option>
-              <option value="5">5凸</option>
-            </select>
-          </div>
-          <div class="input-group-prepend">
-            <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.comparingWeaponList.remove($data)">-削除</button>
+          <div class="row" data-bind="foreach: $data.weaponViewModel().viewHTMLList('$root.comparingWeaponList()['+($index())+'].weaponViewModel')">
+            <div class="col-sm-6">
+              <div data-bind="htmlWithBinding: $data"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -201,33 +208,6 @@ additional_js: ["/js/page/index.js"]
         </div>
       </div>
     </div>
-
-    
-    <h4 class="h4">キャラ・武器サブ効果設定</h4>
-    <div class="mb-3 row">
-
-      <div class="col-sm-6 card">
-        <div class="card-body">
-          <label id="character-option-2">護摩の杖：攻撃力上昇効果</label>
-          <div class="form-group" id="character-option-2">
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="character-option-2-radio" id="character-option-2-1" value="option1" checked>
-              <label class="form-check-label" for="character-option-2-1">
-                HP上限の0.8%分攻撃力上昇
-              </label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="radio" name="character-option-2-radio" id="character-option-2-2" value="option2">
-              <label class="form-check-label" for="character-option-2-2">
-                HP上限の1.8%分攻撃力上昇
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
 
     <h4 class="h4">探索する聖遺物セット</h4>
     <div class="row">

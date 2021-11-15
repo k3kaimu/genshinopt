@@ -51,6 +51,15 @@ $(function(){
 
             return list;
         }, this);
+
+        this.weaponViewModel = ko.observable(new WeaponViewModel());
+        this.selectedWeapon.subscribe(function(newWeaponData){
+            if(newWeaponData == undefined) {
+                this.weaponViewModel(new WeaponViewModel(undefined));
+            } else {
+                this.weaponViewModel(newWeaponData.newViewModel());
+            }
+        }.bind(this));
     }
 
 
@@ -125,7 +134,7 @@ $(function(){
 
         this.selectedChar.subscribe(function(newCharacter){
             if(newCharacter == undefined)
-                this.characterViewModel(undefined);
+                this.characterViewModel(new CharacterViewModel(undefined));
             else
                 this.characterViewModel(newCharacter.newViewModel());
         }.bind(this));

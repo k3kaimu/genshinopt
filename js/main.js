@@ -24,6 +24,14 @@
 })()
 
 
+genUniqueId = (function(){
+    var i=0;
+    return function() {
+        return i++;
+    };
+})();
+
+
 function tryAndDefault(fn, defval)
 {
     try{

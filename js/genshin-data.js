@@ -155,7 +155,7 @@ class HuTaoViewModel extends CharacterViewModel
     constructor(ch)
     {
         super(ch);
-        this.hpLowerThan50 = ko.observable();
+        this.hpLowerThan50 = ko.observable(true);
         this.useC6Effect = ko.observable();
     }
 
@@ -234,6 +234,27 @@ class WeaponData
 
         this[bBonusType] += bBonusValue;
     }
+
+
+    newViewModel()
+    {
+        return new WeaponViewModel(this);
+    }
+}
+
+
+class WeaponViewModel
+{
+    constructor(data)
+    {
+        this.weapon = data;
+    }
+
+
+    viewHTMLList(target)
+    {
+        return [];
+    }
 }
 
 
@@ -250,6 +271,52 @@ class StaffOfHoma extends WeaponData
             "baseCrtDmg",
             0.662
         );
+    }
+
+
+    newViewModel()
+    {
+        return new StaffOfHomaViewModel(this);
+    }
+}
+
+
+class StaffOfHomaViewModel extends WeaponViewModel
+{
+    constructor(data)
+    {
+        super(data);
+        this.selLowHighHP = ko.observable("lowHP");
+    }
+
+
+    viewHTMLList(target)
+    {
+        var uid = genUniqueId();
+
+        return [
+            `
+            <div class="card">
+                <div class="card-header p-2">攻撃力上昇効果</div>
+                <div class="card-body p-2">
+                <div class="form-group" data-bind="with: `+target+`">
+                    <div class="form-check">
+                    <input class="form-check-input" type="radio" name="`+target+uid+`" value="highHP" data-bind="checked: selLowHighHP">
+                    <label class="form-check-label">
+                        HP上限の0.8%分攻撃力上昇
+                    </label>
+                    </div>
+                    <div class="form-check">
+                    <input class="form-check-input" type="radio" name="`+target+uid+`" value="lowHP" data-bind="checked: selLowHighHP">
+                    <label class="form-check-label">
+                        HP上限の1.8%分攻撃力上昇
+                    </label>
+                    </div>
+                </div>
+                </div>
+            </div>
+            `
+        ]
     }
 }
 
