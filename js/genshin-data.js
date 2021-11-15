@@ -48,7 +48,7 @@ class CharacterViewModel
 {
     constructor(ch)
     {
-        this.character = ch;
+        this.parent = ch;
     }
 
 
@@ -247,7 +247,7 @@ class WeaponViewModel
 {
     constructor(data)
     {
-        this.weapon = data;
+        this.parent = data;
     }
 
 
@@ -258,6 +258,7 @@ class WeaponViewModel
 }
 
 
+// 護摩の杖
 class StaffOfHoma extends WeaponData
 {
     constructor()
@@ -281,6 +282,7 @@ class StaffOfHoma extends WeaponData
 }
 
 
+// 護摩の杖, ViewModel
 class StaffOfHomaViewModel extends WeaponViewModel
 {
     constructor(data)
@@ -321,6 +323,7 @@ class StaffOfHomaViewModel extends WeaponViewModel
 }
 
 
+// 磐岩結緑
 class PrimordialJadeCutter extends WeaponData
 {
     constructor()
