@@ -128,6 +128,8 @@ $(function(){
 
 
     function ViewModel() {
+        this.readyNLopt = ko.observable();
+
         this.selectedChar = ko.observable();
         this.characterSelector = new CharacterSelector(this.selectedChar);
         this.characterViewModel = ko.observable(new CharacterViewModel(undefined));
@@ -161,5 +163,11 @@ $(function(){
 
     viewModel = new ViewModel;
 
-    ko.applyBindings(viewModel);    
+    ko.applyBindings(viewModel);
+
+
+    (async () => {
+        await nlopt.ready
+        viewModel.readyNLopt(true);
+    })();
 });
