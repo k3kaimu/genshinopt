@@ -157,11 +157,6 @@ $(function(){
         this.initMultiWeaponAdder = function(){
             this.multiWeaponAdderModal.uncheckALL();
         }.bind(this);
-
-        this.totalBaseHP = ko.computed(function(){
-            return tryAndDefault(() => this.selectedChar().baseHP, 0)
-                +  tryAndDefault(() => this.selectedWeapon().baseHP, 0);
-        }, this);
     }
 
     viewModel = new ViewModel;
