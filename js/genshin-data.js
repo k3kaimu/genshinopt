@@ -1,6 +1,6 @@
 class CharacterData
 {
-    constructor(id, name, rarity, elem, weaponType, bAtt, bDef, bHP, bBonusType, bBonusValue) {
+    constructor(id, name, rarity, elem, weaponType, bAtk, bDef, bHP, bBonusType, bBonusValue) {
         this.id = id;
         this.name = name;
         this.rarity = rarity;   // 5 or 4
@@ -15,8 +15,8 @@ class CharacterData
         */
         this.weaponType = weaponType;
         
-        this.baseAtt = bAtt;
-        this.rateAtt = 0;
+        this.baseAtk = bAtk;
+        this.rateAtk = 0;
         this.baseDef = bDef;
         this.rateDef = 0;
         this.baseHP = bHP;
@@ -32,6 +32,10 @@ class CharacterData
         this.baseHydroDmg = 0;
         this.baseCryoDmg = 0;
         this.baseDendroDmg = 0;
+        this.basePhysicalDmg = 0;
+
+        this.baseRecharge = 1;      // 元素チャージ効率 
+        this.baseMastery = 0;       // 元素熟知
         
         this[bBonusType] += bBonusValue;
     }
@@ -70,10 +74,10 @@ class TravelerAnemo extends CharacterData
             5,
             "Anemo",
             "Sword",
-            213,        /* bAtt */
+            213,        /* bAtk */
             682,        /* bDef */
             10875,      /* bHP */
-            "rateAtt",  /* bBonusType */
+            "rateAtk",  /* bBonusType */
             0.24        /* bBonusValue */
             );
     }
@@ -91,10 +95,10 @@ class TravelerGeo extends CharacterData
             5,
             "Geo",
             "Sword",
-            213,        /* bAtt */
+            213,        /* bAtk */
             682,        /* bDef */
             10875,      /* bHP */
-            "rateAtt",  /* bBonusType */
+            "rateAtk",  /* bBonusType */
             0.24        /* bBonusValue */
             );
     }
@@ -112,10 +116,10 @@ class TravelerElectro extends CharacterData
             5,
             "Electro",
             "Sword",
-            213,        /* bAtt */
+            213,        /* bAtk */
             682,        /* bDef */
             10875,      /* bHP */
-            "rateAtt",  /* bBonusType */
+            "rateAtk",  /* bBonusType */
             0.24        /* bBonusValue */
             );
     }
@@ -134,7 +138,7 @@ class HuTao extends CharacterData
             5,
             "Pyro",
             "Polearm",
-            106,            /* bAtt */
+            106,            /* bAtk */
             876,            /* bDef */
             15552,          /* bHP */
             "baseCrtDmg",   /* bBonusType */
@@ -204,7 +208,7 @@ class HuTaoViewModel extends CharacterViewModel
 
 class WeaponData
 {
-    constructor(id, name, rarity, weaponType, bAtt, bBonusType, bBonusValue) {
+    constructor(id, name, rarity, weaponType, bAtk, bBonusType, bBonusValue) {
         this.id = id;
         this.name = name;
         this.rarity = rarity;
@@ -214,8 +218,8 @@ class WeaponData
         */
         this.weaponType = weaponType;
 
-        this.baseAtt = bAtt;
-        this.rateAtt = 0;
+        this.baseAtk = bAtk;
+        this.rateAtk = 0;
         this.baseDef = 0;
         this.rateDef = 0;
         this.baseHP = 0;
