@@ -60,6 +60,17 @@ class VGData
     }
 
 
+    dup() {
+        var dst = VGData.zero();
+        dst.value = this.value;
+        for(let i = 0; i < 7; ++i) {
+            dst.grad[i] = this.grad[i];
+        }
+
+        return dst;
+    }
+
+
     add_VGData(rhs) {
         var dst = VGData.zero();
         dst.value = this.value + rhs.value;
@@ -353,10 +364,124 @@ class DamageCalculator
         this.baseShatteredBonus = VGData.zero();        // 氷砕き
         this.baseBurningBonus = VGData.zero();          // 燃焼ボーナス
 
-
         this.baseRecharge = VGData.zero();      // 元素チャージ効率
         this.baseMastery = VGData.zero();       // 元素熟知
-        
+
+        // 聖遺物サブオプション
+        this.artRateAtk = VGData.newRateAtk(0);
+        this.artRateDef = VGData.newRateDef(0);
+        this.artRateHP = VGData.newRateHP(0);
+        this.artCrtRate = VGData.newCrtRate(0);
+        this.artCrtDmg = VGData.newCrtDmg(0);
+        this.artRecharge = VGData.newRecharge(0);
+        this.artMastery = VGData.newMastery(0);
+    }
+
+
+    dup()
+    {
+        var dst = new DamageCalculator();
+
+        dst.baseAtk = this.baseAtk.dup();
+        dst.rateAtk = this.rateAtk.dup();
+        dst.addAtk = this.addAtk.dup();
+        dst.baseDef = this.baseDef.dup();
+        dst.rateDef = this.rateDef.dup();
+        dst.addDef = this.addDef.dup();
+        dst.baseHP = this.baseHP.dup();
+        dst.rateHP = this.rateHP.dup();
+        dst.addHP = this.addHP.dup();
+
+        dst.baseCrtRate = this.baseCrtRate.dup();
+        dst.baseCrtDmg = this.baseCrtDmg.dup();
+
+        dst.baseAnemoDmg = this.baseAnemoDmg.dup();
+        dst.baseGeoDmg = this.baseGeoDmg.dup();
+        dst.baseElectroDmg = this.baseElectroDmg.dup();
+        dst.basePyroDmg = this.basePyroDmg.dup();
+        dst.baseHydroDmg = this.baseHydroDmg.dup();
+        dst.baseCryoDmg = this.baseCryoDmg.dup();
+        dst.baseDendroDmg = this.baseDendroDmg.dup();
+        dst.basePhysicalDmg = this.basePhysicalDmg.dup();
+        dst.baseNormalDmg = this.baseNormalDmg.dup();
+        dst.baseChargedDmg = this.baseChargedDmg.dup();
+        dst.basePlungDmg = this.basePlungDmg.dup();
+        dst.baseSkillDmg = this.baseSkillDmg.dup();
+        dst.baseBurstDmg = this.baseBurstDmg.dup();
+        dst.baseSwirlBonus = this.baseSwirlBonus.dup();
+        dst.baseCrystalizeBonus = this.baseCrystalizeBonus.dup();
+        dst.baseVaporizeBonus = this.baseVaporizeBonus.dup();
+        dst.baseOverloadedBonus = this.baseOverloadedBonus.dup();
+        dst.baseMeltBonus = this.baseMeltBonus.dup();
+        dst.baseElectroChargedBonus = this.baseElectroChargedBonus.dup();
+        dst.baseFrozenBonus = this.baseFrozenBonus.dup();
+        dst.baseSuperconductBonus = this.baseSuperconductBonus.dup();
+        dst.baseShatteredBonus = this.baseShatteredBonus.dup();
+        dst.baseBurningBonus = this.baseBurningBonus.dup();
+
+        dst.baseRecharge = this.baseRecharge.dup();
+        dst.baseMastery = this.baseMastery.dup();
+
+        this.artRateAtk = VGData.newRateAtk(0);
+        this.artRateDef = VGData.newRateDef(0);
+        this.artRateHP = VGData.newRateHP(0);
+        this.artCrtRate = VGData.newCrtRate(0);
+        this.artCrtDmg = VGData.newCrtDmg(0);
+        this.artRecharge = VGData.newRecharge(0);
+        this.artMastery = VGData.newMastery(0);
+
+        return dst;
+    }
+
+
+    copyFrom(rhs) {
+        this.baseAtk = rhs.baseAtk.dup();
+        this.rateAtk = rhs.rateAtk.dup();
+        this.addAtk = rhs.addAtk.dup();
+        this.baseDef = rhs.baseDef.dup();
+        this.rateDef = rhs.rateDef.dup();
+        this.addDef = rhs.addDef.dup();
+        this.baseHP = rhs.baseHP.dup();
+        this.rateHP = rhs.rateHP.dup();
+        this.addHP = rhs.addHP.dup();
+
+        this.baseCrtRate = rhs.baseCrtRate.dup();
+        this.baseCrtDmg = rhs.baseCrtDmg.dup();
+
+        this.baseAnemoDmg = rhs.baseAnemoDmg.dup();
+        this.baseGeoDmg = rhs.baseGeoDmg.dup();
+        this.baseElectroDmg = rhs.baseElectroDmg.dup();
+        this.basePyroDmg = rhs.basePyroDmg.dup();
+        this.baseHydroDmg = rhs.baseHydroDmg.dup();
+        this.baseCryoDmg = rhs.baseCryoDmg.dup();
+        this.baseDendroDmg = rhs.baseDendroDmg.dup();
+        this.basePhysicalDmg = rhs.basePhysicalDmg.dup();
+        this.baseNormalDmg = rhs.baseNormalDmg.dup();
+        this.baseChargedDmg = rhs.baseChargedDmg.dup();
+        this.basePlungDmg = rhs.basePlungDmg.dup();
+        this.baseSkillDmg = rhs.baseSkillDmg.dup();
+        this.baseBurstDmg = rhs.baseBurstDmg.dup();
+        this.baseSwirlBonus = rhs.baseSwirlBonus.dup();
+        this.baseCrystalizeBonus = rhs.baseCrystalizeBonus.dup();
+        this.baseVaporizeBonus = rhs.baseVaporizeBonus.dup();
+        this.baseOverloadedBonus = rhs.baseOverloadedBonus.dup();
+        this.baseMeltBonus = rhs.baseMeltBonus.dup();
+        this.baseElectroChargedBonus = rhs.baseElectroChargedBonus.dup();
+        this.baseFrozenBonus = rhs.baseFrozenBonus.dup();
+        this.baseSuperconductBonus = rhs.baseSuperconductBonus.dup();
+        this.baseShatteredBonus = rhs.baseShatteredBonus.dup();
+        this.baseBurningBonus = rhs.baseBurningBonus.dup();
+
+        this.baseRecharge = rhs.baseRecharge.dup();
+        this.baseMastery = rhs.baseMastery.dup();
+
+        this.artRateAtk = rhs.artRateAtk.dup();
+        this.artRateDef = rhs.artRateDef.dup();
+        this.artRateHP = rhs.artRateHP.dup();
+        this.artCrtRate = rhs.artCrtRate.dup();
+        this.artCrtDmg = rhs.artCrtDmg.dup();
+        this.artRecharge = rhs.artRecharge.dup();
+        this.artMastery = rhs.artMastery.dup();
     }
 
 
@@ -424,25 +549,25 @@ class DamageCalculator
     }
 
 
-    atk() { return this.baseAtk.mul(this.rateAtk.add(1)).add(this.addAtk); }
-    def() { return this.baseDef.mul(this.rateDef.add(1)).add(this.addDef); }
-    hp() { return this.baseHP.mul(this.rateHP.add(1)).add(this.addHP); }
-    crtRate() { return this.baseCrtRate.min_number(1).max_number(0); }
-    crtDmg() { return this.baseCrtDmg; }
+    atk() { return this.baseAtk.mul(this.rateAtk.add(1).add(this.artRateAtk)).add(this.addAtk); }
+    def() { return this.baseDef.mul(this.rateDef.add(1).add(this.artRateDef)).add(this.addDef); }
+    hp() { return this.baseHP.mul(this.rateHP.add(1).add(this.artRateHP)).add(this.addHP); }
+    crtRate() { return this.baseCrtRate.add(this.artCrtRate).min_number(1).max_number(0); }
+    crtDmg() { return this.baseCrtDmg.add(this.artCrtDmg); }
 
-    anemoDmg() { return this.baseAnemoDmg; }
-    geoDmg() { return this.baseGeoDmg; }
-    electroDmg() { return this.baseElectroDmg; }
-    pyroDmg() { return this.basePyroDmg; }
-    hydroDmg() { return this.baseHydroDmg; }
-    cryoDmg() { return this.baseCryoDmg; }
-    dendroDmg() { return this.baseDendroDmg; }
-    physicalDmg() { return this.basePhysicalDmg; }
-    normalDmg() { return this.baseNormalDmg; }
-    chargedDmg() { return this.baseChargedDmg; }
-    plungDmg() { return this.basePlungDmg; }
-    skillDmg() { return this.baseSkillDmg; }
-    burstDmg() { return this.baseBurstDmg; }
+    anemoDmgBuff() { return this.baseAnemoDmg; }
+    geoDmgBuff() { return this.baseGeoDmg; }
+    electroDmgBuff() { return this.baseElectroDmg; }
+    pyroDmgBuff() { return this.basePyroDmg; }
+    hydroDmgBuff() { return this.baseHydroDmg; }
+    cryoDmgBuff() { return this.baseCryoDmg; }
+    dendroDmgBuff() { return this.baseDendroDmg; }
+    physicalDmgBuff() { return this.basePhysicalDmg; }
+    normalDmgBuff() { return this.baseNormalDmg; }
+    chargedDmgBuff() { return this.baseChargedDmg; }
+    plungDmgBuff() { return this.basePlungDmg; }
+    skillDmgBuff() { return this.baseSkillDmg; }
+    burstDmgBuff() { return this.baseBurstDmg; }
     swirlBonus() { return this.baseSwirlBonus; }
     crystalizeBonus() { return this.baseCrystalizeBonus; }
     vaporizeBonus() { return this.baseVaporizeBonus; }
@@ -455,12 +580,47 @@ class DamageCalculator
     burningBonus() { return this.baseBurningBonus; }
 
 
-    recharge() { return this.baseRecharge; }
-    mastery() { return this.baseMastery; }
+    recharge() { return this.baseRecharge.add(this.artRecharge); }
+    mastery() { return this.baseMastery.add(this.artMastery); }
 }
 
 
 function calcAttenuationByEnemy(charLvl, enemyLvl)
 {
     return (charLvl + 100)/((enemyLvl + 100) + charLvl + 100);
+}
+
+
+// https://wikiwiki.jp/genshinwiki/%E8%81%96%E9%81%BA%E7%89%A9#Reinforce
+function calcUpperBounds(cost, objfunc)
+{
+    var rect = [
+        cost / 6.2 * 0.047,
+        cost / 6.2 * 0.058,
+        cost / 6.2 * 0.047,
+        cost / 6.2 * 0.031,
+        cost / 6.2 * 0.062,
+        cost / 6.2 * 0.052,
+        cost / 6.2 * 19];
+
+    var grad = objfunc([0, 0, 0, 0, 0, 0, 0]).grad;
+    for(let i = 0; i < 7; ++i)
+        if(grad[i] < 1e-4)
+            rect[i] = 0;
+    
+    return rect;
+}
+
+
+// https://wikiwiki.jp/genshinwiki/%E8%81%96%E9%81%BA%E7%89%A9#Reinforce
+function calcSubOptionCost(x)
+{
+    return  VGData.newRateAtk(x[0]).div(0.047)
+            .add(VGData.newRateDef(x[1]).div(0.058))
+            .add(VGData.newRateHP(x[2]).div(0.047))
+            .add(VGData.newCrtRate(x[3]).div(0.031))
+            .add(VGData.newCrtDmg(x[4]).div(0.062))
+            .add(VGData.newRecharge(x[5]).div(0.052))
+            .add(VGData.newMastery(x[6]).div(19))
+            .mul(6.2);
 }
