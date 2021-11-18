@@ -1,250 +1,237 @@
 ---
-layout: default
+layout: page
 additional_js: ["/js/page/index.js"]
+title: 最適化ツール
 ---
 
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-  <h1 class="h2">最適化ツール</h1>
+
+<h4 class="h4">キャラ設定</h4>
+<div class="mb-3" data-bind="with: characterSelector">
+  <label for="select-character">キャラクター</label>
+  <div class="input-group" id="select-character">
+    <div class="input-group-prepend">
+      <select class="custom-select" id="selectCharacterElement" data-bind="value: selCharElem">
+        <option selected value="ALL">全属性</option>
+        <option value="Anemo">風</option>
+        <option value="Geo">岩</option>
+        <option value="Pyro">火</option>
+        <option value="Hydro">水</option>
+        <option value="Cryo">氷</option>
+        <option value="Electro">雷</option>
+      </select>
+    </div>
+    <div class="input-group-prepend">
+      <select class="custom-select" id="selectCharacterRarity" data-bind="value: selCharRarity">
+        <option selected value="ALL">星5/星4</option>
+        <option value="5">星5</option>
+        <option value="4">星4</option>
+      </select>
+    </div>
+    <select data-bind="options: selCharList,
+                        optionsText: 'name',
+                        value: selectedChar,
+                        optionsCaption: '-キャラ選択-'"
+                        class="custom-select" aria-label="キャラクター選択"></select>
+  </div>
+</div>
+
+<div class="mb-3">
+  <div class="row">
+    <div class="col-3 p-2">
+      <label for="select-constellation">凸数</label>
+      <select class="custom-select" id="select-constellation" aria-label="凸数" data-bind="value: selConstellation">
+        <option value="0">無凸</option>
+        <option value="1">1凸</option>
+        <option value="2">2凸</option>
+        <option value="3">3凸</option>
+        <option value="4">4凸</option>
+        <option value="5">5凸</option>
+        <option value="6">6凸</option>
+      </select>
+    </div>
+    <div class="col-3 p-2">
+      <label for="select-talent-normal">通常天賦</label>
+      <select class="custom-select" id="select-talent-normal" aria-label="通常天賦" data-bind="value: selNormalTalentRank">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option selected value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+      </select>
+    </div>
+    <div class="col-3 p-2">
+      <label for="select-talent-normal">スキル天賦</label>
+      <select class="custom-select" id="select-talent-normal" aria-label="スキル天賦" data-bind="value: selSkillTalentRank">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option selected value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+      </select>
+    </div>
+    <div class="col-3 p-2">
+      <label for="select-talent-normal">爆発天賦</label>
+      <select class="custom-select" id="select-talent-normal" aria-label="爆発天賦" data-bind="value: selBurstTalentRank">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option selected value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+      </select>
+    </div>
+  </div>
 </div>
 
 
-<div class="row">
-  <div class="col-xl-6">
 
-    <h4 class="h4">キャラ設定</h4>
-    <div class="mb-3" data-bind="with: characterSelector">
-      <label for="select-character">キャラクター</label>
-      <div class="input-group" id="select-character">
+<div class="mb-3 row">
+  <!-- ko if: characterViewModel() != undefined -->
+  <!-- ko foreach: characterViewModel().viewHTMLList('$root.characterViewModel') -->
+  <div class="col-sm-6">
+    <div data-bind="htmlWithBinding: $data"></div>
+  </div>
+  <!-- /ko -->
+  <!-- /ko -->
+</div>
+
+
+<h4 class="h4">比較する武器設定</h4>
+<div class="mb-3">
+  <div data-bind="foreach: comparingWeaponList">
+    <div class="mb-3">
+      <div class="input-group">
         <div class="input-group-prepend">
-          <select class="custom-select" id="selectCharacterElement" data-bind="value: selCharElem">
-            <option selected value="ALL">全属性</option>
-            <option value="Anemo">風</option>
-            <option value="Geo">岩</option>
-            <option value="Pyro">火</option>
-            <option value="Hydro">水</option>
-            <option value="Cryo">氷</option>
-            <option value="Electro">雷</option>
-          </select>
-        </div>
-        <div class="input-group-prepend">
-          <select class="custom-select" id="selectCharacterRarity" data-bind="value: selCharRarity">
-            <option selected value="ALL">星5/星4</option>
+          <select class="custom-select" data-bind="value: $data.selWeaponRarity">
+            <option selected value="ALL">全星</option>
             <option value="5">星5</option>
             <option value="4">星4</option>
+            <option value="3">星3</option>
           </select>
         </div>
-        <select data-bind="options: selCharList,
-                           optionsText: 'name',
-                           value: selectedChar,
-                           optionsCaption: '-キャラ選択-'"
-                           class="custom-select" aria-label="キャラクター選択"></select>
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <div class="row">
-        <div class="col-3 p-2">
-          <label for="select-constellation">凸数</label>
-          <select class="custom-select" id="select-constellation" aria-label="凸数" data-bind="value: selConstellation">
-            <option value="0">無凸</option>
+        <select data-bind="options: $data.selWeaponList,
+                          optionsText: 'name',
+                          value: $data.selectedWeapon,
+                          optionsCaption: '-武器選択-'"
+                          class="custom-select" aria-label="武器選択">
+        </select>
+        <div class="input-group-prepend">
+          <select class="custom-select" data-bind="value: $data.selWeaponRank">
+            <option selected value="0">無凸</option>
             <option value="1">1凸</option>
             <option value="2">2凸</option>
             <option value="3">3凸</option>
             <option value="4">4凸</option>
             <option value="5">5凸</option>
-            <option value="6">6凸</option>
           </select>
         </div>
-        <div class="col-3 p-2">
-          <label for="select-talent-normal">通常天賦</label>
-          <select class="custom-select" id="select-talent-normal" aria-label="通常天賦" data-bind="value: selNormalTalentRank">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option selected value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
-          </select>
+        <div class="input-group-prepend">
+          <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.comparingWeaponList.remove($data)">-削除</button>
         </div>
-        <div class="col-3 p-2">
-          <label for="select-talent-normal">スキル天賦</label>
-          <select class="custom-select" id="select-talent-normal" aria-label="スキル天賦" data-bind="value: selSkillTalentRank">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option selected value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
-          </select>
-        </div>
-        <div class="col-3 p-2">
-          <label for="select-talent-normal">爆発天賦</label>
-          <select class="custom-select" id="select-talent-normal" aria-label="爆発天賦" data-bind="value: selBurstTalentRank">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option selected value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
-          </select>
+      </div>
+      <div class="row" data-bind="foreach: $data.weaponViewModel().viewHTMLList('$root.comparingWeaponList()['+($index())+'].weaponViewModel')">
+        <div class="col-sm-6">
+          <div data-bind="htmlWithBinding: $data"></div>
         </div>
       </div>
     </div>
-
-
-    
-    <div class="mb-3 row">
-      <!-- ko if: characterViewModel() != undefined -->
-      <!-- ko foreach: characterViewModel().viewHTMLList('$root.characterViewModel') -->
-      <div class="col-sm-6">
-        <div data-bind="htmlWithBinding: $data"></div>
-      </div>
-      <!-- /ko -->
-      <!-- /ko -->
-    </div>
-
-
-    <h4 class="h4">比較する武器設定</h4>
-    <div class="mb-3">
-      <div data-bind="foreach: comparingWeaponList">
-        <div class="mb-3">
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <select class="custom-select" data-bind="value: $data.selWeaponRarity">
-                <option selected value="ALL">全星</option>
-                <option value="5">星5</option>
-                <option value="4">星4</option>
-                <option value="3">星3</option>
-              </select>
-            </div>
-            <select data-bind="options: $data.selWeaponList,
-                              optionsText: 'name',
-                              value: $data.selectedWeapon,
-                              optionsCaption: '-武器選択-'"
-                              class="custom-select" aria-label="武器選択">
-            </select>
-            <div class="input-group-prepend">
-              <select class="custom-select" data-bind="value: $data.selWeaponRank">
-                <option selected value="0">無凸</option>
-                <option value="1">1凸</option>
-                <option value="2">2凸</option>
-                <option value="3">3凸</option>
-                <option value="4">4凸</option>
-                <option value="5">5凸</option>
-              </select>
-            </div>
-            <div class="input-group-prepend">
-              <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.comparingWeaponList.remove($data)">-削除</button>
-            </div>
-          </div>
-          <div class="row" data-bind="foreach: $data.weaponViewModel().viewHTMLList('$root.comparingWeaponList()['+($index())+'].weaponViewModel')">
-            <div class="col-sm-6">
-              <div data-bind="htmlWithBinding: $data"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <button type="button" class="btn btn-outline-primary" data-bind="click: addComparingWeapon()">+追加</button>
-      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#weaponAdderModal">
-        一括追加
-      </button>
-
-      <!-- Modal -->
-      <div class="modal fade" id="weaponAdderModal" data-bind="with: multiWeaponAdderModal" tabindex="-1" role="dialog" aria-labelledby="weaponAdderModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="weaponAdderModalLabel">比較武器一括追加</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <div class="modal-body">
-              <select class="custom-select" data-bind="value: selWeaponRarity">
-                <option selected value="ALL">星5/星4/星3</option>
-                <option value="5">星5</option>
-                <option value="4">星4</option>
-                <option value="3">星3</option>
-              </select>
-              <div class="mb-3" data-bind="foreach: selWeaponList">
-                <div class="form-group form-check">
-                  <label class="form-check-label">
-                  <input type="checkbox" class="form-check-input" data-bind="checked: $data.checked">
-                  <div data-bind="text: $data.weapon.name"></div>
-                  </label>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn" data-bind="click: checkALL">全選択</button>
-              <button type="button" class="btn" data-bind="click: uncheckALL">全解除</button>
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
-              <button type="button" class="btn btn-primary" data-dismiss="modal" data-bind="click: addWeapons">追加</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <h4 class="h4">探索する聖遺物セット</h4>
-    <div class="row mb-3">
-      <div class="col-6">
-        <label for="select-artifact-1">聖遺物セット1</label>
-        <select id="select-artifact-1" class="multiselect" multiple="multiple">
-          <option selected value="cheese">Cheese</option>
-          <option selected value="tomatoes">Tomatoes</option>
-          <option selected value="mozarella">Mozzarella</option>
-          <option selected value="mushrooms">Mushrooms</option>
-          <option selected value="pepperoni">Pepperoni</option>
-          <option selected value="onions">Onions</option>
-        </select>
-      </div>
-      <div class="col-6">
-        <label for="select-artifact-2">聖遺物セット2</label>
-        <select id="select-artifact-2" class="multiselect" multiple="multiple">
-          <option selected value="cheese">Cheese</option>
-          <option selected value="tomatoes">Tomatoes</option>
-          <option selected value="mozarella">Mozzarella</option>
-          <option selected value="mushrooms">Mushrooms</option>
-          <option selected value="pepperoni">Pepperoni</option>
-          <option selected value="onions">Onions</option>
-        </select>
-      </div>
-    </div>
-    
-
   </div>
+  <button type="button" class="btn btn-outline-primary" data-bind="click: addComparingWeapon()">+追加</button>
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#weaponAdderModal">
+    一括追加
+  </button>
 
-
-  <div class="col-xl-6">
-    <h4 class="h4">探索するパターン数</h4>
-    <div data-bind="text: comparingWeaponList().length"></div>
+  <!-- Modal -->
+  <div class="modal fade" id="weaponAdderModal" data-bind="with: multiWeaponAdderModal" tabindex="-1" role="dialog" aria-labelledby="weaponAdderModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="weaponAdderModalLabel">比較武器一括追加</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <select class="custom-select" data-bind="value: selWeaponRarity">
+            <option selected value="ALL">星5/星4/星3</option>
+            <option value="5">星5</option>
+            <option value="4">星4</option>
+            <option value="3">星3</option>
+          </select>
+          <div class="mb-3" data-bind="foreach: selWeaponList">
+            <div class="form-group form-check">
+              <label class="form-check-label">
+              <input type="checkbox" class="form-check-input" data-bind="checked: $data.checked">
+              <div data-bind="text: $data.weapon.name"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn" data-bind="click: checkALL">全選択</button>
+          <button type="button" class="btn" data-bind="click: uncheckALL">全解除</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">閉じる</button>
+          <button type="button" class="btn btn-primary" data-dismiss="modal" data-bind="click: addWeapons">追加</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+<h4 class="h4">探索する聖遺物セット</h4>
+<div class="row mb-3">
+  <div class="col-6">
+    <label for="select-artifact-1">聖遺物セット1</label>
+    <select id="select-artifact-1" class="multiselect" multiple="multiple">
+      <option selected value="cheese">Cheese</option>
+      <option selected value="tomatoes">Tomatoes</option>
+      <option selected value="mozarella">Mozzarella</option>
+      <option selected value="mushrooms">Mushrooms</option>
+      <option selected value="pepperoni">Pepperoni</option>
+      <option selected value="onions">Onions</option>
+    </select>
+  </div>
+  <div class="col-6">
+    <label for="select-artifact-2">聖遺物セット2</label>
+    <select id="select-artifact-2" class="multiselect" multiple="multiple">
+      <option selected value="cheese">Cheese</option>
+      <option selected value="tomatoes">Tomatoes</option>
+      <option selected value="mozarella">Mozzarella</option>
+      <option selected value="mushrooms">Mushrooms</option>
+      <option selected value="pepperoni">Pepperoni</option>
+      <option selected value="onions">Onions</option>
+    </select>
+  </div>
+</div>
+
+<h4 class="h4">探索するパターン数</h4>
+<div data-bind="text: comparingWeaponList().length"></div>

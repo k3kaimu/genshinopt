@@ -4,18 +4,18 @@
 
 <body>
     <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
-        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">原神OPT</a>
+        <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="{{ site.baseurl }}/">原神OPT</a>
         <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse" data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+            <span class="navbar-toggler-icon"></span>
+        </button>
         <ul class="navbar-nav px-3">
             <li class="nav-item text-nowrap">
-                <a class="nav-link" href="#"> <span data-feather="twitter"></span> Share</a>
+                <a class="nav-link" href="https://twitter.com/intent/tweet?text=%E5%8E%9F%E7%A5%9EOPT&url={{site.baseulr}}/"> <span data-feather="twitter"></span> Share</a>
             </li>
         </ul>
     </nav>
 
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
             {% include sidebar.html %}
