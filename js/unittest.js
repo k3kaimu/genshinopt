@@ -288,7 +288,6 @@ $(function(){
         // let done = false;
         var results = [];
         var results_log = [];
-        const startTime = performance.now();
         for(let i = 0; i < 10; ++i) {
             try {
                 useLog = false;
@@ -318,8 +317,6 @@ $(function(){
             nlopt.GC.flush();
         }
 
-        const endTime = performance.now();
-
         results.sort((a, b) => {
             return b.value - a.value;
         });
@@ -328,8 +325,13 @@ $(function(){
             console.assert(Math.round(results_log[i].value/10)*10 >= Math.round(results[0].value/10)*10);
         }
 
-        console.log(results_log);
-        console.log(results);
+        // console.log(results_log);
+        // console.log(results);
+
+        const startTime = performance.now();
+        var res3 = applyOptimize(nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
+        const endTime = performance.now();
+        document.getElementById("optimize-time").innerHTML = (endTime - startTime);
     })();
 });
 
