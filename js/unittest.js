@@ -81,7 +81,7 @@ $(function(){
     console.assert(Math.round(dmg.grad[6]) == 0);
 
     calc.baseSwirlBonus = calc.baseSwirlBonus.add(0.6);
-    
+
     dmg = calc.calculateElementalReactionDmg({isPyro: true, isSwirl: true}).mul(1.15);
     console.assert(Math.round(dmg.value) == 4445, dmg);
     console.assert(Math.round(dmg.grad[0]) == 0);
@@ -101,21 +101,22 @@ $(function(){
         constructor() { super(); }
         
         atk() {
-            return super.atk().add(super.hp().mul(0.0566 + 0.018));
+            return super.atk().add(super.hp().mul(0.0596 + 0.008));
         }
     }
 
     
     var calc = new HutaoDamageCalculator();
-    calc.baseAtk = VGData.constant(711);
+    calc.baseAtk = VGData.constant(714);
     calc.addAtk = VGData.constant(311);
+    calc.rateAtk = VGData.constant(0.18);
     calc.baseDef = VGData.constant(845);
-    calc.baseHP = VGData.constant(15004);
+    calc.baseHP = VGData.constant(15552);
     calc.addHP = VGData.constant(4780);
     calc.rateHP = VGData.constant(0.466 + 0.2);
-    calc.basePyroDmg = VGData.constant(0.466 + 0.33);
+    calc.basePyroDmg = VGData.constant(0.466 + 0.5);
     calc.baseCrtRate = VGData.constant(0.05 + 0.311);
-    calc.baseCrtDmg = VGData.constant(1.543);
+    calc.baseCrtDmg = VGData.constant(1.546);
 
 
     function objfunc(x) {
@@ -127,18 +128,21 @@ $(function(){
         calc.artRecharge.value = x[5];
         calc.artMastery.value = x[6];
 
-        return calc.calculateDmg(1, {isPyro: true});
+        return calc.calculateDmg(2.287, {isPyro: true}).mul(0.5).mul(0.9);
     }
 
 
     (async () => {
         await nlopt.ready
 
+        // let total_cost = 6.6 * 4 * 5;
+        let total_cost = 0.0001;
+
         function applyOptimize(algoritm, x0, tol, maxEval) {
             const opt = new nlopt.Optimize(algoritm, 7);
 
             opt.setMaxObjective((x, grad) => {
-                var dmg = objfunc(x);
+                var dmg = objfunc(x).log();
 
                 if(grad) {
                     for(let i = 0; i < 7; ++i)
@@ -156,42 +160,176 @@ $(function(){
                         grad[i] = cost.grad[i];
                 }
 
-                return cost.value - 25*5;
+                return cost.value - total_cost;
             }, tol);
 
-            opt.setUpperBounds(calcUpperBounds(25*5, objfunc));
+            opt.setUpperBounds(calcUpperBounds(total_cost, objfunc));
             opt.setLowerBounds([0, 0, 0, 0, 0, 0, 0]);
             opt.setMaxeval(maxEval);
 
             return opt.optimize(x0);
         }
 
-        console.log(calcUpperBounds(25*5, objfunc));
-
-        for(let i = 0; i < 1; ++i) {
+        // let done = false;
+        var results = [];
+        const startTime = performance.now();
+        for(let i = 0; i < 10; ++i) {
             try {
-                const startTime = performance.now();
-                const res1 = applyOptimize(nlopt.Algorithm.GN_ISRES, [0, 0, 0, 0, 0, 0, 0], 1e-2, 1000);
-                const endTime1 = performance.now();
-                const res2 = applyOptimize(nlopt.Algorithm.LD_SLSQP, res1.x, 1e-3, 1e6);
-                const endTime2 = performance.now();
-                // const res2 = applyOptimize(nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-4); 
+                let res = applyOptimize(nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
+                res.value = Math.exp(res.value);
 
-                console.log(res2);
-                // console.log(calcSubOptionCost(res.x));
-                console.log(objfunc(res2.x));
-                // console.log(calc.atk());
-                // console.log(calc.hp());
-                console.log(calc.crtRate());
-                console.log(calc.crtDmg());
-                console.log(endTime1 - startTime);
-                console.log(endTime2 - endTime1);
-
-                // Flush the GC
-                nlopt.GC.flush();
+                if(res.success)
+                    results.push(res);
             } catch(ex) {
 
             }
+
+            // Flush the GC
+            nlopt.GC.flush();
         }
-      })();
+        const endTime = performance.now();
+        // console.log(endTime - startTime);
+        // console.log(results);
+
+        results.sort((a, b) => {
+            return b.value - a.value;
+        });
+
+        var dmg_tmp = objfunc(results[0].x);
+        console.assert(Math.round(calc.crtRate().value*1000) == 361, calc.crtRate());
+        console.assert(Math.round(calc.crtDmg().value*1000) == 1546, calc.crtDmg);
+        console.assert(Math.round(calc.hp().value) == 30690, calc.hp());
+        console.assert(Math.round(results[0].value/10) == 1018, results[0].value);
+
+        // console.log(objfunc([0, 0, 0, 0, 0, 0, 0]));
+    })();
 });
+
+
+
+$(function(){
+    class HutaoDamageCalculator extends DamageCalculator
+    {
+        constructor() { super(); }
+        
+        atk() {
+            return super.atk().add(super.hp().mul(0.0715 + 0.018*2));
+        }
+    }
+
+    
+    var calc = new HutaoDamageCalculator();
+    calc.baseAtk = VGData.constant(714);
+    calc.addAtk = VGData.constant(311);
+    calc.rateAtk = VGData.constant(0.18);
+    calc.baseDef = VGData.constant(845);
+    calc.baseHP = VGData.constant(15552);
+    calc.addHP = VGData.constant(4780);
+    calc.rateHP = VGData.constant(0.466 + 0.4);
+    calc.basePyroDmg = VGData.constant(0.466 + 0.5);
+    calc.baseCrtRate = VGData.constant(0.05 + 0.311);
+    calc.baseCrtDmg = VGData.constant(1.546);
+
+
+    function objfunc(x) {
+        calc.artRateAtk.value = x[0];
+        calc.artRateDef.value = x[1];
+        calc.artRateHP.value = x[2];
+        calc.artCrtRate.value = x[3];
+        calc.artCrtDmg.value = x[4];
+        calc.artRecharge.value = x[5];
+        calc.artMastery.value = x[6];
+
+        return calc.calculateDmg(2.565, {isPyro: true}).mul(0.5).mul(0.9);
+    }
+
+
+    (async () => {
+        await nlopt.ready
+
+        let total_cost = 40 * 5;
+        // let total_cost = 0.0001;
+
+        var useLog = false;
+        function applyOptimize(algoritm, x0, tol, maxEval) {
+            const opt = new nlopt.Optimize(algoritm, 7);
+            
+
+            opt.setMaxObjective((x, grad) => {
+                var dmg = objfunc(x);
+                if(useLog) dmg = dmg.log();
+
+                if(grad) {
+                    for(let i = 0; i < 7; ++i)
+                        grad[i] = dmg.grad[i];
+                }
+
+                return dmg.value;
+            }, tol);
+
+            
+            opt.addInequalityConstraint((x, grad) => {
+                var cost = calcSubOptionCost(x);
+                if(grad) {
+                    for(let i = 0; i < 7; ++i)
+                        grad[i] = cost.grad[i];
+                }
+
+                return cost.value - total_cost;
+            }, tol);
+
+            opt.setUpperBounds(calcUpperBounds(total_cost, objfunc));
+            opt.setLowerBounds([0, 0, 0, 0, 0, 0, 0]);
+            opt.setMaxeval(maxEval);
+
+            return opt.optimize(x0);
+        }
+
+        // let done = false;
+        var results = [];
+        var results_log = [];
+        const startTime = performance.now();
+        for(let i = 0; i < 10; ++i) {
+            try {
+                useLog = false;
+                const res1 = applyOptimize(nlopt.Algorithm.GN_ISRES, [0, 0, 0, 0, 0, 0, 0], 1e-2, 4000);
+                const res2 = applyOptimize(nlopt.Algorithm.LD_SLSQP, res1.x, 1e-3, 1000);
+
+                // res2.value = Math.exp(res2.value);
+                if(res2.success)
+                    results.push(res2);
+
+            } catch(ex) {
+
+            }
+
+            try{
+                useLog = true;
+                var res3 = applyOptimize(nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
+                res3.value = Math.exp(res3.value);
+
+                if(res3.success)
+                    results_log.push(res3);
+            }catch(ex) {
+
+            }
+
+            // Flush the GC
+            nlopt.GC.flush();
+        }
+
+        const endTime = performance.now();
+
+        results.sort((a, b) => {
+            return b.value - a.value;
+        });
+
+        for(let i = 0; i < results_log.length; ++i) {
+            console.assert(Math.round(results_log[i].value/10)*10 >= Math.round(results[0].value/10)*10);
+        }
+
+        console.log(results_log);
+        console.log(results);
+    })();
+});
+

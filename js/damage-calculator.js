@@ -225,6 +225,18 @@ class VGData
             return VGData.constant(num);
         }
     }
+
+
+    // natural log
+    log() {
+        var dst = VGData.zero();
+        dst.value = Math.log(this.value);
+        for(let i = 0; i < 7; ++i) {
+            dst.grad[i] = this.grad[i] / this.value;
+        }
+
+        return dst;
+    }
 }
 
 
@@ -527,7 +539,7 @@ class DamageCalculator
         if("isBurst" in attackProps)    dmgbuff = dmgbuff.add(this.burstDmgBuff());
 
         // var dmg = this.atk() * dmgScale * (1 + Math.min(this.crtRate(), 1) * this.crtDmg()) * (1 + dmgbuff);
-        var dmg = this.atk().mul(dmgScale).mul(this.crtRate().mul(this.crtDmg()).add(1)).mul(dmgbuff.add(1));
+        var dmg = this.atk().mul(dmgScale).mul(this.crtRate().min_number(1).max_number(0).mul(this.crtDmg()).add(1)).mul(dmgbuff.add(1));
 
         if(("isVaporize" in attackProps) || ("isMelt" in attackProps)) {
             var reactBonus = this.mastery().mul(25).div(this.mastery().add(1400).mul(9));
@@ -552,7 +564,7 @@ class DamageCalculator
     atk() { return this.baseAtk.mul(this.rateAtk.add(1).add(this.artRateAtk)).add(this.addAtk); }
     def() { return this.baseDef.mul(this.rateDef.add(1).add(this.artRateDef)).add(this.addDef); }
     hp() { return this.baseHP.mul(this.rateHP.add(1).add(this.artRateHP)).add(this.addHP); }
-    crtRate() { return this.baseCrtRate.add(this.artCrtRate).min_number(1).max_number(0); }
+    crtRate() { return this.baseCrtRate.add(this.artCrtRate); }
     crtDmg() { return this.baseCrtDmg.add(this.artCrtDmg); }
 
     anemoDmgBuff() { return this.baseAnemoDmg; }
@@ -591,7 +603,7 @@ function calcAttenuationByEnemy(charLvl, enemyLvl)
 }
 
 
-// https://wikiwiki.jp/genshinwiki/%E8%81%96%E9%81%BA%E7%89%A9#Reinforce
+// https://wikiwiki.jp/genshinwiki/%E8%81%96%E9%81%BA%E7%89%A9#ParamSubOps
 function calcUpperBounds(cost, objfunc)
 {
     var rect = [
@@ -612,7 +624,7 @@ function calcUpperBounds(cost, objfunc)
 }
 
 
-// https://wikiwiki.jp/genshinwiki/%E8%81%96%E9%81%BA%E7%89%A9#Reinforce
+// https://wikiwiki.jp/genshinwiki/%E8%81%96%E9%81%BA%E7%89%A9#ParamSubOps
 function calcSubOptionCost(x)
 {
     return  VGData.newRateAtk(x[0]).div(0.047)
