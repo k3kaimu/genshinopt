@@ -1,5 +1,6 @@
 // VGData
 $(function(){
+    document.getElementById("start-log").innerHTML = "start-unittest";
     var v = VGData.newRateAtk(10).mul(10).add(100);
     console.assert(v.value == 200, v.value);
     console.assert(v.grad[0] == 10, v.grad);
