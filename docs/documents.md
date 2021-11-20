@@ -2,6 +2,7 @@
 layout: page
 mathjax: true
 title: 本ツールの技術的詳細
+additional_js: ["/js/page/documents.js"]
 ---
 
 #### ダメージ計算式

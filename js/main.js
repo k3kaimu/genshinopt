@@ -20,9 +20,7 @@
             $(this).multiselect();
         });
     });
-
-})()
-
+})();
 
 // for nlopt-js
 window.global = window;

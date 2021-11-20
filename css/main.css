@@ -9,6 +9,11 @@ body {
 }
 
 
+h4 > a > .feather {
+    vertical-align: baseline;
+}
+
+
 /*
    * Sidebar
    */
