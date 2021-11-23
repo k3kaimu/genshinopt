@@ -45,6 +45,31 @@ export class WeaponViewModel
     constructor(data)
     {
         this.parent = data;
+        this.rank = ko.observable();
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc.baseAtk.value += this.parent.baseAtk;
+        calc.rateAtk.value += this.parent.rateAtk;
+        calc.baseDef.value += this.parent.baseDef;
+        calc.rateDef.value += this.parent.rateDef;
+        calc.baseHP.value += this.parent.baseHP;
+        calc.rateHP.value += this.parent.rateHP;
+
+        calc.baseCrtRate.value += this.parent.baseCrtRate;
+        calc.baseCrtDmg.value += this.parent.baseCrtDmg;
+
+        calc.baseAnemoDmg.value += this.parent.baseAnemoDmg;
+        calc.baseGeoDmg.value += this.parent.baseGeoDmg;
+        calc.baseElectroDmg.value += this.parent.baseElectroDmg;
+        calc.basePyroDmg.value += this.parent.basePyroDmg;
+        calc.baseHydroDmg.value += this.parent.baseHydroDmg;
+        calc.baseCryoDmg.value += this.parent.baseCryoDmg;
+        calc.baseDendroDmg.value += this.parent.baseDendroDmg;
+
+        return calc;
     }
 
 

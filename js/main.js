@@ -52,3 +52,9 @@ function zeroToNull(val)
         return val;
     }
 }
+
+
+function textPercentage(value, digit=3)
+{
+    return new Intl.NumberFormat('ja', { style: 'percent', maximumSignificantDigits: digit}).format(value);
+}

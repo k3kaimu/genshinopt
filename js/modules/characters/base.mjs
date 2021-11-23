@@ -22,8 +22,8 @@ export class CharacterData
         this.baseHP = bHP;
         this.rateHP = 0;
 
-        this.baseCrtRate = 5;
-        this.baseCrtDmg = 0;
+        this.baseCrtRate = 0.05;
+        this.baseCrtDmg = 0.5;
 
         this.baseAnemoDmg = 0;
         this.baseGeoDmg = 0;
@@ -53,6 +53,38 @@ export class CharacterViewModel
     constructor(ch)
     {
         this.parent = ch;
+        this.constell = ko.observable(0);           // 凸数
+        this.normalRank = ko.observable(9);      // 通常天賦
+        this.skillRank = ko.observable(9);        // スキル天賦
+        this.burstRank = ko.observable(9);       // 爆発天賦
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc.baseAtk.value += this.parent.baseAtk;
+        calc.rateAtk.value += this.parent.rateAtk;
+        calc.baseDef.value += this.parent.baseDef;
+        calc.rateDef.value += this.parent.rateDef;
+        calc.baseHP.value += this.parent.baseHP;
+        calc.rateHP.value += this.parent.rateHP;
+
+        calc.baseCrtRate.value += this.parent.baseCrtRate;
+        calc.baseCrtDmg.value += this.parent.baseCrtDmg;
+
+        calc.baseAnemoDmg.value += this.parent.baseAnemoDmg;
+        calc.baseGeoDmg.value += this.parent.baseGeoDmg;
+        calc.baseElectroDmg.value += this.parent.baseElectroDmg;
+        calc.basePyroDmg.value += this.parent.basePyroDmg;
+        calc.baseHydroDmg.value += this.parent.baseHydroDmg;
+        calc.baseCryoDmg.value += this.parent.baseCryoDmg;
+        calc.baseDendroDmg.value += this.parent.baseDendroDmg;
+        calc.basePhysicalDmg.value += this.parent.basePhysicalDmg;
+
+        calc.baseRecharge.value += this.parent.baseRecharge;
+        calc.baseMastery.value += this.parent.baseMastery;
+
+        return calc;
     }
 
 

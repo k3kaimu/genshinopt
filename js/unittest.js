@@ -1,3 +1,4 @@
+import { DamageCalculator } from './modules/dmg-calc.mjs';
 import * as Data from '/js/modules/data.mjs';
 import * as Calc from '/js/modules/dmg-calc.mjs';
 
@@ -194,7 +195,7 @@ $(function(){
         }
         const endTime = performance.now();
         // console.log(endTime - startTime);
-        console.log(results);
+        // console.log(results);
 
         results.sort((a, b) => {
             return b.value - a.value;
@@ -213,28 +214,33 @@ $(function(){
 
 
 $(function(){
-    class HutaoDamageCalculator extends Calc.DamageCalculator
-    {
-        constructor() { super(); }
-        
-        atk() {
-            return super.atk().add(super.hp().mul(0.0715 + 0.018*2));
-        }
-    }
-
-    
-    var calc = new HutaoDamageCalculator();
-    calc.baseAtk = Calc.VGData.constant(714);
+    var calc = new DamageCalculator();
     calc.addAtk = Calc.VGData.constant(311);
     calc.rateAtk = Calc.VGData.constant(0.18);
-    calc.baseDef = Calc.VGData.constant(845);
-    calc.baseHP = Calc.VGData.constant(15552);
     calc.addHP = Calc.VGData.constant(4780);
-    calc.rateHP = Calc.VGData.constant(0.466 + 0.4);
+    calc.rateHP = Calc.VGData.constant(0.466);
     calc.basePyroDmg = Calc.VGData.constant(0.466 + 0.5);
-    calc.baseCrtRate = Calc.VGData.constant(0.05 + 0.311);
-    calc.baseCrtDmg = Calc.VGData.constant(1.546);
+    calc.baseCrtRate = Calc.VGData.constant(0.311);
 
+    let hutao = (new Data.HuTao()).newViewModel();
+    hutao.useSkill(true);
+    hutao.lowHP(true);
+    hutao.useC6Effect(false);
+    hutao.constell(0);
+    hutao.normalRank(10);
+    hutao.skillRank(10);
+    hutao.burstRank(10);
+
+
+    let homa = new Data.StaffOfHoma().newViewModel();
+    homa.selLowHighHP("lowHP");
+    homa.rank(4);
+
+    calc = homa.applyDmgCalc(hutao.applyDmgCalc(calc));
+
+    // console.log(calc);
+    // console.log(calc.atk());
+    // console.log(calc.hp());
 
     function objfunc(x) {
         calc.artRateAtk.value = x[0];
@@ -327,11 +333,12 @@ $(function(){
         });
 
         for(let i = 0; i < results_log.length; ++i) {
-            console.assert(Math.round(results_log[i].value/10)*10 >= Math.round(results[0].value/10)*10);
+            console.assert((results_log[i].value + 10) > results[0].value);
         }
 
+        // console.log(results);
         console.log(results_log);
-        console.log(results);
+        console.assert(Math.round(results_log[0].value/10)*10 >= 38260, results_log[0]);
 
         const startTime = performance.now();
         var res3 = applyOptimize(nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
@@ -340,3 +347,24 @@ $(function(){
     })();
 });
 
+
+// $(function(){    
+//     var calc = new DamageCalculator();
+//     calc.baseAtk = Calc.VGData.constant(714);
+//     calc.addAtk = Calc.VGData.constant(311);
+//     calc.rateAtk = Calc.VGData.constant(0.18);
+//     calc.baseDef = Calc.VGData.constant(845);
+//     calc.baseHP = Calc.VGData.constant(15552);
+//     calc.addHP = Calc.VGData.constant(4780);
+//     calc.rateHP = Calc.VGData.constant(0.466 + 0.4);
+//     calc.basePyroDmg = Calc.VGData.constant(0.466 + 0.5);
+//     calc.baseCrtRate = Calc.VGData.constant(0.05 + 0.311);
+//     calc.baseCrtDmg = Calc.VGData.constant(1.546);
+
+//     let calc = new DamageCalculator();
+//     let dst = Object.assign({}, calc);
+
+//     dst.calculateDmg
+
+//     console.log(dst);
+// });

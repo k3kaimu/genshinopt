@@ -36,7 +36,6 @@ $(function(){
         this.weapons = Data.weapons;
         this.selWeaponRarity = ko.observable();
         this.selectedWeapon = ko.observable();
-        this.selWeaponRank = ko.observable();
         this.selWeaponList = ko.computed(function(){
             var list = [];
             var rarity = this.selWeaponRarity();
@@ -186,6 +185,11 @@ $(function(){
         this.readyNLopt = ko.observable();
 
         this.selectedChar = ko.observable();
+        // this.selConstellation = ko.observable();
+        // this.selNormalTalentRank = ko.observable();
+        // this.selSkillTalentRank = ko.observable();
+        // this.selBurstTalentRank = ko.observable();
+    
         this.characterSelector = new CharacterSelector(this.selectedChar);
         this.characterViewModel = ko.observable(new Data.CharacterViewModel(undefined));
 
@@ -195,11 +199,6 @@ $(function(){
             else
                 this.characterViewModel(newCharacter.newViewModel());
         }.bind(this));
-
-        this.selConstellation = ko.observable();
-        this.selNormalTalentRank = ko.observable();
-        this.selSkillTalentRank = ko.observable();
-        this.selBurstTalentRank = ko.observable();
 
 
         this.comparingWeaponList = ko.observableArray();
