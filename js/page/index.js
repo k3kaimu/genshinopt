@@ -222,6 +222,39 @@ $(function(){
         {
             this.comparingArtifactList.push(new ComparingArtifactData(this));
         }.bind(this);
+
+        this.clockMainStatus = [
+            { label:"攻撃力%", checked: ko.observable(true) },
+            { label:"防御力%", checked: ko.observable(false) },
+            { label:"HP%", checked: ko.observable(false) },
+            { label:"元素熟知", checked: ko.observable(true) },
+            { label:"元素チャージ効率", checked: ko.observable(true) },
+        ];
+
+        this.cupMainStatus = [
+            { label:"攻撃力%", checked: ko.observable(true) },
+            { label:"防御力%", checked: ko.observable(false) },
+            { label:"HP%", checked: ko.observable(false) },
+            { label:"元素熟知", checked: ko.observable(true) },
+            { label:"物理ダメージ", checked: ko.observable(false) },
+            { label:"炎ダメージ", checked: ko.observable(false) },
+            { label:"水ダメージ", checked: ko.observable(false) },
+            { label:"氷ダメージ", checked: ko.observable(false) },
+            { label:"雷ダメージ", checked: ko.observable(false) },
+            { label:"風ダメージ", checked: ko.observable(false) },
+            { label:"岩ダメージ", checked: ko.observable(false) },
+            { label:"草ダメージ", checked: ko.observable(false) },
+        ];
+
+        this.hatMainStatus = [
+            { label:"攻撃力%", checked: ko.observable(false) },
+            { label:"防御力%", checked: ko.observable(false) },
+            { label:"HP%", checked: ko.observable(false) },
+            { label:"元素熟知", checked: ko.observable(true) },
+            { label:"会心率", checked: ko.observable(true) },
+            { label:"会心ダメージ", checked: ko.observable(true) },
+            { label:"与える治癒効果", checked: ko.observable(false) },
+        ];
     }
 
     window.viewModel = new ViewModel();

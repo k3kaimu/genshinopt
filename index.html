@@ -247,5 +247,54 @@ title: 最適化ツール
   <button type="button" class="btn btn-outline-primary" data-bind="click: addComparingArtifact()">+追加</button>
 </div>
 
+
+<h4 class="h4">探索する聖遺物メインオプション</h4>
+<div class="mb-3">
+  <div class="card-group">
+    <div class="card">
+      <div class="card-header">時計</div>
+      <div class="card-body">
+        <div data-bind="foreach: clockMainStatus">
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" data-bind="checked: checked">
+              <span data-bind="text: label"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">杯</div>
+      <div class="card-body">
+        <div data-bind="foreach: cupMainStatus">
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" data-bind="checked: checked">
+              <span data-bind="text: label"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">冠</div>
+      <div class="card-body">
+        <div data-bind="foreach: hatMainStatus">
+          <div class="form-check">
+            <label class="form-check-label">
+              <input class="form-check-input" type="checkbox" data-bind="checked: checked">
+              <span data-bind="text: label"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
 <h4 class="h4">探索するパターン数</h4>
 <div data-bind="text: comparingWeaponList().length"></div>
