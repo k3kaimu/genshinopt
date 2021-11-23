@@ -230,6 +230,18 @@ title: 最適化ツール
 
       </div>
     </div>
+    <div class="row">
+      <!-- ko foreach: $data.artifact1ViewModel().viewHTMLList('$root.comparingArtifactList()['+($index())+'].artifact1ViewModel') -->
+      <div class="col-sm-6">
+        <div data-bind="htmlWithBinding: $data"></div>
+      </div>
+      <!-- /ko -->
+      <!-- ko foreach: $data.artifact2ViewModel().viewHTMLList('$root.comparingArtifactList()['+($index())+'].artifact2ViewModel') -->
+      <div class="col-sm-6">
+        <div data-bind="htmlWithBinding: $data"></div>
+      </div>
+      <!-- /ko -->
+    </div>
   </div>
 
   <button type="button" class="btn btn-outline-primary" data-bind="click: addComparingArtifact()">+追加</button>

@@ -149,13 +149,15 @@ $(function(){
         }.bind(this);
 
         this.selectedArtifact1.subscribe(function(newArt){
+            let art2 = this.selectedArtifact2();
             if(newArt == undefined) {
                 this.artifact1ViewModel(new Data.ArtifactViewModel(undefined, 2));
-                this.artifact2ViewModel().setBonusType(2);
+                if(art2 != undefined)
+                    this.artifact2ViewModel(art2.newViewModel(2));
+
                 return;
             }
 
-            let art2 = this.selectedArtifact2();
             if(art2 != undefined)
                 this.setViewModel(newArt, art2, this.artifact1ViewModel, this.artifact2ViewModel);
             else
@@ -163,13 +165,15 @@ $(function(){
         }.bind(this));
 
         this.selectedArtifact2.subscribe(function(newArt){
+            let art1 = this.selectedArtifact1();
             if(newArt == undefined) {
                 this.artifact2ViewModel(new Data.ArtifactViewModel(undefined, 2));
-                this.artifact1ViewModel().setBonusType(2);
+                if(art1 != undefined)
+                    this.artifact1ViewModel(art1.newViewModel(2));
+
                 return;
             }
 
-            let art1 = this.selectedArtifact1();
             if(art1 != undefined)
                 this.setViewModel(art1, newArt, this.artifact1ViewModel, this.artifact2ViewModel);
             else
