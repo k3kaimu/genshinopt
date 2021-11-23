@@ -131,6 +131,7 @@ title: 最適化ツール
     <div class="mb-3">
       <div class="input-group">
         <div class="input-group-prepend">
+          <span class="input-group-text" data-bind="text: '#' + ($index() + 1)"></span>
           <select class="custom-select" data-bind="value: $data.selWeaponRarity">
             <option selected value="ALL">全星</option>
             <option value="5">星5</option>
@@ -144,7 +145,7 @@ title: 最適化ツール
                           optionsCaption: '-武器選択-'"
                           class="custom-select" aria-label="武器選択">
         </select>
-        <div class="input-group-prepend">
+        <div class="input-group-append">
           <select class="custom-select" data-bind="value: $data.weaponViewModel().rank">
             <option selected value="0">無凸</option>
             <option value="1">1凸</option>
@@ -153,7 +154,7 @@ title: 最適化ツール
             <option value="4">4凸</option>
           </select>
         </div>
-        <div class="input-group-prepend">
+        <div class="input-group-append">
           <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.comparingWeaponList.remove($data)">-削除</button>
         </div>
       </div>
@@ -210,24 +211,22 @@ title: 最適化ツール
 <div class="mb-3">
   <div data-bind="foreach: comparingArtifactList">
     <div class="mb-3">
-      <div class="row">
-        <div class="col-6">
-          <label for="select-artifact-1">聖遺物セット1</label>
-          <select data-bind="options: artifacts,
+      <div class="input-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text" data-bind="text: '#' + ($index() + 1)"></span>
+        </div>
+        <select data-bind="options: artifacts,
                           optionsText: 'name',
                           value: selectedArtifact1,
                           optionsCaption: '-聖遺物セット1選択-'"
                           class="custom-select" aria-label="聖遺物セット1選択"></select>
-
-        </div>
-        <div class="col-6">
-          <label for="select-artifact-1">聖遺物セット2</label>
-          <select data-bind="options: artifacts,
+        <select data-bind="options: artifacts,
                           optionsText: 'name',
                           value: selectedArtifact2,
                           optionsCaption: '-聖遺物セット2選択-'"
                           class="custom-select" aria-label="聖遺物セット2選択"></select>
-
+        <div class="input-group-append">
+          <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.comparingArtifactList.remove($data)">-削除</button>
         </div>
       </div>
       <div class="row">
