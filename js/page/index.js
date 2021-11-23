@@ -255,6 +255,38 @@ $(function(){
             { label:"会心ダメージ", checked: ko.observable(true) },
             { label:"与える治癒効果", checked: ko.observable(false) },
         ];
+
+
+        this.allPatterns = ko.computed(function(){
+            let dst = [];
+            this.comparingWeaponList().forEach(weapon => {
+                this.comparingArtifactList().forEach(artifact => {
+                    this.clockMainStatus.forEach(clock => {
+                        if(! clock.checked()) return;
+
+                        this.cupMainStatus.forEach(cup => {
+                            if(! cup.checked()) return;
+
+                            this.hatMainStatus.forEach(hat => {
+                                if(! hat.checked()) return;
+
+                                dst.push({
+                                    character: this.selectedChar(),
+                                    weapon: weapon,
+                                    artifactSet: artifact,
+                                    clock: clock,
+                                    cup: cup,
+                                    hat: hat
+                                });
+                            });
+                        })
+                    });
+                });
+            });
+
+            return dst;
+        }, this);
+
     }
 
     window.viewModel = new ViewModel();
