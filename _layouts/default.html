@@ -28,6 +28,12 @@
     </div>
 
     {% include footer.html %}
+    {% if page.modules_js %}
+        {% for jspath in page.modules_js %}
+        <script type="module" src="{{ jspath }}"></script>
+        {% endfor %}
+    {% endif %}
+
     {% if page.additional_js %}
         {% for jspath in page.additional_js %}
         <script src="{{ jspath }}"></script>

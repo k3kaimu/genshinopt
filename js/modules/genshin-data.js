@@ -1,4 +1,4 @@
-class CharacterData
+export class CharacterData
 {
     constructor(id, name, rarity, elem, weaponType, bAtk, bDef, bHP, bBonusType, bBonusValue) {
         this.id = id;
@@ -48,7 +48,7 @@ class CharacterData
 }
 
 
-class CharacterViewModel
+export class CharacterViewModel
 {
     constructor(ch)
     {
@@ -64,7 +64,7 @@ class CharacterViewModel
 
 
 // 旅人（風）
-class TravelerAnemo extends CharacterData
+export class TravelerAnemo extends CharacterData
 {
     constructor()
     {
@@ -85,7 +85,7 @@ class TravelerAnemo extends CharacterData
 
 
 // 旅人（岩）
-class TravelerGeo extends CharacterData
+export class TravelerGeo extends CharacterData
 {
     constructor()
     {
@@ -106,7 +106,7 @@ class TravelerGeo extends CharacterData
 
 
 // 旅人（雷）
-class TravelerElectro extends CharacterData
+export class TravelerElectro extends CharacterData
 {
     constructor()
     {
@@ -128,7 +128,7 @@ class TravelerElectro extends CharacterData
 
 
 // 胡桃
-class HuTao extends CharacterData
+export class HuTao extends CharacterData
 {
     constructor()
     {
@@ -154,7 +154,7 @@ class HuTao extends CharacterData
 }
 
 
-class HuTaoViewModel extends CharacterViewModel
+export class HuTaoViewModel extends CharacterViewModel
 {
     constructor(ch)
     {
@@ -206,7 +206,7 @@ class HuTaoViewModel extends CharacterViewModel
 
 
 
-class WeaponData
+export class WeaponData
 {
     constructor(id, name, rarity, weaponType, bAtk, bBonusType, bBonusValue) {
         this.id = id;
@@ -247,7 +247,7 @@ class WeaponData
 }
 
 
-class WeaponViewModel
+export class WeaponViewModel
 {
     constructor(data)
     {
@@ -263,7 +263,7 @@ class WeaponViewModel
 
 
 // 護摩の杖
-class StaffOfHoma extends WeaponData
+export class StaffOfHoma extends WeaponData
 {
     constructor()
     {
@@ -287,7 +287,7 @@ class StaffOfHoma extends WeaponData
 
 
 // 護摩の杖, ViewModel
-class StaffOfHomaViewModel extends WeaponViewModel
+export class StaffOfHomaViewModel extends WeaponViewModel
 {
     constructor(data)
     {
@@ -328,7 +328,7 @@ class StaffOfHomaViewModel extends WeaponViewModel
 
 
 // 磐岩結緑
-class PrimordialJadeCutter extends WeaponData
+export class PrimordialJadeCutter extends WeaponData
 {
     constructor()
     {
@@ -345,7 +345,7 @@ class PrimordialJadeCutter extends WeaponData
 }
 
 
-class ArtifactData
+export class ArtifactData
 {
     constructor(id, name)
     {
@@ -361,7 +361,7 @@ class ArtifactData
 }
 
 
-class ArtifactViewModel
+export class ArtifactViewModel
 {
     // bonusType: '2' or '4'
     constructor(data, bonusType)
@@ -379,7 +379,7 @@ class ArtifactViewModel
 
 
 // 燃え盛る炎の魔女
-class CrimsonWitchOfFlames extends ArtifactData
+export class CrimsonWitchOfFlames extends ArtifactData
 {
     constructor()
     {
@@ -398,7 +398,7 @@ class CrimsonWitchOfFlames extends ArtifactData
 
 
 // 燃え盛る炎の魔女, ViewModel
-class CrimsonWitchOfFlamesViewModel extends ArtifactViewModel
+export class CrimsonWitchOfFlamesViewModel extends ArtifactViewModel
 {
     constructor(parent, bonusType)
     {
@@ -438,7 +438,7 @@ class CrimsonWitchOfFlamesViewModel extends ArtifactViewModel
 
 
 // 追憶のしめ縄
-class ShimenawaReminiscence extends ArtifactData
+export class ShimenawaReminiscence extends ArtifactData
 {
     constructor()
     {
@@ -457,7 +457,7 @@ class ShimenawaReminiscence extends ArtifactData
 
 
 // 追憶のしめ縄, ViewModel
-class ShimenawaReminiscenceViewModel extends ArtifactViewModel
+export class ShimenawaReminiscenceViewModel extends ArtifactViewModel
 {
     constructor(parent, bonusType)
     {
@@ -494,7 +494,7 @@ class ShimenawaReminiscenceViewModel extends ArtifactViewModel
 }
 
 
-genshinData = {
+export const genshinData = {
     characters: [
         new TravelerAnemo(),
         new TravelerGeo(),

@@ -1,10 +1,13 @@
+'use strict';
+import * as Data from '/js/modules/genshin-data.js';
+import * as Calc from '/js/modules/damage-calculator.js';
+
+
 $(function(){
-
-
     function CharacterSelector(selectedChar)
     {
         this.selectedChar = selectedChar;
-        this.characters = genshinData.characters;
+        this.characters = Data.genshinData.characters;
         this.selCharElem = ko.observable();
         this.selCharRarity = ko.observable();
         this.selCharList = ko.computed(function(){
@@ -30,7 +33,7 @@ $(function(){
 
     function ComparingWeaponData(selectedChar)
     {
-        this.weapons = genshinData.weapons;
+        this.weapons = Data.genshinData.weapons;
         this.selWeaponRarity = ko.observable();
         this.selectedWeapon = ko.observable();
         this.selWeaponRank = ko.observable();
@@ -52,10 +55,10 @@ $(function(){
             return list;
         }, this);
 
-        this.weaponViewModel = ko.observable(new WeaponViewModel());
+        this.weaponViewModel = ko.observable(new Data.WeaponViewModel());
         this.selectedWeapon.subscribe(function(newWeaponData){
             if(newWeaponData == undefined) {
-                this.weaponViewModel(new WeaponViewModel(undefined));
+                this.weaponViewModel(new Data.WeaponViewModel(undefined));
             } else {
                 this.weaponViewModel(newWeaponData.newViewModel());
             }
@@ -70,7 +73,7 @@ $(function(){
 
 
         this.weapons = [];
-        genshinData.weapons.forEach(e => {
+        Data.genshinData.weapons.forEach(e => {
             this.weapons.push({
                 weapon: e,
                 checked: ko.observable(false)
@@ -132,11 +135,11 @@ $(function(){
 
         this.selectedChar = ko.observable();
         this.characterSelector = new CharacterSelector(this.selectedChar);
-        this.characterViewModel = ko.observable(new CharacterViewModel(undefined));
+        this.characterViewModel = ko.observable(new Data.CharacterViewModel(undefined));
 
         this.selectedChar.subscribe(function(newCharacter){
             if(newCharacter == undefined)
-                this.characterViewModel(new CharacterViewModel(undefined));
+                this.characterViewModel(new Data.CharacterViewModel(undefined));
             else
                 this.characterViewModel(newCharacter.newViewModel());
         }.bind(this));
@@ -161,7 +164,7 @@ $(function(){
         }.bind(this);
     }
 
-    viewModel = new ViewModel;
+    let viewModel = new ViewModel();
 
     ko.applyBindings(viewModel);
 

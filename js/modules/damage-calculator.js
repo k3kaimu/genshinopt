@@ -1,7 +1,7 @@
 
 // Value and Gradient Data
 // 値と勾配ベクトルを保持するデータ
-class VGData
+export class VGData
 {
     constructor(value, gradVec)
     {
@@ -241,7 +241,7 @@ class VGData
 
 
 // https://wikiwiki.jp/genshinwiki/%E3%83%80%E3%83%A1%E3%83%BC%E3%82%B8%E8%A8%88%E7%AE%97%E5%BC%8F
-elementalReactionCoeffTable = [
+const elementalReactionCoeffTable = [
     [8, 10, 20, 26, 33],        // lv1
     [9, 11, 22, 28, 37],
     [9, 11, 23, 29, 39],
@@ -335,7 +335,7 @@ elementalReactionCoeffTable = [
 
 
 // 防御補正と元素耐性補正を除いた部分の期待値計算を行う
-class DamageCalculator
+export class DamageCalculator
 {
     constructor()
     {
