@@ -223,30 +223,30 @@ $(function(){
         }.bind(this);
 
         this.clockMainStatus = [
-            { label:"攻撃力%", checked: ko.observable(true) },
-            { label:"防御力%", checked: ko.observable(false) },
-            { label:"HP%", checked: ko.observable(false) },
-            { label:"元素熟知", checked: ko.observable(true) },
-            { label:"元素チャージ効率", checked: ko.observable(true) },
+            { value: "ATK%",        label:"攻撃力%",            checked: ko.observable(true) },
+            { value: "DEF%",        label:"防御力%",            checked: ko.observable(false) },
+            { value: "HP%",         label:"HP%",                checked: ko.observable(false) },
+            { value: "Mastery",     label:"元素熟知",           checked: ko.observable(true) },
+            { value: "Recharge",    label:"元素チャージ効率",   checked: ko.observable(true) },
         ];
 
         this.cupMainStatus = [
-            { label:"攻撃力%", checked: ko.observable(true) },
-            { label:"防御力%", checked: ko.observable(false) },
-            { label:"HP%", checked: ko.observable(false) },
-            { label:"元素熟知", checked: ko.observable(true) },
-            { label:"物理ダメージ", checked: ko.observable(false) },
-            { label:"キャラ属性ダメージ", checked: ko.observable(true) },
+            { value: "ATK%",    label: "攻撃力%",               checked: ko.observable(true) },
+            { value: "DEF%",    label: "防御力%",               checked: ko.observable(false) },
+            { value: "HP%",     label: "HP%",                   checked: ko.observable(false) },
+            { value: "Mastery", label: "元素熟知",              checked: ko.observable(true) },
+            { value: "PhyDmg",  label: "物理ダメージ",          checked: ko.observable(false) },
+            { value: "ElmDmg",  label: "キャラ属性ダメージ",    checked: ko.observable(true) },
         ];
 
         this.hatMainStatus = [
-            { label:"攻撃力%", checked: ko.observable(true) },
-            { label:"防御力%", checked: ko.observable(false) },
-            { label:"HP%", checked: ko.observable(false) },
-            { label:"元素熟知", checked: ko.observable(true) },
-            { label:"会心率", checked: ko.observable(true) },
-            { label:"会心ダメージ", checked: ko.observable(true) },
-            { label:"与える治癒効果", checked: ko.observable(false) },
+            { value: "ATK%",    label: "攻撃力%",           checked: ko.observable(true) },
+            { value: "DEF%",    label: "防御力%",           checked: ko.observable(false) },
+            { value: "HP%",     label: "HP%",               checked: ko.observable(false) },
+            { value: "Mastery", label: "元素熟知",          checked: ko.observable(true) },
+            { value: "CrtRate", label: "会心率",            checked: ko.observable(true) },
+            { value: "CrtDmg",  label: "会心ダメージ",      checked: ko.observable(true) },
+            { value: "Heal",    label: "与える治癒効果",    checked: ko.observable(false) },
         ];
 
 
