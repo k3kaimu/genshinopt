@@ -132,11 +132,49 @@ $(function(){
 
     function ComparingArtifactData(parent)
     {
-        this.artifacts = Data.genshinData.artifacts;
+        this.artifacts = Data.artifacts;
         this.selectedArtifact1 = ko.observable();
         this.selectedArtifact2 = ko.observable();
-        this.artifact1ViewModel = ko.observable(new Data.ArtifactViewModel());
-        this.artifact2ViewModel = ko.observable(new Data.ArtifactViewModel());
+        this.artifact1ViewModel = ko.observable(new Data.ArtifactViewModel(undefined));
+        this.artifact2ViewModel = ko.observable(new Data.ArtifactViewModel(undefined));
+
+        this.setViewModel = function(sel1, sel2, vm1, vm2){
+            if(sel1.id == sel2.id) {
+                vm1(sel1.newViewModel(4));
+                vm2(new Data.ArtifactViewModel());
+            } else {
+                vm1(sel1.newViewModel(2));
+                vm2(sel2.newViewModel(2));
+            }
+        }.bind(this);
+
+        this.selectedArtifact1.subscribe(function(newArt){
+            if(newArt == undefined) {
+                this.artifact1ViewModel(new Data.ArtifactViewModel(undefined, 2));
+                this.artifact2ViewModel().setBonusType(2);
+                return;
+            }
+
+            let art2 = this.selectedArtifact2();
+            if(art2 != undefined)
+                this.setViewModel(newArt, art2, this.artifact1ViewModel, this.artifact2ViewModel);
+            else
+                this.artifact1ViewModel(newArt.newViewModel(2));
+        }.bind(this));
+
+        this.selectedArtifact2.subscribe(function(newArt){
+            if(newArt == undefined) {
+                this.artifact2ViewModel(new Data.ArtifactViewModel(undefined, 2));
+                this.artifact1ViewModel().setBonusType(2);
+                return;
+            }
+
+            let art1 = this.selectedArtifact1();
+            if(art1 != undefined)
+                this.setViewModel(art1, newArt, this.artifact1ViewModel, this.artifact2ViewModel);
+            else
+                this.artifact2ViewModel(newArt.newViewModel(2));
+        }.bind(this));
     }
 
 
@@ -176,11 +214,15 @@ $(function(){
 
         this.comparingArtifactList = ko.observableArray();
 
+        this.addComparingArtifact = function()
+        {
+            this.comparingArtifactList.push(new ComparingArtifactData(this));
+        }.bind(this);
     }
 
-    let viewModel = new ViewModel();
+    window.viewModel = new ViewModel();
 
-    ko.applyBindings(viewModel);
+    ko.applyBindings(window.viewModel);
 
 
     (async () => {
