@@ -114,7 +114,7 @@ title: 最適化ツール
 
 
 
-<div class="mb-3 row">
+<div class="mb-5 row">
   <!-- ko if: characterViewModel() != undefined -->
   <!-- ko foreach: characterViewModel().viewHTMLList('$root.characterViewModel') -->
   <div class="col-sm-6">
@@ -126,7 +126,7 @@ title: 最適化ツール
 
 
 <h4 class="h4">比較する武器設定</h4>
-<div class="mb-3">
+<div class="mb-5">
   <div data-bind="foreach: comparingWeaponList">
     <div class="mb-3">
       <div class="input-group">
@@ -210,37 +210,39 @@ title: 最適化ツール
 <h4 class="h4">探索する聖遺物セット</h4>
 <div class="mb-3">
   <div data-bind="foreach: comparingArtifactList">
-    <div class="row">
-      <div class="col-6">
-        <label for="select-artifact-1">聖遺物セット1</label>
-        <select data-bind="options: artifacts,
-                        optionsText: 'name',
-                        value: selectedArtifact1,
-                        optionsCaption: '-聖遺物セット1選択-'"
-                        class="custom-select" aria-label="聖遺物セット1選択"></select>
+    <div class="mb-3">
+      <div class="row">
+        <div class="col-6">
+          <label for="select-artifact-1">聖遺物セット1</label>
+          <select data-bind="options: artifacts,
+                          optionsText: 'name',
+                          value: selectedArtifact1,
+                          optionsCaption: '-聖遺物セット1選択-'"
+                          class="custom-select" aria-label="聖遺物セット1選択"></select>
 
-      </div>
-      <div class="col-6">
-        <label for="select-artifact-1">聖遺物セット2</label>
-        <select data-bind="options: artifacts,
-                        optionsText: 'name',
-                        value: selectedArtifact2,
-                        optionsCaption: '-聖遺物セット2選択-'"
-                        class="custom-select" aria-label="聖遺物セット2選択"></select>
+        </div>
+        <div class="col-6">
+          <label for="select-artifact-1">聖遺物セット2</label>
+          <select data-bind="options: artifacts,
+                          optionsText: 'name',
+                          value: selectedArtifact2,
+                          optionsCaption: '-聖遺物セット2選択-'"
+                          class="custom-select" aria-label="聖遺物セット2選択"></select>
 
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <!-- ko foreach: $data.artifact1ViewModel().viewHTMLList('$root.comparingArtifactList()['+($index())+'].artifact1ViewModel') -->
-      <div class="col-sm-6">
-        <div data-bind="htmlWithBinding: $data"></div>
+      <div class="row">
+        <!-- ko foreach: $data.artifact1ViewModel().viewHTMLList('$root.comparingArtifactList()['+($index())+'].artifact1ViewModel') -->
+        <div class="col-sm-6">
+          <div data-bind="htmlWithBinding: $data"></div>
+        </div>
+        <!-- /ko -->
+        <!-- ko foreach: $data.artifact2ViewModel().viewHTMLList('$root.comparingArtifactList()['+($index())+'].artifact2ViewModel') -->
+        <div class="col-sm-6">
+          <div data-bind="htmlWithBinding: $data"></div>
+        </div>
+        <!-- /ko -->
       </div>
-      <!-- /ko -->
-      <!-- ko foreach: $data.artifact2ViewModel().viewHTMLList('$root.comparingArtifactList()['+($index())+'].artifact2ViewModel') -->
-      <div class="col-sm-6">
-        <div data-bind="htmlWithBinding: $data"></div>
-      </div>
-      <!-- /ko -->
     </div>
   </div>
 
@@ -249,7 +251,7 @@ title: 最適化ツール
 
 
 <h4 class="h4">探索する聖遺物メインオプション</h4>
-<div class="mb-3">
+<div class="mb-5">
   <div class="card-group">
     <div class="card">
       <div class="card-header">時計</div>
