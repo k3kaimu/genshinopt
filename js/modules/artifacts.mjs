@@ -122,7 +122,7 @@ export class ShimenawaReminiscenceViewModel extends ArtifactViewModel
     constructor(parent, bonusType)
     {
         super(parent, bonusType);
-        this.buffEffect = ko.observable();
+        this.buffEffect = ko.observable(true);
     }
 
 
