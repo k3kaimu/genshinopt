@@ -237,17 +237,11 @@ $(function(){
             { label:"HP%", checked: ko.observable(false) },
             { label:"元素熟知", checked: ko.observable(true) },
             { label:"物理ダメージ", checked: ko.observable(false) },
-            { label:"炎ダメージ", checked: ko.observable(false) },
-            { label:"水ダメージ", checked: ko.observable(false) },
-            { label:"氷ダメージ", checked: ko.observable(false) },
-            { label:"雷ダメージ", checked: ko.observable(false) },
-            { label:"風ダメージ", checked: ko.observable(false) },
-            { label:"岩ダメージ", checked: ko.observable(false) },
-            { label:"草ダメージ", checked: ko.observable(false) },
+            { label:"キャラ属性ダメージ", checked: ko.observable(true) },
         ];
 
         this.hatMainStatus = [
-            { label:"攻撃力%", checked: ko.observable(false) },
+            { label:"攻撃力%", checked: ko.observable(true) },
             { label:"防御力%", checked: ko.observable(false) },
             { label:"HP%", checked: ko.observable(false) },
             { label:"元素熟知", checked: ko.observable(true) },
