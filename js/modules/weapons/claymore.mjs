@@ -1,0 +1,1 @@
+import * as Base from '/js/modules/weapons/base.mjs'

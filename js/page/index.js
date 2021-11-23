@@ -1,13 +1,13 @@
 'use strict';
-import * as Data from '/js/modules/genshin-data.js';
-import * as Calc from '/js/modules/damage-calculator.js';
+import * as Data from '/js/modules/data.mjs';
+import * as Calc from '/js/modules/dmg-calc.mjs';
 
 
 $(function(){
     function CharacterSelector(selectedChar)
     {
         this.selectedChar = selectedChar;
-        this.characters = Data.genshinData.characters;
+        this.characters = Data.characters;
         this.selCharElem = ko.observable();
         this.selCharRarity = ko.observable();
         this.selCharList = ko.computed(function(){
@@ -33,7 +33,7 @@ $(function(){
 
     function ComparingWeaponData(selectedChar)
     {
-        this.weapons = Data.genshinData.weapons;
+        this.weapons = Data.weapons;
         this.selWeaponRarity = ko.observable();
         this.selectedWeapon = ko.observable();
         this.selWeaponRank = ko.observable();
@@ -73,7 +73,7 @@ $(function(){
 
 
         this.weapons = [];
-        Data.genshinData.weapons.forEach(e => {
+        Data.weapons.forEach(e => {
             this.weapons.push({
                 weapon: e,
                 checked: ko.observable(false)
@@ -130,6 +130,16 @@ $(function(){
     }
 
 
+    function ComparingArtifactData(parent)
+    {
+        this.artifacts = Data.genshinData.artifacts;
+        this.selectedArtifact1 = ko.observable();
+        this.selectedArtifact2 = ko.observable();
+        this.artifact1ViewModel = ko.observable(new Data.ArtifactViewModel());
+        this.artifact2ViewModel = ko.observable(new Data.ArtifactViewModel());
+    }
+
+
     function ViewModel() {
         this.readyNLopt = ko.observable();
 
@@ -162,6 +172,10 @@ $(function(){
         this.initMultiWeaponAdder = function(){
             this.multiWeaponAdderModal.uncheckALL();
         }.bind(this);
+
+
+        this.comparingArtifactList = ko.observableArray();
+
     }
 
     let viewModel = new ViewModel();

@@ -1,6 +1,6 @@
 ---
 layout: page
-modules_js: ["/js/page/index.js"]
+modules_js: ['/js/page/index.js']
 title: 最適化ツール
 ---
 
@@ -208,8 +208,8 @@ title: 最適化ツール
 </div>
 
 <h4 class="h4">探索する聖遺物セット</h4>
-<div class="row mb-3">
-  <div class="col-6">
+<div class="mb-3">
+  <!-- <div class="col-6">
     <label for="select-artifact-1">聖遺物セット1</label>
     <select id="select-artifact-1" class="multiselect" multiple="multiple">
       <option selected value="cheese">Cheese</option>
@@ -230,6 +230,9 @@ title: 最適化ツール
       <option selected value="pepperoni">Pepperoni</option>
       <option selected value="onions">Onions</option>
     </select>
+  </div> -->
+  <div data-bind="foreach: comparingArtifactList">
+
   </div>
 </div>
 

@@ -1,6 +1,6 @@
 ---
 layout: default
-additional_js: ["/js/unittest.js"]
+modules_js: ["/js/unittest.js"]
 ---
 
 <div id="start-log"></div>

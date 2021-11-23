@@ -1,18 +1,22 @@
+import * as Data from '/js/modules/data.mjs';
+import * as Calc from '/js/modules/dmg-calc.mjs';
+
+
 // VGData
 $(function(){
     document.getElementById("start-log").innerHTML = "start-unittest";
-    var v = VGData.newRateAtk(10).mul(10).add(100);
+    var v = Calc.VGData.newRateAtk(10).mul(10).add(100);
     console.assert(v.value == 200, v.value);
     console.assert(v.grad[0] == 10, v.grad);
 
-    var w = v.mul(VGData.newRateDef(2));
+    var w = v.mul(Calc.VGData.newRateDef(2));
     console.assert(w.value == 400, w.value);
     console.assert(w.grad[0] == 20, w.grad);
     console.assert(w.grad[1] == 200, w.grad);
 
-    var a1 = VGData.newRateAtk(1).add(2);           // (x + 2)
-    var a2 = VGData.newRateDef(3).add(4).mul(5);    // (y + 4)*5
-    var a3 = VGData.newRateHP(6).sub(2).div(2);     // (z - 2)/2
+    var a1 = Calc.VGData.newRateAtk(1).add(2);           // (x + 2)
+    var a2 = Calc.VGData.newRateDef(3).add(4).mul(5);    // (y + 4)*5
+    var a3 = Calc.VGData.newRateHP(6).sub(2).div(2);     // (z - 2)/2
 
     // (x + 2) + (y + 4)*5 + (z - 2)/2 @ (x, y, z) = (1, 3, 6)
     var v1 = a1.add(a2).add(a3);
@@ -59,7 +63,7 @@ $(function(){
 
 
 $(function(){
-    var calc = new DamageCalculator();
+    var calc = new Calc.DamageCalculator();
     calc.baseAtk = calc.baseAtk.add(821);
     calc.addAtk = calc.addAtk.add(379);
     calc.rateAtk = calc.rateAtk.add(0.24);
@@ -97,7 +101,7 @@ $(function(){
 
 
 $(function(){
-    class HutaoDamageCalculator extends DamageCalculator
+    class HutaoDamageCalculator extends Calc.DamageCalculator
     {
         constructor() { super(); }
         
@@ -108,16 +112,16 @@ $(function(){
 
     
     var calc = new HutaoDamageCalculator();
-    calc.baseAtk = VGData.constant(714);
-    calc.addAtk = VGData.constant(311);
-    calc.rateAtk = VGData.constant(0.18);
-    calc.baseDef = VGData.constant(845);
-    calc.baseHP = VGData.constant(15552);
-    calc.addHP = VGData.constant(4780);
-    calc.rateHP = VGData.constant(0.466 + 0.2);
-    calc.basePyroDmg = VGData.constant(0.466 + 0.5);
-    calc.baseCrtRate = VGData.constant(0.05 + 0.311);
-    calc.baseCrtDmg = VGData.constant(1.546);
+    calc.baseAtk = Calc.VGData.constant(714);
+    calc.addAtk = Calc.VGData.constant(311);
+    calc.rateAtk = Calc.VGData.constant(0.18);
+    calc.baseDef = Calc.VGData.constant(845);
+    calc.baseHP = Calc.VGData.constant(15552);
+    calc.addHP = Calc.VGData.constant(4780);
+    calc.rateHP = Calc.VGData.constant(0.466 + 0.2);
+    calc.basePyroDmg = Calc.VGData.constant(0.466 + 0.5);
+    calc.baseCrtRate = Calc.VGData.constant(0.05 + 0.311);
+    calc.baseCrtDmg = Calc.VGData.constant(1.546);
 
 
     function objfunc(x) {
@@ -155,7 +159,7 @@ $(function(){
 
             
             opt.addInequalityConstraint((x, grad) => {
-                var cost = calcSubOptionCost(x);
+                var cost = Calc.calcSubOptionCost(x);
                 if(grad) {
                     for(let i = 0; i < 7; ++i)
                         grad[i] = cost.grad[i];
@@ -164,7 +168,7 @@ $(function(){
                 return cost.value - total_cost;
             }, tol);
 
-            opt.setUpperBounds(calcUpperBounds(total_cost, objfunc));
+            opt.setUpperBounds(Calc.calcUpperBounds(total_cost, objfunc));
             opt.setLowerBounds([0, 0, 0, 0, 0, 0, 0]);
             opt.setMaxeval(maxEval);
 
@@ -190,7 +194,7 @@ $(function(){
         }
         const endTime = performance.now();
         // console.log(endTime - startTime);
-        // console.log(results);
+        console.log(results);
 
         results.sort((a, b) => {
             return b.value - a.value;
@@ -209,7 +213,7 @@ $(function(){
 
 
 $(function(){
-    class HutaoDamageCalculator extends DamageCalculator
+    class HutaoDamageCalculator extends Calc.DamageCalculator
     {
         constructor() { super(); }
         
@@ -220,16 +224,16 @@ $(function(){
 
     
     var calc = new HutaoDamageCalculator();
-    calc.baseAtk = VGData.constant(714);
-    calc.addAtk = VGData.constant(311);
-    calc.rateAtk = VGData.constant(0.18);
-    calc.baseDef = VGData.constant(845);
-    calc.baseHP = VGData.constant(15552);
-    calc.addHP = VGData.constant(4780);
-    calc.rateHP = VGData.constant(0.466 + 0.4);
-    calc.basePyroDmg = VGData.constant(0.466 + 0.5);
-    calc.baseCrtRate = VGData.constant(0.05 + 0.311);
-    calc.baseCrtDmg = VGData.constant(1.546);
+    calc.baseAtk = Calc.VGData.constant(714);
+    calc.addAtk = Calc.VGData.constant(311);
+    calc.rateAtk = Calc.VGData.constant(0.18);
+    calc.baseDef = Calc.VGData.constant(845);
+    calc.baseHP = Calc.VGData.constant(15552);
+    calc.addHP = Calc.VGData.constant(4780);
+    calc.rateHP = Calc.VGData.constant(0.466 + 0.4);
+    calc.basePyroDmg = Calc.VGData.constant(0.466 + 0.5);
+    calc.baseCrtRate = Calc.VGData.constant(0.05 + 0.311);
+    calc.baseCrtDmg = Calc.VGData.constant(1.546);
 
 
     function objfunc(x) {
@@ -270,7 +274,7 @@ $(function(){
 
             
             opt.addInequalityConstraint((x, grad) => {
-                var cost = calcSubOptionCost(x);
+                var cost = Calc.calcSubOptionCost(x);
                 if(grad) {
                     for(let i = 0; i < 7; ++i)
                         grad[i] = cost.grad[i];
@@ -279,7 +283,7 @@ $(function(){
                 return cost.value - total_cost;
             }, tol);
 
-            opt.setUpperBounds(calcUpperBounds(total_cost, objfunc));
+            opt.setUpperBounds(Calc.calcUpperBounds(total_cost, objfunc));
             opt.setLowerBounds([0, 0, 0, 0, 0, 0, 0]);
             opt.setMaxeval(maxEval);
 
@@ -326,8 +330,8 @@ $(function(){
             console.assert(Math.round(results_log[i].value/10)*10 >= Math.round(results[0].value/10)*10);
         }
 
-        // console.log(results_log);
-        // console.log(results);
+        console.log(results_log);
+        console.log(results);
 
         const startTime = performance.now();
         var res3 = applyOptimize(nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);

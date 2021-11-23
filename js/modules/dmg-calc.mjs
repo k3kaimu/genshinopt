@@ -597,14 +597,14 @@ export class DamageCalculator
 }
 
 
-function calcAttenuationByEnemy(charLvl, enemyLvl)
+export function calcAttenuationByEnemy(charLvl, enemyLvl)
 {
     return (charLvl + 100)/((enemyLvl + 100) + charLvl + 100);
 }
 
 
 // https://wikiwiki.jp/genshinwiki/%E8%81%96%E9%81%BA%E7%89%A9#ParamSubOps
-function calcUpperBounds(cost, objfunc)
+export function calcUpperBounds(cost, objfunc)
 {
     var rect = [
         cost / 6.2 * 0.047,
@@ -625,7 +625,7 @@ function calcUpperBounds(cost, objfunc)
 
 
 // https://wikiwiki.jp/genshinwiki/%E8%81%96%E9%81%BA%E7%89%A9#ParamSubOps
-function calcSubOptionCost(x)
+export function calcSubOptionCost(x)
 {
     return  VGData.newRateAtk(x[0]).div(0.047)
             .add(VGData.newRateDef(x[1]).div(0.058))
