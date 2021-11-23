@@ -253,7 +253,15 @@ $(function(){
         this.allPatterns = ko.computed(function(){
             let dst = [];
             this.comparingWeaponList().forEach(weapon => {
+                if(weapon.selectedWeapon() == undefined)
+                    return;
+
                 this.comparingArtifactList().forEach(artifact => {
+                    if(artifact.selectedArtifact1() == undefined
+                    || artifact.selectedArtifact2() == undefined) {
+                        return;
+                    }
+
                     this.clockMainStatus.forEach(clock => {
                         if(! clock.checked()) return;
 
@@ -264,9 +272,10 @@ $(function(){
                                 if(! hat.checked()) return;
 
                                 dst.push({
-                                    character: this.selectedChar(),
-                                    weapon: weapon,
-                                    artifactSet: artifact,
+                                    character: this.characterViewModel(),
+                                    weapon: weapon.weaponViewModel(),
+                                    artifactSet1: artifact.artifact1ViewModel(),
+                                    artifactSet2: artifact.artifact2ViewModel(),
                                     clock: clock,
                                     cup: cup,
                                     hat: hat
@@ -280,6 +289,34 @@ $(function(){
             return dst;
         }, this);
 
+
+        this.optimizedResults = ko.observableArray();
+
+        this.optimizeAllCases = function() {
+            this.optimizedResults([]);
+            let allpatterns = this.allPatterns();
+
+            allpatterns.forEach(setting => {
+                let calc = new Calc.DamageCalculator();
+                calc = setting.character.applyDmgCalc(calc);
+                calc = setting.weapon.applyDmgCalc(calc);
+                calc = setting.artifactSet1.applyDmgCalc(calc);
+                calc = setting.artifactSet2.applyDmgCalc(calc);
+
+                [setting.clock, setting.cup, setting.hat].forEach(e => {
+                    calc = Data.applyDmgCalcArtifactMainStatus(calc, setting.character.parent, e.value);
+                });
+
+                let dmg = calc.calculateDmg(2.565, {isPyro: true});
+
+                this.optimizedResults.push({dmg: dmg.value, calc: calc, setting: setting});
+            });
+
+            this.optimizedResults.sort(function(a, b){
+                return -(a.dmg - b.dmg);
+            });
+
+        }.bind(this);
     }
 
     window.viewModel = new ViewModel();

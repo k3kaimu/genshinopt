@@ -25,9 +25,9 @@ export class ArtifactViewModel
     }
 
 
-    setBonusType(newType)
+    applyDmgCalc(calc)
     {
-        this.bonusType = newType;
+        return calc;
     }
 
 
@@ -64,6 +64,25 @@ export class CrimsonWitchOfFlamesViewModel extends ArtifactViewModel
     {
         super(parent, bonusType);
         this.buffStacks = ko.observable();
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        super.applyDmgCalc(calc);
+
+        let bonusValue = 0.15;
+        if(this.bonusType == '4') {
+            bonusValue += bonusValue * 0.5 * this.buffStacks();
+            
+            calc.baseOverloadedBonus.value += 0.4;
+            calc.baseBurningBonus.value += 0.4;
+            calc.baseVaporizeBonus.value += 0.15;
+            calc.baseMeltBonus.value += 0.15;
+        }
+        
+        calc.basePyroDmg.value += bonusValue;
+        return calc;
     }
 
 
@@ -126,6 +145,22 @@ export class ShimenawaReminiscenceViewModel extends ArtifactViewModel
     }
 
 
+    applyDmgCalc(calc)
+    {
+        super.applyDmgCalc(calc);
+
+        calc.rateAtk.value += 0.18;
+
+        if(this.bonusType == '4') {
+            calc.baseNormalDmg.value += 0.5;
+            calc.baseChargedDmg.value += 0.5;
+            calc.basePlungDmg.value += 0.5;
+        }
+
+        return calc;
+    }
+
+
     viewHTMLList(target)
     {
         var list = [];
@@ -158,3 +193,80 @@ export const artifacts = [
     new CrimsonWitchOfFlames(),
     new ShimenawaReminiscence(),
 ];
+
+
+
+// statusType: "ATK%", "DEF%", "HP%", "Mastery", "Recharge", "PhyDmg", "ElmDmg", "CrtRate", "CrtDmg", "Heal"
+export function applyDmgCalcArtifactMainStatus(calc, character, statusType)
+{
+    switch(statusType) {
+        case "ATK%":
+            calc.rateAtk.value += 0.466;
+            break;
+
+        case "DEF%":
+            calc.rateDef.value += 0.583;
+            break;
+
+        case "HP%":
+            calc.rateHP.value += 0.466;
+            break;
+
+        case "Mastery":
+            calc.baseMastery.value += 187;
+            break;
+
+        case "Recharge":
+            calc.baseRecharge.value += 0.518;
+            break;
+
+        case "PhyDmg":
+            calc.basePhysicalDmg.value += 0.583;
+            break;
+
+        case "ElmDmg":
+            switch(character.elem) {
+                case "Anemo":
+                    calc.baseAnemoDmg.value +=  0.466;
+                    break;
+                case "Cryo":
+                    calc.baseCryoDmg.value +=  0.466;
+                    break;
+                case "Dendro":
+                    calc.baseDendroDmg.value +=  0.466;
+                    break;
+                case "Electro":
+                    calc.baseElectroDmg.value +=  0.466;
+                    break;
+                case "Geo":
+                    calc.baseGeoDmg.value +=  0.466;
+                    break;
+                case "Hydro":
+                    calc.baseHydroDmg.value +=  0.466;
+                    break;
+                case "Pyro":
+                    calc.basePyroDmg.value +=  0.466;
+                    break;
+            }
+            break;
+
+        case "CrtRate":
+            calc.baseCrtRate.value += 0.311;
+            break;
+
+        case "CrtDmg":
+            calc.baseCrtDmg.value += 0.622;
+            break;
+
+        case "Heal":
+            calc.baseCrtRate.value += 0.359;
+            break;
+
+        default:
+            console.log("Unknown value: ", e.value);
+    }
+
+    return calc;
+}
+
+

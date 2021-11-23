@@ -341,9 +341,10 @@ $(function(){
         console.assert(Math.round(results_log[0].value/10)*10 >= 38260, results_log[0]);
 
         const startTime = performance.now();
-        var res3 = applyOptimize(nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
+        for(let _ = 0; _ < 100; ++_)
+            var res3 = applyOptimize(nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
         const endTime = performance.now();
-        document.getElementById("optimize-time").innerHTML = (endTime - startTime);
+        document.getElementById("optimize-time").innerHTML = (endTime - startTime)/100;
     })();
 });
 

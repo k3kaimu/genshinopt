@@ -296,5 +296,13 @@ title: 最適化ツール
 
 
 
-<h4 class="h4">探索するパターン数</h4>
-<div data-bind="text: allPatterns().length"></div>
+<h4 class="h4">探索するパターン数：<span data-bind="text: allPatterns().length"></span>通り</h4>
+<div class="mb-3">
+  <button type="button" class="btn btn-primary" data-bind="click: optimizeAllCases()">最適化実行</button>
+  （推定実行時間：<span data-bind="text: allPatterns().length * 2"></span>ミリ秒）
+</div>
+
+<h4></h4>
+<div class="mb-3">
+  <div data-bind="text: optimizedResults().length"></div>
+</div>
