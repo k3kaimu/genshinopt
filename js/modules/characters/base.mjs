@@ -63,11 +63,16 @@ export class CharacterViewModel
     constructor(ch)
     {
         this.parent = ch;
-        this.constell = ko.observable(0);           // 凸数
-        this.normalRank = ko.observable(9);      // 通常天賦
-        this.skillRank = ko.observable(9);        // スキル天賦
-        this.burstRank = ko.observable(9);       // 爆発天賦
+        this.constell = ko.observable(0);           // 凸数, 無凸==0
+        this.normalRank = ko.observable(9);         // 通常天賦
+        this.skillRank = ko.observable(9);          // スキル天賦
+        this.burstRank = ko.observable(9);          // 爆発天賦
     }
+
+
+    maxNormalTalentRank() { return 11; }
+    maxSkillTalentRank() { return 10; }
+    maxBurstTalentRank() { return 10; }
 
 
     applyDmgCalc(calc)

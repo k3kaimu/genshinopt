@@ -27,6 +27,19 @@ export class HuTao extends Base.CharacterData
         return new HuTaoViewModel(this);
     }
 
+    static chargedDmgScaleTable = [
+        1.360,          // lv. 1
+        1.452,
+        1.545,
+        1.669,
+        1.761,
+        1.869,
+        2.009,
+        2.148,
+        2.287,
+        2.426,
+        2.565,          // lv. 11
+    ];
 
     static skillScaleTable = [
         0.0384,         // lv. 1
@@ -42,20 +55,6 @@ export class HuTao extends Base.CharacterData
         0.0656,
         0.0685,
         0.0715,         // lv. 13
-    ];
-
-    static chargedDmgScaleTable = [
-        1.360,          // lv. 1
-        1.452,
-        1.545,
-        1.669,
-        1.761,
-        1.869,
-        2.009,
-        2.148,
-        2.287,
-        2.426,
-        2.565,          // lv. 11
     ];
 
     static burstDmgScaleTable = [
@@ -96,6 +95,10 @@ export class HuTaoViewModel extends Base.CharacterViewModel
         this.lowHP = ko.observable(true);
         this.useC6Effect = ko.observable(false);
     }
+
+
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
 
 
     applyDmgCalc(calc)
