@@ -672,11 +672,11 @@ export class DamageCalculator
     cryoDmgBuff() { return this.baseAllDmg.add(this.baseCryoDmg); }
     dendroDmgBuff() { return this.baseAllDmg.add(this.baseDendroDmg); }
     physicalDmgBuff() { return this.baseAllDmg.add(this.basePhysicalDmg); }
-    normalDmgBuff() { return this.baseAllDmg.add(this.baseNormalDmg); }
-    chargedDmgBuff() { return this.baseAllDmg.add(this.baseChargedDmg); }
-    plungeDmgBuff() { return this.baseAllDmg.add(this.basePlungeDmg); }
-    skillDmgBuff() { return this.baseAllDmg.add(this.baseSkillDmg); }
-    burstDmgBuff() { return this.baseAllDmg.add(this.baseBurstDmg); }
+    normalDmgBuff() { return this.baseNormalDmg; }
+    chargedDmgBuff() { return this.baseChargedDmg; }
+    plungeDmgBuff() { return this.basePlungeDmg; }
+    skillDmgBuff() { return this.baseSkillDmg; }
+    burstDmgBuff() { return this.baseBurstDmg; }
     swirlBonus() { return this.baseSwirlBonus; }
     crystalizeBonus() { return this.baseCrystalizeBonus; }
     vaporizeBonus() { return this.baseVaporizeBonus; }
