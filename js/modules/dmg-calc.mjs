@@ -3,10 +3,14 @@
 // 値と勾配ベクトルを保持するデータ
 export class VGData
 {
+    // for debug
+    static doCalcExprText = true;
+
     constructor(value, gradVec)
     {
         this.value = value;
         this.grad = gradVec;    // double[7]: [rateAtk, rateDef, rateHP, crtRate, crtDmg, recharge, mastery]
+        this.exprText = null;
     }
 
 
@@ -59,6 +63,27 @@ export class VGData
         return new VGData(value, [0, 0, 0, 0, 0, 0, 1]);
     }
 
+    static textValue(value)
+    {
+        if(value >= 1000) {
+            return "" + value;
+        } else {
+            return textNumber(value, 4);
+        }
+    }
+
+
+    toExprText() {
+        if(this.exprText)
+            return "(" + this.exprText + ")";
+        else {
+            if(this.value < 1e-6)
+                return "0";
+            else
+                return VGData.textValue(this.value, 4);
+        }
+    }
+
 
     dup() {
         var dst = VGData.zero();
@@ -66,6 +91,8 @@ export class VGData
         for(let i = 0; i < 7; ++i) {
             dst.grad[i] = this.grad[i];
         }
+
+        dst.exprText = this.exprText;
 
         return dst;
     }
@@ -78,6 +105,10 @@ export class VGData
             dst.grad[i] = this.grad[i] + rhs.grad[i];
         }
 
+        if(VGData.doCalcExprText) {
+            dst.exprText = this.toExprText() + " + " + rhs.toExprText();
+        }
+
         return dst;
     }
 
@@ -87,6 +118,10 @@ export class VGData
         dst.value = this.value + rhs;
         for(let i = 0; i < 7; ++i) {
             dst.grad[i] = this.grad[i];
+        }
+
+        if(VGData.doCalcExprText) {
+            dst.exprText = this.toExprText() + " + " + VGData.textValue(rhs);
         }
 
         return dst;
@@ -109,6 +144,10 @@ export class VGData
             dst.grad[i] = this.grad[i] - rhs.grad[i];
         }
 
+        if(VGData.doCalcExprText) {
+            dst.exprText = this.toExprText() + " - " + rhs.toExprText();
+        }
+
         return dst;
     }
 
@@ -119,6 +158,11 @@ export class VGData
         for(let i = 0; i < 7; ++i) {
             dst.grad[i] = this.grad[i];
         }
+
+        if(VGData.doCalcExprText) {
+            dst.exprText = this.toExprText() + " - " + VGData.textValue(rhs);
+        }
+
 
         return dst;
     }
@@ -140,6 +184,10 @@ export class VGData
             dst.grad[i] = this.grad[i] * rhs.value + this.value * rhs.grad[i];
         }
 
+        if(VGData.doCalcExprText) {
+            dst.exprText = this.toExprText() + " * " + rhs.toExprText();
+        }
+
         return dst;
     }
 
@@ -149,6 +197,10 @@ export class VGData
         dst.value = this.value * rhs;
         for(let i = 0; i < 7; ++i) {
             dst.grad[i] = this.grad[i] * rhs;
+        }
+
+        if(VGData.doCalcExprText) {
+            dst.exprText = this.toExprText() + " * " + VGData.textValue(rhs);
         }
 
         return dst;
@@ -171,6 +223,10 @@ export class VGData
             dst.grad[i] = (this.grad[i] * rhs.value - this.value * rhs.grad[i])/(rhs.value * rhs.value);
         }
 
+        if(VGData.doCalcExprText) {
+            dst.exprText = this.toExprText() + " / " + rhs.toExprText();
+        }
+
         return dst;
     }
 
@@ -180,6 +236,10 @@ export class VGData
         dst.value = this.value / rhs;
         for(let i = 0; i < 7; ++i) {
             dst.grad[i] = this.grad[i] / rhs;
+        }
+
+        if(VGData.doCalcExprText) {
+            dst.exprText = this.toExprText() + " / " + VGData.textValue(rhs);
         }
 
         return dst;
@@ -203,27 +263,49 @@ export class VGData
             dst.grad[i] = -this.grad[i] / (this.value * this.value);
         }
 
+        if(VGData.doCalcExprText) {
+            dst.exprText = "1/" + this.toExprText();
+        }
+
         return dst;
     }
 
 
     // Math.min(this, num)
     min_number(num) {
+        let str = "Math.min(" + this.toExprText() + ", " + VGData.textValue(num) + ")";
+
+        let dst = undefined;
         if(this.value > num) {
-            return VGData.constant(num);
+            dst = VGData.constant(num);
         } else {
-            return VGData.zero().add(this);
+            dst = VGData.zero().add(this);
         }
+
+        if(VGData.doCalcExprText) {
+            dst.exprText = str;
+        }
+
+        return dst;
     }
 
 
     // Math.max(this, num)
     max_number(num) {
+        let str = "Math.max(" + this.toExprText() + ", " + VGData.textValue(num) + ")";
+
+        let dst = undefined;
         if(this.value > num) {
-            return VGData.zero().add(this);
+            dst = VGData.zero().add(this);
         } else {
-            return VGData.constant(num);
+            dst = VGData.constant(num);
         }
+
+        if(VGData.doCalcExprText) {
+            dst.exprText = str;
+        }
+
+        return dst;
     }
 
 
@@ -233,6 +315,10 @@ export class VGData
         dst.value = Math.log(this.value);
         for(let i = 0; i < 7; ++i) {
             dst.grad[i] = this.grad[i] / this.value;
+        }
+
+        if(VGData.doCalcExprText) {
+            dst.exprText = "log" + this.toExprText();
         }
 
         return dst;
