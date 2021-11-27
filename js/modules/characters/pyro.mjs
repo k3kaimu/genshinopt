@@ -71,7 +71,7 @@ export class HuTao extends Base.CharacterData
         5.18,
         5.41,
         5.65,           // lv. 13
-    ]
+    ];
 
 
     static presetAttacks = [
