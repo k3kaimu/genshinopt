@@ -1,10 +1,11 @@
 
 export class ArtifactData
 {
-    constructor(id, name)
+    constructor(id, name, abbr)
     {
         this.id = id;
         this.name = name;
+        this.abbr = abbr;
     }
 
 
@@ -35,6 +36,132 @@ export class ArtifactViewModel
     {
         return [];
     }
+
+
+    toJS() {
+        return {
+            parent_id: this.parent.id, 
+            bonusType: this.bonusType
+        };
+    }
+
+
+    fromJS(obj) {
+        this.bonusType = obj.bonusType;
+    }
+}
+
+
+// 剣闘士のフィナーレ
+export class GladiatorsFinale extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            "gladiators_finale",
+            "剣闘士のフィナーレ",
+            "剣闘士",
+        )
+    }
+
+    newViewModel(bonusType)
+    {
+        return new GladiatorsFinaleViewModel(this, bonusType);
+    }
+}
+
+
+// 剣闘士のフィナーレ, ViewModel
+export class GladiatorsFinaleViewModel extends ArtifactViewModel
+{
+    constructor(parent, bonusType)
+    {
+        super(parent, bonusType);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.rateAtk.value += 0.18;
+
+        if(this.bonusType == 2)
+            return calc;
+
+        // when bonusType == 4 as follows:
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let NewCalcGladiatorsFinale = class extends CalcType {
+            normalDmgBuff() {
+                if(this.character.weaponType == 'Sword'
+                || this.character.weaponType == 'Claymore'
+                || this.character.weaponType == 'Polearm') {
+                    return super.normalDmgBuff().add(0.35);
+                } else {
+                    return super.normalDmgBuff();
+                }
+            }
+        }
+
+        calc = Object.assign(new NewCalcGladiatorsFinale(), calc);
+        return calc;
+    }
+}
+
+
+// 大地を流浪する楽団
+export class WanderersTroupe extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            "wanderers_troupe",
+            "大地を流浪する楽団",
+            "楽団",
+        )
+    }
+
+    newViewModel(bonusType)
+    {
+        return new WanderersTroupeViewModel(this, bonusType);
+    }
+}
+
+
+// 大地を流浪する楽団, ViewModel
+export class WanderersTroupeViewModel extends ArtifactViewModel
+{
+    constructor(parent, bonusType)
+    {
+        super(parent, bonusType);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseMastery.value += 80;
+
+        if(this.bonusType == 2)
+            return calc;
+
+        // when bonusType == 4 as follows:
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let NewCalcWanderersTroupe = class extends CalcType {
+            chargedDmgBuff() {
+                if(this.character.weaponType == 'Catalyst'
+                || this.character.weaponType == 'Bow') {
+                    return super.chargedDmgBuff().add(0.35);
+                } else {
+                    return super.chargedDmgBuff();
+                }
+            }
+        }
+
+        calc = Object.assign(new NewCalcWanderersTroupe(), calc);
+        return calc;
+    }
 }
 
 
@@ -45,8 +172,9 @@ export class CrimsonWitchOfFlames extends ArtifactData
     {
         super(
             'crimson_witch_of_flames',
-            "燃え盛る炎の魔女"
-        )
+            "燃え盛る炎の魔女",
+            "火魔女",
+        );
     }
 
 
@@ -63,7 +191,7 @@ export class CrimsonWitchOfFlamesViewModel extends ArtifactViewModel
     constructor(parent, bonusType)
     {
         super(parent, bonusType);
-        this.buffStacks = ko.observable();
+        this.buffStacks = ko.observable(3);
     }
 
 
@@ -102,7 +230,7 @@ export class CrimsonWitchOfFlamesViewModel extends ArtifactViewModel
                                     <option value="0">+15.0%</option>
                                     <option value="1">+22.5%</option>
                                     <option value="2">+30.0%</option>
-                                    <option selected value="3">+37.5%</option>
+                                    <option value="3">+37.5%</option>
                                 </select>
                             </div>
                         </div>
@@ -112,6 +240,20 @@ export class CrimsonWitchOfFlamesViewModel extends ArtifactViewModel
         }
 
         return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.buffStacks = this.buffStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.buffStacks(obj.buffStacks);
     }
 }
 
@@ -123,7 +265,8 @@ export class ShimenawaReminiscence extends ArtifactData
     {
         super(
             'shimenawa_reminiscence',
-            "追憶のしめ縄"
+            "追憶のしめ縄",
+            "しめ縄",
         );
     }
 
@@ -154,7 +297,7 @@ export class ShimenawaReminiscenceViewModel extends ArtifactViewModel
         if(this.bonusType == '4') {
             calc.baseNormalDmg.value += 0.5;
             calc.baseChargedDmg.value += 0.5;
-            calc.basePlungDmg.value += 0.5;
+            calc.basePlungeDmg.value += 0.5;
         }
 
         return calc;
@@ -186,10 +329,26 @@ export class ShimenawaReminiscenceViewModel extends ArtifactViewModel
 
         return list;
     }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.buffEffect = this.buffEffect();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.buffEffect(obj.buffEffect);
+    }
 }
 
 
 export const artifacts = [
+    new GladiatorsFinale(),
+    new WanderersTroupe(),
     new CrimsonWitchOfFlames(),
     new ShimenawaReminiscence(),
 ];
@@ -259,7 +418,7 @@ export function applyDmgCalcArtifactMainStatus(calc, character, statusType)
             break;
 
         case "Heal":
-            calc.baseCrtRate.value += 0.359;
+            // calc.baseHeal.value += 0.359;
             break;
 
         default:
