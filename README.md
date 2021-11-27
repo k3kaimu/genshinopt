@@ -7,6 +7,7 @@
 + [Bootstrap](https://getbootstrap.com/) v4.5.3
 + [Knockout.js](https://knockoutjs.com/) v3.5.1
 + [nlopt-js](https://github.com/BertrandBev/nlopt-js) v0.1.1
++ [requestIdleCallback polyfill](https://github.com/aFarkas/requestIdleCallback) v0.3.0
 
 
 ## ToDo
