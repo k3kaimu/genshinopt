@@ -45,6 +45,16 @@ export class CharacterData
     {
         return new CharacterViewModel(this);
     }
+
+
+    static presetAttacks = [
+        {
+            label: "通常攻撃（100%）",
+            makeViewModel(characterViewModel) {
+                return new NoReactionAttack(1, { isNormal: true });
+            },
+        }
+    ];
 }
 
 
@@ -112,5 +122,94 @@ export class CharacterViewModel
         this.normalRank(obj.normalRank);
         this.skillRank(obj.skillRank);
         this.burstRank(obj.burstRank);
+    }
+}
+
+
+export class AttackViewModel
+{
+    constructor() {}
+
+    calculate(calc) {
+        return undefined;
+    }
+
+    viewHTMLList(target) {
+        return [];
+    }
+}
+
+
+export class NoReactionAttack
+{
+    constructor(dmgScale, attackProps)
+    {
+        this.dmgScale = dmgScale;
+        this.attackProps = Object.assign({}, attackProps);
+    }
+
+
+    calculate(calc) {
+        return calc.calculateDmg(this.dmgScale, this.attackProps).mul(0.5).mul(0.9);
+    }
+
+
+    viewHTMLList(target){ return []; }
+}
+
+
+
+export class VaporizeMeltProbabilityViewModel
+{
+    constructor(dmgScale, attackProps)
+    {
+        this.reactionType = ko.observable("isVaporize");
+        this.prob = ko.observable(0);
+
+        this.dmgScale = dmgScale;
+
+        this.attackProps = Object.assign({}, attackProps);
+        delete this.attackProps.isVaporize;
+        delete this.attackProps.isMelt;
+    }
+
+
+    calculate(calc) {
+        let newprops = Object.assign({}, this.attackProps);
+
+        let dmg1 = calc.calculateDmg(this.dmgScale, newprops);
+
+        newprops[this.reactionType()] = true;
+        let dmg2 = calc.calculateDmg(this.dmgScale, newprops);
+
+        return dmg1.mul(1 - Number(this.prob())).add(dmg2.mul(Number(this.prob()))).mul(0.5).mul(0.9);
+    }
+
+
+    viewHTMLList(target){
+        return [
+            `
+            <div class="card" data-bind="with: `+ target +`">
+            <div class="card-header p-2">蒸発/溶解</div>
+            <div class="card-body p-2">
+                <div class="form-group row">
+                  <label class="col-5 mt-2">元素反応</label>
+                  <div class="col-7">
+                    <select class="form-control" data-bind="value: reactionType">
+                      <option value="isVaporize">蒸発</option>
+                      <option value="isMelt">溶解</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-sm-5 col-form-label">反応確率：<span data-bind="text: textPercentage(prob() ,2)"></span></label>
+                  <div class="col-sm-7 mt-sm-2">
+                    <input type="range" data-bind="value: prob" class="form-control-range" min="0" max="1" step="0.1">
+                  </div>
+                </div>
+            </div>
+            </div>
+            `
+        ]
     }
 }

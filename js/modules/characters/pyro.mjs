@@ -1,3 +1,4 @@
+import { VaporizeMeltProbabilityViewModel } from './base.mjs';
 import * as Base from '/js/modules/characters/base.mjs';
 
 
@@ -43,13 +44,46 @@ export class HuTao extends Base.CharacterData
         0.0715,         // lv. 13
     ];
 
+    static chargedDmgScaleTable = [
+        1.360,          // lv. 1
+        1.452,
+        1.545,
+        1.669,
+        1.761,
+        1.869,
+        2.009,
+        2.148,
+        2.287,
+        2.426,
+        2.565,          // lv. 11
+    ];
 
-    // static presetAttackTypes = [
-    //     {
-    //         "重撃",
+    static burstDmgScaleTable = [
+        3.03,           // lv. 1
+        3.21,
+        3.40,
+        3.63,
+        3.81,
+        4.00,
+        4.23,
+        4.47,
+        4.70,
+        4.94,
+        5.18,
+        5.41,
+        5.65,           // lv. 13
+    ]
 
-    //     }
-    // ];
+
+    static presetAttacks = [
+        {
+            label: "重撃",
+            makeViewModel(characterViewModel) {
+                let normalRank = characterViewModel.normalRank();
+                return new VaporizeMeltProbabilityViewModel(HuTao.chargedDmgScaleTable[normalRank-1], { isPyro: true, isCharged: true });
+            },
+        }
+    ];
 }
 
 
@@ -72,7 +106,7 @@ export class HuTaoViewModel extends Base.CharacterViewModel
             calc.basePyroDmg.value += 0.33;
         }
 
-        if(this.useC6Effect()) {
+        if(this.constell() >= 6 && this.useC6Effect()) {
             calc.baseCrtRate.value += 1;
         }
 

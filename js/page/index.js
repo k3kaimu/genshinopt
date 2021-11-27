@@ -250,6 +250,28 @@ $(function(){
         ];
 
 
+        this.attackOptions = ko.pureComputed(function(){
+            if(this.selectedChar() == undefined)
+                return Data.CharacterData.presetAttacks;
+            else
+                return Object.getPrototypeOf(this.selectedChar()).constructor.presetAttacks;
+        }, this);
+
+
+        this.selectedAttack = ko.observable();
+        this.selectedAttack.subscribe(newval => {
+            if(newval == undefined)
+                this.selectedAttackViewModel(undefined);
+            else
+                this.selectedAttackViewModel(newval.makeViewModel(this.characterViewModel()));
+        });
+
+        this.selectedAttackViewModel = ko.observable();
+
+
+        this.optTotalCost = ko.observable();
+
+
         this.allPatterns = ko.pureComputed(function(){
             let dst = [];
             this.comparingWeaponList().forEach((weapon, iwp) => {
@@ -298,6 +320,8 @@ $(function(){
         this.optimizeAllCases = function() {
             this.optimizedResults([]);
             let allpatterns = this.allPatterns();
+            let attackViewModel = this.selectedAttackViewModel();
+            let total_cost = this.optTotalCost();
 
             this.doneOptimizedCount(0);
 
@@ -332,13 +356,21 @@ $(function(){
                         calc.artRecharge.value = x[5];
                         calc.artMastery.value = x[6];
                 
-                        return calc.calculateDmg(2.565, {isPyro: true, isVaporize: true, isCharged: true}).mul(0.5).mul(0.9);
+                        // return calc.calculateDmg(2.565, {isPyro: true, isVaporize: true, isCharged: true}).mul(0.5).mul(0.9);
+                        return attackViewModel.calculate(calc);
                     }
 
-                    let opt = applyOptimize(calc, objfunc, 50*5, nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
+                    let x0 = [0, 0, 0, 0, 0, 0, 0];
 
-                    console.assert(opt.opt_result.success);
-                    results.push({dmg: opt.value, calc: opt.calc, setting: setting});
+                    if(total_cost == 0) {
+                        results.push({dmg: objfunc(x0).value, calc: calc, setting: setting});
+                    } else {
+                        let opt = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
+
+                        console.assert(opt.opt_result.success);
+                        results.push({dmg: opt.value, calc: opt.calc, setting: setting});
+                    }
+
                     this.doneOptimizedCount(this.doneOptimizedCount() + 1);
                 }
 
