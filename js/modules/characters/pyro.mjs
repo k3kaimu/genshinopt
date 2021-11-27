@@ -161,7 +161,7 @@ export class HuTaoViewModel extends Base.CharacterViewModel
                         <div class="form-check" data-bind="with: ` + target + `">
                             <label class="form-check-label">
                                 <input class="form-check-input" type="checkbox" data-bind="checked: lowHP" checked>
-                                +33%炎ダメ（HP50%以下）
+                                +33%炎ダメージ
                             </label>
                         </div>
                     </div>
