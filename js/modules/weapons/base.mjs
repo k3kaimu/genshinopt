@@ -29,6 +29,9 @@ export class WeaponData
         this.baseCryoDmg = 0;
         this.baseDendroDmg = 0;
 
+        this.baseRecharge = 0;
+        this.baseMastery = 0;
+
         this[bBonusType] += bBonusValue;
     }
 
@@ -51,6 +54,8 @@ export class WeaponViewModel
 
     applyDmgCalc(calc)
     {
+        calc.weapon = this.parent;
+
         calc.baseAtk.value += this.parent.baseAtk;
         calc.rateAtk.value += this.parent.rateAtk;
         calc.baseDef.value += this.parent.baseDef;
@@ -69,6 +74,9 @@ export class WeaponViewModel
         calc.baseCryoDmg.value += this.parent.baseCryoDmg;
         calc.baseDendroDmg.value += this.parent.baseDendroDmg;
 
+        calc.baseRecharge.value += this.parent.baseRecharge;
+        calc.baseMastery.value += this.parent.baseMastery;
+
         return calc;
     }
 
@@ -76,5 +84,18 @@ export class WeaponViewModel
     viewHTMLList(target)
     {
         return [];
+    }
+
+
+    toJS() {
+        return {
+            parent_id: this.parent.id,
+            rank: this.rank()
+        };
+    }
+
+
+    fromJS(obj) {
+        this.rank(obj.rank);
     }
 }
