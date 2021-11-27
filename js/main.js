@@ -26,6 +26,13 @@
 window.global = window;
 
 
+if(location.href.endsWith('unittest/')) {
+    window.runUnittest = function(func) { func(); }; 
+} else {
+    window.runUnittest = function(func) { };
+}
+
+
 genUniqueId = (function(){
     var i=0;
     return function() {
