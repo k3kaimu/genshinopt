@@ -347,7 +347,7 @@ $(function(){
                         calc = Data.applyDmgCalcArtifactMainStatus(calc, setting.character.parent, e.value);
                     });
 
-                    function objfunc(x) {
+                    function setArg(x) {
                         calc.artRateAtk.value = x[0];
                         calc.artRateDef.value = x[1];
                         calc.artRateHP.value = x[2];
@@ -355,7 +355,10 @@ $(function(){
                         calc.artCrtDmg.value = x[4];
                         calc.artRecharge.value = x[5];
                         calc.artMastery.value = x[6];
-                
+                    }
+
+                    function objfunc(x) {
+                        setArg(x);
                         // return calc.calculateDmg(2.565, {isPyro: true, isVaporize: true, isCharged: true}).mul(0.5).mul(0.9);
                         return attackViewModel.calculate(calc);
                     }
@@ -366,12 +369,13 @@ $(function(){
                         results.push({dmg: objfunc(x0).value, calc: calc, setting: setting});
                     } else {
                         let opt = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
-
+                        
                         console.assert(opt.opt_result.success);
+                        setArg(opt.opt_result.x);
                         results.push({dmg: opt.value, calc: opt.calc, setting: setting});
                     }
 
-                    this.doneOptimizedCount(this.doneOptimizedCount() + 1);
+                    this.doneOptimizedCount(results.length);
                 }
 
                 tasks.push(task.bind(this));
