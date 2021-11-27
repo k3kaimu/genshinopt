@@ -410,9 +410,9 @@ $(function(){
             let ia = r.setting.iartifact;
 
             if(artname2 == undefined) {
-                return "#" + (index+1) + " : " + wname + "(#W" + iw + ")/" + artname1 + '4' + "(#A" + ia + ")";
+                return "#" + (index+1) + " : " + wname + "(#W" + (iw+1) + ")/" + artname1 + '4' + "(#A" + (ia+1) + ")";
             } else {
-                return "#" + (index+1) + " : " + wname + "(#W" + iw + ")/" + artname1 + '2' + artname2 + "2(#A" + ia + ")";
+                return "#" + (index+1) + " : " + wname + "(#W" + (iw+1) + ")/" + artname1 + '2' + artname2 + "2(#A" + (ia+1) + ")";
             }
         }.bind(this);
 
