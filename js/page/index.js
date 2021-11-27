@@ -10,7 +10,7 @@ $(function(){
         this.characters = Data.characters;
         this.selCharElem = ko.observable();
         this.selCharRarity = ko.observable();
-        this.selCharList = ko.computed(function(){
+        this.selCharList = ko.pureComputed(function(){
             var list = [];
             var elem = this.selCharElem();
             var rarity = this.selCharRarity();
@@ -36,7 +36,7 @@ $(function(){
         this.weapons = Data.weapons;
         this.selWeaponRarity = ko.observable();
         this.selectedWeapon = ko.observable();
-        this.selWeaponList = ko.computed(function(){
+        this.selWeaponList = ko.pureComputed(function(){
             var list = [];
             var rarity = this.selWeaponRarity();
             var ch = selectedChar();
@@ -79,7 +79,7 @@ $(function(){
             });
         });
 
-        this.selWeaponList = ko.computed(function(){
+        this.selWeaponList = ko.pureComputed(function(){
             var list = [];
             var rarity = this.selWeaponRarity();
             var ch = this.parent.selectedChar();
@@ -250,13 +250,13 @@ $(function(){
         ];
 
 
-        this.allPatterns = ko.computed(function(){
+        this.allPatterns = ko.pureComputed(function(){
             let dst = [];
-            this.comparingWeaponList().forEach(weapon => {
+            this.comparingWeaponList().forEach((weapon, iwp) => {
                 if(weapon.selectedWeapon() == undefined)
                     return;
 
-                this.comparingArtifactList().forEach(artifact => {
+                this.comparingArtifactList().forEach((artifact, iatft) => {
                     if(artifact.selectedArtifact1() == undefined
                     || artifact.selectedArtifact2() == undefined) {
                         return;
@@ -274,8 +274,10 @@ $(function(){
                                 dst.push({
                                     character: this.characterViewModel(),
                                     weapon: weapon.weaponViewModel(),
+                                    iweapon: iwp,
                                     artifactSet1: artifact.artifact1ViewModel(),
                                     artifactSet2: artifact.artifact2ViewModel(),
+                                    iartifact: iatft,
                                     clock: clock,
                                     cup: cup,
                                     hat: hat
@@ -291,32 +293,148 @@ $(function(){
 
 
         this.optimizedResults = ko.observableArray();
+        this.doneOptimizedCount = ko.observable(0);
 
         this.optimizeAllCases = function() {
             this.optimizedResults([]);
             let allpatterns = this.allPatterns();
 
-            allpatterns.forEach(setting => {
-                let calc = new Calc.DamageCalculator();
-                calc = setting.character.applyDmgCalc(calc);
-                calc = setting.weapon.applyDmgCalc(calc);
-                calc = setting.artifactSet1.applyDmgCalc(calc);
-                calc = setting.artifactSet2.applyDmgCalc(calc);
+            this.doneOptimizedCount(0);
 
-                [setting.clock, setting.cup, setting.hat].forEach(e => {
-                    calc = Data.applyDmgCalcArtifactMainStatus(calc, setting.character.parent, e.value);
+            if(allpatterns.length > 200) {
+                $('#optimizationProgress').modal('show');
+            }
+
+            let tasks = [];
+            let results = [];
+
+            allpatterns.forEach(setting => {
+                function task(){
+                    let calc = new Calc.DamageCalculator();
+                    calc = setting.character.applyDmgCalc(calc);
+                    calc = setting.weapon.applyDmgCalc(calc);
+                    calc = setting.artifactSet1.applyDmgCalc(calc);
+                    calc = setting.artifactSet2.applyDmgCalc(calc);
+
+                    calc.addAtk.value += 311;
+                    calc.addHP.value += 4780;
+
+                    [setting.clock, setting.cup, setting.hat].forEach(e => {
+                        calc = Data.applyDmgCalcArtifactMainStatus(calc, setting.character.parent, e.value);
+                    });
+
+                    function objfunc(x) {
+                        calc.artRateAtk.value = x[0];
+                        calc.artRateDef.value = x[1];
+                        calc.artRateHP.value = x[2];
+                        calc.artCrtRate.value = x[3];
+                        calc.artCrtDmg.value = x[4];
+                        calc.artRecharge.value = x[5];
+                        calc.artMastery.value = x[6];
+                
+                        return calc.calculateDmg(2.565, {isPyro: true, isVaporize: true, isCharged: true}).mul(0.5).mul(0.9);
+                    }
+
+                    let opt = applyOptimize(calc, objfunc, 50*5, nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
+
+                    console.assert(opt.opt_result.success);
+                    results.push({dmg: opt.value, calc: opt.calc, setting: setting});
+                    this.doneOptimizedCount(this.doneOptimizedCount() + 1);
+                }
+
+                tasks.push(task.bind(this));
+            });
+
+            function onFinish() {
+                if(results.length == 0) return;
+                // console.log(results);
+
+                results.sort(function(a, b){
+                    return -(a.dmg - b.dmg);
                 });
 
-                let dmg = calc.calculateDmg(2.565, {isPyro: true});
+                this.optimizedResults(results);
+                $('#optimizationProgress').modal('hide');
+                $("html,body").animate({scrollTop:$('#scrollTargetAfterOptimization').offset().top});
+            }
 
-                this.optimizedResults.push({dmg: dmg.value, calc: calc, setting: setting});
-            });
-
-            this.optimizedResults.sort(function(a, b){
-                return -(a.dmg - b.dmg);
-            });
+            processTasksOnIdle(tasks, onFinish.bind(this));
 
         }.bind(this);
+
+
+        this.titleOptimizedResult = function(index, r) {
+            let wname = r.setting.weapon.parent.name;
+            let iw = r.setting.iweapon;
+            let artname1 = r.setting.artifactSet1.parent.abbr;
+            let artname2 = undefined;
+            if(r.setting.artifactSet2.parent != undefined)
+                artname2 = r.setting.artifactSet2.parent.abbr;
+
+            let ia = r.setting.iartifact;
+
+            if(artname2 == undefined) {
+                return "#" + (index+1) + " : " + wname + "(#" + iw + ")/" + artname1 + '4' + "(#" + ia + ")";
+            } else {
+                return "#" + (index+1) + " : " + wname + "(#" + iw + ")/" + artname1 + '2' + artname2 + "2(#" + ia + ")";
+            }
+        }.bind(this);
+
+        this.textCardBodyOptimizedResult = function(index, r) {
+            let line1 = "メイン：";
+            line1 += r.setting.clock.label + "/" + r.setting.cup.label + "/" + r.setting.hat.label;
+
+            let line2 = "サブ累計：";
+            let sp = "";
+            if(Math.round(r.calc.artRateAtk.value*100) > 0) {
+                line2 += "攻撃力+" + textPercentageFix(r.calc.artRateAtk.value, 1);
+                sp = "/";
+            }
+
+            if(Math.round(r.calc.artRateDef.value*100) > 0) {
+                line2 += sp + "防御力+" + textPercentageFix(r.calc.artRateDef.value, 1);
+                sp = "/";
+            }
+
+            if(Math.round(r.calc.artRateHP.value*100) > 0) {
+                line2 += sp + "HP+" + textPercentageFix(r.calc.artRateHP.value, 1);
+                sp = "/";
+            }
+
+            if(Math.round(r.calc.artCrtRate.value*100) > 0) {
+                line2 += sp + "会心率+" + textPercentageFix(r.calc.artCrtRate.value, 1);
+                sp = "/";
+            }
+
+            if(Math.round(r.calc.artCrtDmg.value*100) > 0) {
+                line2 += sp + "会心ダメ+" + textPercentageFix(r.calc.artCrtDmg.value, 1);
+                sp = "/";
+            }
+
+            if(Math.round(r.calc.artRecharge.value*100) > 0) {
+                line2 += sp + "チャージ効率+" + textPercentageFix(r.calc.artRecharge.value, 1);
+                sp = "/";
+            }
+
+            if(Math.round(r.calc.artMastery.value) > 0) {
+                line2 += sp + "熟知+" + textInteger(Math.round(r.calc.artMastery.value));
+                sp = "/";
+            }
+
+            if(sp == "")
+                line2 += "なし";
+
+            return line1 + "<br>" + line2;
+        }.bind(this);
+
+        this.showOptResultsLimit = ko.observable();
+
+        this.shownOptimizedResults = ko.pureComputed(function(){
+            let arr = this.optimizedResults();
+            let len = arr.length;
+            let lim = this.showOptResultsLimit();
+            return arr.slice(0, Math.min(len, lim));
+        }, this);
     }
 
     window.viewModel = new ViewModel();

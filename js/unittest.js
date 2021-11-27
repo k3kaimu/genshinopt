@@ -141,53 +141,18 @@ $(function(){
     (async () => {
         await nlopt.ready
 
-        // let total_cost = 6.6 * 4 * 5;
         let total_cost = 0.0001;
-
-        function applyOptimize(algoritm, x0, tol, maxEval) {
-            const opt = new nlopt.Optimize(algoritm, 7);
-
-            opt.setMaxObjective((x, grad) => {
-                var dmg = objfunc(x).log();
-
-                if(grad) {
-                    for(let i = 0; i < 7; ++i)
-                        grad[i] = dmg.grad[i];
-                }
-
-                return dmg.value;
-            }, tol);
-
-            
-            opt.addInequalityConstraint((x, grad) => {
-                var cost = Calc.calcSubOptionCost(x);
-                if(grad) {
-                    for(let i = 0; i < 7; ++i)
-                        grad[i] = cost.grad[i];
-                }
-
-                return cost.value - total_cost;
-            }, tol);
-
-            opt.setUpperBounds(Calc.calcUpperBounds(total_cost, objfunc));
-            opt.setLowerBounds([0, 0, 0, 0, 0, 0, 0]);
-            opt.setMaxeval(maxEval);
-
-            return opt.optimize(x0);
-        }
-
-        // let done = false;
+        
         var results = [];
         const startTime = performance.now();
         for(let i = 0; i < 10; ++i) {
             try {
-                let res = applyOptimize(nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
-                res.value = Math.exp(res.value);
+                let res = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
 
-                if(res.success)
+                if(res.opt_result.success)
                     results.push(res);
             } catch(ex) {
-
+                console.log(ex);
             }
 
             // Flush the GC
@@ -201,7 +166,7 @@ $(function(){
             return b.value - a.value;
         });
 
-        var dmg_tmp = objfunc(results[0].x);
+        var dmg_tmp = objfunc(results[0].opt_result.x);
         console.assert(Math.round(calc.crtRate().value*1000) == 361, calc.crtRate());
         console.assert(Math.round(calc.crtDmg().value*1000) == 1546, calc.crtDmg);
         console.assert(Math.round(calc.hp().value) == 30690, calc.hp());
@@ -259,113 +224,28 @@ $(function(){
         await nlopt.ready
 
         let total_cost = 40 * 5;
-        // let total_cost = 0.0001;
-
-        var useLog = false;
-        function applyOptimize(algoritm, x0, tol, maxEval) {
-            const opt = new nlopt.Optimize(algoritm, 7);
-            
-
-            opt.setMaxObjective((x, grad) => {
-                var dmg = objfunc(x);
-                if(useLog) dmg = dmg.log();
-
-                if(grad) {
-                    for(let i = 0; i < 7; ++i)
-                        grad[i] = dmg.grad[i];
-                }
-
-                return dmg.value;
-            }, tol);
-
-            
-            opt.addInequalityConstraint((x, grad) => {
-                var cost = Calc.calcSubOptionCost(x);
-                if(grad) {
-                    for(let i = 0; i < 7; ++i)
-                        grad[i] = cost.grad[i];
-                }
-
-                return cost.value - total_cost;
-            }, tol);
-
-            opt.setUpperBounds(Calc.calcUpperBounds(total_cost, objfunc));
-            opt.setLowerBounds([0, 0, 0, 0, 0, 0, 0]);
-            opt.setMaxeval(maxEval);
-
-            return opt.optimize(x0);
-        }
-
-        // let done = false;
+        
         var results = [];
-        var results_log = [];
         for(let i = 0; i < 10; ++i) {
             try {
-                useLog = false;
-                const res1 = applyOptimize(nlopt.Algorithm.GN_ISRES, [0, 0, 0, 0, 0, 0, 0], 1e-2, 4000);
-                const res2 = applyOptimize(nlopt.Algorithm.LD_SLSQP, res1.x, 1e-3, 1000);
-
-                // res2.value = Math.exp(res2.value);
-                if(res2.success)
-                    results.push(res2);
-
+                var res = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
+                
+                if(res.opt_result.success)
+                    results.push(res);
             } catch(ex) {
-
-            }
-
-            try{
-                useLog = true;
-                var res3 = applyOptimize(nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
-                res3.value = Math.exp(res3.value);
-
-                if(res3.success)
-                    results_log.push(res3);
-            }catch(ex) {
-
+                console.log(ex);
             }
 
             // Flush the GC
             nlopt.GC.flush();
         }
 
-        results.sort((a, b) => {
-            return b.value - a.value;
-        });
-
-        for(let i = 0; i < results_log.length; ++i) {
-            console.assert((results_log[i].value + 10) > results[0].value);
-        }
-
-        // console.log(results);
-        console.log(results_log);
-        console.assert(Math.round(results_log[0].value/10)*10 >= 38260, results_log[0]);
+        console.assert(Math.round(results[0].value/10)*10 >= 38260, results[0]);
 
         const startTime = performance.now();
         for(let _ = 0; _ < 100; ++_)
-            var res3 = applyOptimize(nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
+            var res3 = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, [0, 0, 0, 0, 0, 0, 0], 1e-3, 1000);
         const endTime = performance.now();
         document.getElementById("optimize-time").innerHTML = (endTime - startTime)/100;
     })();
 });
-
-
-// $(function(){    
-//     var calc = new DamageCalculator();
-//     calc.baseAtk = Calc.VGData.constant(714);
-//     calc.addAtk = Calc.VGData.constant(311);
-//     calc.rateAtk = Calc.VGData.constant(0.18);
-//     calc.baseDef = Calc.VGData.constant(845);
-//     calc.baseHP = Calc.VGData.constant(15552);
-//     calc.addHP = Calc.VGData.constant(4780);
-//     calc.rateHP = Calc.VGData.constant(0.466 + 0.4);
-//     calc.basePyroDmg = Calc.VGData.constant(0.466 + 0.5);
-//     calc.baseCrtRate = Calc.VGData.constant(0.05 + 0.311);
-//     calc.baseCrtDmg = Calc.VGData.constant(1.546);
-
-//     let calc = new DamageCalculator();
-//     let dst = Object.assign({}, calc);
-
-//     dst.calculateDmg
-
-//     console.log(dst);
-// });

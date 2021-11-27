@@ -30,7 +30,8 @@ title: 最適化ツール
     <select data-bind="options: selCharList,
                         optionsText: 'name',
                         value: selectedChar,
-                        optionsCaption: '-キャラ選択-'"
+                        optionsCaption: '-キャラ選択-',
+                        css: {'border-danger': selectedChar() == undefined}",
                         class="custom-select" aria-label="キャラクター選択"></select>
   </div>
 </div>
@@ -142,7 +143,8 @@ title: 最適化ツール
         <select data-bind="options: $data.selWeaponList,
                           optionsText: 'name',
                           value: $data.selectedWeapon,
-                          optionsCaption: '-武器選択-'"
+                          optionsCaption: '-武器選択-',
+                          css: {'border-danger': $data.selectedWeapon() == undefined}"
                           class="custom-select" aria-label="武器選択">
         </select>
         <div class="input-group-append">
@@ -218,12 +220,14 @@ title: 最適化ツール
         <select data-bind="options: artifacts,
                           optionsText: 'name',
                           value: selectedArtifact1,
-                          optionsCaption: '-聖遺物セット1選択-'"
+                          optionsCaption: '-聖遺物セット1選択-',
+                          css: {'border-danger': $data.selectedArtifact1() == undefined}"
                           class="custom-select" aria-label="聖遺物セット1選択"></select>
         <select data-bind="options: artifacts,
                           optionsText: 'name',
                           value: selectedArtifact2,
-                          optionsCaption: '-聖遺物セット2選択-'"
+                          optionsCaption: '-聖遺物セット2選択-',
+                          css: {'border-danger': $data.selectedArtifact2() == undefined}"
                           class="custom-select" aria-label="聖遺物セット2選択"></select>
         <div class="input-group-append">
           <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.comparingArtifactList.remove($data)">-削除</button>
@@ -296,13 +300,196 @@ title: 最適化ツール
 
 
 
-<h4 class="h4">探索するパターン数：<span data-bind="text: allPatterns().length"></span>通り</h4>
-<div class="mb-3">
-  <button type="button" class="btn btn-primary" data-bind="click: optimizeAllCases()">最適化実行</button>
-  （推定実行時間：<span data-bind="text: allPatterns().length * 2"></span>ミリ秒）
+<h4 class="h4" id="scrollTargetAfterOptimization">探索するパターン数：<span data-bind="text: allPatterns().length"></span>通り</h4>
+<div class="row mb-5">
+  <div class="col-6">
+    <select class="custom-select" data-bind="value: showOptResultsLimit">
+      <option selected value="20">上位20件表示</option>
+      <option value="40">上位40件表示</option>
+      <option value="100">上位100件表示</option>
+      <option value="1000">上位1000件表示</option>
+    </select>
+  </div>
+  <div class="col-6">
+    <button type="submit" class="btn btn-primary" data-bind="click: optimizeAllCases(), disable: allPatterns().length == 0">最適化実行</button>
+  </div>
+  
+  <!-- （推定実行時間：<span data-bind="text: allPatterns().length * 2"></span>ミリ秒） -->
+  
 </div>
 
-<h4></h4>
+
+<!-- Modal -->
+<div class="modal fade" id="optimizationProgress" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="optimizationProgressLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="optimizationProgressLabel">最適化中・・・</h5>
+        <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button> -->
+      </div>
+      <div class="modal-body">
+        <div class="progress">
+          <div class="progress-bar" data-bind="style: {width: textPercentageFix(doneOptimizedCount()/allPatterns().length, 1) }" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <span data-bind="text: doneOptimizedCount"></span>/<span data-bind="text: allPatterns().length"></span>
+      </div>
+      <!-- <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div> -->
+    </div>
+  </div>
+</div>
+
+
+<h4 id="optimizedResultList">最適化結果一覧</h4>
 <div class="mb-3">
-  <div data-bind="text: optimizedResults().length"></div>
+  <div data-bind="foreach: shownOptimizedResults">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">
+          <span data-bind="text: $root.titleOptimizedResult($index(), $data)"></span>
+          <span style="float: right;" class="text-primary" data-bind="text: textInteger($data.dmg)"></span style="float: right;">
+        </h5>
+        <div>
+          <span data-bind="html: $root.textCardBodyOptimizedResult($index()+1, $data)"></span>
+          <a type="button" class="float-right" data-toggle="collapse" data-bind="attr: {'data-target': '#detailCollapse'+$index()}">詳細表示</a>
+          <div class="collapse" data-bind="attr: {id: 'detailCollapse'+$index()}">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">パラメータ</th>
+                  <th scope="col">値</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">攻撃力</th>
+                  <td data-bind="text: textInteger($data.calc.atk().value)"></td>
+                </tr>
+                <tr>
+                  <th scope="row">防御力</th>
+                  <td data-bind="text: textInteger($data.calc.def().value)"></td>
+                </tr>
+                <tr>
+                  <th scope="row">HP</th>
+                  <td data-bind="text: textInteger($data.calc.hp().value)"></td>
+                </tr>
+                <tr>
+                  <th scope="row">会心率</th>
+                  <td data-bind="text: textPercentageFix($data.calc.crtRate().value, 1)"></td>
+                </tr>
+                <tr>
+                  <th scope="row">会心ダメージ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.crtDmg().value, 1)"></td>
+                </tr>
+                <tr>
+                  <th scope="row">元素チャージ効率</th>
+                  <td data-bind="text: textPercentageFix($data.calc.recharge().value, 1)"></td>
+                </tr>
+                <tr>
+                  <th scope="row">元素熟知</th>
+                  <td data-bind="text: textInteger($data.calc.mastery().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.anemoDmgBuff().value > 1e-3">
+                  <th scope="row">風元素ダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.anemoDmgBuff().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.geoDmgBuff().value > 1e-3">
+                  <th scope="row">岩元素ダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.geoDmgBuff().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.electroDmgBuff().value > 1e-3">
+                  <th scope="row">雷元素ダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.electroDmgBuff().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.pyroDmgBuff().value > 1e-3">
+                  <th scope="row">炎元素ダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.pyroDmgBuff().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.hydroDmgBuff().value > 1e-3">
+                  <th scope="row">水元素ダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.hydroDmgBuff().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.cryoDmgBuff().value > 1e-3">
+                  <th scope="row">氷元素ダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.cryoDmgBuff().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.dendroDmgBuff().value > 1e-3">
+                  <th scope="row">草元素ダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.dendroDmgBuff().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.physicalDmgBuff().value > 1e-3">
+                  <th scope="row">物理ダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.physicalDmgBuff().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.normalDmgBuff().value > 1e-3">
+                  <th scope="row">通常攻撃ダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.normalDmgBuff().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.chargedDmgBuff().value > 1e-3">
+                  <th scope="row">重撃ダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.chargedDmgBuff().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.plungeDmgBuff().value > 1e-3">
+                  <th scope="row">落下ダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.plungeDmgBuff().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.skillDmgBuff().value > 1e-3">
+                  <th scope="row">スキルダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.skillDmgBuff().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.burstDmgBuff().value > 1e-3">
+                  <th scope="row">元素爆発ダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.burstDmgBuff().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.swirlBonus().value > 1e-3">
+                  <th scope="row">拡散ボーナス</th>
+                  <td data-bind="text: textPercentageFix($data.calc.swirlBonus().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.crystalizeBonus().value > 1e-3">
+                  <th scope="row">結晶化ボーナス</th>
+                  <td data-bind="text: textPercentageFix($data.calc.crystalizeBonus().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.vaporizeBonus().value > 1e-3">
+                  <th scope="row">蒸発ボーナス</th>
+                  <td data-bind="text: textPercentageFix($data.calc.vaporizeBonus().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.overloadedBonus().value > 1e-3">
+                  <th scope="row">過負荷ボーナス</th>
+                  <td data-bind="text: textPercentageFix($data.calc.overloadedBonus().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.meltBonus().value > 1e-3">
+                  <th scope="row">溶解ボーナス</th>
+                  <td data-bind="text: textPercentageFix($data.calc.meltBonus().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.electroChargedBonus().value > 1e-3">
+                  <th scope="row">感電ボーナス</th>
+                  <td data-bind="text: textPercentageFix($data.calc.electroChargedBonus().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.frozenBonus().value > 1e-3">
+                  <th scope="row">凍結ボーナス</th>
+                  <td data-bind="text: textPercentageFix($data.calc.frozenBonus().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.shatteredBonus().value > 1e-3">
+                  <th scope="row">氷砕きボーナス</th>
+                  <td data-bind="text: textPercentageFix($data.calc.shatteredBonus().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.superconductBonus().value > 1e-3">
+                  <th scope="row">超伝導ボーナス</th>
+                  <td data-bind="text: textPercentageFix($data.calc.superconductBonus().value, 1)"></td>
+                </tr>
+                <tr data-bind="if: $data.calc.burningBonus().value > 1e-3">
+                  <th scope="row">燃焼ボーナス</th>
+                  <td data-bind="text: textPercentageFix($data.calc.burningBonus().value, 1)"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
