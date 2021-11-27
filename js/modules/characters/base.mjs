@@ -62,6 +62,8 @@ export class CharacterViewModel
 
     applyDmgCalc(calc)
     {
+        calc.character = this.parent;
+
         calc.baseAtk.value += this.parent.baseAtk;
         calc.rateAtk.value += this.parent.rateAtk;
         calc.baseDef.value += this.parent.baseDef;
@@ -91,5 +93,24 @@ export class CharacterViewModel
     // typeof(return): string[]
     viewHTMLList(target){
         return [];
+    }
+
+
+    toJS() {
+        return {
+            parent_id:  this.parent.id,
+            constell:   this.constell(),
+            normalRank: this.normalRank(),
+            skillRank:  this.skillRank(),
+            burstRank:  this.burstRank(),
+        };
+    }
+
+
+    fromJS(obj) {
+        this.constell(obj.constell);
+        this.normalRank(obj.normalRank);
+        this.skillRank(obj.skillRank);
+        this.burstRank(obj.burstRank);
     }
 }

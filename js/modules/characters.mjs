@@ -23,3 +23,21 @@ export const characters = [
     new Electro.TravelerElectro(),
     new Pyro.HuTao(),
 ];
+
+
+function lookupCharacter(id) {
+    let res = undefined;
+    characters.forEach(e => {
+        if(e.id == id) {
+            res = e;
+        }
+    });
+
+    return res;
+}
+
+
+runUnittest(function(){
+    console.assert(lookupCharacter("traveler_anemo").id == "traveler_anemo");
+    console.assert(lookupCharacter("hu_tao").id == "hu_tao");
+});

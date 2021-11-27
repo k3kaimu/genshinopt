@@ -42,6 +42,14 @@ export class HuTao extends Base.CharacterData
         0.0685,
         0.0715,         // lv. 13
     ];
+
+
+    // static presetAttackTypes = [
+    //     {
+    //         "重撃",
+
+    //     }
+    // ];
 }
 
 
@@ -104,7 +112,7 @@ export class HuTaoViewModel extends Base.CharacterViewModel
                         <div class="form-check" data-bind="with: ` + target + `">
                             <label class="form-check-label">
                                 <input class="form-check-input" type="checkbox" data-bind="checked: useSkill" checked>
-                                HP上限の<div data-bind="text: skillScaleText()">分だけ攻撃力上昇
+                                HP上限の<span data-bind="text: skillScaleText()"></span>分だけ攻撃力上昇
                             </label>
                         </div>
                     </div>
@@ -148,6 +156,41 @@ export class HuTaoViewModel extends Base.CharacterViewModel
             `
         ];
     }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useSkill = this.useSkill();
+        obj.lowHP = this.lowHP();
+        obj.useC6Effect = this.useC6Effect();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+
+        this.useSkill(obj.useSkill);
+        this.lowHP(obj.lowHP);
+        this.useC6Effect(obj.useC6Effect);
+    }
 }
 
+runUnittest(function(){
+    let vm1 = (new HuTao()).newViewModel();
+    vm1.skillRank(1);
+    vm1.useSkill(false);
+    vm1.lowHP(false);
+    vm1.useC6Effect(true);
+    vm1.constell(6);
 
+    let vm2 = (new HuTao()).newViewModel();
+    vm2.fromJS(vm1.toJS());
+
+    console.assert(vm2.skillRank() == 1);
+    console.assert(vm2.useSkill() == false);
+    console.assert(vm2.lowHP() == false);
+    console.assert(vm2.useC6Effect() == true);
+    console.assert(vm2.constell() == 6);
+});
