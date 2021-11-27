@@ -629,7 +629,7 @@ export class DamageCalculator
         if("isHydro" in attackProps)    dmgbuff = dmgbuff.add(this.hydroDmgBuff());
         if("isCryo" in attackProps)     dmgbuff = dmgbuff.add(this.cryoDmgBuff());
         if("isDendro" in attackProps)   dmgbuff = dmgbuff.add(this.dendroDmgBuff());
-        if("isPysical" in attackProps)  dmgbuff = dmgbuff.add(this.physicalDmgBuff());
+        if("isPhysical" in attackProps)  dmgbuff = dmgbuff.add(this.physicalDmgBuff());
         if("isNormal" in attackProps)   dmgbuff = dmgbuff.add(this.normalDmgBuff());
         if("isCharged" in attackProps)  dmgbuff = dmgbuff.add(this.chargedDmgBuff());
         if("isPlunge" in attackProps)    dmgbuff = dmgbuff.add(this.plungeDmgBuff());
