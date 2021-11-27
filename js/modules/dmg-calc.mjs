@@ -425,6 +425,9 @@ export class DamageCalculator
 {
     constructor()
     {
+        this.character = undefined;
+        this.weapon = undefined;
+
         this.baseAtk = VGData.zero();
         this.rateAtk = VGData.zero();
         this.addAtk = VGData.zero();
@@ -438,6 +441,7 @@ export class DamageCalculator
         this.baseCrtRate = VGData.zero();
         this.baseCrtDmg = VGData.zero();
 
+        this.baseAllDmg = VGData.zero();
         this.baseAnemoDmg = VGData.zero();
         this.baseGeoDmg = VGData.zero();
         this.baseElectroDmg = VGData.zero();
@@ -448,7 +452,7 @@ export class DamageCalculator
         this.basePhysicalDmg = VGData.zero();
         this.baseNormalDmg = VGData.zero();     // 通常攻撃ダメージバフ
         this.baseChargedDmg = VGData.zero();    // 重撃ダメージバフ
-        this.basePlungDmg = VGData.zero();      // 落下ダメージバフ
+        this.basePlungeDmg = VGData.zero();      // 落下ダメージバフ
         this.baseSkillDmg = VGData.zero();      // スキルダメージ
         this.baseBurstDmg = VGData.zero();      // 元素爆発ダメージ
         this.baseSwirlBonus = VGData.zero();            // 拡散ボーナス
@@ -480,6 +484,9 @@ export class DamageCalculator
     {
         var dst = new DamageCalculator();
 
+        dst.character = this.character;
+        dst.weapon = this.weapon;
+
         dst.baseAtk = this.baseAtk.dup();
         dst.rateAtk = this.rateAtk.dup();
         dst.addAtk = this.addAtk.dup();
@@ -493,6 +500,7 @@ export class DamageCalculator
         dst.baseCrtRate = this.baseCrtRate.dup();
         dst.baseCrtDmg = this.baseCrtDmg.dup();
 
+        dst.baseAllDmg = this.baseAllDmg.dup();
         dst.baseAnemoDmg = this.baseAnemoDmg.dup();
         dst.baseGeoDmg = this.baseGeoDmg.dup();
         dst.baseElectroDmg = this.baseElectroDmg.dup();
@@ -503,7 +511,7 @@ export class DamageCalculator
         dst.basePhysicalDmg = this.basePhysicalDmg.dup();
         dst.baseNormalDmg = this.baseNormalDmg.dup();
         dst.baseChargedDmg = this.baseChargedDmg.dup();
-        dst.basePlungDmg = this.basePlungDmg.dup();
+        dst.basePlungeDmg = this.basePlungeDmg.dup();
         dst.baseSkillDmg = this.baseSkillDmg.dup();
         dst.baseBurstDmg = this.baseBurstDmg.dup();
         dst.baseSwirlBonus = this.baseSwirlBonus.dup();
@@ -533,6 +541,9 @@ export class DamageCalculator
 
 
     copyFrom(rhs) {
+        this.character = rhs.character;
+        this.weapon = rhs.weapon;
+
         this.baseAtk = rhs.baseAtk.dup();
         this.rateAtk = rhs.rateAtk.dup();
         this.addAtk = rhs.addAtk.dup();
@@ -546,6 +557,7 @@ export class DamageCalculator
         this.baseCrtRate = rhs.baseCrtRate.dup();
         this.baseCrtDmg = rhs.baseCrtDmg.dup();
 
+        this.baseAllDmg = rhs.baseAllDmg.dup();
         this.baseAnemoDmg = rhs.baseAnemoDmg.dup();
         this.baseGeoDmg = rhs.baseGeoDmg.dup();
         this.baseElectroDmg = rhs.baseElectroDmg.dup();
@@ -556,7 +568,7 @@ export class DamageCalculator
         this.basePhysicalDmg = rhs.basePhysicalDmg.dup();
         this.baseNormalDmg = rhs.baseNormalDmg.dup();
         this.baseChargedDmg = rhs.baseChargedDmg.dup();
-        this.basePlungDmg = rhs.basePlungDmg.dup();
+        this.basePlungeDmg = rhs.basePlungeDmg.dup();
         this.baseSkillDmg = rhs.baseSkillDmg.dup();
         this.baseBurstDmg = rhs.baseBurstDmg.dup();
         this.baseSwirlBonus = rhs.baseSwirlBonus.dup();
@@ -620,7 +632,7 @@ export class DamageCalculator
         if("isPysical" in attackProps)  dmgbuff = dmgbuff.add(this.physicalDmgBuff());
         if("isNormal" in attackProps)   dmgbuff = dmgbuff.add(this.normalDmgBuff());
         if("isCharged" in attackProps)  dmgbuff = dmgbuff.add(this.chargedDmgBuff());
-        if("isPlung" in attackProps)    dmgbuff = dmgbuff.add(this.plungDmgBuff());
+        if("isPlunge" in attackProps)    dmgbuff = dmgbuff.add(this.plungeDmgBuff());
         if("isSkill" in attackProps)    dmgbuff = dmgbuff.add(this.skillDmgBuff());
         if("isBurst" in attackProps)    dmgbuff = dmgbuff.add(this.burstDmgBuff());
 
@@ -638,9 +650,8 @@ export class DamageCalculator
             if(("isPyro" in attackProps) && ("isMelt" in attackProps))      reactScale = 2;     // 氷 -> 炎
             if(("isCryo" in attackProps) && ("isMelt" in attackProps))      reactScale = 1.5;   // 炎 -> 氷
 
-            var masteryBonus = this.mastery().mul(25).div(this.mastery().add(1400).mul(9));
 
-            return dmg.mul(reactScale).mul(masteryBonus.add(1).add(reactBonus));
+            return dmg.mul(reactScale).mul(reactBonus.add(1));
         }
         
         return dmg;
@@ -653,19 +664,19 @@ export class DamageCalculator
     crtRate() { return this.baseCrtRate.add(this.artCrtRate); }
     crtDmg() { return this.baseCrtDmg.add(this.artCrtDmg); }
 
-    anemoDmgBuff() { return this.baseAnemoDmg; }
-    geoDmgBuff() { return this.baseGeoDmg; }
-    electroDmgBuff() { return this.baseElectroDmg; }
-    pyroDmgBuff() { return this.basePyroDmg; }
-    hydroDmgBuff() { return this.baseHydroDmg; }
-    cryoDmgBuff() { return this.baseCryoDmg; }
-    dendroDmgBuff() { return this.baseDendroDmg; }
-    physicalDmgBuff() { return this.basePhysicalDmg; }
-    normalDmgBuff() { return this.baseNormalDmg; }
-    chargedDmgBuff() { return this.baseChargedDmg; }
-    plungDmgBuff() { return this.basePlungDmg; }
-    skillDmgBuff() { return this.baseSkillDmg; }
-    burstDmgBuff() { return this.baseBurstDmg; }
+    anemoDmgBuff() { return this.baseAllDmg.add(this.baseAnemoDmg); }
+    geoDmgBuff() { return this.baseAllDmg.add(this.baseGeoDmg); }
+    electroDmgBuff() { return this.baseAllDmg.add(this.baseElectroDmg); }
+    pyroDmgBuff() { return this.baseAllDmg.add(this.basePyroDmg); }
+    hydroDmgBuff() { return this.baseAllDmg.add(this.baseHydroDmg); }
+    cryoDmgBuff() { return this.baseAllDmg.add(this.baseCryoDmg); }
+    dendroDmgBuff() { return this.baseAllDmg.add(this.baseDendroDmg); }
+    physicalDmgBuff() { return this.baseAllDmg.add(this.basePhysicalDmg); }
+    normalDmgBuff() { return this.baseAllDmg.add(this.baseNormalDmg); }
+    chargedDmgBuff() { return this.baseAllDmg.add(this.baseChargedDmg); }
+    plungeDmgBuff() { return this.baseAllDmg.add(this.basePlungeDmg); }
+    skillDmgBuff() { return this.baseAllDmg.add(this.baseSkillDmg); }
+    burstDmgBuff() { return this.baseAllDmg.add(this.baseBurstDmg); }
     swirlBonus() { return this.baseSwirlBonus; }
     crystalizeBonus() { return this.baseCrystalizeBonus; }
     vaporizeBonus() { return this.baseVaporizeBonus; }
@@ -677,48 +688,47 @@ export class DamageCalculator
     superconductBonus() { return this.baseSuperconductBonus; }
     burningBonus() { return this.baseBurningBonus; }
 
-
     recharge() { return this.baseRecharge.add(this.artRecharge); }
     mastery() { return this.baseMastery.add(this.artMastery); }
-}
 
 
-export function calcAttenuationByEnemy(charLvl, enemyLvl)
-{
-    return (charLvl + 100)/((enemyLvl + 100) + charLvl + 100);
-}
+    // https://wikiwiki.jp/genshinwiki/%E8%81%96%E9%81%BA%E7%89%A9#ParamSubOps
+    calcSubOptionCost(x)
+    {
+        return  VGData.newRateAtk(x[0]).div(0.047)
+                .add(VGData.newRateDef(x[1]).div(0.058))
+                .add(VGData.newRateHP(x[2]).div(0.047))
+                .add(VGData.newCrtRate(x[3]).div(0.031))
+                .add(VGData.newCrtDmg(x[4]).div(0.062))
+                .add(VGData.newRecharge(x[5]).div(0.052))
+                .add(VGData.newMastery(x[6]).div(19))
+                .mul(6.2);
+    }
 
 
-// https://wikiwiki.jp/genshinwiki/%E8%81%96%E9%81%BA%E7%89%A9#ParamSubOps
-export function calcUpperBounds(cost, objfunc)
-{
-    var rect = [
-        cost / 6.2 * 0.047,
-        cost / 6.2 * 0.058,
-        cost / 6.2 * 0.047,
-        cost / 6.2 * 0.031,
-        cost / 6.2 * 0.062,
-        cost / 6.2 * 0.052,
-        cost / 6.2 * 19];
+    // https://wikiwiki.jp/genshinwiki/%E8%81%96%E9%81%BA%E7%89%A9#ParamSubOps
+    calcUpperBounds(cost, objfunc)
+    {
+        var rect = [
+            cost / 6.2 * 0.047,
+            cost / 6.2 * 0.058,
+            cost / 6.2 * 0.047,
+            cost / 6.2 * 0.031,
+            cost / 6.2 * 0.062,
+            cost / 6.2 * 0.052,
+            cost / 6.2 * 19];
 
-    var grad = objfunc([0, 0, 0, 0, 0, 0, 0]).grad;
-    for(let i = 0; i < 7; ++i)
-        if(grad[i] < 1e-4)
-            rect[i] = 0;
-    
-    return rect;
-}
+        var grad = objfunc([0, 0, 0, 0, 0, 0, 0]).grad;
+        for(let i = 0; i < 7; ++i)
+            if(grad[i] < 1e-4)
+                rect[i] = 0;
+        
+        return rect;
+    }
 
 
-// https://wikiwiki.jp/genshinwiki/%E8%81%96%E9%81%BA%E7%89%A9#ParamSubOps
-export function calcSubOptionCost(x)
-{
-    return  VGData.newRateAtk(x[0]).div(0.047)
-            .add(VGData.newRateDef(x[1]).div(0.058))
-            .add(VGData.newRateHP(x[2]).div(0.047))
-            .add(VGData.newCrtRate(x[3]).div(0.031))
-            .add(VGData.newCrtDmg(x[4]).div(0.062))
-            .add(VGData.newRecharge(x[5]).div(0.052))
-            .add(VGData.newMastery(x[6]).div(19))
-            .mul(6.2);
+    calcAttenuationByEnemy(charLvl, enemyLvl)
+    {
+        return (charLvl + 100)/((enemyLvl + 100) + charLvl + 100);
+    }
 }
