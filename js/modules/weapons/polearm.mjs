@@ -173,13 +173,13 @@ export class StaffOfHomaViewModel extends Base.WeaponViewModel
                     <div class="form-check">
                     <label class="form-check-label">
                         <input class="form-check-input" type="radio" name="`+target+uid+`" value="highHP" data-bind="checked: selLowHighHP">
-                        HP上限の<span data-bind="text: textHPtoAtkh()"></span>%分攻撃力上昇
+                        HP上限の<span data-bind="text: textHPtoAtkh()"></span>分攻撃力上昇
                     </label>
                     </div>
                     <div class="form-check">
                     <label class="form-check-label">
                         <input class="form-check-input" type="radio" name="`+target+uid+`" value="lowHP" data-bind="checked: selLowHighHP">
-                        HP上限の<span data-bind="text: textHPtoAtkl()"></span>%分攻撃力上昇
+                        HP上限の<span data-bind="text: textHPtoAtkl()"></span>分攻撃力上昇
                     </label>
                     </div>
                 </div>
