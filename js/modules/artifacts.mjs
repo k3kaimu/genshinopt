@@ -197,7 +197,7 @@ export class CrimsonWitchOfFlamesViewModel extends ArtifactViewModel
 
     applyDmgCalc(calc)
     {
-        super.applyDmgCalc(calc);
+        calc = super.applyDmgCalc(calc);
 
         let bonusValue = 0.15;
         if(this.bonusType == '4') {
@@ -290,7 +290,7 @@ export class ShimenawaReminiscenceViewModel extends ArtifactViewModel
 
     applyDmgCalc(calc)
     {
-        super.applyDmgCalc(calc);
+        calc = super.applyDmgCalc(calc);
 
         calc.rateAtk.value += 0.18;
 
