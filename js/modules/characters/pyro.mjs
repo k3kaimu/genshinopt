@@ -141,7 +141,7 @@ export class HuTaoViewModel extends Base.CharacterViewModel
 
     viewHTMLList(target)
     {
-        return [
+        let ret = [
             `
             <div class="card">
                 <div class="card-header p-2">蝶導来世（元素スキル）</div>
@@ -171,28 +171,28 @@ export class HuTaoViewModel extends Base.CharacterViewModel
                     </div>
                 </div>
             </div>
-            `,
-            `
-            <div data-bind="with: ` + target + `">
-                <div data-bind="if: constell() >= 6">
-                    <div class="card">
-                        <div class="card-header p-2">冥蝶の抱擁（6凸効果）</div>
-                            <div class="card-body p-2">
-                                <div class="form-group m-0">
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="form-check-input" type="checkbox" data-bind="checked: useC6Effect" checked>
-                                            会心率+100%
-                                        </label>
-                                    </div>
-                                </div>
+            `];
+        
+        if(this.constell() >= 6) {
+            ret.push(`
+            <div class="card" data-bind="with: ` + target + `">
+                <div class="card-header p-2">冥蝶の抱擁（6凸効果）</div>
+                    <div class="card-body p-2">
+                        <div class="form-group m-0">
+                            <div class="form-check">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="checkbox" data-bind="checked: useC6Effect" checked>
+                                    会心率+100%
+                                </label>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            `
-        ];
+            `);
+        }
+
+        return ret;
     }
 
 

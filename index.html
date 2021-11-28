@@ -32,15 +32,10 @@ title: 最適化ツール
                         value: selectedChar,
                         optionsCaption: '-キャラ選択-',
                         css: {'border-danger': selectedChar() == undefined}",
-                        class="custom-select" aria-label="キャラクター選択"></select>
-  </div>
-</div>
-
-<div class="mb-3">
-  <div class="row" data-bind="with: characterViewModel()">
-    <div class="col-3 p-2">
-      <label for="select-constellation">凸数</label>
-      <select class="custom-select" id="select-constellation" aria-label="凸数" data-bind="value: constell">
+                        class="custom-select" aria-label="キャラクター選択">
+    </select>
+    <div class="input-group-append">
+      <select class="custom-select" id="select-constellation" aria-label="凸数" data-bind="value: $root.characterViewModel().constell">
         <option value="0">無凸</option>
         <option value="1">1凸</option>
         <option value="2">2凸</option>
@@ -50,19 +45,38 @@ title: 最適化ツール
         <option value="6">6凸</option>
       </select>
     </div>
-    <div class="col-3 p-2">
+  </div>
+</div>
+
+<div class="mb-3">
+  <div class="row" data-bind="with: characterViewModel()">
+    <div class="col-4">
       <label for="select-talent-normal">通常天賦</label>
       <select class="custom-select" id="select-talent-normal" aria-label="通常天賦" data-bind="value: normalRank, options: [...Array(maxNormalTalentRank()).keys()].map(i => i + 1)">
       </select>
     </div>
-    <div class="col-3 p-2">
+    <div class="col-4">
       <label for="select-talent-normal">スキル天賦</label>
       <select class="custom-select" id="select-talent-normal" aria-label="スキル天賦" data-bind="value: skillRank, options: [...Array(maxSkillTalentRank()).keys()].map(i => i + 1)">
       </select>
     </div>
-    <div class="col-3 p-2">
+    <div class="col-4">
       <label for="select-talent-normal">爆発天賦</label>
       <select class="custom-select" id="select-talent-normal" aria-label="爆発天賦" data-bind="value: burstRank, options: [...Array(maxBurstTalentRank()).keys()].map(i => i + 1)">
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="mb-3">
+  <div class="row">
+    <div class="col-12">
+      <select class="custom-select"
+        data-bind="options: attackOptions,
+                  optionsText: 'label',
+                  value: selectedAttack,
+                  optionsCaption: '-攻撃方法-',
+                  css: {'border-danger': selectedAttack() == undefined}">
       </select>
     </div>
   </div>
@@ -73,6 +87,13 @@ title: 最適化ツール
 <div class="mb-5 row">
   <!-- ko if: characterViewModel() != undefined -->
   <!-- ko foreach: characterViewModel().viewHTMLList('$root.characterViewModel') -->
+  <div class="col-sm-6">
+    <div data-bind="htmlWithBinding: $data"></div>
+  </div>
+  <!-- /ko -->
+  <!-- /ko -->
+  <!-- ko if: selectedAttackViewModel() != undefined -->
+  <!-- ko foreach: selectedAttackViewModel().viewHTMLList('$root.selectedAttackViewModel') -->
   <div class="col-sm-6">
     <div data-bind="htmlWithBinding: $data"></div>
   </div>
