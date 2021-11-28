@@ -92,13 +92,6 @@ title: 最適化ツール
   </div>
   <!-- /ko -->
   <!-- /ko -->
-  <!-- ko if: selectedAttackViewModel() != undefined -->
-  <!-- ko foreach: selectedAttackViewModel().viewHTMLList('$root.selectedAttackViewModel') -->
-  <div class="col-sm-6">
-    <div data-bind="htmlWithBinding: $data"></div>
-  </div>
-  <!-- /ko -->
-  <!-- /ko -->
 </div>
 
 
@@ -310,7 +303,7 @@ title: 最適化ツール
     </select>
   </div>
   <div class="col-6 col-lg-3">
-    <button type="submit" id="scrollTargetAfterOptimization" class="btn btn-primary" data-bind="click: optimizeAllCases(), disable: allPatterns().length == 0 || selectedAttackViewModel() == undefined">最適化実行</button>
+    <button type="submit" id="scrollTargetAfterOptimization" class="btn btn-primary" data-bind="click: optimizeAllCases(), disable: allPatterns().length == 0 || selectedAttack() == undefined">最適化実行</button>
   </div>
 </div>
 

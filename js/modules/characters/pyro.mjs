@@ -1,5 +1,84 @@
-import { VaporizeMeltProbabilityViewModel } from './base.mjs';
 import * as Base from '/js/modules/characters/base.mjs';
+
+
+export class PyroCharacterViewModel extends Base.CharacterViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.reactionType = ko.observable("isVaporize");
+        this.reactionProb = ko.observable(0);
+    }
+
+
+    viewHTMLList(target){
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            `
+            <div class="card" data-bind="with: `+ target +`">
+            <div class="card-header p-2">蒸発/溶解</div>
+            <div class="card-body p-2">
+                <div class="form-group row">
+                    <label class="col-5 mt-2">元素反応</label>
+                    <div class="col-7">
+                    <select class="form-control" data-bind="value: reactionType">
+                        <option value="isVaporize">蒸発</option>
+                        <option value="isMelt">溶解</option>
+                    </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-sm-5 col-form-label">反応確率：<span data-bind="text: textPercentage(reactionProb() ,2)"></span></label>
+                    <div class="col-sm-7 mt-sm-2">
+                    <input type="range" data-bind="value: reactionProb" class="form-control-range" min="0" max="1" step="0.1">
+                    </div>
+                </div>
+            </div>
+            </div>
+            `
+        );
+
+        return dst;
+    }
+
+
+    calculate(calc, dmgScale, attackProps)
+    {
+        if(attackProps.isPyro || false) {
+            let newProps = Object.assign({}, attackProps);
+
+            // 元素反応なし
+            let dmg1 = super.calculate(calc, dmgScale, newProps);
+
+            newProps[this.reactionType()] = true;
+
+            // 元素反応あり
+            let dmg2 = super.calculate(calc, dmgScale, newProps);
+
+            return dmg1.mul(1 - Number(this.reactionProb())).add(dmg2.mul(Number(this.reactionProb())));
+        } else {
+            // 攻撃が炎ではないので，元素反応なし
+            return super.calculate(calc, dmgScale, attackProps);
+        }
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.reactionType = this.reactionType();
+        obj.reactionProb = this.reactionProb();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.reactionType(obj.reactionType);
+        this.reactionProb(obj.reactionProb);
+    }
+}
 
 
 // 胡桃
@@ -77,41 +156,29 @@ export class HuTao extends Base.CharacterData
     static presetAttacks = [
         {
             label: "重撃",
-            attackProps: { isPyro: true, isCharged: true, isNowHuTaoSkill: true },
-            makeViewModel(characterViewModel) {
-                let normalRank = characterViewModel.normalRank();
-                return new VaporizeMeltProbabilityViewModel(HuTao.chargedDmgScaleTable[normalRank-1], { isPyro: true, isCharged: true });
-            },
+            dmgScale(vm){ return HuTao.chargedDmgScaleTable[vm.normalRank()-1] },
+            attackProps: { isCharged: true, }
         },
         {
             label: "スキル中重撃",
-            attackProps: { isPyro: true, isCharged: true, isNowHuTaoSkill: true },
-            makeViewModel(characterViewModel) {
-                let normalRank = characterViewModel.normalRank();
-                return new VaporizeMeltProbabilityViewModel(HuTao.chargedDmgScaleTable[normalRank-1], { isPyro: true, isCharged: true, isNowHuTaoSkill: true });
-            },
+            dmgScale(vm){ return HuTao.chargedDmgScaleTable[vm.normalRank()-1] },
+            attackProps: { isPyro: true, isCharged: true, isNowHuTaoSkill: true }
         },
         {
             label: "爆発",
-            attackProps: { isPyro: true, isBurst: true, isNowHuTaoSkill: true },
-            makeViewModel(characterViewModel) {
-                let burstRank = characterViewModel.burstRank();
-                return new VaporizeMeltProbabilityViewModel(HuTao.burstDmgScaleTable[burstRank-1], { isPyro: true, isBurst: true });
-            },
+            dmgScale(vm){ return HuTao.burstDmgScaleTable[vm.burstRank()-1] },
+            attackProps: { isPyro: true, isBurst: true }
         },
         {
             label: "スキル中爆発",
-            attackProps: { isPyro: true, isBurst: true, isNowHuTaoSkill: true },
-            makeViewModel(characterViewModel) {
-                let burstRank = characterViewModel.burstRank();
-                return new VaporizeMeltProbabilityViewModel(HuTao.burstDmgScaleTable[burstRank-1], { isPyro: true, isBurst: true, isNowHuTaoSkill: true });
-            },
+            dmgScale(vm){ return HuTao.burstDmgScaleTable[vm.burstRank()-1] },
+            attackProps: { isPyro: true, isBurst: true, isNowHuTaoSkill: true }
         }
     ];
 }
 
 
-export class HuTaoViewModel extends Base.CharacterViewModel
+export class HuTaoViewModel extends PyroCharacterViewModel
 {
     constructor(ch)
     {
@@ -144,10 +211,13 @@ export class HuTaoViewModel extends Base.CharacterViewModel
             hutaoSkillScale = HuTao.skillScaleTable[skillRank_-1];
 
             atk(attackProps) {
+                let dst = undefined;
                 if(attackProps.isNowHuTaoSkill || false)
-                    return super.atk(attackProps).add(this.hp(attackProps).mul(this.hutaoSkillScale).min_number(4 * this.baseAtk.value));
+                    dst = super.atk(attackProps).add(this.hp(attackProps).mul(this.hutaoSkillScale).min_number(4 * this.baseAtk.value));
                 else
-                    return super.atk(attackProps);
+                    dst = super.atk(attackProps);
+
+                return dst;
             }
         };
 
@@ -164,7 +234,9 @@ export class HuTaoViewModel extends Base.CharacterViewModel
 
     viewHTMLList(target)
     {
-        let ret = [
+        let ret = super.viewHTMLList(target);
+
+        ret.push(
             `
             <div class="card">
                 <div class="card-header p-2">血のかまど</div>
@@ -179,7 +251,8 @@ export class HuTaoViewModel extends Base.CharacterViewModel
                     </div>
                 </div>
             </div>
-            `];
+            `
+        );
         
         if(this.constell() >= 6) {
             ret.push(`

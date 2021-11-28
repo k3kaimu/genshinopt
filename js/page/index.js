@@ -259,15 +259,6 @@ $(function(){
 
 
         this.selectedAttack = ko.observable();
-        this.selectedAttack.subscribe(newval => {
-            if(newval == undefined)
-                this.selectedAttackViewModel(undefined);
-            else
-                this.selectedAttackViewModel(newval.makeViewModel(this.characterViewModel()));
-        });
-
-        this.selectedAttackViewModel = ko.observable();
-
 
         this.optTotalCost = ko.observable();
 
@@ -295,7 +286,7 @@ $(function(){
 
                                 dst.push({
                                     character: this.characterViewModel(),
-                                    attack: this.selectedAttackViewModel(),
+                                    attack: this.selectedAttack(),
                                     weapon: weapon.weaponViewModel(),
                                     iweapon: iwp,
                                     artifactSet1: artifact.artifact1ViewModel(),
@@ -347,7 +338,7 @@ $(function(){
                         calc = Data.applyDmgCalcArtifactMainStatus(calc, setting.character.parent, e.value);
                     });
 
-                    let attackViewModel = setting.attack;
+                    let attackType = setting.attack;
 
                     function setArg(x) {
                         calc.artRateAtk.value = x[0];
@@ -361,8 +352,7 @@ $(function(){
 
                     function objfunc(x) {
                         setArg(x);
-                        // return calc.calculateDmg(2.565, {isPyro: true, isVaporize: true, isCharged: true}).mul(0.5).mul(0.9);
-                        return attackViewModel.calculate(calc);
+                        return setting.character.calculate(calc, attackType.dmgScale(setting.character), attackType.attackProps);
                     }
 
                     let x0 = [0, 0, 0, 0, 0, 0, 0];
