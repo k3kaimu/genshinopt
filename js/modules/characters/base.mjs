@@ -50,6 +50,7 @@ export class CharacterData
     static presetAttacks = [
         {
             label: "通常攻撃（100%）",
+            dmgScale(vm){ return 1; },
             attackProps: { isNormal: true, isPhysical: true }
         }
     ];
