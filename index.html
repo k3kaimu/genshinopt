@@ -387,6 +387,10 @@ title: 最適化ツール
                   <th scope="row">元素熟知</th>
                   <td data-bind="text: textInteger($data.calc.mastery($data.setting.attack.attackProps).value, 1)"></td>
                 </tr>
+                <tr data-bind="if: $data.calc.allDmgBuff($data.setting.attack.attackProps).value > 1e-3">
+                  <th scope="row">ダメージバブ</th>
+                  <td data-bind="text: textPercentageFix($data.calc.allDmgBuff($data.setting.attack.attackProps).value, 1)"></td>
+                </tr>
                 <tr data-bind="if: $data.calc.anemoDmgBuff($data.setting.attack.attackProps).value > 1e-3">
                   <th scope="row">風元素ダメージバブ</th>
                   <td data-bind="text: textPercentageFix($data.calc.anemoDmgBuff($data.setting.attack.attackProps).value, 1)"></td>
