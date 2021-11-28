@@ -461,7 +461,21 @@ $(function(){
             let arr = this.optimizedResults();
             let len = arr.length;
             let lim = this.showOptResultsLimit();
-            return arr.slice(0, Math.min(len, lim));
+
+            // DOMを遅延して構築するために必要
+            function EachResultViewModel() {
+                this.isOpen = ko.observable(false);
+                this.toggle = function() {
+                    this.isOpen(!this.isOpen());
+                }.bind(this);
+            }
+
+            let dst = [];
+            arr.slice(0, Math.min(len, lim)).forEach(e => {
+                dst.push(Object.assign(new EachResultViewModel(), e));
+            });
+
+            return dst;
         }, this);
     }
 
