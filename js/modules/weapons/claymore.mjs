@@ -88,3 +88,21 @@ export class WhiteblindViewModel extends Base.WeaponViewModel
         this.buffStacks(obj.buffStacks);
     }
 }
+
+
+
+export class PrototypeArchaic extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "prototype_archaic",
+            "古華・試作",
+            4,
+            "Claymore",
+            565,
+            "rateAtk",
+            0.276
+        );
+    }
+}

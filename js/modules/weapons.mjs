@@ -16,6 +16,7 @@ import * as Sword from '/js/modules/weapons/sword.mjs';
 
 export const weapons = [
     new Claymore.Whiteblind(),
+    new Claymore.PrototypeArchaic(),
     new Polearm.StaffOfHoma(),
     new Polearm.DragonsBane(),
     new Sword.PrimordialJadeCutter(),
