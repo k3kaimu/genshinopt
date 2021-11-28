@@ -56,7 +56,9 @@ export class DragonsBaneViewModel extends Base.WeaponViewModel
 
     viewHTMLList(target)
     {
-        return [
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
             `
             <div class="card">
                 <div class="card-header p-2">炎と水の破滅</div>
@@ -72,7 +74,9 @@ export class DragonsBaneViewModel extends Base.WeaponViewModel
                 </div>
             </div>
             `
-        ];
+        );
+
+        return dst;
     }
 
 
@@ -162,9 +166,11 @@ export class StaffOfHomaViewModel extends Base.WeaponViewModel
 
     viewHTMLList(target)
     {
+        let dst = super.viewHTMLList(target);
+
         var uid = genUniqueId();
 
-        return [
+        dst.push(
             `
             <div class="card">
                 <div class="card-header p-2">攻撃力上昇効果</div>
@@ -186,7 +192,9 @@ export class StaffOfHomaViewModel extends Base.WeaponViewModel
                 </div>
             </div>
             `
-        ];
+        );
+
+        return dst;
     }
 
 
