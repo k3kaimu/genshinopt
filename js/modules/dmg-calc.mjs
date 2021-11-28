@@ -469,6 +469,8 @@ export class DamageCalculator
         this.baseRecharge = VGData.zero();      // 元素チャージ効率
         this.baseMastery = VGData.zero();       // 元素熟知
 
+        this.baseRateShieldStrength = VGData.zero();    // シールド強化
+
         // 聖遺物サブオプション
         this.artRateAtk = VGData.newRateAtk(0);
         this.artRateDef = VGData.newRateDef(0);
@@ -528,6 +530,8 @@ export class DamageCalculator
         dst.baseRecharge = this.baseRecharge.dup();
         dst.baseMastery = this.baseMastery.dup();
 
+        dst.baseRateShieldStrength = this.baseRateShieldStrength.dup();
+
         this.artRateAtk = VGData.newRateAtk(0);
         this.artRateDef = VGData.newRateDef(0);
         this.artRateHP = VGData.newRateHP(0);
@@ -584,6 +588,8 @@ export class DamageCalculator
 
         this.baseRecharge = rhs.baseRecharge.dup();
         this.baseMastery = rhs.baseMastery.dup();
+
+        this.baseRateShieldStrength = rhs.baseRateShieldStrength.dup();
 
         this.artRateAtk = rhs.artRateAtk.dup();
         this.artRateDef = rhs.artRateDef.dup();
