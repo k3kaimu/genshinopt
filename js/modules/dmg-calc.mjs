@@ -4,7 +4,7 @@
 export class VGData
 {
     // for debug
-    static doCalcExprText = true;
+    static doCalcExprText = false;
 
     constructor(value, gradVec)
     {
@@ -697,6 +697,11 @@ export class DamageCalculator
             if(("isPyro" in attackProps) && ("isVaporize" in attackProps))  reactScale = 1.5;   // 水 -> 炎
             if(("isPyro" in attackProps) && ("isMelt" in attackProps))      reactScale = 2;     // 氷 -> 炎
             if(("isCryo" in attackProps) && ("isMelt" in attackProps))      reactScale = 1.5;   // 炎 -> 氷
+
+            // 元々が物理か蒸発・溶解が発生しない元素
+            if(reactScale == 1) {
+                return VGData.constant(1);
+            }
 
             return reactBonus.add(1).mul(reactScale);
         } else {
