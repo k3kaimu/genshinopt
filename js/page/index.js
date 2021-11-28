@@ -181,6 +181,38 @@ $(function(){
     }
 
 
+    function ExternalBuff()
+    {
+        this.addAtk = ko.observable();
+        this.rateAtk = ko.observable();
+        this.addDef = ko.observable();
+        this.rateDef = ko.observable();
+        this.addHP = ko.observable();
+        this.rateHP = ko.observable();
+        this.crtRate = ko.observable();
+        this.crtDmg = ko.observable();
+        this.mastery = ko.observable();
+        this.dmgBuff = ko.observable();
+        this.recharge = ko.observable();
+
+        this.applyDmgCalc = function(calc){
+            calc.addAtk.value += Number(this.addAtk() || 0)
+            calc.rateAtk.value += Number(this.rateAtk() || 0)
+            calc.addDef.value += Number(this.addDef() || 0)
+            calc.rateDef.value += Number(this.rateDef() || 0)
+            calc.addHP.value += Number(this.addHP() || 0)
+            calc.rateHP.value += Number(this.rateHP() || 0)
+            calc.baseCrtRate.value += Number(this.crtRate() || 0)
+            calc.baseCrtDmg.value += Number(this.crtDmg() || 0)
+            calc.baseMastery.value += Number(this.mastery() || 0)
+            calc.baseAllDmg.value += Number(this.dmgBuff() || 0)
+            calc.baseRecharge.value += Number(this.recharge() || 0)
+
+            return calc;
+        }.bind(this);
+    }
+
+
     function ViewModel() {
         this.readyNLopt = ko.observable();
 
@@ -260,6 +292,8 @@ $(function(){
 
         this.selectedAttack = ko.observable();
 
+        this.externalBuff = new ExternalBuff();
+
         this.optTotalCost = ko.observable();
 
 
@@ -294,7 +328,8 @@ $(function(){
                                     iartifact: iatft,
                                     clock: clock,
                                     cup: cup,
-                                    hat: hat
+                                    hat: hat,
+                                    exbuff: this.externalBuff,
                                 });
                             });
                         })
@@ -337,6 +372,8 @@ $(function(){
                     [setting.clock, setting.cup, setting.hat].forEach(e => {
                         calc = Data.applyDmgCalcArtifactMainStatus(calc, setting.character.parent, e.value);
                     });
+
+                    calc = setting.exbuff.applyDmgCalc(calc);
 
                     let attackType = setting.attack;
 

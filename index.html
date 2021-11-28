@@ -267,6 +267,67 @@ title: 最適化ツール
 </div>
 
 
+<div class="mb-5">
+  <button type="button" class="btn btn-outline-primary" data-toggle="collapse" data-target="#buffSetting">他キャラや飯バフなどの詳細設定（上級者向け）</button>
+  <div class="collapse mt-2" id="buffSetting">
+    <p class="text-danger">
+      注意：百分率（%）の欄は倍率値を入力してください（例：33% -> 0.33）
+    </p>
+    <div class="form-row" data-bind="with: externalBuff">
+      <div class="col-sm-3 col-6">
+        <label>攻撃力実数</label>
+        <input type="text" class="form-control" data-bind="value: addAtk" placeholder="例：1000">
+      </div>
+      <div class="col-sm-3 col-6">
+        <label>攻撃力%</label>
+        <input type="text" class="form-control" data-bind="value: rateAtk" placeholder="例：0.2">
+      </div>
+      <div class="col-sm-3 col-6">
+        <label>防御力実数</label>
+        <input type="text" class="form-control" data-bind="value: addDef" placeholder="例：1000">
+      </div>
+      <div class="col-sm-3 col-6">
+        <label>防御力%</label>
+        <input type="text" class="form-control" data-bind="value: rateDef" placeholder="例：0.2">
+      </div>
+      <div class="col-sm-3 col-6">
+        <label>HP実数</label>
+        <input type="text" class="form-control" data-bind="value: addHP" placeholder="例：1000">
+      </div>
+      <div class="col-sm-3 col-6">
+        <label>HP%</label>
+        <input type="text" class="form-control" data-bind="value: rateHP" placeholder="例：0.2">
+      </div>
+      <div class="col-sm-3 col-6">
+        <label>会心率%</label>
+        <input type="text" class="form-control" data-bind="value: crtRate" placeholder="例：0.2">
+      </div>
+      <div class="col-sm-3 col-6">
+        <label>会心ダメージ%</label>
+        <input type="text" class="form-control" data-bind="value: crtDmg" placeholder="例：0.2">
+      </div>
+      <div class="col-sm-3 col-6">
+        <label>元素熟知</label>
+        <input type="text" class="form-control" data-bind="value: mastery" placeholder="例：100">
+      </div>
+      <div class="col-sm-3 col-6">
+        <label>ダメバフ%</label>
+        <input type="text" class="form-control" data-bind="value: dmgBuff" placeholder="例：0.5">
+      </div>
+      <div class="col-sm-3 col-6">
+        <label>チャージ効率</label>
+        <input type="text" class="form-control" data-bind="value: recharge" placeholder="例：0.5">
+      </div>
+      <div class="col-sm-3 col-6" disabled>
+        <label>耐性ダウン（未実装）</label>
+        <input type="text" class="form-control" placeholder="現在未実装">
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 
 
 <h4 class="h4">探索するパターン数：<span data-bind="text: allPatterns().length"></span>通り</h4>
@@ -349,66 +410,70 @@ title: 最適化ツール
             <div class="collapse mt-3" data-bind="attr: {id: 'detailCollapse'+optresIndex()}">
               <div class="table-responsive">
                 <table class="table mb-3 table-sm">
-                  <tr>
-                    <th scope="col">パラメータ</th>
-                    <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                    <th scope="col" data-bind="text: attackType.label"></th>
-                    <!-- /ko -->
-                  </tr>
-                  <tr>
-                    <th scope="col">ダメージ期待値</th>
-                    <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                    <td data-bind="text: textInteger(optres.setting.character.calculate(optres.calc, attackType.dmgScale(optres.setting.character), attackType.attackProps).value)"></td>
-                    <!-- /ko -->
-                  </tr>
-                  <tr>
-                    <th scope="col">攻撃力</th>
-                    <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                    <td data-bind="text: textInteger(optres.calc.atk(attackType.attackProps).value)"></td>
-                    <!-- /ko -->
-                  </tr>
-                  <tr>
-                    <th scope="col">会心率</th>
-                    <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                    <td data-bind="text: textPercentageFix(optres.calc.crtRate(attackType.attackProps).value, 1)"></td>
-                    <!-- /ko -->
-                  </tr>
-                  <tr>
-                    <th scope="col">会心ダメージ</th>
-                    <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                    <td data-bind="text: textPercentageFix(optres.calc.crtDmg(attackType.attackProps).value, 1)"></td>
-                    <!-- /ko -->
-                  </tr>
-                  <tr>
-                    <th scope="col">累計ダメバフ</th>
-                    <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                    <td data-bind="text: textPercentageFix(optres.calc.calculateTotalDmgBuff(attackType.attackProps).value, 1)"></td>
-                    <!-- /ko -->
-                  </tr>
-                  <tr>
-                    <th scope="col">防御力</th>
-                    <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                    <td data-bind="text: textInteger(optres.calc.def(attackType.attackProps).value)"></td>
-                    <!-- /ko -->
-                  </tr>
-                  <tr>
-                    <th scope="col">HP</th>
-                    <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                    <td data-bind="text: textInteger(optres.calc.hp(attackType.attackProps).value)"></td>
-                    <!-- /ko -->
-                  </tr>
-                  <tr data-bind="if: optres.setting.character.parent.elem == 'Pyro' || optres.setting.character.parent.elem == 'Hydro'">
-                    <th scope="col">蒸発倍率</th>
-                    <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                    <td data-bind="text: textNumber(optres.calc.calculateVaporizeMeltBonus( Object.assign({isVaporize: true}, attackType.attackProps) ).value, 3)"></td>
-                    <!-- /ko -->
-                  </tr>
-                  <tr data-bind="if: optres.setting.character.parent.elem == 'Pyro' || optres.setting.character.parent.elem == 'Cryo'">
-                    <th scope="col">溶解倍率</th>
-                    <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                    <td data-bind="text: textNumber(optres.calc.calculateVaporizeMeltBonus( Object.assign({isMelt: true}, attackType.attackProps) ).value, 3)"></td>
-                    <!-- /ko -->
-                  </tr>
+                  <thead>
+                    <tr>
+                      <th scope="col">パラメータ</th>
+                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                      <th scope="col" data-bind="text: attackType.label"></th>
+                      <!-- /ko -->
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">ダメージ期待値</th>
+                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                      <td data-bind="text: textInteger(optres.setting.character.calculate(optres.calc, attackType.dmgScale(optres.setting.character), attackType.attackProps).value)"></td>
+                      <!-- /ko -->
+                    </tr>
+                    <tr>
+                      <th scope="row">攻撃力</th>
+                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                      <td data-bind="text: textInteger(optres.calc.atk(attackType.attackProps).value)"></td>
+                      <!-- /ko -->
+                    </tr>
+                    <tr>
+                      <th scope="row">会心率</th>
+                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                      <td data-bind="text: textPercentageFix(optres.calc.crtRate(attackType.attackProps).value, 1)"></td>
+                      <!-- /ko -->
+                    </tr>
+                    <tr>
+                      <th scope="row">会心ダメージ</th>
+                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                      <td data-bind="text: textPercentageFix(optres.calc.crtDmg(attackType.attackProps).value, 1)"></td>
+                      <!-- /ko -->
+                    </tr>
+                    <tr>
+                      <th scope="row">累計ダメバフ</th>
+                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                      <td data-bind="text: textPercentageFix(optres.calc.calculateTotalDmgBuff(attackType.attackProps).value, 1)"></td>
+                      <!-- /ko -->
+                    </tr>
+                    <tr>
+                      <th scope="row">防御力</th>
+                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                      <td data-bind="text: textInteger(optres.calc.def(attackType.attackProps).value)"></td>
+                      <!-- /ko -->
+                    </tr>
+                    <tr>
+                      <th scope="row">HP</th>
+                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                      <td data-bind="text: textInteger(optres.calc.hp(attackType.attackProps).value)"></td>
+                      <!-- /ko -->
+                    </tr>
+                    <tr data-bind="if: optres.setting.character.parent.elem == 'Pyro' || optres.setting.character.parent.elem == 'Hydro'">
+                      <th scope="row">蒸発倍率</th>
+                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                      <td data-bind="text: textNumber(optres.calc.calculateVaporizeMeltBonus( Object.assign({isVaporize: true}, attackType.attackProps) ).value, 3)"></td>
+                      <!-- /ko -->
+                    </tr>
+                    <tr data-bind="if: optres.setting.character.parent.elem == 'Pyro' || optres.setting.character.parent.elem == 'Cryo'">
+                      <th scope="row">溶解倍率</th>
+                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                      <td data-bind="text: textNumber(optres.calc.calculateVaporizeMeltBonus( Object.assign({isMelt: true}, attackType.attackProps) ).value, 3)"></td>
+                      <!-- /ko -->
+                    </tr>
+                  </tbody>
                 </table>
               </div>
               <table class="table mb-3 table-sm">
