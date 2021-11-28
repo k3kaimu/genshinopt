@@ -77,10 +77,34 @@ export class HuTao extends Base.CharacterData
     static presetAttacks = [
         {
             label: "重撃",
-            attackProps: { isPyro: true, isCharged: true },
+            attackProps: { isPyro: true, isCharged: true, isNowHuTaoSkill: true },
             makeViewModel(characterViewModel) {
                 let normalRank = characterViewModel.normalRank();
                 return new VaporizeMeltProbabilityViewModel(HuTao.chargedDmgScaleTable[normalRank-1], { isPyro: true, isCharged: true });
+            },
+        },
+        {
+            label: "スキル中重撃",
+            attackProps: { isPyro: true, isCharged: true, isNowHuTaoSkill: true },
+            makeViewModel(characterViewModel) {
+                let normalRank = characterViewModel.normalRank();
+                return new VaporizeMeltProbabilityViewModel(HuTao.chargedDmgScaleTable[normalRank-1], { isPyro: true, isCharged: true, isNowHuTaoSkill: true });
+            },
+        },
+        {
+            label: "爆発",
+            attackProps: { isPyro: true, isBurst: true, isNowHuTaoSkill: true },
+            makeViewModel(characterViewModel) {
+                let burstRank = characterViewModel.burstRank();
+                return new VaporizeMeltProbabilityViewModel(HuTao.burstDmgScaleTable[burstRank-1], { isPyro: true, isBurst: true });
+            },
+        },
+        {
+            label: "スキル中爆発",
+            attackProps: { isPyro: true, isBurst: true, isNowHuTaoSkill: true },
+            makeViewModel(characterViewModel) {
+                let burstRank = characterViewModel.burstRank();
+                return new VaporizeMeltProbabilityViewModel(HuTao.burstDmgScaleTable[burstRank-1], { isPyro: true, isBurst: true, isNowHuTaoSkill: true });
             },
         }
     ];
@@ -92,7 +116,6 @@ export class HuTaoViewModel extends Base.CharacterViewModel
     constructor(ch)
     {
         super(ch);
-        this.useSkill = ko.observable(true);
         this.lowHP = ko.observable(true);
         this.useC6Effect = ko.observable(false);
     }
@@ -114,9 +137,6 @@ export class HuTaoViewModel extends Base.CharacterViewModel
             calc.baseCrtRate.value += 1;
         }
 
-        if(! this.useSkill())
-            return calc;
-
         let skillRank_ = this.skillRank();
 
         let CalcType = Object.getPrototypeOf(calc).constructor;
@@ -124,7 +144,10 @@ export class HuTaoViewModel extends Base.CharacterViewModel
             hutaoSkillScale = HuTao.skillScaleTable[skillRank_-1];
 
             atk(attackProps) {
-                return super.atk(attackProps).add(this.hp(attackProps).mul(this.hutaoSkillScale).min_number(4 * this.baseAtk.value));
+                if(attackProps.isNowHuTaoSkill || false)
+                    return super.atk(attackProps).add(this.hp(attackProps).mul(this.hutaoSkillScale).min_number(4 * this.baseAtk.value));
+                else
+                    return super.atk(attackProps);
             }
         };
 
@@ -142,21 +165,6 @@ export class HuTaoViewModel extends Base.CharacterViewModel
     viewHTMLList(target)
     {
         let ret = [
-            `
-            <div class="card">
-                <div class="card-header p-2">蝶導来世（元素スキル）</div>
-                <div class="card-body p-2">
-                    <div class="form-group m-0">
-                        <div class="form-check" data-bind="with: ` + target + `">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" data-bind="checked: useSkill" checked>
-                                HP上限の<span data-bind="text: skillScaleText()"></span>分だけ攻撃力上昇
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            `,
             `
             <div class="card">
                 <div class="card-header p-2">血のかまど</div>
@@ -198,7 +206,6 @@ export class HuTaoViewModel extends Base.CharacterViewModel
 
     toJS() {
         let obj = super.toJS();
-        obj.useSkill = this.useSkill();
         obj.lowHP = this.lowHP();
         obj.useC6Effect = this.useC6Effect();
 
@@ -209,7 +216,6 @@ export class HuTaoViewModel extends Base.CharacterViewModel
     fromJS(obj) {
         super.fromJS(obj);
 
-        this.useSkill(obj.useSkill);
         this.lowHP(obj.lowHP);
         this.useC6Effect(obj.useC6Effect);
     }
@@ -218,7 +224,6 @@ export class HuTaoViewModel extends Base.CharacterViewModel
 runUnittest(function(){
     let vm1 = (new HuTao()).newViewModel();
     vm1.skillRank(1);
-    vm1.useSkill(false);
     vm1.lowHP(false);
     vm1.useC6Effect(true);
     vm1.constell(6);
@@ -227,7 +232,6 @@ runUnittest(function(){
     vm2.fromJS(vm1.toJS());
 
     console.assert(vm2.skillRank() == 1);
-    console.assert(vm2.useSkill() == false);
     console.assert(vm2.lowHP() == false);
     console.assert(vm2.useC6Effect() == true);
     console.assert(vm2.constell() == 6);

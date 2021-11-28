@@ -94,7 +94,7 @@ function textNumber(value, digit=3)
 
 
 function applyOptimize(calc, objfunc, total_cost, algoritm, x0, tol, maxEval) {
-    let VGData = Object.getPrototypeOf(calc.atk()).constructor;
+    let VGData = Object.getPrototypeOf(calc.baseAtk).constructor;
 
     VGData.doCalcExprText = false;
     let returnValue = undefined;

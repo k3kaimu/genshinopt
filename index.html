@@ -277,59 +277,40 @@ title: 最適化ツール
 
 
 <h4 class="h4">探索するパターン数：<span data-bind="text: allPatterns().length"></span>通り</h4>
-<div class="mb-3">
-  <div class="row">
-    <div class="col-6">
-      <select class="custom-select"
-        data-bind="options: attackOptions,
-                   optionsText: 'label',
-                   value: selectedAttack,
-                   optionsCaption: '-攻撃方法-',
-                   css: {'border-danger': selectedAttack() == undefined}">
-      </select>
-    </div>
-    <div class="col-6">
-      <select class="custom-select" data-bind="value: optTotalCost">
-        <option value="0">各部位スコア0</option>
-        <option value="25">各部位スコア5</option>
-        <option value="50">各部位スコア10（厳選なし）</option>
-        <option selected value="75">各部位スコア15（微厳選）</option>
-        <option value="100">各部位スコア20（一般厳選）</option>
-        <option value="150">各部位スコア30</option>
-        <option value="200">各部位スコア40（ガチ厳選）</option>
-        <option value="250">各部位スコア50（神厳選）</option>
-      </select>
-      <!-- <select class="custom-select" data-bind="value: showOptResultsLimit">
-        <option selected value="20">上位20件表示</option>
-        <option value="40">上位40件表示</option>
-        <option value="100">上位100件表示</option>
-        <option value="1000">上位1000件表示</option>
-      </select> -->
-    </div>
-    
-    <!-- （推定実行時間：<span data-bind="text: allPatterns().length * 2"></span>ミリ秒） -->
-    
+<div class="row mb-3">
+  <div class="col-sm-6 mb-3">
+    <select class="custom-select" data-bind="value: optTotalCost">
+      <option value="0">各部位スコア0</option>
+      <option value="25">各部位スコア5</option>
+      <option value="50">各部位スコア10（厳選なし）</option>
+      <option selected value="75">各部位スコア15（微厳選）</option>
+      <option value="100">各部位スコア20（一般厳選）</option>
+      <option value="150">各部位スコア30</option>
+      <option value="200">各部位スコア40（ガチ厳選）</option>
+      <option value="250">各部位スコア50（神厳選）</option>
+    </select>
+    <!-- <select class="custom-select" data-bind="value: showOptResultsLimit">
+      <option selected value="20">上位20件表示</option>
+      <option value="40">上位40件表示</option>
+      <option value="100">上位100件表示</option>
+      <option value="1000">上位1000件表示</option>
+    </select> -->
   </div>
-  <div class="row mb-3" data-bind="if: selectedAttackViewModel() != undefined">
-    <!-- ko foreach: selectedAttackViewModel().viewHTMLList('$root.selectedAttackViewModel') -->
-    <div class="col-sm-6">
-      <div data-bind="htmlWithBinding: $data"></div>
-    </div>
-    <!-- /ko -->
-  </div>
+  
+  <!-- （推定実行時間：<span data-bind="text: allPatterns().length * 2"></span>ミリ秒） -->
+<!-- </div>
 
-  <div class="row">
-    <div class="col-6">
-      <select class="custom-select" data-bind="value: showOptResultsLimit">
-        <option selected value="20">上位20件表示</option>
-        <option value="40">上位40件表示</option>
-        <option value="100">上位100件表示</option>
-        <option value="1000">上位1000件表示</option>
-      </select>
-    </div>
-    <div class="col-6">
-      <button type="submit" id="scrollTargetAfterOptimization" class="btn btn-primary" data-bind="click: optimizeAllCases(), disable: allPatterns().length == 0 || selectedAttackViewModel() == undefined">最適化実行</button>
-    </div>
+<div class="row mb-3"> -->
+  <div class="col-6 col-lg-3">
+    <select class="custom-select" data-bind="value: showOptResultsLimit">
+      <option selected value="20">上位20件表示</option>
+      <option value="40">上位40件表示</option>
+      <option value="100">上位100件表示</option>
+      <option value="1000">上位1000件表示</option>
+    </select>
+  </div>
+  <div class="col-6 col-lg-3">
+    <button type="submit" id="scrollTargetAfterOptimization" class="btn btn-primary" data-bind="click: optimizeAllCases(), disable: allPatterns().length == 0 || selectedAttackViewModel() == undefined">最適化実行</button>
   </div>
 </div>
 

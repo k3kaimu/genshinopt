@@ -652,7 +652,6 @@ export class DamageCalculator
             if(("isPyro" in attackProps) && ("isMelt" in attackProps))      reactScale = 2;     // 氷 -> 炎
             if(("isCryo" in attackProps) && ("isMelt" in attackProps))      reactScale = 1.5;   // 炎 -> 氷
 
-
             return dmg.mul(reactScale).mul(reactBonus.add(1));
         }
         
