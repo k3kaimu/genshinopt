@@ -51,7 +51,7 @@ export class CharacterData
         {
             label: "通常攻撃（100%）",
             makeViewModel(characterViewModel) {
-                return new NoReactionAttack(1, { isNormal: true });
+                return new NoReactionAttack(1, { isNormal: true, isPhysical: true });
             },
         }
     ];

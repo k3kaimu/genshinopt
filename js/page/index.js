@@ -295,6 +295,7 @@ $(function(){
 
                                 dst.push({
                                     character: this.characterViewModel(),
+                                    attack: this.selectedAttackViewModel(),
                                     weapon: weapon.weaponViewModel(),
                                     iweapon: iwp,
                                     artifactSet1: artifact.artifact1ViewModel(),
@@ -320,7 +321,6 @@ $(function(){
         this.optimizeAllCases = function() {
             this.optimizedResults([]);
             let allpatterns = this.allPatterns();
-            let attackViewModel = this.selectedAttackViewModel();
             let total_cost = this.optTotalCost();
 
             this.doneOptimizedCount(0);
@@ -341,11 +341,13 @@ $(function(){
                     calc = setting.artifactSet2.applyDmgCalc(calc);
 
                     calc.addAtk.value += 311;
-                    calc.addHP.value += 4780;
+                    calc.addHP.value += 4780;   
 
                     [setting.clock, setting.cup, setting.hat].forEach(e => {
                         calc = Data.applyDmgCalcArtifactMainStatus(calc, setting.character.parent, e.value);
                     });
+
+                    let attackViewModel = setting.attack;
 
                     function setArg(x) {
                         calc.artRateAtk.value = x[0];

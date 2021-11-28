@@ -77,6 +77,7 @@ export class HuTao extends Base.CharacterData
     static presetAttacks = [
         {
             label: "重撃",
+            attackProps: { isPyro: true, isCharged: true },
             makeViewModel(characterViewModel) {
                 let normalRank = characterViewModel.normalRank();
                 return new VaporizeMeltProbabilityViewModel(HuTao.chargedDmgScaleTable[normalRank-1], { isPyro: true, isCharged: true });
@@ -122,8 +123,8 @@ export class HuTaoViewModel extends Base.CharacterViewModel
         let NewCalc = class extends CalcType {
             hutaoSkillScale = HuTao.skillScaleTable[skillRank_-1];
 
-            atk() {
-                return super.atk().add(this.hp().mul(this.hutaoSkillScale).min_number(4 * this.baseAtk.value));
+            atk(attackProps) {
+                return super.atk(attackProps).add(this.hp(attackProps).mul(this.hutaoSkillScale).min_number(4 * this.baseAtk.value));
             }
         };
 

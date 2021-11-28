@@ -146,8 +146,8 @@ export class StaffOfHomaViewModel extends Base.WeaponViewModel
         let NewCalc = class extends CalcType {
             staffOfHomaScale = scale;
 
-            atk(){
-                return super.atk().add(this.hp().mul(this.staffOfHomaScale));
+            atk(attackProps){
+                return super.atk(attackProps).add(this.hp(attackProps).mul(this.staffOfHomaScale));
             }
         };
 
