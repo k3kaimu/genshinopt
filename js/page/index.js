@@ -404,7 +404,8 @@ $(function(){
                         results.push({dmg: opt.value, calc: opt.calc, setting: setting});
                     }
 
-                    this.doneOptimizedCount(results.length);
+                    if(results.length % 10 == 0)
+                        this.doneOptimizedCount(results.length);
                 }
 
                 tasks.push(task.bind(this));
