@@ -258,6 +258,93 @@ export class CrimsonWitchOfFlamesViewModel extends ArtifactViewModel
 }
 
 
+// 逆飛びの流星
+export class RetracingBolide extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            "retracing_bolide",
+            "逆飛びの流星",
+            "逆飛び"
+        );
+    }
+
+
+    newViewModel(type)
+    {
+        return new RetracingBolideViewModel(this, type);
+    }
+}
+
+
+// 逆飛びの流星, ViewModel
+export class RetracingBolideViewModel extends ArtifactViewModel
+{
+    constructor(parent, type)
+    {
+        super(parent, type);
+        this.useEffect4 = ko.observable(true);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseRateShieldStrength.value += 0.35;
+
+        if(this.bonusType == '4' && this.useEffect4()) {
+            calc.baseNormalDmg.value += 0.4;
+            calc.baseChargedDmg.value += 0.4;
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        var list = [];
+
+        if(this.bonusType == '4') {
+            list.push(
+                `
+                <div class="card">
+                    <div class="card-header p-2">逆飛び：ダメバフ</div>
+                    <div class="card-body p-2">
+                        <div class="form-group m-0">
+                            <div class="form-check" data-bind="with: ` + target + `">
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="checkbox" data-bind="checked: useEffect4" checked>
+                                    通常・重撃+40%ダメバフ
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `);
+        }
+
+        return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useEffect4 = this.useEffect4();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.useEffect4(obj.useEffect4);
+    }
+}
+
+
 // 追憶のしめ縄
 export class ShimenawaReminiscence extends ArtifactData
 {
@@ -350,6 +437,7 @@ export const artifacts = [
     new GladiatorsFinale(),
     new WanderersTroupe(),
     new CrimsonWitchOfFlames(),
+    new RetracingBolide(),
     new ShimenawaReminiscence(),
 ];
 
