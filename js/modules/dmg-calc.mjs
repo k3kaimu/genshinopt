@@ -621,41 +621,13 @@ export class DamageCalculator
         if(attackProps == undefined)
             attackProps = {};
 
-        var dmgbuff = this.allDmgBuff(attackProps);
-        if("isAnemo" in attackProps)    dmgbuff = dmgbuff.add(this.anemoDmgBuff(attackProps));
-        if("isGeo" in attackProps)      dmgbuff = dmgbuff.add(this.geoDmgBuff(attackProps));
-        if("isElectro" in attackProps)  dmgbuff = dmgbuff.add(this.electroDmgBuff(attackProps));
-        if("isPyro" in attackProps)     dmgbuff = dmgbuff.add(this.pyroDmgBuff(attackProps));
-        if("isHydro" in attackProps)    dmgbuff = dmgbuff.add(this.hydroDmgBuff(attackProps));
-        if("isCryo" in attackProps)     dmgbuff = dmgbuff.add(this.cryoDmgBuff(attackProps));
-        if("isDendro" in attackProps)   dmgbuff = dmgbuff.add(this.dendroDmgBuff(attackProps));
-        if("isPhysical" in attackProps) dmgbuff = dmgbuff.add(this.physicalDmgBuff(attackProps));
-        if("isNormal" in attackProps)   dmgbuff = dmgbuff.add(this.normalDmgBuff(attackProps));
-        if("isCharged" in attackProps)  dmgbuff = dmgbuff.add(this.chargedDmgBuff(attackProps));
-        if("isPlunge" in attackProps)   dmgbuff = dmgbuff.add(this.plungeDmgBuff(attackProps));
-        if("isSkill" in attackProps)    dmgbuff = dmgbuff.add(this.skillDmgBuff(attackProps));
-        if("isBurst" in attackProps)    dmgbuff = dmgbuff.add(this.burstDmgBuff(attackProps));
+        var dmgbuff = this.calculateTotalDmgBuff(attackProps);
 
-        // var dmg = this.atk() * dmgScale * (1 + Math.min(this.crtRate(), 1) * this.crtDmg()) * (1 + dmgbuff);
         var dmg = this.atk(attackProps).mul(dmgScale)
                 .mul(this.crtRate(attackProps).min_number(1).max_number(0).mul(this.crtDmg(attackProps)).add(1))
                 .mul(dmgbuff.add(1));
-
-        if(("isVaporize" in attackProps) || ("isMelt" in attackProps)) {
-            var reactBonus = this.mastery(attackProps).mul(25).div(this.mastery(attackProps).add(1400).mul(9));
-            if("isVaporize" in attackProps)     reactBonus = reactBonus.add(this.vaporizeBonus(attackProps));
-            if("isMelt" in attackProps)         reactBonus = reactBonus.add(this.meltBonus(attackProps));
-
-            var reactScale = 1;
-            if(("isHydro" in attackProps) && ("isVaporize" in attackProps)) reactScale = 2;     // 炎 -> 水
-            if(("isPyro" in attackProps) && ("isVaporize" in attackProps))  reactScale = 1.5;   // 水 -> 炎
-            if(("isPyro" in attackProps) && ("isMelt" in attackProps))      reactScale = 2;     // 氷 -> 炎
-            if(("isCryo" in attackProps) && ("isMelt" in attackProps))      reactScale = 1.5;   // 炎 -> 氷
-
-            return dmg.mul(reactScale).mul(reactBonus.add(1));
-        }
         
-        return dmg;
+        return dmg.mul(this.calculateVaporizeMeltBonus(attackProps));
     }
 
 
@@ -692,6 +664,45 @@ export class DamageCalculator
 
     recharge(attackProps) { return this.baseRecharge.add(this.artRecharge); }
     mastery(attackProps) { return this.baseMastery.add(this.artMastery); }
+
+
+    calculateTotalDmgBuff(attackProps) {
+        var dmgbuff = this.allDmgBuff(attackProps);
+        if("isAnemo" in attackProps)    dmgbuff = dmgbuff.add(this.anemoDmgBuff(attackProps));
+        if("isGeo" in attackProps)      dmgbuff = dmgbuff.add(this.geoDmgBuff(attackProps));
+        if("isElectro" in attackProps)  dmgbuff = dmgbuff.add(this.electroDmgBuff(attackProps));
+        if("isPyro" in attackProps)     dmgbuff = dmgbuff.add(this.pyroDmgBuff(attackProps));
+        if("isHydro" in attackProps)    dmgbuff = dmgbuff.add(this.hydroDmgBuff(attackProps));
+        if("isCryo" in attackProps)     dmgbuff = dmgbuff.add(this.cryoDmgBuff(attackProps));
+        if("isDendro" in attackProps)   dmgbuff = dmgbuff.add(this.dendroDmgBuff(attackProps));
+        if("isPhysical" in attackProps) dmgbuff = dmgbuff.add(this.physicalDmgBuff(attackProps));
+        if("isNormal" in attackProps)   dmgbuff = dmgbuff.add(this.normalDmgBuff(attackProps));
+        if("isCharged" in attackProps)  dmgbuff = dmgbuff.add(this.chargedDmgBuff(attackProps));
+        if("isPlunge" in attackProps)   dmgbuff = dmgbuff.add(this.plungeDmgBuff(attackProps));
+        if("isSkill" in attackProps)    dmgbuff = dmgbuff.add(this.skillDmgBuff(attackProps));
+        if("isBurst" in attackProps)    dmgbuff = dmgbuff.add(this.burstDmgBuff(attackProps));
+
+        return dmgbuff;
+    }
+
+
+    calculateVaporizeMeltBonus(attackProps) {
+        if(("isVaporize" in attackProps) || ("isMelt" in attackProps)) {
+            var reactBonus = this.mastery(attackProps).mul(25).div(this.mastery(attackProps).add(1400).mul(9));
+            if("isVaporize" in attackProps)     reactBonus = reactBonus.add(this.vaporizeBonus(attackProps));
+            if("isMelt" in attackProps)         reactBonus = reactBonus.add(this.meltBonus(attackProps));
+
+            var reactScale = 1;
+            if(("isHydro" in attackProps) && ("isVaporize" in attackProps)) reactScale = 2;     // 炎 -> 水
+            if(("isPyro" in attackProps) && ("isVaporize" in attackProps))  reactScale = 1.5;   // 水 -> 炎
+            if(("isPyro" in attackProps) && ("isMelt" in attackProps))      reactScale = 2;     // 氷 -> 炎
+            if(("isCryo" in attackProps) && ("isMelt" in attackProps))      reactScale = 1.5;   // 炎 -> 氷
+
+            return reactBonus.add(1).mul(reactScale);
+        } else {
+            return VGData.constant(1);
+        }
+    }
 
 
     // https://wikiwiki.jp/genshinwiki/%E8%81%96%E9%81%BA%E7%89%A9#ParamSubOps
