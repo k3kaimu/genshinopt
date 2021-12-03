@@ -151,9 +151,9 @@ export class NoelleViewModel extends Base.CharacterViewModel
             calc.baseChargedDmg.value += 0.15;
         }
 
-        let skillRank_ = this.skillRank();
+        let burstRank_ = this.burstRank();
 
-        let defToAtkScale = Noelle.burstScale[skillRank_-1][2];
+        let defToAtkScale = Noelle.burstScale[burstRank_-1][2];
         if(this.constell() >= 6) {
             defToAtkScale += 0.5;
         }
