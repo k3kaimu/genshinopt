@@ -170,3 +170,111 @@ function processTasksOnIdle(tasks, onFinish)
 
     requestIdleCallback(runTasks);
 }
+
+
+
+function deleteProperties(obj, props = [])
+{
+    if(!Array.isArray(props))
+        props = [props];
+
+
+    props.forEach(e => {
+        delete obj[e];
+    });
+
+    return obj;
+}
+
+runUnittest(function(){
+    let obj = {a:1, b:2, c:3};
+
+    obj = deleteProperties(obj, ['a', 'c', 'd']);
+    console.assert(obj.a == undefined, obj);
+    console.assert(obj.b == 2, obj);
+    console.assert(obj.c == undefined, obj);
+});
+
+
+
+function hasAnyProperties(obj, props = [])
+{
+    if(!Array.isArray(props))
+        props = [props];
+
+    let ret = false;
+    props.forEach(e => {
+        if(e in obj)
+            ret = true;
+    });
+
+    return ret;
+}
+
+runUnittest(function(){
+    let obj = {a:1, b:2, c:3};
+
+    console.assert(hasAnyProperties(obj, 'a') === true);
+    console.assert(hasAnyProperties(obj, 'd') === false);
+    console.assert(hasAnyProperties(obj, ['a', 'd']) == true);
+
+    obj = deleteProperties(obj, ['a', 'c']);
+    console.assert(hasAnyProperties(obj, 'a') === false);
+    console.assert(hasAnyProperties(obj, 'd') === false);
+    console.assert(hasAnyProperties(obj, ['a', 'd']) == false);
+});
+
+
+function hasAllPropertiesWithSameValue(obj, props = {})
+{
+    var keys = Object.keys(props);
+
+    for (var i = 0; i < keys.length; i++) {
+        if(obj[keys[i]] != props[keys[i]])
+            return false;
+    }
+
+    return true;
+}
+
+
+runUnittest(function(){
+    let obj = {a:1, b:2, c:3};
+
+    console.assert(hasAllPropertiesWithSameValue(obj, {a:1}) === true);
+    console.assert(hasAllPropertiesWithSameValue(obj, {a:2}) === false);
+    console.assert(hasAllPropertiesWithSameValue(obj, {d:1}) === false);
+    console.assert(hasAllPropertiesWithSameValue(obj, {a:1,b:2}) == true);
+    console.assert(hasAllPropertiesWithSameValue(obj, {a:1,b:3}) == false);
+
+    obj = deleteProperties(obj, ['a', 'c']);
+    console.assert(hasAllPropertiesWithSameValue(obj, {a:1}) === false);
+    console.assert(hasAllPropertiesWithSameValue(obj, {d:1}) === false);
+});
+
+
+function hasAnyPropertiesWithSameValue(obj, props = {})
+{
+    var keys = Object.keys(props);
+
+    for (var i = 0; i < keys.length; i++) {
+        if(obj[keys[i]] == props[keys[i]])
+            return true;
+    }
+
+    return false;
+}
+
+runUnittest(function(){
+    let obj = {a:1, b:2, c:3};
+
+    console.assert(hasAnyPropertiesWithSameValue(obj, {a:1}) === true);
+    console.assert(hasAnyPropertiesWithSameValue(obj, {a:2}) === false);
+    console.assert(hasAnyPropertiesWithSameValue(obj, {d:1}) === false);
+    console.assert(hasAnyPropertiesWithSameValue(obj, {a:1,b:2}) == true);
+    console.assert(hasAnyPropertiesWithSameValue(obj, {a:1,b:3}) == true);
+
+    obj = deleteProperties(obj, ['a', 'c']);
+    console.assert(hasAnyPropertiesWithSameValue(obj, {a:1}) === false);
+    console.assert(hasAnyPropertiesWithSameValue(obj, {d:1}) === false);
+});
