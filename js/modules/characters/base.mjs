@@ -9,12 +9,17 @@ export class CharacterData
         Anemo, Cryo, Dendro, Electro, Geo, Hydro, Pyro
         */
         this.elem = elem;
+        console.assert(this.elem == "Anemo" || this.elem == "Cryo" || this.elem == "Dendro"
+                    || this.elem == "Electro" || this.elem == "Geo" || this.elem == "Hydro"
+                    || this.elem == "Pyro" );
 
         /*
         Sword, Claymore, Polearm, Catalyst, Bow
         */
         this.weaponType = weaponType;
-        
+        console.assert(this.weaponType == "Sword" || this.weaponType == "Claymore" || this.weaponType == "Polearm"
+                    || this.weaponType == "Catalyst" || this.weaponType == "Bow");
+
         this.baseAtk = bAtk;
         this.rateAtk = 0;
         this.baseDef = bDef;
