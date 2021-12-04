@@ -188,7 +188,7 @@ $(function(){
     calc.baseCrtRate = Calc.VGData.constant(0.311);
 
     let hutao = (new Data.HuTao()).newViewModel();
-    hutao.useSkill(true);
+    // hutao.useSkill(true);
     hutao.lowHP(true);
     hutao.useC6Effect(false);
     hutao.constell(0);
@@ -216,7 +216,7 @@ $(function(){
         calc.artRecharge.value = x[5];
         calc.artMastery.value = x[6];
 
-        return calc.calculateDmg(2.565, {isPyro: true}).mul(0.5).mul(0.9);
+        return calc.calculateDmg(2.565, {isPyro: true, isNowHuTaoSkill: true, isNormal: true}).mul(0.5).mul(0.9);
     }
 
 
