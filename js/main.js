@@ -173,11 +173,17 @@ function processTasksOnIdle(tasks, onFinish)
 
 
 
+function shallowDup(obj)
+{
+    return Object.assign({}, obj);
+}
+
+
+
 function deleteProperties(obj, props = [])
 {
     if(!Array.isArray(props))
         props = [props];
-
 
     props.forEach(e => {
         delete obj[e];
