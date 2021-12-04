@@ -629,11 +629,30 @@ export class DamageCalculator
 
         var dmgbuff = this.calculateTotalDmgBuff(attackProps);
 
-        var dmg = this.atk(attackProps).mul(dmgScale)
+        let dmg = this.atk(attackProps).mul(dmgScale).add(this.increaseDamage(attackProps))
                 .mul(this.crtRate(attackProps).min_number(1).max_number(0).mul(this.crtDmg(attackProps)).add(1))
                 .mul(dmgbuff.add(1));
         
-        return dmg.mul(this.calculateVaporizeMeltBonus(attackProps));
+        dmg = dmg.mul(this.calculateVaporizeMeltBonus(attackProps));
+
+        if(hasAllPropertiesWithSameValue(attackProps, {isChainable: false})) {
+            // 追撃が発生しない
+            return dmg;
+        } else {
+            return dmg.add(this.chainedAttackDmg(attackProps));
+        }
+    }
+
+
+    // シナバースビンドルなどの，そもそものダメージを増加させる効果
+    increaseDamage(attackProps) {
+        return VGData.zero();
+    }
+
+    // 古華・試作など，一定の条件での追撃
+    // attackPropsがisChainable: falseでは発火しない
+    chainedAttackDmg(attackProps) {
+        return VGData.zero();
     }
 
 
@@ -755,4 +774,23 @@ export class DamageCalculator
     {
         return (charLvl + 100)/((enemyLvl + 100) + charLvl + 100);
     }
+}
+
+
+export function deleteAllElementFromAttackProps(props)
+{
+    const elmnt = ["isAnemo", "isGeo", "isElectro", "isPyro", "isHydro", "isCryo", "isDendro", "isPhysical"];
+    const react = ["isVaporize", "isMelt", "isSuperconduct", "isSwirl", "isElectroCharged", "isShattered", "isOverloaded"];
+
+    props = deleteProperties(shallowDup(props), elmnt);
+    props = deleteProperties(props, react);
+    return props;
+}
+
+
+export function deleteAllAttackTypeFromAttackProps(props)
+{
+    const types = ["isNormal", "isCharged", "isPlunge", "isSkill", "isBurst"];
+
+    return deleteProperties(shallowDup(props), types);
 }
