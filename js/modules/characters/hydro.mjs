@@ -10,7 +10,7 @@ export class Tartaglia extends Base.CharacterData
         super(
             "noelle",
             "タルタリヤ",
-            4,
+            5,
             "Hydro",
             "Bow",
             301,        /* bAtk */
