@@ -15,10 +15,17 @@ import * as Sword from '/js/modules/weapons/sword.mjs';
 
 
 export const weapons = [
+    // 弓, 星5
     new Bow.SkywardHarp(),
+    // 弓, 星4
+    new Bow.Rust(),
+    // 両手剣, 星4
     new Claymore.Whiteblind(),
     new Claymore.PrototypeArchaic(),
+    // 長柄武器, 星5
     new Polearm.StaffOfHoma(),
+    // 長柄武器, 星4
     new Polearm.DragonsBane(),
+    // 片手剣, 星5
     new Sword.PrimordialJadeCutter(),
 ];

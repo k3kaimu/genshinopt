@@ -107,3 +107,52 @@ export class SkywardHarpViewModel extends Base.WeaponViewModel
         this.perAttack(obj.perAttack);
     }
 }
+
+
+
+// 弓蔵
+export class Rust extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "rust",
+            "弓蔵",
+            4,
+            "Bow",
+            510,
+            "rateAtk",
+            0.413
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new RustViewModel(this);
+    }
+
+
+    static addNormalDmg = [0.4, 0.5, 0.6, 0.7, 0.8];
+}
+
+
+// 弓蔵
+export class RustViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseNormalDmg.value += Rust.addNormalDmg[this.rank()];
+        calc.baseChargedDmg.value -= 0.1;
+
+        return calc;
+    }
+}
