@@ -1,6 +1,3 @@
-import { checkBoxViewHTML } from '../widget.mjs';
-import { selectViewHTML } from '../widget.mjs';
-import { buildViewHTML } from '../widget.mjs';
 import * as Base from '/js/modules/characters/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
 
