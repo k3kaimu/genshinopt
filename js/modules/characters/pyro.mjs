@@ -1,4 +1,7 @@
+import { checkBoxViewHTML } from '../widget.mjs';
+import { buildViewHTML } from '../widget.mjs';
 import * as Base from '/js/modules/characters/base.mjs';
+import * as Widget from '/js/modules/widget.mjs';
 
 
 export class PyroCharacterViewModel extends Base.CharacterViewModel
@@ -252,40 +255,11 @@ export class HuTaoViewModel extends PyroCharacterViewModel
         let ret = super.viewHTMLList(target);
 
         ret.push(
-            `
-            <div class="card">
-                <div class="card-header p-2">血のかまど</div>
-                <div class="card-body p-2">
-                    <div class="form-group m-0">
-                        <div class="form-check" data-bind="with: ` + target + `">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" data-bind="checked: lowHP" checked>
-                                +33%炎ダメージ
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            `
+            Widget.buildViewHTML(target, "血のかまど", Widget.checkBoxViewHTML("lowHP", "+33%炎ダメージ"))
         );
         
         if(this.constell() >= 6) {
-            ret.push(`
-            <div class="card" data-bind="with: ` + target + `">
-                <div class="card-header p-2">冥蝶の抱擁（6凸効果）</div>
-                    <div class="card-body p-2">
-                        <div class="form-group m-0">
-                            <div class="form-check">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" type="checkbox" data-bind="checked: useC6Effect" checked>
-                                    会心率+100%
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            `);
+            ret.push(Widget.buildViewHTML(target, "冥蝶の抱擁（6凸効果）", Widget.checkBoxViewHTML("useC6Effect", "会心率+100%")));
         }
 
         return ret;
