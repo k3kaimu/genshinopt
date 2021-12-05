@@ -20,6 +20,8 @@ export function buildViewHTMLImpl(target, title, innerHTML)
 
 export function buildBindAttr(bindAttr)
 {
+    if(bindAttr == undefined)   return "";
+
     let dst = "";
     let keys = Object.keys(bindAttr);
 
@@ -48,12 +50,12 @@ export function spanPercentageFix(expr, digit)
 }
 
 
-export function checkBoxViewHTML(observableStr, labelHTML)
+export function checkBoxViewHTML(observableStr, labelHTML, otherBindAttr = undefined)
 {
     return `<div class="form-group m-0">
         <div class="form-check">
             <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" data-bind="checked: ${observableStr}">
+                <input class="form-check-input" type="checkbox" data-bind="checked: ${observableStr}, ${buildBindAttr(otherBindAttr)}">
                 ${labelHTML}
             </label>
         </div>
@@ -61,7 +63,7 @@ export function checkBoxViewHTML(observableStr, labelHTML)
 }
 
 
-export function sliderViewHTML(observableStr, min, max, step, labelHTML, otherBindAttr)
+export function sliderViewHTML(observableStr, min, max, step, labelHTML, otherBindAttr = undefined)
 {
     return `<div class="form-group row m-0">
         <label class="col-sm-5 col-form-label">${labelHTML}</label>
@@ -72,7 +74,7 @@ export function sliderViewHTML(observableStr, min, max, step, labelHTML, otherBi
 }
 
 
-export function selectViewHTML(observableStr, options, labelHTML = undefined)
+export function selectViewHTML(observableStr, options, labelHTML = undefined, otherBindAttr = undefined)
 {
     let ops = "";
     for(let i = 0; i < options.length; ++i) {
@@ -89,7 +91,7 @@ export function selectViewHTML(observableStr, options, labelHTML = undefined)
         return `<div class="form-group row m-0">
             <label class="col-5 mt-2">${labelHTML}</label>
             <div class="col-7">
-            <select class="form-control" data-bind="value: ${observableStr}">
+            <select class="form-control" data-bind="value: ${observableStr}, ${buildBindAttr(otherBindAttr)}">
                 ${ops}
             </select>
             </div>
@@ -98,7 +100,7 @@ export function selectViewHTML(observableStr, options, labelHTML = undefined)
 }
 
 
-export function radioViewHTML(observableStr, options)
+export function radioViewHTML(observableStr, options, otherBindAttr = undefined)
 {
     let uid = genUniqueId();
 
@@ -106,7 +108,7 @@ export function radioViewHTML(observableStr, options)
     for(let i = 0; i < options.length; ++i) {
         inputs += `<div class="form-check">
             <label class="form-check-label">
-                <input class="form-check-input" type="radio" name="radio_generated_${uid}" value="${options[i].value}" data-bind="checked: ${observableStr}">
+                <input class="form-check-input" type="radio" name="radio_generated_${uid}" value="${options[i].value}" data-bind="checked: ${observableStr}, ${buildBindAttr(otherBindAttr)}">
                 ${options[i].label}
             </label>
         </div>`;
