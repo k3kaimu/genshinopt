@@ -1,4 +1,3 @@
-import { checkBoxViewHTML } from '../widget.mjs';
 import * as Calc from '/js/modules/dmg-calc.mjs';
 import * as Base from '/js/modules/weapons/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
@@ -192,6 +191,7 @@ export class PrototypeArchaicViewModel extends Base.WeaponViewModel
     toJS() {
         let obj = super.toJS();
         obj.perAttack = this.perAttack();
+        obj.useEffect = this.useEffect();
 
         return obj;
     }
@@ -200,5 +200,6 @@ export class PrototypeArchaicViewModel extends Base.WeaponViewModel
     fromJS(obj) {
         super.fromJS(obj);
         this.perAttack(obj.perAttack);
+        this.useEffect(obj.useEffect);
     }
 }
