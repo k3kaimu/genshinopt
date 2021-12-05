@@ -532,13 +532,13 @@ export class DamageCalculator
 
         dst.baseRateShieldStrength = this.baseRateShieldStrength.dup();
 
-        this.artRateAtk = VGData.newRateAtk(0);
-        this.artRateDef = VGData.newRateDef(0);
-        this.artRateHP = VGData.newRateHP(0);
-        this.artCrtRate = VGData.newCrtRate(0);
-        this.artCrtDmg = VGData.newCrtDmg(0);
-        this.artRecharge = VGData.newRecharge(0);
-        this.artMastery = VGData.newMastery(0);
+        dst.artRateAtk = this.artRateAtk.dup();
+        dst.artRateDef = this.artRateDef.dup();
+        dst.artRateHP = this.artRateHP.dup();
+        dst.artCrtRate = this.artCrtRate.dup();
+        dst.artCrtDmg = this.artCrtDmg.dup();
+        dst.artRecharge = this.artRecharge.dup();
+        dst.artMastery = this.artMastery.dup();
 
         return dst;
     }
@@ -618,10 +618,10 @@ export class DamageCalculator
 
         if(hasAllPropertiesWithSameValue(attackProps, {isChainable: false})) {
             // 追撃が発生しない
-            return dmg.mul(0.5).mul(0.9);
+            return dmg;
         } else {
             // 追撃の計算
-            return dmg.add(this.chainedAttackDmg(attackProps)).mul(0.5).mul(0.9);
+            return dmg.add(this.chainedAttackDmg(attackProps));
         }
     }
 
@@ -643,11 +643,12 @@ export class DamageCalculator
 
         var masteryBonus = this.mastery().mul(16).div(this.mastery().add(2000));
 
-        return coef.mul(masteryBonus.add(1).add(bonus));
+        return coef.mul(masteryBonus.add(1).add(bonus)).mul(0.5).mul(0.9);
     }
 
 
     // 一般のダメージ計算（蒸発・融解のボーナスを含む）
+    // このメソッドのオーバーライドは非推奨
     calculateNormalDmg(dmgScale, attackProps) {
         if(attackProps == undefined)
             attackProps = {};
@@ -658,7 +659,7 @@ export class DamageCalculator
                 .mul(this.crtRate(attackProps).min_number(1).max_number(0).mul(this.crtDmg(attackProps)).add(1))
                 .mul(dmgbuff.add(1));
         
-        return dmg.mul(this.calculateVaporizeMeltBonus(attackProps));
+        return dmg.mul(this.calculateVaporizeMeltBonus(attackProps)).mul(0.5).mul(0.9);
     }
 
 
@@ -669,7 +670,8 @@ export class DamageCalculator
 
     // 古華・試作など，一定の条件での追撃
     // attackPropsがisChainable: falseでは発火しない
-    chainedAttackDmg(attackProps) {
+    // parentAttackPropsは追撃の発生元となった攻撃のattackProps
+    chainedAttackDmg(parentAttackProps) {
         return VGData.zero();
     }
 
