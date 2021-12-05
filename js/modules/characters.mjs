@@ -19,9 +19,10 @@ import * as Pyro from '/js/modules/characters/pyro.mjs';
 
 export const characters = [
     new Anemo.TravelerAnemo(),
+    new Electro.TravelerElectro(),
     new Geo.TravelerGeo(),
     new Geo.Noelle(),
-    new Electro.TravelerElectro(),
+    new Hydro.Tartaglia(),
     new Pyro.HuTao(),
 ];
 
