@@ -1,3 +1,5 @@
+import * as Widget from '/js/modules/widget.mjs';
+
 
 export class ArtifactData
 {
@@ -220,23 +222,14 @@ export class CrimsonWitchOfFlamesViewModel extends ArtifactViewModel
 
         if(this.bonusType == '4') {
             list.push(
-                `
-                <div class="card">
-                    <div class="card-header p-2">火魔女：炎ダメバフ</div>
-                    <div class="card-body p-2">
-                        <div class="form-group m-0">
-                            <div class="form-check" data-bind="with: ` + target + `">
-                                <select class="custom-select" aria-label="バフ効果量" data-bind="value: buffStacks">
-                                    <option value="0">+15.0%</option>
-                                    <option value="1">+22.5%</option>
-                                    <option value="2">+30.0%</option>
-                                    <option value="3">+37.5%</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `);
+                Widget.buildViewHTML(target, "炎ダメバフ",
+                    Widget.selectViewHTML("buffStacks", [
+                        {value: 0, label: "+15.0%"},
+                        {value: 1, label: "+22.5%"},
+                        {value: 2, label: "+30.0%"},
+                        {value: 3, label: "+37.5%"},
+                    ]))
+                );
         }
 
         return list;
@@ -309,21 +302,9 @@ export class RetracingBolideViewModel extends ArtifactViewModel
 
         if(this.bonusType == '4') {
             list.push(
-                `
-                <div class="card">
-                    <div class="card-header p-2">逆飛び：ダメバフ</div>
-                    <div class="card-body p-2">
-                        <div class="form-group m-0">
-                            <div class="form-check" data-bind="with: ` + target + `">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" type="checkbox" data-bind="checked: useEffect4" checked>
-                                    通常・重撃+40%ダメバフ
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `);
+                Widget.buildViewHTML(target, "ダメバフ", 
+                    Widget.checkBoxViewHTML("useEffect4", "通常・重撃+40%ダメバフ")
+                ));
         }
 
         return list;
@@ -396,22 +377,9 @@ export class ShimenawaReminiscenceViewModel extends ArtifactViewModel
         var list = [];
 
         if(this.bonusType == '4') {
-            list.push(
-                `
-                <div class="card">
-                    <div class="card-header p-2">しめ縄：ダメバフ</div>
-                    <div class="card-body p-2">
-                        <div class="form-group m-0">
-                            <div class="form-check" data-bind="with: ` + target + `">
-                                <label class="form-check-label">
-                                    <input class="form-check-input" type="checkbox" data-bind="checked: buffEffect" checked>
-                                    通常・重撃・落下+50%ダメバフ（元素エネ15消費）
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                `);
+            list.push(Widget.buildViewHTML(target, "ダメバフ（元素エネ15消費）",
+                    Widget.checkBoxViewHTML("buffEffect", "通常・重撃・落下+50%ダメバフ")
+                ));
         }
 
         return list;
