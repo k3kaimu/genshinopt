@@ -43,24 +43,39 @@ export class PyroCharacterViewModel extends Base.CharacterViewModel
     }
 
 
-    calculate(calc, dmgScale, attackProps)
+    applyDmgCalc(calc)
     {
-        if(attackProps.isPyro || false) {
-            let newProps = Object.assign({}, attackProps);
+        calc = super.applyDmgCalc(calc);
 
-            // 元素反応なし
-            let dmg1 = super.calculate(calc, dmgScale, newProps);
+        let prob = Number(this.reactionProb());
+        let type = this.reactionType();
 
-            newProps[this.reactionType()] = true;
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let NewCalc = class extends CalcType {
+            reactionProb = prob;
+            reactionType = type;
 
-            // 元素反応あり
-            let dmg2 = super.calculate(calc, dmgScale, newProps);
+            calculate(dmgScale, attackProps) {
+                if(attackProps.isPyro || false) {
+                    let newProps = Object.assign({}, attackProps);
+        
+                    // 元素反応なし
+                    let dmg1 = super.calculate(dmgScale, newProps);
 
-            return dmg1.mul(1 - Number(this.reactionProb())).add(dmg2.mul(Number(this.reactionProb())));
-        } else {
-            // 攻撃が炎ではないので，元素反応なし
-            return super.calculate(calc, dmgScale, attackProps);
-        }
+                    // 元素反応あり
+                    newProps[this.reactionType] = true;
+                    let dmg2 = super.calculate(dmgScale, newProps);
+        
+                    return dmg1.mul(1 - this.reactionProb).add(dmg2.mul(this.reactionProb));
+                } else {
+                    // 攻撃が炎ではないので，元素反応なし
+                    return super.calculate(dmgScale, attackProps);
+                }
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+        return calc;
     }
 
 

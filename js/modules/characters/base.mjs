@@ -109,13 +109,6 @@ export class CharacterViewModel
     }
 
 
-    calculate(calc, dmgScale, attackProps)
-    {
-        return calc.calculateDmg(dmgScale, attackProps).mul(0.5).mul(0.9);
-    }
-
-
-
     // typeof(return): string[]
     viewHTMLList(target){
         return [];

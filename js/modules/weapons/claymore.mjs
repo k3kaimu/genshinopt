@@ -156,7 +156,7 @@ export class PrototypeArchaicViewModel extends Base.WeaponViewModel
 
                     newProps.isPhysical = true;   // 物理攻撃
                     newProps.isChainable = false; // この攻撃では追撃は発生しない
-                    return superValue.add(super.calculateDmg(this.scaleOfPrototypeArchaic, newProps).div(this.perAttackOfPrototypeArchaic));
+                    return superValue.add(super.calculateNormalDmg(this.scaleOfPrototypeArchaic, newProps).div(this.perAttackOfPrototypeArchaic));
                 } else {
                     // 通常攻撃でも重撃でもないので，追撃は発生しない
                     return superValue;

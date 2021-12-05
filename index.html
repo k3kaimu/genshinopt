@@ -422,7 +422,7 @@ title: ダメージ期待値比較ツール
                     <tr>
                       <th scope="row">ダメージ期待値</th>
                       <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                      <td class="text-right" data-bind="text: textInteger(optres.setting.character.calculate(optres.calc, attackType.dmgScale(optres.setting.character), attackType.attackProps).value)"></td>
+                      <td class="text-right" data-bind="text: textInteger(optres.calc.calculate(attackType.dmgScale(optres.setting.character), attackType.attackProps).value)"></td>
                       <!-- /ko -->
                     </tr>
                     <tr>

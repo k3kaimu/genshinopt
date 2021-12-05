@@ -601,6 +601,31 @@ export class DamageCalculator
     }
 
 
+    calculate(dmgScale, attackProps)
+    {
+        let dmg = undefined;
+
+        if(hasAnyPropertiesWithSameValue(attackProps, {
+            isSuperconduct: true, isSwirl: true, isElectroCharged: true,
+            isShattered: true, isOverloaded: true
+        })) {
+            // 溶解・蒸発以外の元素反応ダメージ
+            dmg = this.calculateElementalReactionDmg(attackProps).mul(0.5).mul(0.9);
+        } else {
+            // 一般のダメージ計算と溶解・蒸発の元素反応ダメージ
+            dmg = this.calculateNormalDmg(dmgScale, attackProps).mul(0.5).mul(0.9);
+        }
+
+        if(hasAllPropertiesWithSameValue(attackProps, {isChainable: false})) {
+            // 追撃が発生しない
+            return dmg;
+        } else {
+            // 追撃の計算
+            return dmg.add(this.chainedAttackDmg(attackProps));
+        }
+    }
+
+
     // 蒸発・融解以外の元素反応のダメージ計算
     calculateElementalReactionDmg(attackProps)
     {
@@ -623,7 +648,7 @@ export class DamageCalculator
 
 
     // 一般のダメージ計算（蒸発・融解のボーナスを含む）
-    calculateDmg(dmgScale, attackProps) {
+    calculateNormalDmg(dmgScale, attackProps) {
         if(attackProps == undefined)
             attackProps = {};
 
@@ -633,14 +658,7 @@ export class DamageCalculator
                 .mul(this.crtRate(attackProps).min_number(1).max_number(0).mul(this.crtDmg(attackProps)).add(1))
                 .mul(dmgbuff.add(1));
         
-        dmg = dmg.mul(this.calculateVaporizeMeltBonus(attackProps));
-
-        if(hasAllPropertiesWithSameValue(attackProps, {isChainable: false})) {
-            // 追撃が発生しない
-            return dmg;
-        } else {
-            return dmg.add(this.chainedAttackDmg(attackProps));
-        }
+        return dmg.mul(this.calculateVaporizeMeltBonus(attackProps));
     }
 
 

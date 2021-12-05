@@ -389,7 +389,7 @@ $(function(){
 
                     function objfunc(x) {
                         setArg(x);
-                        return setting.character.calculate(calc, attackType.dmgScale(setting.character), attackType.attackProps);
+                        return calc.calculate(attackType.dmgScale(setting.character), attackType.attackProps);
                     }
 
                     let x0 = [0, 0, 0, 0, 0, 0, 0];

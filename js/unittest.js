@@ -75,7 +75,7 @@ $(function(){
     calc.baseCrtDmg = calc.baseCrtDmg.add(0.5);
     calc.artCrtDmg.value = 0.33;
 
-    var dmg = calc.calculateDmg(0.817, {}).mul(0.5).mul(0.9);
+    var dmg = calc.calculateNormalDmg(0.817, {}).mul(0.5).mul(0.9);
     console.assert(Math.round(dmg.value) == 714, dmg);
     console.assert(Math.round(calc.atk().value) == 1602, calc.atk());
     console.assert(Math.round(dmg.grad[0]) == 366);
@@ -134,7 +134,7 @@ $(function(){
         calc.artRecharge.value = x[5];
         calc.artMastery.value = x[6];
 
-        return calc.calculateDmg(2.287, {isPyro: true}).mul(0.5).mul(0.9);
+        return calc.calculateNormalDmg(2.287, {isPyro: true}).mul(0.5).mul(0.9);
     }
 
 
@@ -216,7 +216,7 @@ $(function(){
         calc.artRecharge.value = x[5];
         calc.artMastery.value = x[6];
 
-        return calc.calculateDmg(2.565, {isPyro: true, isNowHuTaoSkill: true, isNormal: true}).mul(0.5).mul(0.9);
+        return calc.calculateNormalDmg(2.565, {isPyro: true, isNowHuTaoSkill: true, isNormal: true}).mul(0.5).mul(0.9);
     }
 
 
