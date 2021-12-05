@@ -88,7 +88,7 @@ export class WhiteblindViewModel extends Base.WeaponViewModel
 }
 
 
-
+// 古華・試作
 export class PrototypeArchaic extends Base.WeaponData
 {
     constructor()
