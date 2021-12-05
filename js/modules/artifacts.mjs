@@ -326,7 +326,7 @@ export class RetracingBolideViewModel extends ArtifactViewModel
 }
 
 
-//
+// 氷風を彷徨う勇士
 export class BlizzardStrayer extends ArtifactData
 {
     constructor()
@@ -346,6 +346,7 @@ export class BlizzardStrayer extends ArtifactData
 }
 
 
+// 氷風を彷徨う勇士
 export class BlizzardStrayerViewModel extends ArtifactViewModel
 {
     constructor(parent, type)
