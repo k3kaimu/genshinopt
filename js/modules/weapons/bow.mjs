@@ -61,19 +61,14 @@ export class SkywardHarpViewModel extends Base.WeaponViewModel
             chainedAttackDmg(attackProps) {
                 let superValue = super.chainedAttackDmg(attackProps);
 
-                if(hasAnyPropertiesWithSameValue(attackProps, {isNormal: true, isCharged: true})) {
-                    let newProps = shallowDup(attackProps);
-                    // 元々の攻撃の属性や攻撃種類を削除する
-                    newProps = Calc.deleteAllElementFromAttackProps(attackProps);
-                    newProps = Calc.deleteAllAttackTypeFromAttackProps(attackProps);
+                let newProps = shallowDup(attackProps);
+                // 元々の攻撃の属性や攻撃種類を削除する
+                newProps = Calc.deleteAllElementFromAttackProps(attackProps);
+                newProps = Calc.deleteAllAttackTypeFromAttackProps(attackProps);
 
-                    newProps.isPhysical = true;   // 物理攻撃
-                    newProps.isChainable = false; // この攻撃では追撃は発生しない
-                    return superValue.add(super.calculateNormalDmg(1.25, newProps).div(this.perAttackOfSkywardHarp));
-                } else {
-                    // 通常攻撃でも重撃でもないので，追撃は発生しない
-                    return superValue;
-                }
+                newProps.isPhysical = true;   // 物理攻撃
+                newProps.isChainable = false; // この攻撃では追撃は発生しない
+                return superValue.add(super.calculateNormalDmg(1.25, newProps).div(this.perAttackOfSkywardHarp));
             }
         };
 
