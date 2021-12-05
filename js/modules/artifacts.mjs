@@ -406,6 +406,80 @@ export class BlizzardStrayerViewModel extends ArtifactViewModel
 }
 
 
+// 沈淪の心
+export class HeartOfDepth extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            "heart_of_depth",
+            "沈淪の心",
+            "沈淪"
+        );
+    }
+
+
+    newViewModel(type)
+    {
+        return new HeartOfDepthViewModel(this, type);
+    }
+}
+
+
+// 沈淪の心
+export class HeartOfDepthViewModel extends ArtifactViewModel
+{
+    constructor(parent, bonusType)
+    {
+        super(parent, bonusType);
+        this.buffEffect = ko.observable(true);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseHydroDmg.value += 0.15;
+
+        if(this.bonusType == '4' && this.buffEffect()) {
+            calc.baseNormalDmg.value += 0.3;
+            calc.baseChargedDmg.value += 0.3;
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        var list = [];
+
+        if(this.bonusType == '4') {
+            list.push(Widget.buildViewHTML(target, "ダメバフ（元素スキル後）",
+                    Widget.checkBoxViewHTML("buffEffect", "通常・重撃+30%")
+                ));
+        }
+
+        return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.buffEffect = this.buffEffect();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.buffEffect(obj.buffEffect);
+    }
+}
+
+
 // 追憶のしめ縄
 export class ShimenawaReminiscence extends ArtifactData
 {
@@ -487,6 +561,7 @@ export const artifacts = [
     new CrimsonWitchOfFlames(),
     new RetracingBolide(),
     new BlizzardStrayer(),
+    new HeartOfDepth(),
     new ShimenawaReminiscence(),
 ];
 
