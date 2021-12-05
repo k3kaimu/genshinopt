@@ -442,7 +442,7 @@ export class ShimenawaReminiscenceViewModel extends ArtifactViewModel
 
         calc.rateAtk.value += 0.18;
 
-        if(this.bonusType == '4') {
+        if(this.bonusType == '4' && this.buffEffect()) {
             calc.baseNormalDmg.value += 0.5;
             calc.baseChargedDmg.value += 0.5;
             calc.basePlungeDmg.value += 0.5;
