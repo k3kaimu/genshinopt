@@ -1,4 +1,5 @@
-import * as Base from '/js/modules/weapons/base.mjs'
+import * as Base from '/js/modules/weapons/base.mjs';
+import * as Widget from '/js/modules/widget.mjs';
 
 
 // 匣中滅龍
@@ -59,21 +60,10 @@ export class DragonsBaneViewModel extends Base.WeaponViewModel
         let dst = super.viewHTMLList(target);
 
         dst.push(
-            `
-            <div class="card">
-                <div class="card-header p-2">炎と水の破滅</div>
-                <div class="card-body p-2">
-                    <div class="form-group m-0">
-                        <div class="form-check" data-bind="with: ` + target + `">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" data-bind="checked: useEffect" checked>
-                                水/炎の影響を受けた敵へのダメージ+<span data-bind="text: textDmgBuff()"></span>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            `
+            Widget.buildViewHTML(target, "炎と水の破滅",
+                Widget.checkBoxViewHTML("useEffect", 
+                    `水/炎の影響を受けた敵へのダメージ+` + Widget.spanText("textDmgBuff()") )
+            )
         );
 
         return dst;
@@ -171,27 +161,12 @@ export class StaffOfHomaViewModel extends Base.WeaponViewModel
         var uid = genUniqueId();
 
         dst.push(
-            `
-            <div class="card">
-                <div class="card-header p-2">攻撃力上昇効果</div>
-                <div class="card-body p-2">
-                <div class="form-group" data-bind="with: `+target+`">
-                    <div class="form-check">
-                    <label class="form-check-label">
-                        <input class="form-check-input" type="radio" name="`+target+uid+`" value="highHP" data-bind="checked: selLowHighHP">
-                        HP上限の<span data-bind="text: textHPtoAtkh()"></span>分攻撃力上昇
-                    </label>
-                    </div>
-                    <div class="form-check">
-                    <label class="form-check-label">
-                        <input class="form-check-input" type="radio" name="`+target+uid+`" value="lowHP" data-bind="checked: selLowHighHP">
-                        HP上限の<span data-bind="text: textHPtoAtkl()"></span>分攻撃力上昇
-                    </label>
-                    </div>
-                </div>
-                </div>
-            </div>
-            `
+            Widget.buildViewHTML(target, "攻撃力上昇効果",
+                Widget.radioViewHTML("selLowHighHP", [
+                    {value: "highHP", label: `HP上限の${Widget.spanText("textHPtoAtkh()")}分攻撃力上昇`},
+                    {value: "lowHP", label: `HP上限の${Widget.spanText("textHPtoAtkl()")}分攻撃力上昇`},
+                ])
+            )
         );
 
         return dst;

@@ -1,5 +1,7 @@
-import * as Calc from '/js/modules/dmg-calc.mjs'
-import * as Base from '/js/modules/weapons/base.mjs'
+import { checkBoxViewHTML } from '../widget.mjs';
+import * as Calc from '/js/modules/dmg-calc.mjs';
+import * as Base from '/js/modules/weapons/base.mjs';
+import * as Widget from '/js/modules/widget.mjs';
 
 
 // 白影の剣
@@ -48,29 +50,24 @@ export class WhiteblindViewModel extends Base.WeaponViewModel
     }
 
 
-    textbuffInc() { return Whiteblind.buffInc[this.rank()]; }
+    getBuffInc() { return Whiteblind.buffInc[this.rank()]; }
 
 
     viewHTMLList(target)
     {
         let dst = super.viewHTMLList(target);
 
-        dst.push(`
-        <div class="card" data-bind="with: ${target}">
-            <div class="card-header p-2">攻撃力/防御力+<span data-bind="text: textPercentageFix(textbuffInc(), 1)"></span>/スタック</div>
-            <div class="card-body p-2">
-                <div class="form-group m-0">
-                    <select class="custom-select" data-bind="value: buffStacks">
-                        <option value="0">0スタック</option>
-                        <option value="1">1スタック</option>
-                        <option value="2">2スタック</option>
-                        <option value="3">3スタック</option>
-                        <option selected value="4">4スタック</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-        `);
+        dst.push(
+            Widget.buildViewHTML(target, `攻撃力/防御力+${Widget.spanPercentageFix("getBuffInc()", 1)}/スタック`,
+                Widget.selectViewHTML("buffStacks", [
+                    {value: 0, label: "0スタック"},
+                    {value: 1, label: "1スタック"},
+                    {value: 2, label: "2スタック"},
+                    {value: 3, label: "3スタック"},
+                    {value: 4, label: "4スタック"},
+                ])
+            ) 
+        );
 
         return dst;
     }
@@ -179,25 +176,14 @@ export class PrototypeArchaicViewModel extends Base.WeaponViewModel
     {
         let dst = super.viewHTMLList(target);
 
-        dst.push(`
-        <div class="card" data-bind="with: ${target}">
-            <div class="card-header p-2">通常/重撃時：追加ダメージ</div>
-            <div class="card-body p-2">
-                <div class="form-check" data-bind="with: ` + target + `">
-                    <label class="form-check-label">
-                        <input class="form-check-input" type="checkbox" data-bind="checked: useEffect">
-                        <span data-bind="text: perAttack"></span>回に1回<span data-bind="text: addAttackPercentageText()"></span>物理ダメージ
-                    </label>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-5 col-form-label">発生頻度</label>
-                    <div class="col-sm-7 mt-sm-2">
-                    <input type="range" data-bind="value: perAttack, disable: !useEffect()" class="form-control-range" min="1" max="20" step="1">
-                    </div>
-                </div>
-            </div>
-        </div>
-        `);
+        dst.push(
+            Widget.buildViewHTML(target, "通常/重撃時：追加ダメージ",
+                Widget.checkBoxViewHTML("useEffect",
+                    `${Widget.spanText("perAttack()")}回に1回${Widget.spanText("addAttackPercentageText()")}物理ダメージ`)
+                +
+                Widget.sliderViewHTML("perAttack", 1, 20, 1, `発生頻度`, {disable: "!useEffect()"})
+            )
+        );
 
         return dst;
     }

@@ -1,4 +1,5 @@
 import { checkBoxViewHTML } from '../widget.mjs';
+import { selectViewHTML } from '../widget.mjs';
 import { buildViewHTML } from '../widget.mjs';
 import * as Base from '/js/modules/characters/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
@@ -18,28 +19,15 @@ export class PyroCharacterViewModel extends Base.CharacterViewModel
         let dst = super.viewHTMLList(target);
 
         dst.push(
-            `
-            <div class="card" data-bind="with: `+ target +`">
-            <div class="card-header p-2">蒸発/溶解</div>
-            <div class="card-body p-2">
-                <div class="form-group row">
-                    <label class="col-5 mt-2">元素反応</label>
-                    <div class="col-7">
-                    <select class="form-control" data-bind="value: reactionType">
-                        <option value="isVaporize">蒸発</option>
-                        <option value="isMelt">溶解</option>
-                    </select>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label class="col-sm-5 col-form-label">反応確率：<span data-bind="text: textPercentage(reactionProb() ,2)"></span></label>
-                    <div class="col-sm-7 mt-sm-2">
-                    <input type="range" data-bind="value: reactionProb" class="form-control-range" min="0" max="1" step="0.1">
-                    </div>
-                </div>
-            </div>
-            </div>
-            `
+            Widget.buildViewHTML(target, "蒸発/溶解",
+                Widget.selectViewHTML("reactionType", [
+                    {label: "蒸発", value: "isVaporize"},
+                    {label: "溶解", value: "isMelt"}
+                ], "元素反応")
+                +
+                Widget.sliderViewHTML("reactionProb", 0, 1, 0.1,
+                    `反応確率：` + Widget.spanPercentage("reactionProb()", 2))
+            )
         );
 
         return dst;
