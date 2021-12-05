@@ -326,6 +326,85 @@ export class RetracingBolideViewModel extends ArtifactViewModel
 }
 
 
+//
+export class BlizzardStrayer extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            "blizzard_strayer",
+            "氷風を彷徨う勇士",
+            "氷風"
+        );
+    }
+
+
+    newViewModel(type)
+    {
+        return new BlizzardStrayerViewModel(this, type);
+    }
+}
+
+
+export class BlizzardStrayerViewModel extends ArtifactViewModel
+{
+    constructor(parent, type)
+    {
+        super(parent, type);
+        this.addCrtRate = ko.observable(0.2);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseCryoDmg.value += 0.15;
+
+        if(this.bonusType == '4') {
+            calc.baseCrtRate.value += Number(this.addCrtRate());
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        var list = [];
+
+        if(this.bonusType == '4') {
+            list.push(
+                Widget.buildViewHTML(target, "会心率増加", 
+                    Widget.selectViewHTML("addCrtRate", [
+                        {value: 0, label: "+0%"},
+                        {value: 0.2, label: "+20%（氷元素の影響のみ）"},
+                        {value: 0.4, label: "+40%（凍結）"}
+                    ])
+                ));
+        }
+
+        return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.addCrtRate = this.addCrtRate();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.addCrtRate(obj.addCrtRate);
+    }
+
+
+}
+
+
 // 追憶のしめ縄
 export class ShimenawaReminiscence extends ArtifactData
 {
@@ -406,6 +485,7 @@ export const artifacts = [
     new WanderersTroupe(),
     new CrimsonWitchOfFlames(),
     new RetracingBolide(),
+    new BlizzardStrayer(),
     new ShimenawaReminiscence(),
 ];
 
