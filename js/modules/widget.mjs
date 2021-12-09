@@ -44,9 +44,16 @@ export function spanPercentage(expr, digit)
     return `<span data-bind="text: textPercentage(${expr} ,${digit})"></span>`;
 }
 
+
 export function spanPercentageFix(expr, digit)
 {
     return `<span data-bind="text: textPercentageFix(${expr} ,${digit})"></span>`;
+}
+
+
+export function spanInteger(expr)
+{
+    return `<span data-bind="text: textInteger(${expr})"></span>`;
 }
 
 
