@@ -109,6 +109,96 @@ export class SkywardHarpViewModel extends Base.WeaponViewModel
 }
 
 
+
+// 飛雷の鳴弦
+export class ThunderingPulse extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "thundering_pulse",
+            "飛雷の鳴弦",
+            5,
+            "Bow",
+            608,
+            "baseCrtDmg",
+            0.662
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new ThunderingPulseViewModel(this);
+    }
+
+
+    static subSkill = [
+        {atk: 0.20, dmg: [0, 0.120, 0.240, 0.400]},
+        {atk: 0.25, dmg: [0, 0.150, 0.300, 0.500]},
+        {atk: 0.30, dmg: [0, 0.180, 0.360, 0.600]},
+        {atk: 0.35, dmg: [0, 0.210, 0.420, 0.700]},
+        {atk: 0.40, dmg: [0, 0.240, 0.480, 0.800]},
+    ];
+}
+
+
+// 飛雷の鳴弦
+export class ThunderingPulseViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.buffStacks = ko.observable(3);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.rateAtk.value += ThunderingPulse.subSkill[this.rank()].atk;
+        calc.baseNormalDmg.value += ThunderingPulse.subSkill[this.rank()].dmg[this.buffStacks()];
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "飛雷の御執", 
+                Widget.selectViewHTML("buffStacks", [
+                    {value: 0, label: `通常攻撃ダメージ+${textPercentageFix(ThunderingPulse.subSkill[this.rank()].dmg[0], 1)}`},
+                    {value: 1, label: `通常攻撃ダメージ+${textPercentageFix(ThunderingPulse.subSkill[this.rank()].dmg[1], 1)}`},
+                    {value: 2, label: `通常攻撃ダメージ+${textPercentageFix(ThunderingPulse.subSkill[this.rank()].dmg[2], 1)}`},
+                    {value: 3, label: `通常攻撃ダメージ+${textPercentageFix(ThunderingPulse.subSkill[this.rank()].dmg[3], 1)}`},
+                ]))
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.buffStacks = this.buffStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.buffStacks(obj.buffStacks);
+    }
+}
+
+
+
+
 // 冬極の白星
 export class PolarStar extends Base.WeaponData
 {
