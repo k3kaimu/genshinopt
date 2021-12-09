@@ -181,7 +181,7 @@ export class HuTao extends Base.CharacterData
     ];
 }
 
-
+// 胡桃
 export class HuTaoViewModel extends PyroCharacterViewModel
 {
     constructor(ch)
@@ -284,3 +284,227 @@ runUnittest(function(){
     console.assert(vm2.useC6Effect() == true);
     console.assert(vm2.constell() == 6);
 });
+
+
+// 煙緋
+export class Yanfei extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "yanfei",
+            "煙緋",
+            4,
+            "Pyro",
+            "Catalyst",
+            240,            /* bAtk */
+            587,            /* bDef */
+            9352,           /* bHP */
+            "basePyroDmg",  /* bBonusType */
+            0.240           /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new YanfeiViewModel(this);
+    }
+
+
+    static normalTalentTable = [
+        // 0:1段目, 1:2段目, 2:3段目, 3: 重撃                                   4: 落下期間, 5:低空, 6:高空
+        [58/100, 52/100, 76/100, [98/100, 116/100, 133/100, 150/100, 168/100], 56.8/100, 114/100, 142/100],     // lv. 1
+        [63/100, 56/100, 82/100, [104/100, 122/100, 141/100, 159/100, 178/100], 61.5/100, 123/100, 153/100],
+        [67/100, 60/100, 87/100, [110/100, 129/100, 149/100, 168/100, 188/100], 66.1/100, 132/100, 165/100],
+        [73/100, 65/100, 95/100, [118/100, 138/100, 159/100, 180/100, 201/100], 72.7/100, 145/100, 182/100],
+        [77/100, 69/100, 101/100, [124/100, 145/100, 167/100, 189/100, 211/100], 77.3/100, 155/100, 193/100],
+        [82/100, 73/100, 106/100, [129/100, 152/100, 175/100, 198/100, 221/100], 82.6/100, 165/100, 206/100],
+        [88/100, 78/100, 114/100, [137/100, 161/100, 185/100, 210/100, 234/100], 89.9/100, 180/100, 224/100],
+        [93/100, 83/100, 122/100, [145/100, 170/100, 196/100, 221/100, 247/100], 97.1/100, 194/100, 243/100],
+        [99/100, 89/100, 129/100, [152/100, 179/100, 206/100, 233/100, 260/100], 104.4/100, 209/100, 261/100],
+        [105/100, 94/100, 137/100, [160/100, 188/100, 216/100, 245/100, 273/100], 112.3/100, 225/100, 281/100],
+        [111/100, 99/100, 144/100, [168/100, 197/100, 227/100, 256/100, 286/100], 120.3/100, 240/100, 300/100], // lv. 11
+    ];
+
+    //                        lv. 1                                                                     lv. 13
+    static skillTalentTable = [1.70, 1.82, 1.95, 2.12, 2.25, 2.37, 2.54, 2.71, 2.88, 3.05, 3.22, 3.39, 3.60];
+
+    static burstTalentTable = [
+    //  ダメージ, 重撃ダメバフ 
+        [1.82, 0.33],
+        [1.96, 0.35],
+        [2.10, 0.37],
+        [2.28, 0.40],
+        [2.42, 0.42],
+        [2.55, 0.44],
+        [2.74, 0.47],
+        [2.92, 0.49],
+        [3.10, 0.52],
+        [3.28, 0.54],
+        [3.47, 0.57],
+        [3.65, 0.60],
+        [3.88, 0.62],
+    ];
+
+
+    static presetAttacks = [
+        {
+            label: "通常1段目",
+            dmgScale(vm){ return Yanfei.normalTalentTable[vm.normalRank()-1][0] },
+            attackProps: { isNormal: true, isPyro: true }
+        },
+        {
+            label: "重撃（追撃なし）",
+            dmgScale(vm){ return Yanfei.normalTalentTable[vm.normalRank()-1][3][vm.getCountSeals()]; },
+            attackProps: { isCharged: true, isPyro: true, isChainable: false }
+        },
+        {
+            label: "重撃（追撃あり）",
+            dmgScale(vm){ return Yanfei.normalTalentTable[vm.normalRank()-1][3][vm.getCountSeals()]; },
+            attackProps: { isCharged: true, isPyro: true }
+        },
+        {
+            label: "追撃のみ",
+            dmgScale(vm){ return 0; },
+            attackProps: { isCharged: true, isPyro: true }
+        },
+        {
+            label: "スキル",
+            dmgScale(vm){ return Yanfei.skillTalentTable[vm.skillRank()-1] },
+            attackProps: { isPyro: true, isSkill: true }
+        },
+        {
+            label: "爆発",
+            dmgScale(vm){ return Yanfei.burstTalentTable[vm.burstRank()-1][0] },
+            attackProps: { isPyro: true, isBurst: true }
+        }
+    ];
+
+}
+
+
+// 煙緋
+export class YanfeiViewModel extends PyroCharacterViewModel
+{
+    constructor(ch)
+    {
+        super(ch);
+        this.countSeals = ko.observable(4);
+        this.useC2Effect = ko.observable(true);
+        this.useBurstEffect = ko.observable(true);
+    }
+
+
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+
+
+    getCountSeals() {
+        return Math.min(Number(this.countSeals()), this.constell() >= 6 ? 4 : 3);
+    }
+
+
+    getBurstChargedDmgBuff() {
+        return Yanfei.burstTalentTable[this.burstRank()-1][1];
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        if(this.useBurstEffect()) {
+            // 重撃ダメージアップ
+            calc.baseChargedDmg.value += this.getBurstChargedDmgBuff();
+        }
+
+        calc.basePyroDmg.value += 0.05 * this.getCountSeals();
+
+        let data = this.toJS();
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let NewCalc = class extends CalcType {
+            #yanfeiData = data;
+
+            crtRate(attackProps) {
+                if(this.#yanfeiData.constell >= 2 && this.#yanfeiData.useC2Effect
+                    && hasAllPropertiesWithSameValue(attackProps, {isCharged: true})) {
+                    // 2凸効果
+                    return super.crtRate(attackProps).add(0.2);
+                }
+
+                return super.crtRate(attackProps);
+            }
+
+            chainedAttackDmg(parentAttackProps) {
+                let dmg = super.chainedAttackDmg(parentAttackProps);
+
+                if(hasAllPropertiesWithSameValue(parentAttackProps, {isCharged: true})) {
+                    let newprops = shallowDup(parentAttackProps);
+                    newprops = Calc.deleteAllElementFromAttackProps(newprops);
+                    newprops = Calc.deleteAllAttackTypeFromAttackProps(newprops);
+                    newprops.isChainable = false;
+                    newprops.isPyro = true;
+                    newprops.isCharged = true;
+
+                    // 重撃が会心時に80%の重撃を発生
+                    dmg = dmg.add(this.calculate(0.8, newprops).total().mul(this.crtRate(parentAttackProps)));
+                }
+
+                return dmg;
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let ret = super.viewHTMLList(target);
+
+        ret.push(Widget.buildViewHTML(target, "丹火の印",
+            Widget.selectViewHTML("countSeals", [
+                {label: "0個（炎ダメ+0%）", value: 0},
+                {label: "1個（炎ダメ+5%）", value: 1},
+                {label: "2個（炎ダメ+10%）", value: 2},
+                {label: "3個（炎ダメ+15%）", value: 3},
+                {label: (this.constell() >= 6 ? "最大（炎ダメ+20%）" : "最大（炎ダメ+15%）"), value: 4},
+            ])
+        ));
+
+
+        ret.push(
+            Widget.buildViewHTML(target, "灼灼（元素爆発後）",
+                Widget.checkBoxViewHTML("useBurstEffect",
+                    `重撃ダメージ+${Widget.spanPercentageFix("getBurstChargedDmgBuff()", 1)}`)
+            )
+        );
+
+        if(this.constell() >= 2) {
+            ret.push(Widget.buildViewHTML(target, "最終解釈権（2凸）",
+                Widget.checkBoxViewHTML("useC2Effect", "重撃の会心率+20%")
+            ));
+        }
+
+        return ret;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.countSeals = this.countSeals();
+        obj.useC2Effect = this.useC2Effect();
+        obj.useBurstEffect = this.useBurstEffect();
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.countSeals(obj.countSeals);
+        this.useC2Effect(obj.useC2Effect);
+        this.useBurstEffect(obj.useBurstEffect);
+    }
+}
