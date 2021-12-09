@@ -1,5 +1,6 @@
 import * as Base from '/js/modules/characters/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
+import * as Calc from '/js/modules/dmg-calc.mjs';
 
 
 export class PyroCharacterViewModel extends Base.CharacterViewModel
@@ -54,7 +55,7 @@ export class PyroCharacterViewModel extends Base.CharacterViewModel
                     newProps[this.reactionType] = true;
                     let dmg2 = super.calculate(dmgScale, newProps);
         
-                    return dmg1.mul(1 - this.reactionProb).add(dmg2.mul(this.reactionProb));
+                    return Calc.Attacks.expect([1 - this.reactionProb, this.reactionProb], [dmg1, dmg2]);
                 } else {
                     // 攻撃が炎ではないので，元素反応なし
                     return super.calculate(dmgScale, attackProps);

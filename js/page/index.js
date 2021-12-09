@@ -389,7 +389,7 @@ $(function(){
 
                     function objfunc(x) {
                         setArg(x);
-                        return calc.calculate(attackType.dmgScale(setting.character), attackType.attackProps);
+                        return calc.calculate(attackType.dmgScale(setting.character), attackType.attackProps).total();
                     }
 
                     let x0 = [0, 0, 0, 0, 0, 0, 0];
@@ -509,7 +509,7 @@ $(function(){
 
                 this.dmgExpected = {};
                 Object.getPrototypeOf(e.setting.character.parent).constructor.presetAttacks.forEach(attackType => {
-                    this.dmgExpected[attackType.label] = e.calc.calculate(attackType.dmgScale(e.setting.character), attackType.attackProps);
+                    this.dmgExpected[attackType.label] = e.calc.calculate(attackType.dmgScale(e.setting.character), attackType.attackProps).total();
                 });
             }
 

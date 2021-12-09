@@ -326,6 +326,46 @@ export class VGData
 }
 
 
+export class Attacks
+{
+    constructor(damage)
+    {
+        this.damage = damage;
+        this.chained = VGData.zero();
+    }
+
+
+    addChained(dmg)
+    {
+        this.chained = this.chained.add(dmg);
+    }
+
+
+    total() {
+        return this.damage.add(this.chained);
+    }
+
+
+    static expect(probs, attacks)
+    {
+        console.assert(probs.length == attacks.length, `(probs.length == ${probs.length}) and (attacks.length == ${attacks.length})`);
+
+        if(probs.length == 0)
+            return new Attacks(VGData.zero());
+
+        let newAttacks = new Attacks(VGData.zero());
+        let chains = {};
+        attacks.forEach((e, i) => {
+            const p = probs[i];
+            newAttacks.damage = newAttacks.damage.add(e.damage.mul(p));
+            newAttacks.chained = newAttacks.chained.add(e.chained.mul(p));
+        });
+
+        return newAttacks;
+    }
+}
+
+
 // https://wikiwiki.jp/genshinwiki/%E3%83%80%E3%83%A1%E3%83%BC%E3%82%B8%E8%A8%88%E7%AE%97%E5%BC%8F
 const elementalReactionCoeffTable = [
     [8, 10, 20, 26, 33],        // lv1
@@ -452,7 +492,7 @@ export class DamageCalculator
         this.basePhysicalDmg = VGData.zero();
         this.baseNormalDmg = VGData.zero();     // 通常攻撃ダメージバフ
         this.baseChargedDmg = VGData.zero();    // 重撃ダメージバフ
-        this.basePlungeDmg = VGData.zero();      // 落下ダメージバフ
+        this.basePlungeDmg = VGData.zero();     // 落下ダメージバフ
         this.baseSkillDmg = VGData.zero();      // スキルダメージ
         this.baseBurstDmg = VGData.zero();      // 元素爆発ダメージ
         this.baseSwirlBonus = VGData.zero();            // 拡散ボーナス
@@ -616,12 +656,15 @@ export class DamageCalculator
             dmg = this.calculateNormalDmg(dmgScale, attackProps);
         }
 
+        let attack = new Attacks(dmg);
+
         if(hasAllPropertiesWithSameValue(attackProps, {isChainable: false})) {
             // 追撃が発生しない
-            return dmg;
+            return attack;
         } else {
             // 追撃の計算
-            return dmg.add(this.chainedAttackDmg(attackProps));
+            attack.addChained(this.chainedAttackDmg(attackProps));
+            return attack;
         }
     }
 
