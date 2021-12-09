@@ -408,190 +408,306 @@ title: ダメージ期待値比較ツール
           <a type="button" class="float-right" data-toggle="collapse" data-bind="attr: {'data-target': '#detailCollapse'+optresIndex()}, click: optres.toggle">詳細表示</a>
           <div data-bind="if: optres.isOpen">
             <div class="collapse mt-3" data-bind="attr: {id: 'detailCollapse'+optresIndex()}">
-              <div class="table-responsive">
-                <table class="table mb-3 table-sm">
-                  <thead>
-                    <tr>
-                      <th scope="col">パラメータ</th>
-                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                      <th scope="col" data-bind="text: attackType.label"></th>
-                      <!-- /ko -->
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">ダメージ期待値</th>
-                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                      <td class="text-right" data-bind="text: textInteger(optres.calc.calculate(attackType.dmgScale(optres.setting.character), attackType.attackProps).value)"></td>
-                      <!-- /ko -->
-                    </tr>
-                    <tr>
-                      <th scope="row">攻撃力</th>
-                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                      <td class="text-right" data-bind="text: textInteger(optres.calc.atk(attackType.attackProps).value)"></td>
-                      <!-- /ko -->
-                    </tr>
-                    <tr>
-                      <th scope="row">会心率</th>
-                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.crtRate(attackType.attackProps).value, 1)"></td>
-                      <!-- /ko -->
-                    </tr>
-                    <tr>
-                      <th scope="row">会心ダメージ</th>
-                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.crtDmg(attackType.attackProps).value, 1)"></td>
-                      <!-- /ko -->
-                    </tr>
-                    <tr>
-                      <th scope="row">累計ダメバフ</th>
-                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.calculateTotalDmgBuff(attackType.attackProps).value, 1)"></td>
-                      <!-- /ko -->
-                    </tr>
-                    <tr>
-                      <th scope="row">防御力</th>
-                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                      <td class="text-right" data-bind="text: textInteger(optres.calc.def(attackType.attackProps).value)"></td>
-                      <!-- /ko -->
-                    </tr>
-                    <tr>
-                      <th scope="row">HP</th>
-                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                      <td class="text-right" data-bind="text: textInteger(optres.calc.hp(attackType.attackProps).value)"></td>
-                      <!-- /ko -->
-                    </tr>
-                    <tr data-bind="if: optres.setting.character.parent.elem == 'Pyro' || optres.setting.character.parent.elem == 'Hydro'">
-                      <th scope="row">蒸発倍率</th>
-                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                      <td class="text-right" data-bind="text: textNumber(optres.calc.calculateVaporizeMeltBonus( Object.assign({isVaporize: true}, attackType.attackProps) ).value, 3)"></td>
-                      <!-- /ko -->
-                    </tr>
-                    <tr data-bind="if: optres.setting.character.parent.elem == 'Pyro' || optres.setting.character.parent.elem == 'Cryo'">
-                      <th scope="row">溶解倍率</th>
-                      <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
-                      <td class="text-right" data-bind="text: textNumber(optres.calc.calculateVaporizeMeltBonus( Object.assign({isMelt: true}, attackType.attackProps) ).value, 3)"></td>
-                      <!-- /ko -->
-                    </tr>
-                  </tbody>
-                </table>
+              <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item">
+                  <a class="nav-link active" data-toggle="tab" data-bind="attr: {href: '#status_' + optresIndex() }" role="tab">ステータス詳細</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" data-toggle="tab" data-bind="attr: {href: '#increase_' + optresIndex() }" role="tab">ダメージ増加率</a>
+                </li>
+              </ul>
+              <div class="tab-content">
+                <div class="tab-pane fade show active" data-bind="attr: {id: 'status_' + optresIndex() }" role="tabpanel">
+                  <div class="table-responsive">
+                    <table class="table mb-3 table-sm">
+                      <thead>
+                        <tr>
+                          <th scope="col">パラメータ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <th scope="col" class="text-right" data-bind="text: attackType.label"></th>
+                          <!-- /ko -->
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">ダメージ期待値</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textInteger(optres.dmgExpected[attackType.label].value)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">HP</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textInteger(optres.calc.hp(attackType.attackProps).value)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">攻撃力</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textInteger(optres.calc.atk(attackType.attackProps).value)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">防御力</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textInteger(optres.calc.def(attackType.attackProps).value)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">元素熟知</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textInteger(optres.calc.mastery(attackType.attackProps).value)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">会心率</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.crtRate(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">会心ダメージ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.crtDmg(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">元素チャージ効率</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.recharge(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">累計ダメバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.calculateTotalDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.anemoDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">風元素ダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.anemoDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.geoDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">岩元素ダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.geoDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.electroDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">雷元素ダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.electroDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.pyroDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">炎元素ダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.pyroDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.hydroDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">水元素ダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.hydroDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.cryoDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">氷元素ダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.cryoDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.dendroDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">草元素ダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.dendroDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.physicalDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">物理ダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.physicalDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.normalDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">通常攻撃ダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.normalDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.chargedDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">重撃ダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.chargedDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.plungeDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">落下ダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.plungeDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.skillDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">スキルダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.skillDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.burstDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">元素爆発ダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.burstDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.setting.character.parent.elem == 'Pyro' || optres.setting.character.parent.elem == 'Hydro'">
+                          <th scope="row">蒸発倍率</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textNumber(optres.calc.calculateVaporizeMeltBonus( Object.assign({isVaporize: true}, attackType.attackProps) ).value, 3)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.setting.character.parent.elem == 'Pyro' || optres.setting.character.parent.elem == 'Cryo'">
+                          <th scope="row">溶解倍率</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textNumber(optres.calc.calculateVaporizeMeltBonus( Object.assign({isMelt: true}, attackType.attackProps) ).value, 3)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.swirlBonus(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">拡散ボーナス</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.swirlBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.crystalizeBonus(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">結晶化ボーナス</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.crystalizeBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.vaporizeBonus(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">蒸発ボーナス</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.vaporizeBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.overloadedBonus(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">過負荷ボーナス</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.overloadedBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.meltBonus(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">溶解ボーナス</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.meltBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.electroChargedBonus(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">感電ボーナス</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.electroChargedBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.frozenBonus(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">凍結ボーナス</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.frozenBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.shatteredBonus(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">氷砕きボーナス</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.shatteredBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.superconductBonus(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">超伝導ボーナス</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.superconductBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr data-bind="if: optres.calc.burningBonus(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">燃焼ボーナス</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.burningBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="tab-pane fade" data-bind="attr: {id: 'increase_' + optresIndex() }" role="tabpanel">
+                  <div class="table-responsive">
+                    <table class="table mb-3 table-sm">
+                      <thead>
+                        <tr>
+                          <th scope="col">パラメータ</th>
+                          <th class="text-right">サブステ上昇量</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <th scope="col" class="text-right" data-bind="text: attackType.label"></th>
+                          <!-- /ko -->
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row">攻撃力</th>
+                          <td class="text-right">4.7%</td>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label].grad[0]/optres.dmgExpected[attackType.label].value * 0.047, 2)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">会心率</th>
+                          <td class="text-right">3.1%</td>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label].grad[3]/optres.dmgExpected[attackType.label].value * 0.031, 2)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">会心ダメージ</th>
+                          <td class="text-right">6.2%</td>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label].grad[4]/optres.dmgExpected[attackType.label].value * 0.062, 2)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">防御力</th>
+                          <td class="text-right">5.8%</td>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label].grad[1]/optres.dmgExpected[attackType.label].value * 0.058, 2)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">HP</th>
+                          <td class="text-right">4.7%</td>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label].grad[2]/optres.dmgExpected[attackType.label].value * 0.047, 2)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">チャージ効率</th>
+                          <td class="text-right">5.2%</td>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label].grad[5]/optres.dmgExpected[attackType.label].value * 0.052, 2)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">元素熟知</th>
+                          <td class="text-right">19</td>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label].grad[6]/optres.dmgExpected[attackType.label].value * 19, 2)"></td>
+                          <!-- /ko -->
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p>
+                    各ステータスが最適化結果の値から「サブステ上昇量」に書かれた分だけ上昇したときに，ダメージの期待値がどれだけ上昇するのかを示しています
+                  </p>
+                </div>
               </div>
-              <div class="table-responsive">
-                <table class="table mb-3 table-sm">
-                  <thead>
-                    <tr>
-                      <th scope="col">パラメータ</th>
-                      <th scope="col">値</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope="row">元素チャージ効率</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.recharge(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr>
-                      <th scope="row">元素熟知</th>
-                      <td class="text-right" data-bind="text: textInteger(optres.calc.mastery(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.allDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">ダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.allDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.anemoDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">風元素ダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.anemoDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.geoDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">岩元素ダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.geoDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.electroDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">雷元素ダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.electroDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.pyroDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">炎元素ダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.pyroDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.hydroDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">水元素ダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.hydroDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.cryoDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">氷元素ダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.cryoDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.dendroDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">草元素ダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.dendroDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.physicalDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">物理ダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.physicalDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.normalDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">通常攻撃ダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.normalDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.chargedDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">重撃ダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.chargedDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.plungeDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">落下ダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.plungeDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.skillDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">スキルダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.skillDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.burstDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">元素爆発ダメージバフ</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.burstDmgBuff(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.swirlBonus(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">拡散ボーナス</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.swirlBonus(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.crystalizeBonus(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">結晶化ボーナス</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.crystalizeBonus(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.vaporizeBonus(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">蒸発ボーナス</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.vaporizeBonus(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.overloadedBonus(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">過負荷ボーナス</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.overloadedBonus(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.meltBonus(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">溶解ボーナス</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.meltBonus(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.electroChargedBonus(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">感電ボーナス</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.electroChargedBonus(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.frozenBonus(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">凍結ボーナス</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.frozenBonus(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.shatteredBonus(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">氷砕きボーナス</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.shatteredBonus(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.superconductBonus(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">超伝導ボーナス</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.superconductBonus(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                    <tr data-bind="if: optres.calc.burningBonus(optres.setting.attack.attackProps).value > 1e-3">
-                      <th scope="row">燃焼ボーナス</th>
-                      <td class="text-right" data-bind="text: textPercentageFix(optres.calc.burningBonus(optres.setting.attack.attackProps).value, 1)"></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+
             </div>
           </div>
         </div>

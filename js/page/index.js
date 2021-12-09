@@ -501,16 +501,21 @@ $(function(){
             let lim = this.showOptResultsLimit();
 
             // DOMを遅延して構築するために必要
-            function EachResultViewModel() {
+            function EachResultViewModel(e) {
                 this.isOpen = ko.observable(false);
                 this.toggle = function() {
                     this.isOpen(!this.isOpen());
                 }.bind(this);
+
+                this.dmgExpected = {};
+                Object.getPrototypeOf(e.setting.character.parent).constructor.presetAttacks.forEach(attackType => {
+                    this.dmgExpected[attackType.label] = e.calc.calculate(attackType.dmgScale(e.setting.character), attackType.attackProps);
+                });
             }
 
             let dst = [];
             arr.slice(0, Math.min(len, lim)).forEach(e => {
-                dst.push(Object.assign(new EachResultViewModel(), e));
+                dst.push(Object.assign(new EachResultViewModel(e), e));
             });
 
             return dst;
