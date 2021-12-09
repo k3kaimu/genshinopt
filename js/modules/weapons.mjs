@@ -21,6 +21,8 @@ export const weapons = [
     new Bow.PolarStar(),
     // 弓, 星4
     new Bow.Rust(),
+    // 法器，星4
+    new Catalyst.TheWidsith(),
     // 両手剣, 星4
     new Claymore.Whiteblind(),
     new Claymore.PrototypeArchaic(),
