@@ -267,3 +267,86 @@ export class PrototypeArchaicViewModel extends Base.WeaponViewModel
         this.useEffect(obj.useEffect);
     }
 }
+
+
+// 螭龍の剣
+export class SerpentSpine extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "serpent_spine",
+            "螭龍の剣",
+            4,
+            "Claymore",
+            510,
+            "baseCrtRate",
+            0.276
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new SerpentSpineViewModel(this);
+    }
+
+
+    static buffInc = [0.06, 0.07, 0.08, 0.09, 0.1];
+}
+
+
+export class SerpentSpineViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.buffStacks = ko.observable(5);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+        calc.baseAllDmg.value +=  Number(this.buffStacks()) * SerpentSpine.buffInc[this.rank()];
+        return calc;
+    }
+
+
+    getBuffInc() { return SerpentSpine.buffInc[this.rank()]; }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, `ダメージ+${Widget.spanPercentageFix("getBuffInc()", 1)}/スタック`,
+                Widget.selectViewHTML("buffStacks", [
+                    {value: 0, label: "0スタック"},
+                    {value: 1, label: "1スタック"},
+                    {value: 2, label: "2スタック"},
+                    {value: 3, label: "3スタック"},
+                    {value: 4, label: "4スタック"},
+                    {value: 5, label: "5スタック"},
+                ])
+            ) 
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.buffStacks = this.buffStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.buffStacks(obj.buffStacks);
+    }
+}

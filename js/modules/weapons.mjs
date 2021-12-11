@@ -28,6 +28,7 @@ export const weapons = [
     // 両手剣, 星4
     new Claymore.Whiteblind(),
     new Claymore.PrototypeArchaic(),
+    new Claymore.SerpentSpine(),
     // 長柄武器, 星5
     new Polearm.StaffOfHoma(),
     // 長柄武器, 星4
