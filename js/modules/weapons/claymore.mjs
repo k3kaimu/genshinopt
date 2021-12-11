@@ -3,6 +3,70 @@ import * as Base from '/js/modules/weapons/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
 
 
+// 赤角石塵滅砕
+export class RedhornStonethresher extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "redhorn_stonethresher",
+            "赤角石塵滅砕",
+            5,
+            "Claymore",
+            542,
+            "baseCrtRate",
+            0.882
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new RedhornStonethresherViewModel(this);
+    }
+
+
+    static defInc = [0.28, 0.35, 0.42, 0.49, 0.56];
+    static dmgInc = [0.40, 0.50, 0.60, 0.70, 0.80];
+}
+
+
+// 赤角石塵滅砕
+export class RedhornStonethresherViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        let data = this.toJS();
+        calc.rateDef.value += RedhornStonethresher.defInc[data.rank];
+
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let NewCalc = class extends CalcType {
+            redhornData = data;
+
+            increaseDamage(attackProps) {
+                let dmg = super.increaseDamage(attackProps);
+
+                if(hasAnyPropertiesWithSameValue(attackProps, {isNormal: true, isCharged: true}))
+                    dmg = dmg.add(this.def().mul(RedhornStonethresher.dmgInc[this.redhornData.rank]));
+
+                return dmg;
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+        return calc;
+    }
+}
+
+
 // 白影の剣
 export class Whiteblind extends Base.WeaponData
 {
