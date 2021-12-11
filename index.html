@@ -531,6 +531,12 @@ title: ダメージ期待値比較ツール
                           <td class="text-right" data-bind="text: textPercentageFix(optres.calc.physicalDmgBuff(attackType.attackProps).value, 1)"></td>
                           <!-- /ko -->
                         </tr>
+                        <tr data-bind="if: optres.calc.allDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                          <th scope="row">全攻撃ダメージバフ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.allDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- /ko -->
+                        </tr>
                         <tr data-bind="if: optres.calc.normalDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
                           <th scope="row">通常攻撃ダメージバフ</th>
                           <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
