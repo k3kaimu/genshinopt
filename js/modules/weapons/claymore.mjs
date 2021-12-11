@@ -14,7 +14,7 @@ export class RedhornStonethresher extends Base.WeaponData
             5,
             "Claymore",
             542,
-            "baseCrtRate",
+            "baseCrtDmg",
             0.882
         );
     }
