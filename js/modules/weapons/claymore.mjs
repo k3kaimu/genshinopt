@@ -26,6 +26,7 @@ export class RedhornStonethresher extends Base.WeaponData
     }
 
 
+    // 予測値
     static defInc = [0.28, 0.35, 0.42, 0.49, 0.56];
     static dmgInc = [0.40, 0.50, 0.60, 0.70, 0.80];
 }
@@ -107,8 +108,8 @@ export class WhiteblindViewModel extends Base.WeaponViewModel
     applyDmgCalc(calc)
     {
         calc = super.applyDmgCalc(calc);
-        calc.rateAtk.value += this.buffStacks() * Whiteblind.buffInc[this.rank()];
-        calc.rateDef.value += this.buffStacks() * Whiteblind.buffInc[this.rank()];
+        calc.rateAtk.value += Number(this.buffStacks()) * Whiteblind.buffInc[this.rank()];
+        calc.rateDef.value += Number(this.buffStacks()) * Whiteblind.buffInc[this.rank()];
         return calc;
     }
 
