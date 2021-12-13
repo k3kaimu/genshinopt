@@ -8,7 +8,8 @@
 + [Knockout.js](https://knockoutjs.com/) v3.5.1
 + [nlopt-js](https://github.com/BertrandBev/nlopt-js) v0.1.1
 + [requestIdleCallback polyfill](https://github.com/aFarkas/requestIdleCallback) v0.3.0
-
++ [msgpack-javascript](https://github.com/msgpack/msgpack-javascript) v2.7.1
++ [LZMA-js](https://github.com/LZMA-JS/LZMA-JS) v2.3.2
 
 ## ToDo
 
