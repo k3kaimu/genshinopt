@@ -62,6 +62,20 @@ $(function(){
                 this.weaponViewModel(newWeaponData.newViewModel());
             }
         }.bind(this));
+
+        this.toJS  = function() {
+            let obj = {};
+            obj.weapon = this.weaponViewModel().toJS();
+            return obj;
+        }.bind(this);
+
+        this.fromJS = function(obj) {
+            this.selectedWeapon(Data.lookupWeapon(obj.weapon.parent_id));
+            
+            let w = this.weaponViewModel();
+            w.fromJS(obj.weapon);
+            this.weaponViewModel(w);
+        }.bind(this);
     }
 
 
@@ -178,6 +192,38 @@ $(function(){
             else
                 this.artifact2ViewModel(newArt.newViewModel(2));
         }.bind(this));
+
+
+        this.toJS = function(){
+            let obj = {};
+            obj.art1 = this.artifact1ViewModel().toJS();
+
+            if(this.artifact2ViewModel().parent)
+                obj.art2 = this.artifact2ViewModel().toJS();
+
+            return obj;
+        }.bind(this);
+
+        this.fromJS = function(obj){
+            this.selectedArtifact1(Data.lookupArtifact(obj.art1.parent_id));
+
+            if(obj.art2 == undefined) {
+                // art1と同じ
+                this.selectedArtifact2(Data.lookupArtifact(obj.art1.parent_id));
+            } else {
+                this.selectedArtifact2(Data.lookupArtifact(obj.art2.parent_id));
+            }
+
+            let a1 = this.artifact1ViewModel();
+            a1.fromJS(obj.art1);
+            this.artifact1ViewModel(a1);
+
+            if(!(obj.art2 == undefined)) {
+                let a2 = this.artifact2ViewModel();
+                a2.fromJS(obj.art2);
+                this.artifact1ViewModel(a2);
+            }
+        }.bind(this);
     }
 
 
@@ -209,6 +255,36 @@ $(function(){
             calc.baseRecharge.value += Number(this.recharge() || 0)
 
             return calc;
+        }.bind(this);
+
+        this.toJS = function(){
+            let obj = {};
+            obj.addAtk = this.addAtk();
+            obj.rateAtk = this.rateAtk();
+            obj.addDef = this.addDef();
+            obj.rateDef = this.rateDef();
+            obj.addHP = this.addHP();
+            obj.rateHP = this.rateHP();
+            obj.crtRate = this.crtRate();
+            obj.crtDmg = this.crtDmg();
+            obj.mastery = this.mastery();
+            obj.dmgBuff = this.dmgBuff();
+            obj.recharge = this.recharge();
+            return obj;
+        }.bind(this);
+
+        this.fromJS = function(obj) {
+            this.addAtk(obj.addAtk);
+            this.rateAtk(obj.rateAtk);
+            this.addDef(obj.addDef);
+            this.rateDef(obj.rateDef);
+            this.addHP(obj.addHP);
+            this.rateHP(obj.rateHP);
+            this.crtRate(obj.crtRate);
+            this.crtDmg(obj.crtDmg);
+            this.mastery(obj.mastery);
+            this.dmgBuff(obj.dmgBuff);
+            this.recharge(obj.recharge);
         }.bind(this);
     }
 
@@ -340,6 +416,7 @@ $(function(){
             return dst;
         }, this);
 
+        this.savedURL = ko.observable();
 
         this.optimizedResults = ko.observableArray();
         this.doneOptimizedCount = ko.observable(0);
@@ -422,6 +499,10 @@ $(function(){
                 this.optimizedResults(results);
                 $('#optimizationProgress').modal('hide');
                 $("html,body").animate({scrollTop:$('#scrollTargetAfterOptimization').offset().top});
+
+                const encodedURL = location.pathname + '?data=' + encodeToURI(this.toJS());
+                this.savedURL(location.protocol + '//' + location.host + encodedURL);
+                history.replaceState('', '', encodedURL);
             }
 
             processTasksOnIdle(tasks, onFinish.bind(this));
@@ -520,12 +601,116 @@ $(function(){
 
             return dst;
         }, this);
+
+
+        this.copySavedURL = function() {
+            copyTextToClipboard(this.savedURL());
+        }.bind(this);
+
+
+        this.toJS = function(){
+            let obj = {};
+
+            obj.character = this.characterViewModel().toJS();
+            obj.weapons = [];
+            this.comparingWeaponList().forEach(w => {
+                obj.weapons.push(w.toJS());
+            });
+
+            obj.artifacts = [];
+            this.comparingArtifactList().forEach(a => {
+                obj.artifacts.push(a.toJS());
+            });
+
+            obj.attack = {label: this.selectedAttack().label};
+            obj.totcost = this.optTotalCost();
+            obj.buff = this.externalBuff.toJS();
+
+            obj.clock = {};
+            this.clockMainStatus.forEach(c => {
+                obj.clock[c.value] = c.checked();
+            });
+
+            obj.cup = {};
+            this.cupMainStatus.forEach(c => {
+                obj.cup[c.value] = c.checked();
+            });
+
+            obj.hat = {};
+            this.hatMainStatus.forEach(c => {
+                obj.hat[c.value] = c.checked();
+            });
+
+            return obj;
+
+        }.bind(this);
+
+
+        this.fromJS = function(obj){
+            this.selectedChar(Data.lookupCharacter(obj.character.parent_id));
+            let charVM = this.characterViewModel();
+            charVM.fromJS(obj.character);
+            this.characterViewModel(charVM);
+
+            this.comparingWeaponList([]);
+            obj.weapons.forEach(w => {
+                let wdata = new ComparingWeaponData(this.selectedChar);
+                wdata.fromJS(w);
+                this.comparingWeaponList.push(wdata);
+            });
+
+            this.comparingArtifactList([]);
+            obj.artifacts.forEach(a => {
+                let adata = new ComparingArtifactData(this);
+                adata.fromJS(a);
+                this.comparingArtifactList.push(adata);
+            });
+
+            this.attackOptions().forEach(e => {
+                if(e.label == obj.attack.label)
+                    this.selectedAttack(e);
+            });
+
+            this.optTotalCost(obj.totcost);
+            this.externalBuff.fromJS(obj.buff);
+
+            this.clockMainStatus.forEach(c => {
+                c.checked(obj.clock[c.value]);
+            });
+
+            this.cupMainStatus.forEach(c => {
+                c.checked(obj.cup[c.value]);
+            });
+
+            this.hatMainStatus.forEach(c => {
+                c.checked(obj.hat[c.value]);
+            });
+
+        }.bind(this);
     }
 
     window.viewModel = new ViewModel();
 
     ko.applyBindings(window.viewModel);
 
+    function loadDataFromURI(uri)
+    {
+        viewModel.fromJS(decodeFromURI(uri));
+    }
+
+    function encodeDataToURI()
+    {
+        return encodeToURI(viewModel.toJS());
+    }
+
+
+    // ページロード時にgetパラメータにデータがあればそれを復元する
+    var url = new URL(window.location.href);
+    const uridata = url.searchParams.get('data');
+    if(uridata) {
+        loadDataFromURI(uridata);
+        viewModel.optimizeAllCases();
+    }
 
     (async () => {
         await nlopt.ready

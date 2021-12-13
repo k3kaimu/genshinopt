@@ -368,6 +368,15 @@ title: ダメージ期待値比較ツール
   </div>
 </div>
 
+<div data-bind="visible: (savedURL() || '').length != 0">
+<div class="input-group mb-3">
+  <input type="text" class="form-control" id="savedURLTextInput" data-bind="textInput: savedURL()">
+  <div class="input-group-append">
+    <button class="btn btn-outline-primary" type="button" data-bind="click: copySavedURL">Copy!</button>
+  </div>
+</div>
+</div>
+
 
 <!-- Modal -->
 <div class="modal fade" id="optimizationProgress" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="optimizationProgressLabel" aria-hidden="true">
