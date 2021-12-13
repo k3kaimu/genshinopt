@@ -332,7 +332,7 @@ title: ダメージ期待値比較ツール
 
 <h4 class="h4">探索するパターン数：<span data-bind="text: allPatterns().length"></span>通り</h4>
 <div class="row mb-3">
-  <div class="col-sm-6 mb-3">
+  <div class="col-sm-6">
     <select class="custom-select" data-bind="value: optTotalCost">
       <option value="0">各部位スコア0</option>
       <option value="25">各部位スコア5</option>
@@ -370,6 +370,9 @@ title: ダメージ期待値比較ツール
 
 <div data-bind="visible: (savedURL() || '').length != 0">
 <div class="input-group mb-3">
+  <div class="input-group-prepend">
+    <span class="input-group-text" id="basic-addon1">保存&共有用URL</span>
+  </div>
   <input type="text" class="form-control" id="savedURLTextInput" data-bind="textInput: savedURL()">
   <div class="input-group-append">
     <button class="btn btn-outline-primary" type="button" data-bind="click: copySavedURL">Copy!</button>
