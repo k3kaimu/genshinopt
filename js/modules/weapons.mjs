@@ -36,3 +36,20 @@ export const weapons = [
     // 片手剣, 星5
     new Sword.PrimordialJadeCutter(),
 ];
+
+
+export function lookupWeapon(id)
+{
+    let ret = undefined;
+    weapons.forEach(e => {
+        if(e.id == id)
+            ret = e;
+    });
+
+    return ret;
+}
+
+
+runUnittest(function(){
+    console.assert(lookupWeapon("staff_of_homa").id == "staff_of_homa");
+});

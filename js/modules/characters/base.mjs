@@ -116,13 +116,13 @@ export class CharacterViewModel
 
 
     toJS() {
-        return {
-            parent_id:  this.parent.id,
-            constell:   this.constell(),
-            normalRank: this.normalRank(),
-            skillRank:  this.skillRank(),
-            burstRank:  this.burstRank(),
-        };
+        let obj = {};
+        obj.parent_id  = this.parent.id;
+        obj.constell   = this.constell();
+        obj.normalRank = this.normalRank();
+        obj.skillRank  = this.skillRank();
+        obj.burstRank  = this.burstRank();
+        return obj;
     }
 
 

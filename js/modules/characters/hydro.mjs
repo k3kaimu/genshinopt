@@ -8,7 +8,7 @@ export class Tartaglia extends Base.CharacterData
     constructor()
     {
         super(
-            "noelle",
+            "tartaglia",
             "タルタリヤ",
             5,
             "Hydro",

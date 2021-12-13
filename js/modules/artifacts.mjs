@@ -41,10 +41,10 @@ export class ArtifactViewModel
 
 
     toJS() {
-        return {
-            parent_id: this.parent.id, 
-            bonusType: this.bonusType
-        };
+        let obj = {};
+        obj.parent_id = this.parent.id;
+        obj.bonusType = this.bonusType;
+        return obj;
     }
 
 
@@ -564,6 +564,23 @@ export const artifacts = [
     new HeartOfDepth(),
     new ShimenawaReminiscence(),
 ];
+
+
+export function lookupArtifact(id)
+{
+    let ret = undefined;
+    artifacts.forEach(e => {
+        if(e.id == id)
+            ret = e;
+    });
+
+    return ret;
+}
+
+
+runUnittest(function(){
+    console.assert(lookupArtifact("heart_of_depth").id == "heart_of_depth");
+});
 
 
 

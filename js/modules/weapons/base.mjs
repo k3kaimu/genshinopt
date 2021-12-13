@@ -88,10 +88,10 @@ export class WeaponViewModel
 
 
     toJS() {
-        return {
-            parent_id: this.parent.id,
-            rank: this.rank()
-        };
+        let obj = {};
+        obj.parent_id = this.parent.id;
+        obj.rank = this.rank();
+        return obj;
     }
 
 
