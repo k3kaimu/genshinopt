@@ -246,7 +246,7 @@ export class AratakiItto extends Base.CharacterData
             attackProps: { isGeo: true, isNowAratakiBurst: true, isNormal: true }
         },
         {
-            label: "元素爆発中：左一文字斬り（通常1段目）",
+            label: "元素爆発中：左一文字斬り（通常重撃）",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][6],
             attackProps: { isGeo: true, isNowAratakiBurst: true, isCharged: true }
         },
