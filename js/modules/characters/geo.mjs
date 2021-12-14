@@ -177,3 +177,147 @@ export class NoelleViewModel extends Base.CharacterViewModel
         return calc;
     }
 }
+
+
+// 荒瀧一斗
+export class AratakiItto extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "arataki_itto",
+            "荒瀧一斗",
+            5,
+            "Geo",
+            "Claymore",
+            227,        /* bAtk */
+            959,        /* bDef */
+            12858,      /* bHP */
+            "baseCrtRate",  /* bBonusType */
+            0.192       /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new AratakiIttoViewModel(this);
+    }
+
+
+    static normalTable = [
+        // 0:通常1段,    1:通常2段,      2:通常3段,      3:通常4段,      4:逆袈裟連斬,    5:逆袈裟とどめ,  6:左一文字斬り,  7;落下期間,     8:低空落下,     9:高空落下     
+        [79.2/100,      76.4/100,      91.6/100,      117.2/100,     91.2/100,      190.9/100,     90.5/100,      81.8/100,      164/100,       204/100],
+    ];
+
+    static skillTable = [
+        307.2/100,      // lv. 1
+    ];
+
+    static burstTable = [
+        57.6/100,       // lv. 1
+    ];
+
+
+    static presetAttacks = [
+        {
+            label: "通常1段目",
+            dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][0],
+            attackProps: { isNormal: true }
+        },
+        {
+            label: "左一文字斬り（通常重撃）",
+            dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][6],
+            attackProps: { isCharged: true }
+        },
+        {
+            label: "荒瀧逆袈裟連撃",
+            dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][4],
+            attackProps: { isCharged: true, isSakagesa: true }
+        },
+        {
+            label: "荒瀧逆袈裟とどめ",
+            dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][5],
+            attackProps: { isCharged: true, isSakagesa: true }
+        },
+        {
+            label: "元素爆発中：通常1段目",
+            dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][0],
+            attackProps: { isGeo: true, isNowAratakiBurst: true, isNormal: true }
+        },
+        {
+            label: "元素爆発中：左一文字斬り（通常1段目）",
+            dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][6],
+            attackProps: { isGeo: true, isNowAratakiBurst: true, isCharged: true }
+        },
+        {
+            label: "元素爆発中：荒瀧逆袈裟連撃",
+            dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][4],
+            attackProps: { isGeo: true, isNowAratakiBurst: true, isCharged: true, isSakagesa: true }
+        },
+        {
+            label: "元素爆発中：荒瀧逆袈裟とどめ",
+            dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][5],
+            attackProps: { isGeo: true, isNowAratakiBurst: true, isCharged: true, isSakagesa: true }
+        },
+    ];
+}
+
+
+// 荒瀧一斗
+export class AratakiIttoViewModel extends Base.CharacterViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+    }
+
+
+    maxNormalTalentRank()   { return 1; }
+    maxSkillTalentRank()    { return 1; }
+    maxBurstTalentRank()    { return 1; }
+
+    // maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    // maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        let data = this.toJS();
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let NewCalc = class extends CalcType {
+            aratakiData = data;
+
+            increaseDamage(attackProps) {
+                let dmg = super.increaseDamage(attackProps);
+
+                if(attackProps.isSakagesa || false)
+                    dmg = dmg.add(this.def().mul(0.35));
+
+                return dmg;
+            }
+
+            atk(attackProps) {
+                let dst = undefined;
+                if(attackProps.isNowAratakiBurst || false)
+                    dst = super.atk(attackProps).add(this.def(attackProps).mul(AratakiItto.burstTable[this.aratakiData.burstRank-1]));
+                else
+                    dst = super.atk(attackProps);
+
+                return dst;
+            }
+
+            crtDmg(attackProps) {
+                if(this.aratakiData.constell >= 6 && (attackProps.isCharged || false))
+                    return super.crtDmg(attackProps).add(0.7);
+                else
+                    return super.crtDmg(attackProps);
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+        return calc;
+    }
+}

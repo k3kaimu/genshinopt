@@ -21,6 +21,7 @@ export const characters = [
     new Anemo.TravelerAnemo(),
     new Electro.TravelerElectro(),
     new Geo.TravelerGeo(),
+    new Geo.AratakiItto(),
     new Geo.Noelle(),
     new Hydro.Tartaglia(),
     new Pyro.HuTao(),
