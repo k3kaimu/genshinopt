@@ -401,8 +401,6 @@ export class BlizzardStrayerViewModel extends ArtifactViewModel
         super.fromJS(obj);
         this.addCrtRate(obj.addCrtRate);
     }
-
-
 }
 
 
@@ -555,6 +553,88 @@ export class ShimenawaReminiscenceViewModel extends ArtifactViewModel
 }
 
 
+// 華館夢醒形骸記
+export class HuskOfOpulentDreams extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            'husk_of_opulent_dreams',
+            "華館夢醒形骸記",
+            "華館",
+        );
+    }
+
+
+    newViewModel(type)
+    {
+        return new HuskOfOpulentDreamsViewModel(this, type);
+    }
+}
+
+
+// 華館夢醒形骸記
+export class HuskOfOpulentDreamsViewModel extends ArtifactViewModel
+{
+    constructor(parent, bonusType)
+    {
+        super(parent, bonusType);
+        this.buffStacks = ko.observable(4);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.rateDef.value += 0.3;
+
+        if(this.bonusType == '4') {
+            calc.rateDef.value += 0.06 * Number(this.buffStacks());
+            calc.baseGeoDmg.value += 0.06 * Number(this.buffStacks());
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        var list = [];
+
+        if(this.bonusType == '4') {
+            list.push(
+                Widget.buildViewHTML(target, "防御&岩ダメバフ+6%/スタック",
+                    Widget.selectViewHTML("buffStacks", [
+                        {value: 0, label: "防御力+30%"},
+                        {value: 1, label: "防御力+36%，岩ダメバフ+6%"},
+                        {value: 2, label: "防御力+42%，岩ダメバフ+12%"},
+                        {value: 3, label: "防御力+48%，岩ダメバフ+18%"},
+                        {value: 4, label: "防御力+54%，岩ダメバフ+24%"},
+                    ]))
+                );
+        }
+
+        return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.buffStacks = this.buffStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.buffStacks(obj.buffStacks);
+    }
+}
+
+
+
 export const artifacts = [
     new GladiatorsFinale(),
     new WanderersTroupe(),
@@ -563,6 +643,7 @@ export const artifacts = [
     new BlizzardStrayer(),
     new HeartOfDepth(),
     new ShimenawaReminiscence(),
+    new HuskOfOpulentDreams(),
 ];
 
 
