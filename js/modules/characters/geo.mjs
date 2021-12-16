@@ -97,31 +97,37 @@ export class Noelle extends Base.CharacterData
 
     static presetAttacks = [
         {
+            id: "normal_1",
             label: "通常1段目",
             dmgScale: vm => Noelle.normal1DmgScale[vm.normalRank()-1],
             attackProps: { isNormal: true }
         },
         {
+            id: "charged",
             label: "重撃連続",
             dmgScale: vm => Noelle.chargedDmgScale[vm.normalRank()-1],
             attackProps: { isCharged: true }
         },
         {
+            id: "burst_impact",
             label: "元素爆発：衝撃波",
             dmgScale: vm => Noelle.burstScale[vm.burstRank()-1][0],
             attackProps: { isBurst: true, isGeo: true, isNowNoelleBurst: true }
         },
         {
+            id: "burst_first",
             label: "元素爆発：初撃",
             dmgScale: vm => Noelle.burstScale[vm.burstRank()-1][1],
             attackProps: { isBurst: true, isGeo: true, isNowNoelleBurst: true }
         },
         {
+            id: "normal_1_burst",
             label: "元素爆発中：通常1段目",
             dmgScale: vm => Noelle.normal1DmgScale[vm.normalRank()-1],
             attackProps: { isNormal: true, isGeo: true, isNowNoelleBurst: true,  }
         },
         {
+            id: "charged_burst",
             label: "元素爆発中：重撃連続",
             dmgScale: vm => Noelle.chargedDmgScale[vm.normalRank()-1],
             attackProps: { isCharged: true, isGeo: true, isNowNoelleBurst: true }
@@ -221,41 +227,49 @@ export class AratakiItto extends Base.CharacterData
 
     static presetAttacks = [
         {
+            id: "normal_1",
             label: "通常1段目",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][0],
             attackProps: { isNormal: true }
         },
         {
+            id: "charged",
             label: "左一文字斬り（通常重撃）",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][6],
             attackProps: { isCharged: true }
         },
         {
+            id: "sakagesa_cont",
             label: "荒瀧逆袈裟連撃",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][4],
             attackProps: { isCharged: true, isSakagesa: true }
         },
         {
+            id: "sakagesa_last",
             label: "荒瀧逆袈裟とどめ",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][5],
             attackProps: { isCharged: true, isSakagesa: true }
         },
         {
+            id: "normal_1_burst",
             label: "元素爆発中：通常1段目",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][0],
             attackProps: { isGeo: true, isNowAratakiBurst: true, isNormal: true }
         },
         {
+            id: "charged_burst",
             label: "元素爆発中：左一文字斬り（通常重撃）",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][6],
             attackProps: { isGeo: true, isNowAratakiBurst: true, isCharged: true }
         },
         {
+            id: "sakagesa_cont_burst",
             label: "元素爆発中：荒瀧逆袈裟連撃",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][4],
             attackProps: { isGeo: true, isNowAratakiBurst: true, isCharged: true, isSakagesa: true }
         },
         {
+            id: "sakagesa_last_last",
             label: "元素爆発中：荒瀧逆袈裟とどめ",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][5],
             attackProps: { isGeo: true, isNowAratakiBurst: true, isCharged: true, isSakagesa: true }

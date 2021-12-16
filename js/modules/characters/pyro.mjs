@@ -159,21 +159,25 @@ export class HuTao extends Base.CharacterData
 
     static presetAttacks = [
         {
+            id: "charged",
             label: "重撃",
             dmgScale(vm){ return HuTao.chargedDmgScaleTable[vm.normalRank()-1] },
             attackProps: { isCharged: true, }
         },
         {
+            id: "charged_skill",
             label: "スキル中重撃",
             dmgScale(vm){ return HuTao.chargedDmgScaleTable[vm.normalRank()-1] },
             attackProps: { isPyro: true, isCharged: true, isNowHuTaoSkill: true }
         },
         {
+            id: "burst",
             label: "爆発",
             dmgScale(vm){ return HuTao.burstDmgScaleTable[vm.burstRank()-1] },
             attackProps: { isPyro: true, isBurst: true }
         },
         {
+            id: "burst_skill",
             label: "スキル中爆発",
             dmgScale(vm){ return HuTao.burstDmgScaleTable[vm.burstRank()-1] },
             attackProps: { isPyro: true, isBurst: true, isNowHuTaoSkill: true }
@@ -350,31 +354,37 @@ export class Yanfei extends Base.CharacterData
 
     static presetAttacks = [
         {
+            id: "normal_1",
             label: "通常1段目",
             dmgScale(vm){ return Yanfei.normalTalentTable[vm.normalRank()-1][0] },
             attackProps: { isNormal: true, isPyro: true }
         },
         {
+            id: "charged_without_additional",
             label: "重撃（追撃なし）",
             dmgScale(vm){ return Yanfei.normalTalentTable[vm.normalRank()-1][3][vm.getCountSeals()]; },
             attackProps: { isCharged: true, isPyro: true, isChainable: false }
         },
         {
+            id: "charged",
             label: "重撃（追撃あり）",
             dmgScale(vm){ return Yanfei.normalTalentTable[vm.normalRank()-1][3][vm.getCountSeals()]; },
             attackProps: { isCharged: true, isPyro: true }
         },
         {
+            id: "additional_only",
             label: "追撃のみ",
             dmgScale(vm){ return 0; },
             attackProps: { isCharged: true, isPyro: true }
         },
         {
+            id: "skill",
             label: "スキル",
             dmgScale(vm){ return Yanfei.skillTalentTable[vm.skillRank()-1] },
             attackProps: { isPyro: true, isSkill: true }
         },
         {
+            id: "burst",
             label: "爆発",
             dmgScale(vm){ return Yanfei.burstTalentTable[vm.burstRank()-1][0] },
             attackProps: { isPyro: true, isBurst: true }

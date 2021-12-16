@@ -623,7 +623,7 @@ $(function(){
                 obj.artifacts.push(a.toJS());
             });
 
-            obj.attack = {label: this.selectedAttack().label};
+            obj.attack = {id: this.selectedAttack().id};
             obj.totcost = this.optTotalCost();
             obj.buff = this.externalBuff.toJS();
 
@@ -668,7 +668,7 @@ $(function(){
             });
 
             this.attackOptions().forEach(e => {
-                if(e.label == obj.attack.label)
+                if(e.id == obj.attack.id)
                     this.selectedAttack(e);
             });
 
@@ -707,14 +707,18 @@ $(function(){
 
 
     // ページロード時にgetパラメータにデータがあればそれを復元する
-    var url = new URL(window.location.href);
-    const uridata = url.searchParams.get('data');
-    const verdata = url.searchParams.get('ver') || '0';    // データのバージョン
+    try {
+        var url = new URL(window.location.href);
+        const uridata = url.searchParams.get('data');
+        const verdata = url.searchParams.get('ver') || '0';    // データのバージョン
 
-    if(uridata && verdata) {
-        loadDataFromURI(verdata, uridata);
-        viewModel.optimizeAllCases();
-    }
+        if(uridata && verdata) {
+            loadDataFromURI(verdata, uridata);
+            viewModel.optimizeAllCases();
+        }
+    } catch(ex) {
+
+    };
 
     (async () => {
         await nlopt.ready

@@ -82,31 +82,37 @@ export class Tartaglia extends Base.CharacterData
 
     static presetAttacks = [
         {
+            id: "bow_1",
             label: "弓1段目",
             dmgScale: vm => Tartaglia.normalDmgTable[vm.normalRank()-1][0],
             attackProps: { isNormal: true }
         },
         {
+            id: "bow_charged",
             label: "弓フルチャージ",
             dmgScale: vm => Tartaglia.normalDmgTable[vm.normalRank()-1][7],
             attackProps: { isCharged: true, isHydro: true }
         },
         {
+            id: "sword_1",
             label: "双剣1段目",
             dmgScale: vm => Tartaglia.skillDmgTable[vm.skillRank()-1][1],
             attackProps: { isNormal: true, isHydro: true }
         },
         {
+            id: "sword_charged",
             label: "双剣重撃",
             dmgScale: vm => Tartaglia.skillDmgTable[vm.skillRank()-1][7],
             attackProps: { isCharged: true, isHydro: true }
         },
         {
+            id: "bow_burst",
             label: "元素爆発：遠隔",
             dmgScale: vm => Tartaglia.burstScale[vm.burstRank()-1][1],
             attackProps: { isBurst: true, isHydro: true }
         },
         {
+            id: "sword_burst",
             label: "元素爆発中：近接",
             dmgScale: vm => Tartaglia.burstScale[vm.burstRank()-1][0],
             attackProps: { isBurst: true, isHydro: true }
