@@ -1,6 +1,7 @@
 'use strict';
 import * as Data from '/js/modules/data.mjs';
 import * as Calc from '/js/modules/dmg-calc.mjs';
+import * as Migrator from '/js/modules/migrator.mjs'
 
 
 $(function(){
@@ -500,8 +501,8 @@ $(function(){
                 $('#optimizationProgress').modal('hide');
                 $("html,body").animate({scrollTop:$('#scrollTargetAfterOptimization').offset().top});
 
-                const encodedURL = location.pathname + '?data=' + encodeToURI(this.toJS());
-                this.savedURL(location.protocol + '//' + location.host + encodedURL);
+                const encodedURL = `${location.pathname}?ver=${Migrator.indexDataMigrator.currentVersion()}&data=${encodeToURI(this.toJS())}`;
+                this.savedURL(`${location.protocol}//${location.host}${encodedURL}`);
                 history.replaceState('', '', encodedURL);
             }
 
@@ -693,9 +694,10 @@ $(function(){
 
     ko.applyBindings(window.viewModel);
 
-    function loadDataFromURI(uri)
+    function loadDataFromURI(version, uri)
     {
-        viewModel.fromJS(decodeFromURI(uri));
+        let migrated = Migrator.indexDataMigrator.migrate(version, decodeFromURI(uri));
+        viewModel.fromJS(migrated);
     }
 
     function encodeDataToURI()
@@ -707,8 +709,10 @@ $(function(){
     // ページロード時にgetパラメータにデータがあればそれを復元する
     var url = new URL(window.location.href);
     const uridata = url.searchParams.get('data');
-    if(uridata) {
-        loadDataFromURI(uridata);
+    const verdata = url.searchParams.get('ver') || '0';    // データのバージョン
+
+    if(uridata && verdata) {
+        loadDataFromURI(verdata, uridata);
         viewModel.optimizeAllCases();
     }
 
