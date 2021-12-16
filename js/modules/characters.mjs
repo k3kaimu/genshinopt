@@ -30,12 +30,10 @@ export const characters = [
 
 
 export function lookupCharacter(id) {
-    console.log(id);
     let res = undefined;
     characters.forEach(e => {
         if(e.id == id) {
             res = e;
-            console.log(e);
         }
     });
 
