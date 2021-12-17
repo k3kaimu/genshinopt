@@ -409,23 +409,24 @@ title: ダメージ期待値比較ツール
               原神のダメージ計算式は単純なため，局所最適化アルゴリズムでも十分に動作しますが，この設定を有効にすることで，
               大域最適化アルゴリズムを利用できます．
               具体的には，この設定を有効にすることで大域最適化アルゴリズムを実行し大まかな最適解のアタリをつけた後に，局所最適化アルゴリズムを実行するようになります．
-              注意として，<span class="text-danger">この設定を有効にすると最適化が完了するまでに時間がかかる可能性があります．</span>
+              注意として，<span class="text-danger">この設定を有効にすると最適化の時間が非常に長くなる一方で，ほとんど効果を得られない可能性があります．</span>
+              また，この設定はURLにデータとして埋め込まれません．
             </p>
             <div class="form-group m-0">
               <div class="form-check">
                 <label class="form-check-label">
-                  <input class="form-check-input" type="checkbox">
+                  <input class="form-check-input" type="checkbox" data-bind="checked: useGlobalOpt">
                   大域最適化を有効にする
                 </label>
               </div>
             </div>
             <div class="form-group">
               <label class="col-form-label">大域最適化の目的関数の呼び出し回数の上限</label>
-              <select class="custom-select">
+              <select class="custom-select" data-bind="value: numOfEvalGlobalOpt">
                 <option value="100">100回</option>
-                <option value="100">1000回</option>
-                <option value="100">1万回</option>
-                <option value="100">10万回</option>
+                <option value="1000">1000回</option>
+                <option value="10000">1万回</option>
+                <option value="100000">10万回</option>
               </select>
             </div>
           </div>

@@ -380,6 +380,12 @@ $(function(){
         // usePowRechargeが有効のとき，元素チャージ効率のX乗を評価値に乗算する
         this.exponentOfRecharge = ko.observable(0.5);
 
+        // 大域最適化アルゴリズムを利用するか？
+        this.useGlobalOpt = ko.observable(false);
+
+        // 大域最適化アルゴリズムでの，目的関数の評価回数の上限
+        this.numOfEvalGlobalOpt = ko.observable(10000);
+
 
         this.allPatterns = ko.pureComputed(function(){
             let dst = [];
@@ -415,6 +421,7 @@ $(function(){
                                     hat: hat,
                                     exbuff: this.externalBuff,
                                     powRecharge: { isEnabled: this.usePowRecharge(), exp: Number(this.exponentOfRecharge()) },
+                                    globalOpt: { isEnabled: this.useGlobalOpt(), maxEval: Number(this.numOfEvalGlobalOpt()) },
                                 });
                             });
                         })
@@ -489,7 +496,18 @@ $(function(){
                     if(total_cost == 0) {
                         results.push({dmg: objfunc(x0).value, calc: calc, setting: setting});
                     } else {
-                        let opt = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
+                        let opt = undefined;
+                        if(setting.globalOpt.isEnabled) {
+                            opt = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.GN_ISRES, x0, 1e-2, setting.globalOpt.maxEval);
+                            opt = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, opt.opt_result.x, 1e-3, 1000);
+
+                            // 局所最適化のみ
+                            let local = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
+                            if(opt.value < local.value)
+                                opt = local;    // 局所最適化の方が性能が良かったのでそちらを採用
+                        } else {
+                            opt = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
+                        }
                         
                         console.assert(opt.opt_result.success);
                         setArg(opt.opt_result.x);
@@ -659,6 +677,9 @@ $(function(){
             obj.usePowRecharge = this.usePowRecharge();
             obj.exponentOfRecharge = Number(this.exponentOfRecharge());
 
+            // obj.useGlobalOpt = this.useGlobalOpt();
+            // obj.numOfEvalGlobalOpt = Number(this.numOfEvalGlobalOpt());
+
             return obj;
 
         }.bind(this);
@@ -706,6 +727,9 @@ $(function(){
 
             this.usePowRecharge(obj.usePowRecharge);
             this.exponentOfRecharge(obj.exponentOfRecharge);
+
+            // this.useGlobalOpt(obj.useGlobalOpt);
+            // this.numOfEvalGlobalOpt(obj.numOfEvalGlobalOpt);
 
         }.bind(this);
     }
