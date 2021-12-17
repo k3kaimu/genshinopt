@@ -271,10 +271,23 @@ export class VGData
     }
 
 
+    // 累乗
+    pow_number(num) {
+        let dst = VGData.zero();
+        dst.value = Math.pow(this.value, num);
+
+        // d/dx f(x)^a = a f(x)^{a-1} f'(x)
+        const pm1 = Math.pow(this.value, num-1) * num;
+        for(let i = 0; i < 7; ++i) {
+            dst.grad[i] = pm1 * this.grad[i]
+        }
+
+        return dst;
+    }
+
+
     // Math.min(this, num)
     min_number(num) {
-        let str = "Math.min(" + this.toExprText() + ", " + VGData.textValue(num) + ")";
-
         let dst = undefined;
         if(this.value > num) {
             dst = VGData.constant(num);
@@ -283,6 +296,7 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
+            let str = "Math.min(" + this.toExprText() + ", " + VGData.textValue(num) + ")";
             dst.exprText = str;
         }
 
@@ -292,8 +306,6 @@ export class VGData
 
     // Math.max(this, num)
     max_number(num) {
-        let str = "Math.max(" + this.toExprText() + ", " + VGData.textValue(num) + ")";
-
         let dst = undefined;
         if(this.value > num) {
             dst = VGData.zero().add(this);
@@ -302,6 +314,7 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
+            let str = "Math.max(" + this.toExprText() + ", " + VGData.textValue(num) + ")";
             dst.exprText = str;
         }
 
