@@ -332,7 +332,7 @@ title: ダメージ期待値比較ツール
 
 <h4 class="h4">探索するパターン数：<span data-bind="text: allPatterns().length"></span>通り</h4>
 <div class="row mb-3">
-  <div class="col-sm-6">
+  <div class="col-sm-6 col-lg-3">
     <select class="custom-select" data-bind="value: optTotalCost">
       <option value="0">各部位スコア0</option>
       <option value="25">各部位スコア5</option>
@@ -355,7 +355,7 @@ title: ダメージ期待値比較ツール
 <!-- </div>
 
 <div class="row mb-3"> -->
-  <div class="col-6 col-lg-3">
+  <div class="col-sm-6 col-lg-3">
     <select class="custom-select" data-bind="value: showOptResultsLimit">
       <option selected value="20">上位20件表示</option>
       <option value="40">上位40件表示</option>
@@ -363,10 +363,78 @@ title: ダメージ期待値比較ツール
       <option value="1000">上位1000件表示</option>
     </select>
   </div>
-  <div class="col-6 col-lg-3">
+  <div class="col-sm-6 col-lg-3">
+    <button type="submit" class="btn btn-outline-primary" data-toggle="collapse" data-target="#otherSettings">その他の設定</button>
+  </div>
+  <div class="col-sm-6 col-lg-3">
     <button type="submit" id="scrollTargetAfterOptimization" class="btn btn-primary" data-bind="click: optimizeAllCases(), disable: allPatterns().length == 0 || selectedAttack() == undefined">最適化実行</button>
   </div>
 </div>
+
+<div class="mb-3">
+  <div class="collapse mt-2" id="otherSettings">
+    <div class="row">
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-header p-2">元素チャージ効率を考慮</div>
+          <div class="card-body p-2">
+            <p>
+              ダメージの期待値に元素チャージ効率のX乗の値を掛けたものを評価値として最適化します．
+              <span class="text-danger">この設定を有効にした場合，最適化結果一覧で表示される数値（最適化の評価値）は元素チャージ効率のX乗の値を掛けたものになります．</span>
+              ただし，「詳細表示」で表示されるダメージ期待値は従来通りダメージの期待値になっています．
+            </p>
+            <div class="form-group m-0">
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="checkbox" data-bind="checked: usePowRecharge">
+                  この設定を有効にする
+                </label>
+              </div>
+            </div>
+            <div class="form-group row m-0">
+              <label class="col-sm-5 col-form-label">累乗数：<span></span>乗</label>
+              <div class="col-sm-7 mt-sm-2">
+              <input type="range" class="form-control-range" data-bind="value: exponentOfRecharge" min="0" max="2" step="0.1">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-6">
+        <div class="card">
+          <div class="card-header p-2">大域最適化アルゴリズムの利用</div>
+          <div class="card-body p-2">
+            <p>
+              本サイトでは，計算時間の都合上デフォルトでは局所最適化アルゴリズムを採用しています．
+              原神のダメージ計算式は単純なため，局所最適化アルゴリズムでも十分に動作しますが，この設定を有効にすることで，
+              大域最適化アルゴリズムを利用できます．
+              具体的には，この設定を有効にすることで大域最適化アルゴリズムを実行し大まかな最適解のアタリをつけた後に，局所最適化アルゴリズムを実行するようになります．
+              注意として，<span class="text-danger">この設定を有効にすると最適化が完了するまでに時間がかかる可能性があります．</span>
+            </p>
+            <div class="form-group m-0">
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input class="form-check-input" type="checkbox">
+                  大域最適化を有効にする
+                </label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-form-label">大域最適化の目的関数の呼び出し回数の上限</label>
+              <select class="custom-select">
+                <option value="100">100回</option>
+                <option value="100">1000回</option>
+                <option value="100">1万回</option>
+                <option value="100">10万回</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <div data-bind="visible: (savedURL() || '').length != 0">
 <div class="input-group mb-3">

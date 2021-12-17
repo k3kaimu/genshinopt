@@ -374,6 +374,13 @@ $(function(){
         this.optTotalCost = ko.observable();
 
 
+        // 評価値に元素チャージ効率を考慮するか？
+        this.usePowRecharge = ko.observable(false);
+
+        // usePowRechargeが有効のとき，元素チャージ効率のX乗を評価値に乗算する
+        this.exponentOfRecharge = ko.observable(0.5);
+
+
         this.allPatterns = ko.pureComputed(function(){
             let dst = [];
             this.comparingWeaponList().forEach((weapon, iwp) => {
@@ -407,6 +414,7 @@ $(function(){
                                     cup: cup,
                                     hat: hat,
                                     exbuff: this.externalBuff,
+                                    powRecharge: { isEnabled: this.usePowRecharge(), exp: Number(this.exponentOfRecharge()) },
                                 });
                             });
                         })
@@ -467,7 +475,13 @@ $(function(){
 
                     function objfunc(x) {
                         setArg(x);
-                        return calc.calculate(attackType.dmgScale(setting.character), attackType.attackProps).total();
+                        let dmg = calc.calculate(attackType.dmgScale(setting.character), attackType.attackProps).total();
+
+                        if(setting.powRecharge.isEnabled) {
+                            return dmg.mul(calc.recharge(attackType.attackProps).pow_number(setting.powRecharge.exp));
+                        } else {
+                            return dmg;
+                        }
                     }
 
                     let x0 = [0, 0, 0, 0, 0, 0, 0];
@@ -642,6 +656,9 @@ $(function(){
                 obj.hat[c.value] = c.checked();
             });
 
+            obj.usePowRecharge = this.usePowRecharge();
+            obj.exponentOfRecharge = Number(this.exponentOfRecharge());
+
             return obj;
 
         }.bind(this);
@@ -686,6 +703,9 @@ $(function(){
             this.hatMainStatus.forEach(c => {
                 c.checked(obj.hat[c.value]);
             });
+
+            this.usePowRecharge(obj.usePowRecharge);
+            this.exponentOfRecharge(obj.exponentOfRecharge);
 
         }.bind(this);
     }
