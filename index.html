@@ -268,7 +268,7 @@ title: ダメージ期待値比較ツール
 
 
 <div class="mb-5">
-  <button type="button" class="btn btn-outline-primary" data-toggle="collapse" data-target="#buffSetting">他キャラや飯バフなどの詳細設定（上級者向け）</button>
+  <button type="button" class="btn btn-outline-primary btn-block" data-toggle="collapse" data-target="#buffSetting">他キャラや飯バフなどの詳細設定（上級者向け）</button>
   <div class="collapse mt-2" id="buffSetting">
     <p class="text-danger">
       注意：百分率（%）の欄は倍率値を入力してください（例：33% -> 0.33）
@@ -365,10 +365,10 @@ title: ダメージ期待値比較ツール
     </select>
   </div>
   <div class="col-sm-6 col-lg-3">
-    <button type="submit" class="btn btn-outline-primary" data-toggle="collapse" data-target="#otherSettings">その他の設定</button>
+    <button type="submit" class="btn btn-outline-primary btn-block" data-toggle="collapse" data-target="#otherSettings">その他の設定</button>
   </div>
   <div class="col-sm-6 col-lg-3">
-    <button type="submit" id="scrollTargetAfterOptimization" class="btn btn-primary" data-bind="click: optimizeAllCases(), disable: allPatterns().length == 0 || selectedAttack() == undefined">最適化実行</button>
+    <button type="submit" id="scrollTargetAfterOptimization" class="btn btn-primary btn-block" data-bind="click: optimizeAllCases(), disable: allPatterns().length == 0 || selectedAttack() == undefined">最適化実行</button>
   </div>
 </div>
 
@@ -513,6 +513,18 @@ title: ダメージ期待値比較ツール
                           <th scope="row">ダメージ期待値</th>
                           <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
                           <td class="text-right" data-bind="text: textInteger(optres.dmgExpected[attackType.label].value)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">会心ダメージ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textInteger(optres.dmgCrt[attackType.label].value)"></td>
+                          <!-- /ko -->
+                        </tr>
+                        <tr>
+                          <th scope="row">非会心ダメージ</th>
+                          <!-- ko foreach: { data: Object.getPrototypeOf(optres.setting.character.parent).constructor.presetAttacks, as: 'attackType'} -->
+                          <td class="text-right" data-bind="text: textInteger(optres.dmgNonCrt[attackType.label].value)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>

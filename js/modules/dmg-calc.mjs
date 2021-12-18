@@ -711,9 +711,26 @@ export class DamageCalculator
 
         var dmgbuff = this.calculateTotalDmgBuff(attackProps);
 
-        let dmg = this.atk(attackProps).mul(dmgScale).add(this.increaseDamage(attackProps))
-                .mul(this.crtRate(attackProps).min_number(1).max_number(0).mul(this.crtDmg(attackProps)).add(1))
-                .mul(dmgbuff.add(1));
+        let dmg = this.atk(attackProps).mul(dmgScale).add(this.increaseDamage(attackProps));
+
+        if(attackProps.isForcedCritical || false)
+        {
+            // critical
+            dmg = dmg.mul(this.crtDmg(attackProps).add(1));
+        }
+        else if(attackProps.isForcedNonCritical || false)
+        {
+            // not critical
+            dmg = dmg;  // Nop
+        }
+        else
+        {
+            // expected value
+            dmg = dmg.mul(this.crtRate(attackProps).min_number(1).max_number(0).mul(this.crtDmg(attackProps)).add(1));
+        }
+        
+        // damage buffs
+        dmg = dmg.mul(dmgbuff.add(1));
         
         return dmg.mul(this.calculateVaporizeMeltBonus(attackProps)).mul(0.5).mul(0.9);
     }

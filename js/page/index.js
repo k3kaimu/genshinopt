@@ -623,9 +623,14 @@ $(function(){
                 }.bind(this);
 
                 this.dmgExpected = {};
+                this.dmgCrt = {};
+                this.dmgNonCrt = {};
                 Object.getPrototypeOf(e.setting.character.parent).constructor.presetAttacks.forEach(attackType => {
                     this.dmgExpected[attackType.label] = e.calc.calculate(attackType.dmgScale(e.setting.character), attackType.attackProps).total();
+                    this.dmgCrt[attackType.label] = e.calc.calculate(attackType.dmgScale(e.setting.character), {isForcedCritical: true, ...attackType.attackProps}).total();
+                    this.dmgNonCrt[attackType.label] = e.calc.calculate(attackType.dmgScale(e.setting.character), {isForcedNonCritical: true, ...attackType.attackProps}).total();
                 });
+                
             }
 
             let dst = [];
