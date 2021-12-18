@@ -285,6 +285,12 @@ export class AratakiItto extends Base.CharacterData
             attackProps: { isCharged: true, isSakagesa: true, isPhysical: true }
         },
         {
+            id: "skill",
+            label: "スキル",
+            dmgScale: vm => AratakiItto.skillTable[vm.normalRank()-1],
+            attackProps: { isSkill: true, isGeo: true }
+        },
+        {
             id: "normal_1_burst",
             label: "元素爆発中：通常1段目",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][0],
@@ -303,10 +309,16 @@ export class AratakiItto extends Base.CharacterData
             attackProps: { isGeo: true, isNowAratakiBurst: true, isCharged: true, isSakagesa: true }
         },
         {
-            id: "sakagesa_last_last",
+            id: "sakagesa_last_burst",
             label: "元素爆発中：荒瀧逆袈裟とどめ",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][5],
             attackProps: { isGeo: true, isNowAratakiBurst: true, isCharged: true, isSakagesa: true }
+        },
+        {
+            id: "skill_burst",
+            label: "元素爆発中：スキル",
+            dmgScale: vm => AratakiItto.skillTable[vm.normalRank()-1],
+            attackProps: { isSkill: true, isGeo: true, isNowAratakiBurst: true, }
         },
     ];
 }
