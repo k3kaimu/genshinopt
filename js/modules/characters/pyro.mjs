@@ -290,6 +290,243 @@ runUnittest(function(){
 });
 
 
+export class Yoimiya extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "yoimiya",
+            "宵宮",
+            5,
+            "Pyro",
+            "Bow",
+            323,            /* bAtk */
+            615,            /* bDef */
+            10164,          /* bHP */
+            "baseCrtRate",  /* bBonusType */
+            0.192           /* bBonusValue */
+        );
+    }
+
+
+    newViewModel() {
+        return new YoimiyaViewModel(this);
+    }
+
+
+    static normalTalentTable = [
+        // 0:1段,    1:2段,     2:3段,    3:4段,      4:5段,     5:狙撃,   6:フル,   7:焔硝, 8:落下期間, 9:低空, 10:高空
+        [35.6*2/100, 68.4/100, 88.9/100, 46.4*2/100, 105.9/100, 43.9/100, 124/100, 16/100, 56.8/100, 114/100, 142/100],
+        [38.1*2/100, 73.0/100, 94.9/100, 49.6*2/100, 113.1/100, 47.4/100, 133/100, 18/100, 61.5/100, 123/100, 153/100],
+        [40.5*2/100, 77.7/100, 101.0/100, 52.8*2/100, 120.3/100, 51.0/100, 143/100, 19/100, 66.1/100, 132/100, 165/100],
+        [43.7*2/100, 83.9/100, 109.1/100, 57.0*2/100, 129.9/100, 56.1/100, 155/100, 21/100, 72.7/100, 145/100, 182/100],
+        [46.2*2/100, 88.6/100, 115.2/100, 60.1*2/100, 137.1/100, 59.7/100, 164/100, 22/100, 77.3/100, 155/100, 193/100],
+        [49.0*2/100, 94.0/100, 122.2/100, 63.8*2/100, 145.6/100, 63.8/100, 174/100, 23/100, 82.6/100, 165/100, 206/100],
+        [52.7*2/100, 101.0/100, 131.3/100, 68.6*2/100, 156.4/100, 69.4/100, 186/100, 25/100, 89.9/100, 180/100, 224/100],
+        [56.3*2/100, 108.0/100, 140.4/100, 73.3*2/100, 167.2/100, 75.0/100, 198/100, 26/100, 97.1/100, 194/100, 243/100],
+        [59.9*2/100, 115.0/100, 149.5/100, 78.1*2/100, 178.0/100, 80.6/100, 211/100, 28/100, 104.4/100, 209/100, 261/100],
+        [63.6*2/100, 122.0/100, 158.6/100, 82.8*2/100, 188.9/100, 86.7/100, 223/100, 30/100, 112.3/100, 225/100, 281/100],
+        [67.2*2/100, 129.0/100, 167.7/100, 87.6*2/100, 199.7/100, 92.8/100, 236/100, 31/100, 120.3/100, 240/100, 300/100],
+    ];
+
+    static skillTalentTable = [
+        137.9/100,
+        140.2/100,
+        142.4/100,
+        145.4/100,
+        147.7/100,
+        149.9/100,
+        152.9/100,
+        155.8/100,
+        158.8/100,
+        161.7/100,
+        164.7/100,
+        167.6/100,
+        170.6/100,
+    ];
+
+    static burstTalentTable = [
+        // 0:ダメージ, 1:追加爆発ダメージ
+        [127/100, 122/100],
+        [137/100, 131/100],
+        [146/100, 140/100],
+        [159/100, 153/100],
+        [169/100, 162/100],
+        [178/100, 171/100],
+        [191/100, 183/100],
+        [204/100, 195/100],
+        [216/100, 207/100],
+        [229/100, 220/100],
+        [242/100, 232/100],
+        [254/100, 244/100],
+        [270/100, 259/100],
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_1",
+            label: "通常1段目",
+            dmgScale(vm){ return Yoimiya.normalTalentTable[vm.normalRank()-1][0]; },
+            attackProps: { isPhysical: true, isNormal: true, }
+        },
+        {
+            id: "full_charged",
+            label: "フルチャージ狙い撃ち",
+            dmgScale(vm){ return Yoimiya.normalTalentTable[vm.normalRank()-1][6]; },
+            attackProps: { isPyro: true, isCharged: true, }
+        },
+        {
+            id: "full_charged_additional",
+            label: "焔硝の矢3本",
+            dmgScale(vm){ return Yoimiya.normalTalentTable[vm.normalRank()-1][7]*3; },
+            attackProps: { isPyro: true, isCharged: true, }
+        },
+        {
+            id: "normal_1_skill",
+            label: "スキル中通常1段目",
+            dmgScale(vm){ return Yoimiya.normalTalentTable[vm.normalRank()-1][0] * Yoimiya.skillTalentTable[vm.skillRank()-1]; },
+            attackProps: { isPyro: true, isNormal: true, isNowYoimiyaSkill: true }
+        },
+        {
+            id: "burst",
+            label: "元素爆発",
+            dmgScale(vm){ return Yoimiya.burstTalentTable[vm.burstRank()-1][0]; },
+            attackProps: { isPyro: true, isBurst: true }
+        },
+        {
+            id: "burst",
+            label: "元素爆発中の追加爆発",
+            dmgScale(vm){ return Yoimiya.burstTalentTable[vm.burstRank()-1][1]; },
+            attackProps: { isPyro: true, isBurst: true }
+        },
+    ];
+}
+
+
+// 宵宮
+export class YoimiyaViewModel extends Base.CharacterViewModel
+{
+    // 天賦「炎昼の風物詩」はサポート能力のため無視
+
+    constructor(parent)
+    {
+        super(parent);
+        this.skillStacks = ko.observable(10);   // 天賦「袖火百景図」
+        this.useC1Effect = ko.observable(true);   // 1凸効果（攻撃力+20%）の有無
+        this.useC2Effect = ko.observable(true);   // 2凸効果（炎元素ダメージ+25%）の有無
+        this.useC6Effect = ko.observable(true);   // 6凸効果（追撃）
+    }
+
+
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.basePyroDmg.value += Number(this.skillStacks()) * 0.02;
+
+        if(this.constell() >= 1 && this.useC1Effect()) {
+            calc.rateAtk.value += 0.2;
+        }
+
+        if(this.constell() >= 2 && this.useC2Effect()) {
+            calc.basePyroDmg.value += 0.25;
+        }
+
+        if(this.constell() >= 6 && this.useC6Effect()) {
+            let data = this.toJS();
+            let CalcType = Object.getPrototypeOf(calc).constructor;
+            let NewCalc = class extends CalcType {
+                yoimiyaData = data;
+
+                chainedAttackDmg(parentAttackProps) {
+                    let dmg = super.chainedAttackDmg(parentAttackProps);
+
+                    if(hasAllPropertiesWithSameValue(parentAttackProps, {isNowYoimiyaSkill: true, isNormal: true})) {
+                        let newProps = Calc.deleteAllElementFromAttackProps({isChainable: false, ...parentAttackProps});
+                        dmg = dmg.add(this.calculate(0.6, newProps).total().mul(0.5));
+                    }
+
+                    return dmg;
+                }
+            };
+
+            calc = Object.assign(new NewCalc(), calc);
+        }
+
+        return calc;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.skillStacks = this.skillStacks();
+        obj.useC1Effect = this.useC1Effect();
+        obj.useC2Effect = this.useC2Effect();
+        obj.useC6Effect = this.useC6Effect();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+
+        this.skillStacks(obj.skillStacks);
+        this.useC1Effect(obj.useC1Effect);
+        this.useC2Effect(obj.useC2Effect);
+        this.useC6Effect(obj.useC6Effect);
+    }
+
+
+    viewHTMLList(target)
+    {
+        let ret = super.viewHTMLList(target);
+
+        ret.push(
+            Widget.buildViewHTML(target, "袖火百景図",
+                Widget.selectViewHTML("skillStacks", [
+                    {label: '炎元素ダメージ+0%', value: 0},
+                    {label: '炎元素ダメージ+2%', value: 1},
+                    {label: '炎元素ダメージ+4%', value: 2},
+                    {label: '炎元素ダメージ+6%', value: 3},
+                    {label: '炎元素ダメージ+8%', value: 4},
+                    {label: '炎元素ダメージ+10%', value: 5},
+                    {label: '炎元素ダメージ+12%', value: 6},
+                    {label: '炎元素ダメージ+14%', value: 7},
+                    {label: '炎元素ダメージ+16%', value: 8},
+                    {label: '炎元素ダメージ+18%', value: 9},
+                    {label: '炎元素ダメージ+20%', value: 10},])
+            )
+        );
+
+        if(this.constell() >= 1) {
+            ret.push(
+                Widget.buildViewHTML(target, "紅玉の琉金（1凸）", Widget.checkBoxViewHTML("useC1Effect", "+20%攻撃力"))
+            );
+        }
+
+        if(this.constell() >= 2) {
+            ret.push(
+                Widget.buildViewHTML(target, "万燈の火（2凸）", Widget.checkBoxViewHTML("useC2Effect", "+25%炎元素ダメージ"))
+            );
+        }
+        
+        if(this.constell() >= 6) {
+            ret.push(
+                Widget.buildViewHTML(target, "長野原龍勢流星群（6凸）", Widget.checkBoxViewHTML("useC6Effect", "スキル中の通常攻撃に50%の確率で60%の追撃ダメージを加算"))
+            );
+        }
+
+        return ret;
+    }
+}
+
+
 // 煙緋
 export class Yanfei extends Base.CharacterData
 {
