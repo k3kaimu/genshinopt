@@ -287,7 +287,7 @@ export class AratakiItto extends Base.CharacterData
         {
             id: "skill",
             label: "スキル",
-            dmgScale: vm => AratakiItto.skillTable[vm.normalRank()-1],
+            dmgScale: vm => AratakiItto.skillTable[vm.skillRank()-1],
             attackProps: { isSkill: true, isGeo: true }
         },
         {
@@ -317,7 +317,7 @@ export class AratakiItto extends Base.CharacterData
         {
             id: "skill_burst",
             label: "元素爆発中：スキル",
-            dmgScale: vm => AratakiItto.skillTable[vm.normalRank()-1],
+            dmgScale: vm => AratakiItto.skillTable[vm.skillRank()-1],
             attackProps: { isSkill: true, isGeo: true, isNowAratakiBurst: true, }
         },
     ];
