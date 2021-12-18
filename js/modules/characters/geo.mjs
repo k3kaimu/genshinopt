@@ -100,13 +100,13 @@ export class Noelle extends Base.CharacterData
             id: "normal_1",
             label: "通常1段目",
             dmgScale: vm => Noelle.normal1DmgScale[vm.normalRank()-1],
-            attackProps: { isNormal: true }
+            attackProps: { isNormal: true, isPhysical: true }
         },
         {
             id: "charged",
             label: "重撃連続",
             dmgScale: vm => Noelle.chargedDmgScale[vm.normalRank()-1],
-            attackProps: { isCharged: true }
+            attackProps: { isCharged: true, isPhysical: true }
         },
         {
             id: "burst_impact",
@@ -264,25 +264,25 @@ export class AratakiItto extends Base.CharacterData
             id: "normal_1",
             label: "通常1段目",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][0],
-            attackProps: { isNormal: true }
+            attackProps: { isNormal: true, isPhysical: true }
         },
         {
             id: "charged",
             label: "左一文字斬り（通常重撃）",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][6],
-            attackProps: { isCharged: true }
+            attackProps: { isCharged: true, isPhysical: true }
         },
         {
             id: "sakagesa_cont",
             label: "荒瀧逆袈裟連撃",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][4],
-            attackProps: { isCharged: true, isSakagesa: true }
+            attackProps: { isCharged: true, isSakagesa: true, isPhysical: true }
         },
         {
             id: "sakagesa_last",
             label: "荒瀧逆袈裟とどめ",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][5],
-            attackProps: { isCharged: true, isSakagesa: true }
+            attackProps: { isCharged: true, isSakagesa: true, isPhysical: true }
         },
         {
             id: "normal_1_burst",

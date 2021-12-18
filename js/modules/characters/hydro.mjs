@@ -85,7 +85,7 @@ export class Tartaglia extends Base.CharacterData
             id: "bow_1",
             label: "弓1段目",
             dmgScale: vm => Tartaglia.normalDmgTable[vm.normalRank()-1][0],
-            attackProps: { isNormal: true }
+            attackProps: { isNormal: true, isPhysical: true }
         },
         {
             id: "bow_charged",

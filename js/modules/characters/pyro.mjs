@@ -162,7 +162,7 @@ export class HuTao extends Base.CharacterData
             id: "charged",
             label: "重撃",
             dmgScale(vm){ return HuTao.chargedDmgScaleTable[vm.normalRank()-1] },
-            attackProps: { isCharged: true, }
+            attackProps: { isCharged: true, isPhysical: true }
         },
         {
             id: "charged_skill",
