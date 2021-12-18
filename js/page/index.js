@@ -384,7 +384,7 @@ $(function(){
         this.useGlobalOpt = ko.observable(false);
 
         // 大域最適化アルゴリズムでの，目的関数の評価回数の上限
-        this.numOfEvalGlobalOpt = ko.observable(10000);
+        this.numOfEvalGlobalOpt = ko.observable(100);
 
 
         this.allPatterns = ko.pureComputed(function(){
@@ -444,7 +444,7 @@ $(function(){
 
             this.doneOptimizedCount(0);
 
-            if(allpatterns.length > 200) {
+            if(allpatterns.length > 200 || (this.useGlobalOpt() && Number(this.numOfEvalGlobalOpt()) * allpatterns.length > 200 )) {
                 $('#optimizationProgress').modal('show');
             }
 
@@ -498,8 +498,9 @@ $(function(){
                     } else {
                         let opt = undefined;
                         if(setting.globalOpt.isEnabled) {
-                            opt = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.GN_ISRES, x0, 1e-2, setting.globalOpt.maxEval);
-                            opt = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, opt.opt_result.x, 1e-3, 1000);
+                            // opt = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.GN_ISRES, x0, 1e-2, setting.globalOpt.maxEval);
+                            // opt = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, opt.opt_result.x, 1e-3, 1000);
+                            opt = applyGlobalOptimize(calc, objfunc, total_cost, nlopt.Algorithm.GN_ISRES, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, setting.globalOpt.maxEval, 1000);
 
                             // 局所最適化のみ
                             let local = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
@@ -514,7 +515,7 @@ $(function(){
                         results.push({dmg: opt.value, calc: opt.calc, setting: setting});
                     }
 
-                    if(results.length % 10 == 0)
+                    if(results.length % 10 == 0 || this.useGlobalOpt())
                         this.doneOptimizedCount(results.length);
                 }
 
@@ -607,12 +608,12 @@ $(function(){
             return line1 + "<br>" + line2;
         }.bind(this);
 
-        this.showOptResultsLimit = ko.observable();
+        this.showOptResultsLimit = ko.observable(20);
 
         this.shownOptimizedResults = ko.pureComputed(function(){
             let arr = this.optimizedResults();
             let len = arr.length;
-            let lim = this.showOptResultsLimit();
+            let lim = Number(this.showOptResultsLimit());
 
             // DOMを遅延して構築するために必要
             function EachResultViewModel(e) {
