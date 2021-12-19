@@ -546,142 +546,84 @@ export class DamageCalculator
     }
 
 
-    dup()
+    postCopyDup()
     {
-        var dst = new DamageCalculator();
+        this.baseAtk = this.baseAtk.dup();
+        this.rateAtk = this.rateAtk.dup();
+        this.addAtk = this.addAtk.dup();
+        this.baseDef = this.baseDef.dup();
+        this.rateDef = this.rateDef.dup();
+        this.addDef = this.addDef.dup();
+        this.baseHP = this.baseHP.dup();
+        this.rateHP = this.rateHP.dup();
+        this.addHP = this.addHP.dup();
 
-        dst.character = this.character;
-        dst.weapon = this.weapon;
+        this.baseCrtRate = this.baseCrtRate.dup();
+        this.baseCrtDmg = this.baseCrtDmg.dup();
 
-        dst.baseAtk = this.baseAtk.dup();
-        dst.rateAtk = this.rateAtk.dup();
-        dst.addAtk = this.addAtk.dup();
-        dst.baseDef = this.baseDef.dup();
-        dst.rateDef = this.rateDef.dup();
-        dst.addDef = this.addDef.dup();
-        dst.baseHP = this.baseHP.dup();
-        dst.rateHP = this.rateHP.dup();
-        dst.addHP = this.addHP.dup();
+        this.baseAllDmg = this.baseAllDmg.dup();
+        this.baseAnemoDmg = this.baseAnemoDmg.dup();
+        this.baseGeoDmg = this.baseGeoDmg.dup();
+        this.baseElectroDmg = this.baseElectroDmg.dup();
+        this.basePyroDmg = this.basePyroDmg.dup();
+        this.baseHydroDmg = this.baseHydroDmg.dup();
+        this.baseCryoDmg = this.baseCryoDmg.dup();
+        this.baseDendroDmg = this.baseDendroDmg.dup();
+        this.basePhysicalDmg = this.basePhysicalDmg.dup();
+        this.baseNormalDmg = this.baseNormalDmg.dup();
+        this.baseChargedDmg = this.baseChargedDmg.dup();
+        this.basePlungeDmg = this.basePlungeDmg.dup();
+        this.baseSkillDmg = this.baseSkillDmg.dup();
+        this.baseBurstDmg = this.baseBurstDmg.dup();
+        this.baseSwirlBonus = this.baseSwirlBonus.dup();
+        this.baseCrystalizeBonus = this.baseCrystalizeBonus.dup();
+        this.baseVaporizeBonus = this.baseVaporizeBonus.dup();
+        this.baseOverloadedBonus = this.baseOverloadedBonus.dup();
+        this.baseMeltBonus = this.baseMeltBonus.dup();
+        this.baseElectroChargedBonus = this.baseElectroChargedBonus.dup();
+        this.baseFrozenBonus = this.baseFrozenBonus.dup();
+        this.baseSuperconductBonus = this.baseSuperconductBonus.dup();
+        this.baseShatteredBonus = this.baseShatteredBonus.dup();
+        this.baseBurningBonus = this.baseBurningBonus.dup();
 
-        dst.baseCrtRate = this.baseCrtRate.dup();
-        dst.baseCrtDmg = this.baseCrtDmg.dup();
+        this.baseRecharge = this.baseRecharge.dup();
+        this.baseMastery = this.baseMastery.dup();
 
-        dst.baseAllDmg = this.baseAllDmg.dup();
-        dst.baseAnemoDmg = this.baseAnemoDmg.dup();
-        dst.baseGeoDmg = this.baseGeoDmg.dup();
-        dst.baseElectroDmg = this.baseElectroDmg.dup();
-        dst.basePyroDmg = this.basePyroDmg.dup();
-        dst.baseHydroDmg = this.baseHydroDmg.dup();
-        dst.baseCryoDmg = this.baseCryoDmg.dup();
-        dst.baseDendroDmg = this.baseDendroDmg.dup();
-        dst.basePhysicalDmg = this.basePhysicalDmg.dup();
-        dst.baseNormalDmg = this.baseNormalDmg.dup();
-        dst.baseChargedDmg = this.baseChargedDmg.dup();
-        dst.basePlungeDmg = this.basePlungeDmg.dup();
-        dst.baseSkillDmg = this.baseSkillDmg.dup();
-        dst.baseBurstDmg = this.baseBurstDmg.dup();
-        dst.baseSwirlBonus = this.baseSwirlBonus.dup();
-        dst.baseCrystalizeBonus = this.baseCrystalizeBonus.dup();
-        dst.baseVaporizeBonus = this.baseVaporizeBonus.dup();
-        dst.baseOverloadedBonus = this.baseOverloadedBonus.dup();
-        dst.baseMeltBonus = this.baseMeltBonus.dup();
-        dst.baseElectroChargedBonus = this.baseElectroChargedBonus.dup();
-        dst.baseFrozenBonus = this.baseFrozenBonus.dup();
-        dst.baseSuperconductBonus = this.baseSuperconductBonus.dup();
-        dst.baseShatteredBonus = this.baseShatteredBonus.dup();
-        dst.baseBurningBonus = this.baseBurningBonus.dup();
+        this.baseRateShieldStrength = this.baseRateShieldStrength.dup();
 
-        dst.baseRecharge = this.baseRecharge.dup();
-        dst.baseMastery = this.baseMastery.dup();
+        this.artRateAtk = this.artRateAtk.dup();
+        this.artRateDef = this.artRateDef.dup();
+        this.artRateHP = this.artRateHP.dup();
+        this.artCrtRate = this.artCrtRate.dup();
+        this.artCrtDmg = this.artCrtDmg.dup();
+        this.artRecharge = this.artRecharge.dup();
+        this.artMastery = this.artMastery.dup();
 
-        dst.baseRateShieldStrength = this.baseRateShieldStrength.dup();
+        this.baseAllResis = this.baseAllResis.dup();
+        this.baseAnemoResis = this.baseAnemoResis.dup();
+        this.baseGeoResis = this.baseGeoResis.dup();
+        this.baseElectroResis = this.baseElectroResis.dup();
+        this.basePyroResis = this.basePyroResis.dup();
+        this.baseHydroResis = this.baseHydroResis.dup();
+        this.baseCryoResis = this.baseCryoResis.dup();
+        this.baseDendroResis = this.baseDendroResis.dup();
+        this.basePhysicalResis = this.basePhysicalResis.dup();
+    }
 
-        dst.artRateAtk = this.artRateAtk.dup();
-        dst.artRateDef = this.artRateDef.dup();
-        dst.artRateHP = this.artRateHP.dup();
-        dst.artCrtRate = this.artCrtRate.dup();
-        dst.artCrtDmg = this.artCrtDmg.dup();
-        dst.artRecharge = this.artRecharge.dup();
-        dst.artMastery = this.artMastery.dup();
 
-        dst.baseAllResis = this.baseAllResis.dup();
-        dst.baseAnemoResis = this.baseAnemoResis.dup();
-        dst.baseGeoResis = this.baseGeoResis.dup();
-        dst.baseElectroResis = this.baseElectroResis.dup();
-        dst.basePyroResis = this.basePyroResis.dup();
-        dst.baseHydroResis = this.baseHydroResis.dup();
-        dst.baseCryoResis = this.baseCryoResis.dup();
-        dst.baseDendroResis = this.baseDendroResis.dup();
-        dst.basePhysicalResis = this.basePhysicalResis.dup();
+    dup() {
+        let ctor = new Object.getPrototypeOf(this).constructor;
+        let newObj = new ctor;
+        newObj = Object.assign(newObj, this);
+        newObj.postCopyDup();
 
-        return dst;
+        return newObj;
     }
 
 
     copyFrom(rhs) {
-        this.character = rhs.character;
-        this.weapon = rhs.weapon;
-
-        this.baseAtk = rhs.baseAtk.dup();
-        this.rateAtk = rhs.rateAtk.dup();
-        this.addAtk = rhs.addAtk.dup();
-        this.baseDef = rhs.baseDef.dup();
-        this.rateDef = rhs.rateDef.dup();
-        this.addDef = rhs.addDef.dup();
-        this.baseHP = rhs.baseHP.dup();
-        this.rateHP = rhs.rateHP.dup();
-        this.addHP = rhs.addHP.dup();
-
-        this.baseCrtRate = rhs.baseCrtRate.dup();
-        this.baseCrtDmg = rhs.baseCrtDmg.dup();
-
-        this.baseAllDmg = rhs.baseAllDmg.dup();
-        this.baseAnemoDmg = rhs.baseAnemoDmg.dup();
-        this.baseGeoDmg = rhs.baseGeoDmg.dup();
-        this.baseElectroDmg = rhs.baseElectroDmg.dup();
-        this.basePyroDmg = rhs.basePyroDmg.dup();
-        this.baseHydroDmg = rhs.baseHydroDmg.dup();
-        this.baseCryoDmg = rhs.baseCryoDmg.dup();
-        this.baseDendroDmg = rhs.baseDendroDmg.dup();
-        this.basePhysicalDmg = rhs.basePhysicalDmg.dup();
-        this.baseNormalDmg = rhs.baseNormalDmg.dup();
-        this.baseChargedDmg = rhs.baseChargedDmg.dup();
-        this.basePlungeDmg = rhs.basePlungeDmg.dup();
-        this.baseSkillDmg = rhs.baseSkillDmg.dup();
-        this.baseBurstDmg = rhs.baseBurstDmg.dup();
-        this.baseSwirlBonus = rhs.baseSwirlBonus.dup();
-        this.baseCrystalizeBonus = rhs.baseCrystalizeBonus.dup();
-        this.baseVaporizeBonus = rhs.baseVaporizeBonus.dup();
-        this.baseOverloadedBonus = rhs.baseOverloadedBonus.dup();
-        this.baseMeltBonus = rhs.baseMeltBonus.dup();
-        this.baseElectroChargedBonus = rhs.baseElectroChargedBonus.dup();
-        this.baseFrozenBonus = rhs.baseFrozenBonus.dup();
-        this.baseSuperconductBonus = rhs.baseSuperconductBonus.dup();
-        this.baseShatteredBonus = rhs.baseShatteredBonus.dup();
-        this.baseBurningBonus = rhs.baseBurningBonus.dup();
-
-        this.baseRecharge = rhs.baseRecharge.dup();
-        this.baseMastery = rhs.baseMastery.dup();
-
-        this.baseRateShieldStrength = rhs.baseRateShieldStrength.dup();
-
-        this.artRateAtk = rhs.artRateAtk.dup();
-        this.artRateDef = rhs.artRateDef.dup();
-        this.artRateHP = rhs.artRateHP.dup();
-        this.artCrtRate = rhs.artCrtRate.dup();
-        this.artCrtDmg = rhs.artCrtDmg.dup();
-        this.artRecharge = rhs.artRecharge.dup();
-        this.artMastery = rhs.artMastery.dup();
-
-        this.baseAllResis = rhs.baseAllResis.dup();
-        this.baseAnemoResis = rhs.baseAnemoResis.dup();
-        this.baseGeoResis = rhs.baseGeoResis.dup();
-        this.baseElectroResis = rhs.baseElectroResis.dup();
-        this.basePyroResis = rhs.basePyroResis.dup();
-        this.baseHydroResis = rhs.baseHydroResis.dup();
-        this.baseCryoResis = rhs.baseCryoResis.dup();
-        this.baseDendroResis = rhs.baseDendroResis.dup();
-        this.basePhysicalResis = rhs.basePhysicalResis.dup();
+        Object.assign(this, rhs);
+        this.postCopyDup();
     }
 
 
