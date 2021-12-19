@@ -10,7 +10,7 @@ export class AmosBow extends Base.WeaponData
     constructor()
     {
         super(
-            "AmosBow",
+            "amos_bow",
             "アモスの弓",
             5,
             "Bow",
