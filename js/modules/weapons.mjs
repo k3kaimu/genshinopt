@@ -16,6 +16,7 @@ import * as Sword from '/js/modules/weapons/sword.mjs';
 
 export const weapons = [
     // 弓, 星5
+    new Bow.AmosBow(),
     new Bow.SkywardHarp(),
     new Bow.ThunderingPulse(),
     new Bow.PolarStar(),

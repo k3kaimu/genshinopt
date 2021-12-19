@@ -4,6 +4,102 @@ import * as Widget from '/js/modules/widget.mjs';
 
 
 
+// アモスの弓
+export class AmosBow extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "AmosBow",
+            "アモスの弓",
+            5,
+            "Bow",
+            608,
+            "rateAtk",
+            0.496
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new AmosBowViewModel(this);
+    }
+
+
+    static addNormalChargedDmgInc = [0.12, 0.15, 0.18, 0.21, 0.24];
+    static addDmgIncByTime = [0.08, 0.10, 0.12, 0.14, 0.16];
+}
+
+
+// アモスの弓
+export class AmosBowViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.stacksDmgInc = ko.observable(5);
+    }
+
+
+    totalDmgInc(nstack) {
+        let rank_ = this.rank();
+        let ret = AmosBow.addNormalChargedDmgInc[rank_];
+        ret += AmosBow.addDmgIncByTime[rank_] * Number(nstack);
+
+        return ret;
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        let dmgInc = this.totalDmgInc(this.stacksDmgInc());
+        calc.baseNormalDmg.value += dmgInc;
+        calc.baseChargedDmg.value += dmgInc;
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "一心不乱",
+                Widget.selectViewHTML("stacksDmgInc", [
+                    {value: 0, label: `通常重撃ダメージ+${textPercentageFix(this.totalDmgInc(0), 0)}（0.0秒後）`},
+                    {value: 1, label: `通常重撃ダメージ+${textPercentageFix(this.totalDmgInc(1), 0)}（0.1秒後）`},
+                    {value: 2, label: `通常重撃ダメージ+${textPercentageFix(this.totalDmgInc(2), 0)}（0.2秒後）`},
+                    {value: 3, label: `通常重撃ダメージ+${textPercentageFix(this.totalDmgInc(3), 0)}（0.3秒後）`},
+                    {value: 4, label: `通常重撃ダメージ+${textPercentageFix(this.totalDmgInc(4), 0)}（0.4秒後）`},
+                    {value: 5, label: `通常重撃ダメージ+${textPercentageFix(this.totalDmgInc(5), 0)}（0.5秒後）`},
+                ])
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.stacksDmgInc = this.stacksDmgInc();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.stacksDmgInc(obj.stacksDmgInc);
+    }
+}
+
+
+
 // 天空の翼
 export class SkywardHarp extends Base.WeaponData
 {
