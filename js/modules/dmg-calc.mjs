@@ -532,6 +532,17 @@ export class DamageCalculator
         this.artCrtDmg = VGData.newCrtDmg(0);
         this.artRecharge = VGData.newRecharge(0);
         this.artMastery = VGData.newMastery(0);
+
+        // 耐性
+        this.baseAllResis = VGData.constant(0.1);
+        this.baseAnemoResis = VGData.zero();
+        this.baseGeoResis = VGData.zero();
+        this.baseElectroResis = VGData.zero();
+        this.basePyroResis = VGData.zero();
+        this.baseHydroResis = VGData.zero();
+        this.baseCryoResis = VGData.zero();
+        this.baseDendroResis = VGData.zero();
+        this.basePhysicalResis = VGData.zero();
     }
 
 
@@ -593,6 +604,16 @@ export class DamageCalculator
         dst.artRecharge = this.artRecharge.dup();
         dst.artMastery = this.artMastery.dup();
 
+        dst.baseAllResis = this.baseAllResis.dup();
+        dst.baseAnemoResis = this.baseAnemoResis.dup();
+        dst.baseGeoResis = this.baseGeoResis.dup();
+        dst.baseElectroResis = this.baseElectroResis.dup();
+        dst.basePyroResis = this.basePyroResis.dup();
+        dst.baseHydroResis = this.baseHydroResis.dup();
+        dst.baseCryoResis = this.baseCryoResis.dup();
+        dst.baseDendroResis = this.baseDendroResis.dup();
+        dst.basePhysicalResis = this.basePhysicalResis.dup();
+
         return dst;
     }
 
@@ -651,6 +672,16 @@ export class DamageCalculator
         this.artCrtDmg = rhs.artCrtDmg.dup();
         this.artRecharge = rhs.artRecharge.dup();
         this.artMastery = rhs.artMastery.dup();
+
+        this.baseAllResis = rhs.baseAllResis.dup();
+        this.baseAnemoResis = rhs.baseAnemoResis.dup();
+        this.baseGeoResis = rhs.baseGeoResis.dup();
+        this.baseElectroResis = rhs.baseElectroResis.dup();
+        this.basePyroResis = rhs.basePyroResis.dup();
+        this.baseHydroResis = rhs.baseHydroResis.dup();
+        this.baseCryoResis = rhs.baseCryoResis.dup();
+        this.baseDendroResis = rhs.baseDendroResis.dup();
+        this.basePhysicalResis = rhs.basePhysicalResis.dup();
     }
 
 
@@ -699,7 +730,7 @@ export class DamageCalculator
 
         var masteryBonus = this.mastery().mul(16).div(this.mastery().add(2000));
 
-        return coef.mul(masteryBonus.add(1).add(bonus)).mul(0.5).mul(0.9);
+        return coef.mul(masteryBonus.add(1).add(bonus)).mul(0.5).mul(this.calculateTotalResistanceBonus(attackProps));
     }
 
 
@@ -732,7 +763,7 @@ export class DamageCalculator
         // damage buffs
         dmg = dmg.mul(dmgbuff.add(1));
         
-        return dmg.mul(this.calculateVaporizeMeltBonus(attackProps)).mul(0.5).mul(0.9);
+        return dmg.mul(this.calculateVaporizeMeltBonus(attackProps)).mul(0.5).mul(this.calculateTotalResistanceBonus(attackProps));
     }
 
 
@@ -780,6 +811,16 @@ export class DamageCalculator
     superconductBonus(attackProps) { return this.baseSuperconductBonus; }
     burningBonus(attackProps) { return this.baseBurningBonus; }
 
+    allResis(attackProps) { return this.baseAllResis; }
+    anemoResis(attackProps) { return this.baseAnemoResis; }
+    geoResis(attackProps) { return this.baseGeoResis; }
+    electroResis(attackProps) { return this.baseElectroResis; }
+    pyroResis(attackProps) { return this.basePyroResis; }
+    hydroResis(attackProps) { return this.baseHydroResis; }
+    cryoResis(attackProps) { return this.baseCryoResis; }
+    dendroResis(attackProps) { return this.baseDendroResis; }
+    physicalResis(attackProps) { return this.basePhysicalResis; }
+
     recharge(attackProps) { return this.baseRecharge.add(this.artRecharge); }
     mastery(attackProps) { return this.baseMastery.add(this.artMastery); }
 
@@ -824,6 +865,27 @@ export class DamageCalculator
             return reactBonus.add(1).mul(reactScale);
         } else {
             return VGData.constant(1);
+        }
+    }
+
+
+    calculateTotalResistanceBonus(attackProps) {
+        var dmgResis = this.allResis(attackProps);
+        if(attackProps.isAnemo)     dmgResis = dmgResis.add(this.anemoResis(attackProps));
+        if(attackProps.isGeo)       dmgResis = dmgResis.add(this.geoResis(attackProps));
+        if(attackProps.isElectro)   dmgResis = dmgResis.add(this.electroResis(attackProps));
+        if(attackProps.isPyro)      dmgResis = dmgResis.add(this.pyroResis(attackProps));
+        if(attackProps.isHydro)     dmgResis = dmgResis.add(this.hydroResis(attackProps));
+        if(attackProps.isCryo)      dmgResis = dmgResis.add(this.cryoResis(attackProps));
+        if(attackProps.isDendro)    dmgResis = dmgResis.add(this.dendroResis(attackProps));
+        if(attackProps.isPhysical)  dmgResis = dmgResis.add(this.physicalResis(attackProps));
+
+        if(dmgResis.value < 0) {
+            return VGData.constant(1).sub(dmgResis.mul(0.5));
+        } else if(dmgResis.value < 0.75) {
+            return VGData.constant(1).sub(dmgResis);
+        } else {
+            return VGData.constant(1).div(dmgResis.mul(4).add(1));
         }
     }
 
