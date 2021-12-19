@@ -241,19 +241,21 @@ $(function(){
         this.mastery = ko.observable();
         this.dmgBuff = ko.observable();
         this.recharge = ko.observable();
+        this.resisDown = ko.observable();
 
         this.applyDmgCalc = function(calc){
-            calc.addAtk.value += Number(this.addAtk() || 0)
-            calc.rateAtk.value += Number(this.rateAtk() || 0)
-            calc.addDef.value += Number(this.addDef() || 0)
-            calc.rateDef.value += Number(this.rateDef() || 0)
-            calc.addHP.value += Number(this.addHP() || 0)
-            calc.rateHP.value += Number(this.rateHP() || 0)
-            calc.baseCrtRate.value += Number(this.crtRate() || 0)
-            calc.baseCrtDmg.value += Number(this.crtDmg() || 0)
-            calc.baseMastery.value += Number(this.mastery() || 0)
-            calc.baseAllDmg.value += Number(this.dmgBuff() || 0)
-            calc.baseRecharge.value += Number(this.recharge() || 0)
+            calc.addAtk.value += Number(this.addAtk() || 0);
+            calc.rateAtk.value += Number(this.rateAtk() || 0);
+            calc.addDef.value += Number(this.addDef() || 0);
+            calc.rateDef.value += Number(this.rateDef() || 0);
+            calc.addHP.value += Number(this.addHP() || 0);
+            calc.rateHP.value += Number(this.rateHP() || 0);
+            calc.baseCrtRate.value += Number(this.crtRate() || 0);
+            calc.baseCrtDmg.value += Number(this.crtDmg() || 0);
+            calc.baseMastery.value += Number(this.mastery() || 0);
+            calc.baseAllDmg.value += Number(this.dmgBuff() || 0);
+            calc.baseRecharge.value += Number(this.recharge() || 0);
+            calc.baseAllResis.value -= Number(this.resisDown() || 0);
 
             return calc;
         }.bind(this);
@@ -271,6 +273,7 @@ $(function(){
             obj.mastery = this.mastery();
             obj.dmgBuff = this.dmgBuff();
             obj.recharge = this.recharge();
+            obj.resisDown = this.resisDown();
             return obj;
         }.bind(this);
 
@@ -286,6 +289,7 @@ $(function(){
             this.mastery(obj.mastery);
             this.dmgBuff(obj.dmgBuff);
             this.recharge(obj.recharge);
+            this.resisDown(obj.resisDown);
         }.bind(this);
     }
 
