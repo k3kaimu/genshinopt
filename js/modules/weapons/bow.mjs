@@ -431,3 +431,78 @@ export class RustViewModel extends Base.WeaponViewModel
         return calc;
     }
 }
+
+
+// 澹月・試作
+export class PrototypeCrescent extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "prototype_crescent",
+            "澹月・試作",
+            4,
+            "Bow",
+            510,
+            "rateAtk",
+            0.413
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new PrototypeCrescentViewModel(this);
+    }
+
+
+    static addAtk = [0.36, 0.45, 0.54, 0.63, 0.72];
+}
+
+
+export class PrototypeCrescentViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.useAddRateAtk = ko.observable(true);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        if(this.useAddRateAtk()) {
+            calc.rateAtk.value += PrototypeCrescent.addAtk[this.rank()];
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "帰らない", Widget.checkBoxViewHTML("useAddRateAtk", `攻撃力+${textPercentageFix(PrototypeCrescent.addAtk[this.rank()], 0)}`))
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useAddRateAtk = this.useAddRateAtk();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.useAddRateAtk(obj.useAddRateAtk);
+    }
+}
