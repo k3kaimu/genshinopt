@@ -98,7 +98,8 @@ export class TheWidsithViewModel extends Base.WeaponViewModel
                 }
 
                 if(dmgs.length == 0) {
-                    return new Calc.Attacks(Calc.VGData.zero());
+                    // 一つも選択されていないので，バフ無しの素の火力を出す
+                    return super.calculate(dmgScale, attackProps);
                 }
 
                 let probs = [];
@@ -126,7 +127,7 @@ export class TheWidsithViewModel extends Base.WeaponViewModel
         let dst = super.viewHTMLList(target);
 
         dst.push(
-            Widget.buildViewHTML(target, `<span data-bind="css: {'text-danger': countChecked() == 0 }">バフ選択（最低一つ選択）</span>`,
+            Widget.buildViewHTML(target, `序曲（バフ選択）`,
                 Widget.checkBoxViewHTML("useAtkUp", `攻撃力+${Widget.spanPercentageFix("getBuffInc().atk", 0)}（確率：${Widget.spanPercentageFix("useAtkUp() ? 1/countChecked() : 0", 0)}）`)
                 +
                 Widget.checkBoxViewHTML("useDmgUp", `ダメージ+${Widget.spanPercentageFix("getBuffInc().dmg", 0)}（確率：${Widget.spanPercentageFix("useDmgUp() ? 1/countChecked() : 0", 0)}）`)
