@@ -222,7 +222,7 @@ $(function(){
             if(!(obj.art2 == undefined)) {
                 let a2 = this.artifact2ViewModel();
                 a2.fromJS(obj.art2);
-                this.artifact1ViewModel(a2);
+                this.artifact2ViewModel(a2);
             }
         }.bind(this);
     }
