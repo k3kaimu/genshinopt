@@ -28,6 +28,7 @@ export class WeaponData
         this.baseHydroDmg = 0;
         this.baseCryoDmg = 0;
         this.baseDendroDmg = 0;
+        this.basePhysicalDmg = 0;
 
         this.baseRecharge = 0;
         this.baseMastery = 0;
@@ -73,6 +74,7 @@ export class WeaponViewModel
         calc.baseHydroDmg.value += this.parent.baseHydroDmg;
         calc.baseCryoDmg.value += this.parent.baseCryoDmg;
         calc.baseDendroDmg.value += this.parent.baseDendroDmg;
+        calc.basePhysicalDmg.value += this.parent.basePhysicalDmg;
 
         calc.baseRecharge.value += this.parent.baseRecharge;
         calc.baseMastery.value += this.parent.baseMastery;
