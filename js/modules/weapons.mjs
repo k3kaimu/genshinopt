@@ -25,6 +25,7 @@ export const weapons = [
     new Bow.PrototypeCrescent(),
     // 法器，星4
     new Catalyst.TheWidsith(),
+    new Catalyst.MappaMare(),
     // 両手剣, 星5
     new Claymore.RedhornStonethresher(),
     // 両手剣, 星4

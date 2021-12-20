@@ -157,3 +157,93 @@ export class TheWidsithViewModel extends Base.WeaponViewModel
         this.useMryUp(obj.useMryUp);
     }
 }
+
+
+// 万国諸海の図譜
+export class MappaMare extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "mappa_mare",
+            "万国諸海の図譜",
+            4,
+            "Catalyst",
+            565,
+            "baseMastery",
+            110
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new MappaMareViewModel(this);
+    }
+
+
+    static buffInc = [0.08, 0.10, 0.12, 0.14, 0.16];
+}
+
+
+export class MappaMareViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.buffStacks = ko.observable(2);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        let dmgbuff = MappaMare.buffInc[this.rank()] * Number(this.buffStacks());
+
+        calc.baseAnemoDmg.value += dmgbuff;
+        calc.baseGeoDmg.value += dmgbuff;
+        calc.baseElectroDmg.value += dmgbuff;
+        calc.basePyroDmg.value += dmgbuff;
+        calc.baseHydroDmg.value += dmgbuff;
+        calc.baseCryoDmg.value += dmgbuff;
+        calc.baseDendroDmg.value += dmgbuff;
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        let rank_ = this.rank();
+        dst.push(
+            Widget.buildViewHTML(target, `注入の巻`,
+                Widget.selectViewHTML("buffStacks", [
+                    {value: 0, label: `元素ダメージ+${textPercentageFix(MappaMare.buffInc[rank_] * 0, 0)}`},
+                    {value: 1, label: `元素ダメージ+${textPercentageFix(MappaMare.buffInc[rank_] * 1, 0)}`},
+                    {value: 2, label: `元素ダメージ+${textPercentageFix(MappaMare.buffInc[rank_] * 2, 0)}`},
+                ])
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.buffStacks = this.buffStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.buffStacks(obj.buffStacks);
+    }
+}
+
+
