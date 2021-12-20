@@ -770,23 +770,22 @@ $(function(){
         return encodeToURI(viewModel.toJS());
     }
 
-
-    // ページロード時にgetパラメータにデータがあればそれを復元する
-    try {
-        var url = new URL(window.location.href);
-        const uridata = url.searchParams.get('data');
-        const verdata = url.searchParams.get('ver') || '0';    // データのバージョン
-
-        if(uridata && verdata) {
-            loadDataFromURI(verdata, uridata);
-            viewModel.optimizeAllCases();
-        }
-    } catch(ex) {
-
-    };
-
     (async () => {
         await nlopt.ready
         viewModel.readyNLopt(true);
+
+        // ページロード時にgetパラメータにデータがあればそれを復元する
+        try {
+            var url = new URL(window.location.href);
+            const uridata = url.searchParams.get('data');
+            const verdata = url.searchParams.get('ver') || '0';    // データのバージョン
+
+            if(uridata && verdata) {
+                loadDataFromURI(verdata, uridata);
+                viewModel.optimizeAllCases();
+            }
+        } catch(ex) {
+
+        };
     })();
 });
