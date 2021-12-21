@@ -260,6 +260,15 @@ $(function(){
             return calc;
         }.bind(this);
 
+        this.textInputCSS = function(value) {
+            if(isValidNumber(value) && value != 0)
+                return "text-success";
+            else if(!isValidNumber(value) && value != undefined)
+                return "text-danger";
+            else
+                return "";
+        }.bind(this);
+
         this.toJS = function(){
             let obj = {};
             obj.addAtk = this.addAtk();
@@ -614,10 +623,17 @@ $(function(){
 
         this.showOptResultsLimit = ko.observable(20);
 
+        this.shownOptimizedResultsCondition = ko.observable("ALL");
+
+        this.setShownResult = function(cond) {
+            this.shownOptimizedResultsCondition(cond);
+        }.bind(this);
+
         this.shownOptimizedResults = ko.pureComputed(function(){
             let arr = this.optimizedResults();
             let len = arr.length;
             let lim = Number(this.showOptResultsLimit());
+            let cond = this.shownOptimizedResultsCondition();
 
             // DOMを遅延して構築するために必要
             function EachResultViewModel(e) {
@@ -646,6 +662,30 @@ $(function(){
                         this.doneCalc = true;
                     }
                 }.bind(this));
+            }
+
+            if(cond == 'ALL') {
+                // nop
+            } else {
+                // genKeyでarrの内容をユニークにする
+                let genKey;
+                if(cond == 'weapon') {
+                    genKey = function(e) { return `${e.setting.iweapon}`; };
+                } else {
+                    genKey = function(e) { return `${e.setting.iweapon}_${e.setting.iartifact}`; };
+                }
+
+                let uniqueKeys = {};
+                let newarr = [];
+                for(let i = 0; i < arr.length; ++i) {
+                    let k = genKey(arr[i]);
+                    if(k in uniqueKeys) continue;
+
+                    uniqueKeys[k] = true;
+                    newarr.push(arr[i]);
+                }
+
+                arr = newarr;
             }
 
             let dst = [];
@@ -758,6 +798,9 @@ $(function(){
     window.viewModel = new ViewModel();
 
     ko.applyBindings(window.viewModel);
+
+    // 初期設定
+    viewModel.setShownResult("ALL");
 
     function loadDataFromURI(version, uri)
     {

@@ -117,3 +117,15 @@ h4 > a > .feather {
     border-color: transparent;
     box-shadow: 0 0 0 3px rgba(255, 255, 255, .25);
 }
+
+
+/* select */
+.input-group > .input-group-append > .custom-select {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.input-group > .input-group-prepend > .custom-select {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}

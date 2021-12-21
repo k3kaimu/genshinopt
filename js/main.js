@@ -93,6 +93,27 @@ function textNumber(value, digit=3)
 }
 
 
+function isValidNumber(value)
+{
+    value = Number(value);
+
+    if(value == undefined || isNaN(value))
+        return false;
+    else if(typeof value == 'number')
+        return true;
+    else
+        return false;
+}
+
+runUnittest(function(){
+    console.assert(isValidNumber(0));
+    console.assert(isValidNumber(1));
+    console.assert(isValidNumber(-1));
+    console.assert(!isValidNumber(NaN));
+    console.assert(!isValidNumber(undefined));
+});
+
+
 function applyOptimize(calc, objfunc, total_cost, algoritm, x0, tol, maxEval) {
     let VGData = Object.getPrototypeOf(calc.baseAtk).constructor;
 
