@@ -553,6 +553,60 @@ export class ShimenawaReminiscenceViewModel extends ArtifactViewModel
 }
 
 
+// 絶縁の旗印
+export class EmblemOfSeveredFate extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            'emblem_of_severed_fate',
+            "絶縁の旗印",
+            "絶縁",
+        );
+    }
+
+
+    newViewModel(type)
+    {
+        return new EmblemOfSeveredFateViewModel(this, type);
+    }
+}
+
+
+// 絶縁の旗印
+export class EmblemOfSeveredFateViewModel extends ArtifactViewModel
+{
+    constructor(parent, bonusType)
+    {
+        super(parent, bonusType);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseRecharge.value += 0.2;
+
+        if(this.bonusType == '4') {
+            let CalcType = Object.getPrototypeOf(calc).constructor;
+            let NewCalc = class extends CalcType {
+                burstDmgBuff(attackProps) {
+                    let val = super.burstDmgBuff(attackProps);
+                    let rec = this.recharge(attackProps);
+
+                    return val.add(rec.mul(0.25).min_number(0.75));
+                }
+            };
+
+            calc = Object.assign(new NewCalc(), calc);
+        }
+
+        return calc;
+    }
+}
+
+
 // 華館夢醒形骸記
 export class HuskOfOpulentDreams extends ArtifactData
 {
@@ -643,6 +697,7 @@ export const artifacts = [
     new BlizzardStrayer(),
     new HeartOfDepth(),
     new ShimenawaReminiscence(),
+    new EmblemOfSeveredFate(),
     new HuskOfOpulentDreams(),
 ];
 
