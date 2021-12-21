@@ -543,6 +543,9 @@ export class DamageCalculator
         this.baseCryoResis = VGData.zero();
         this.baseDendroResis = VGData.zero();
         this.basePhysicalResis = VGData.zero();
+
+        // 敵の防御の倍率
+        this.baseEnemyRateDef = VGData.constant(1);
     }
 
 
@@ -608,6 +611,8 @@ export class DamageCalculator
         this.baseCryoResis = this.baseCryoResis.dup();
         this.baseDendroResis = this.baseDendroResis.dup();
         this.basePhysicalResis = this.basePhysicalResis.dup();
+
+        this.baseEnemyRateDef = this.baseEnemyRateDef.dup();
     }
 
 
@@ -705,7 +710,10 @@ export class DamageCalculator
         // damage buffs
         dmg = dmg.mul(dmgbuff.add(1));
         
-        return dmg.mul(this.calculateVaporizeMeltBonus(attackProps)).mul(0.5).mul(this.calculateTotalResistanceBonus(attackProps));
+        return dmg
+                .mul(this.calculateVaporizeMeltBonus(attackProps))
+                .mul(this.calcAttenuationByEnemy(attackProps, 90, 90))
+                .mul(this.calculateTotalResistanceBonus(attackProps));
     }
 
 
@@ -766,6 +774,7 @@ export class DamageCalculator
     recharge(attackProps) { return this.baseRecharge.add(this.artRecharge); }
     mastery(attackProps) { return this.baseMastery.add(this.artMastery); }
 
+    enemyRateDef(attackProps) { return this.baseEnemyRateDef; }
 
     calculateTotalDmgBuff(attackProps) {
         var dmgbuff = this.allDmgBuff(attackProps);
@@ -867,9 +876,9 @@ export class DamageCalculator
     }
 
 
-    calcAttenuationByEnemy(charLvl, enemyLvl)
+    calcAttenuationByEnemy(attackProps, charLvl, enemyLvl)
     {
-        return (charLvl + 100)/((enemyLvl + 100) + charLvl + 100);
+        return (this.enemyRateDef(attackProps).mul(enemyLvl + 100).add(charLvl + 100)).inv().mul(charLvl + 100);
     }
 }
 
