@@ -56,7 +56,7 @@ export class CharacterData
         {
             id: 'normal_100',
             label: "通常攻撃（100%）",
-            dmgScale(vm){ return 1; },
+            dmgScale(vm){ return 1; },  // たとえば「通常攻撃1段目～5段目」のように，攻撃が複数の場合には配列を返す
             attackProps: { isNormal: true, isPhysical: true }
         }
     ];

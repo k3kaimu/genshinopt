@@ -493,9 +493,16 @@ $(function(){
                         calc.artMastery.value = x[6];
                     }
 
+                    let dmgScales = attackType.dmgScale(setting.character);
+                    if(!Array.isArray(dmgScales))
+                        dmgScales = [dmgScales];
+
                     function objfunc(x) {
                         setArg(x);
-                        let dmg = calc.calculate(attackType.dmgScale(setting.character), attackType.attackProps).total();
+                        let dmg = Calc.VGData.zero();
+                        dmgScales.forEach(e => {
+                            dmg = dmg.add(calc.calculate(e, attackType.attackProps).total());
+                        });
 
                         if(setting.powRecharge.isEnabled) {
                             return dmg.mul(calc.recharge(attackType.attackProps).pow_number(setting.powRecharge.exp));
