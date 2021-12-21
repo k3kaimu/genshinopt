@@ -186,3 +186,105 @@ export class StaffOfHomaViewModel extends Base.WeaponViewModel
         this.selLowHighHP(obj.selLowHighHP);
     }
 }
+
+
+// 草薙の稲光
+export class EngulfingLightning extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "engulfing_lightning",
+            "草薙の稲光",
+            5,
+            "Polearm",
+            608,
+            "baseRecharge",
+            0.551
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new EngulfingLightningViewModel(this);
+    }
+
+
+    static effectTable = [
+    //  0:攻撃力変換, 1:最大攻撃力, 2:元素ダメージ効率
+        [0.28, 0.8, 0.30],
+        [0.35, 0.9, 0.35],
+        [0.42, 1.0, 0.40],
+        [0.49, 1.1, 0.45],
+        [0.56, 1.2, 0.50],
+    ];
+}
+
+
+// 草薙の稲光
+export class EngulfingLightningViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.useEffect = ko.observable(true);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        if(this.useEffect()) {
+            calc.baseRecharge.value += EngulfingLightning.effectTable[this.rank()][2];
+        }
+
+        let data = this.toJS();
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let NewCalc = class extends CalcType {
+            #dataEngLight = data;
+
+            atk(attackProps){
+                let incAtk = this.recharge(attackProps).sub(1)
+                        .mul(EngulfingLightning.effectTable[this.#dataEngLight.rank][0]);
+
+                incAtk = incAtk.min_number(EngulfingLightning.effectTable[this.#dataEngLight.rank][1]);
+
+                return super.atk(attackProps).add(incAtk.mul(this.baseAtk));
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "非時の夢・常世竈食",
+                Widget.checkBoxViewHTML("useEffect", 
+                    `元素チャージ効率+${textPercentageFix(EngulfingLightning.effectTable[this.rank()][2], 0)}`)
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useEffect = this.useEffect();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.useEffect(obj.useEffect);
+    }
+}

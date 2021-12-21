@@ -34,6 +34,7 @@ export const weapons = [
     new Claymore.SerpentSpine(),
     // 長柄武器, 星5
     new Polearm.StaffOfHoma(),
+    new Polearm.EngulfingLightning(),
     // 長柄武器, 星4
     new Polearm.DragonsBane(),
     // 片手剣, 星5
