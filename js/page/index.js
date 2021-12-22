@@ -662,9 +662,20 @@ $(function(){
                 this.isOpen.subscribe(function(newVal){
                     if(newVal && !this.doneCalc) {
                         Object.getPrototypeOf(e.setting.character.parent).constructor.presetAttacks.forEach(attackType => {
-                            this.dmgExpected[attackType.label](e.calc.calculate(attackType.dmgScale(e.setting.character), attackType.attackProps).total());
-                            this.dmgCrt[attackType.label](e.calc.calculate(attackType.dmgScale(e.setting.character), {isForcedCritical: true, ...attackType.attackProps}).total());
-                            this.dmgNonCrt[attackType.label](e.calc.calculate(attackType.dmgScale(e.setting.character), {isForcedNonCritical: true, ...attackType.attackProps}).total());
+                            let scales = [attackType.dmgScale(e.setting.character)].flat();
+
+                            let expected = Calc.VGData.zero();
+                            let crt = Calc.VGData.zero();
+                            let noncrt = Calc.VGData.zero();
+                            scales.forEach(s => {
+                                expected = expected.add(e.calc.calculate(s, attackType.attackProps).total());
+                                crt = crt.add(e.calc.calculate(s, {isForcedCritical: true, ...attackType.attackProps}).total());
+                                noncrt = noncrt.add(e.calc.calculate(s, {isForcedNonCritical: true, ...attackType.attackProps}).total());
+                            });
+
+                            this.dmgExpected[attackType.label](expected);
+                            this.dmgCrt[attackType.label](crt);
+                            this.dmgNonCrt[attackType.label](noncrt);
                         });
                         this.doneCalc = true;
                     }
