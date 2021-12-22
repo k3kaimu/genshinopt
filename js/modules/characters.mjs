@@ -28,6 +28,7 @@ export const characters = [
     new Hydro.Tartaglia(),
     new Pyro.HuTao(),
     new Pyro.Yoimiya(),
+    new Pyro.Xiangling(),
     new Pyro.Yanfei(),
 ];
 

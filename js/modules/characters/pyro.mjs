@@ -527,6 +527,205 @@ export class YoimiyaViewModel extends Base.CharacterViewModel
 }
 
 
+// 香菱
+export class Xiangling extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "xiangling",
+            "香菱",
+            4,
+            "Pyro",
+            "Polearm",
+            225,            /* bAtk */
+            669,            /* bDef */
+            10875,          /* bHP */
+            "baseMastery",  /* bBonusType */
+            96              /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new XianglingViewModel(this);
+    }
+
+
+    static normalTalentTable = [
+    //  0:1段目,     1:2段目,  2:3段目,              3:4段目,               4:5段目,  5:重撃,   6:落下,   7:低空,  8:高空
+        [42.1/100, 42.1/100, Array(2).fill(0.261), Array(4).fill(0.141), 71.0/100, 122/100, 63.9/100, 128/100, 160/100],
+        [45.5/100, 45.6/100, Array(2).fill(0.282), Array(4).fill(0.153), 76.8/100, 132/100, 69.1/100, 138/100, 173/100],
+        [48.9/100, 49.0/100, Array(2).fill(0.303), Array(4).fill(0.164), 82.6/100, 142/100, 74.3/100, 149/100, 186/100],
+        [53.8/100, 53.9/100, Array(2).fill(0.333), Array(4).fill(0.180), 90.9/100, 156/100, 81.8/100, 164/100, 204/100],
+        [57.2/100, 57.3/100, Array(2).fill(0.355), Array(4).fill(0.192), 96.6/100, 166/100, 87.0/100, 174/100, 217/100],
+        [61.1/100, 61.3/100, Array(2).fill(0.379), Array(4).fill(0.205), 103/100, 177/100, 92.9/100, 186/100, 232/100],
+        [66.5/100, 66.6/100, Array(2).fill(0.412), Array(4).fill(0.223), 112/100, 192/100, 101.1/100, 202/100, 253/100],
+        [71.9/100, 72.0/100, Array(2).fill(0.445), Array(4).fill(0.241), 121/100, 208/100, 109/100, 219/100, 273/100],
+        [77.3/100, 77.4/100, Array(2).fill(0.479), Array(4).fill(0.259), 131/100, 224/100, 117/100, 235/100, 293/100],
+        [83.1/100, 83.3/100, Array(2).fill(0.515), Array(4).fill(0.279), 140/100, 241/100, 126/100, 253/100, 316/100],
+        [89.9/100, 90.0/100, Array(2).fill(0.557), Array(4).fill(0.301), 152/100, 260/100, 135/100, 271/100, 338/100],
+    ];
+
+
+    static skillTalentTable = [
+        1.11,
+        1.20,
+        1.28,
+        1.39,
+        1.47,
+        1.56,
+        1.67,
+        1.78,
+        1.89,
+        2.00,
+        2.11,
+        2.23,
+        2.36,
+    ];
+
+
+    static burstTalentTable = [
+    // 0:1段目    1:2段目   2:3段目, 3:継続
+        [72.0/100, 88/100, 1.10, 1.12],
+        [77.4/100, 95/100, 1.18, 1.20],
+        [82.8/100, 101/100, 1.26, 1.29],
+        [90.0/100, 110/100, 1.37, 1.40],
+        [95.4/100, 117/100, 1.45, 1.48],
+        [101/100, 123/100, 1.53, 1.57],
+        [108/100, 132/100, 1.64, 1.68],
+        [115/100, 141/100, 1.75, 1.79],
+        [122/100, 150/100, 1.86, 1.90],
+        [130/100, 158/100, 1.97, 2.02],
+        [137/100, 167/100, 2.08, 2.13],
+        [144/100, 176/100, 2.19, 2.24],
+        [153/100, 187/100, 2.33, 2.38],
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_total",
+            label: "通常1～5段累計",
+            dmgScale(vm){ return Xiangling.normalTalentTable[vm.normalRank()-1].slice(0, 5).flat(); },
+            attackProps: { isPhysical: true, isNormal: true, }
+        },
+        {
+            id: "charged",
+            label: "重撃",
+            dmgScale(vm){ return Xiangling.normalTalentTable[vm.normalRank()-1][5]; },
+            attackProps: { isPhysical: true, isCharged: true, }
+        },
+        {
+            id: "skill",
+            label: "グゥオパァー",
+            dmgScale(vm){ return Xiangling.skillTalentTable[vm.skillRank()-1]; },
+            attackProps: { isPyro: true, isSkill: true, }
+        },
+        {
+            id: "burst_first",
+            label: "旋火輪発動時の振り回し1～3段累計",
+            dmgScale(vm){ return Xiangling.burstTalentTable[vm.burstRank()-1].slice(0, 3); },
+            attackProps: { isPyro: true, isBurst: true, isXianglingBurst: true }
+        },
+        {
+            id: "burst_cont",
+            label: "旋火輪継続中ダメージ",
+            dmgScale(vm){ return Xiangling.burstTalentTable[vm.burstRank()-1][3]; },
+            attackProps: { isPyro: true, isBurst: true, isXianglingBurst: true }
+        },
+    ];
+}
+
+
+// 香菱
+export class XianglingViewModel extends Base.CharacterViewModel
+{
+    // 2凸効果の爆縮ダメージは未実装
+
+    constructor(parent)
+    {
+        super(parent);
+        this.useAtkIncEffect = ko.observable(true);     // 唐辛子を拾うと攻撃力+10%
+        this.useC1Effect = ko.observable(true);         // グゥオパァーの攻撃で炎耐性-15%
+        this.useC6Effect = ko.observable(true);         // 旋火輪発動後に炎ダメージが15％上昇（ただし， 旋火輪には乗らない）
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        if(this.useAtkIncEffect()) {
+            calc.rateAtk.value += 0.1;
+        }
+
+        if(this.useC1Effect() && this.constell() >= 1) {
+            calc.basePyroResis.value -= 0.15;
+        }
+
+        if(this.useC6Effect() && this.constell() >= 6) {
+            let CalcType = Object.getPrototypeOf(calc).constructor;
+            let NewCalc = class extends CalcType {
+                pyroDmgBuff(attackProps) {
+                    if(attackProps.isXianglingBurst || false)
+                        return super.pyroDmgBuff(attackProps);
+                    else
+                        return super.pyroDmgBuff(attackProps).add(0.15);
+                }
+            };
+    
+            calc = Object.assign(new NewCalc(), calc);
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let ret = super.viewHTMLList(target);
+
+        ret.push(Widget.buildViewHTML(target, "激辛唐辛子",
+            Widget.checkBoxViewHTML("useAtkIncEffect", "攻撃力+10%")
+        ));
+
+
+        if(this.constell() >= 1) {
+            ret.push(Widget.buildViewHTML(target, "外カリ中フワ",
+                Widget.checkBoxViewHTML("useC1Effect", "敵の炎耐性-15%")
+            ));
+        }
+
+        if(this.constell() >= 6) {
+            ret.push(Widget.buildViewHTML(target, "竜巻旋火輪",
+                Widget.checkBoxViewHTML("useC6Effect", "炎ダメージ+15%（旋火輪は適用外）")
+            ));
+        }
+
+        return ret;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useAtkIncEffect = this.useAtkIncEffect();
+        obj.useC1Effect = this.useC1Effect();
+        obj.useC6Effect = this.useC6Effect();
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.useAtkIncEffect(obj.useAtkIncEffect);
+        this.useC1Effect(obj.useC1Effect);
+        this.useC6Effect(obj.useC6Effect);
+    }
+}
+
+
 // 煙緋
 export class Yanfei extends Base.CharacterData
 {
