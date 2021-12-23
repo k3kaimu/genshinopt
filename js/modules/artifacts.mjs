@@ -821,6 +821,89 @@ export class HeartOfDepthViewModel extends ArtifactViewModel
 }
 
 
+// 蒼白の炎
+export class PaleFlame extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            "pale_flame",
+            "蒼白の炎",
+            "蒼白"
+        );
+    }
+
+
+    newViewModel(type)
+    {
+        return new PaleFlameViewModel(this, type);
+    }
+}
+
+
+// 蒼白の炎
+export class PaleFlameViewModel extends ArtifactViewModel
+{
+    constructor(parent, bonusType)
+    {
+        super(parent, bonusType);
+        this.buffStacks = ko.observable(2);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.basePhysicalDmg.value += 0.25;
+
+        if(this.bonusType == 4) {
+            if(this.buffStacks() == 1) {
+                calc.rateAtk.value += 0.09;
+            } else if(this.buffStacks() == 2) {
+                calc.rateAtk.value += 0.18;
+                calc.basePhysicalDmg.value += 0.25;
+            }
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        var list = [];
+
+        if(this.bonusType == 4) {
+            list.push(
+                Widget.buildViewHTML(target, "スキル命中によるバフ",
+                    Widget.selectViewHTML("buffStacks", [
+                        {label: "物理ダメージ+25%", value: 0},
+                        {label: "物理ダメージ+25%, 攻撃力+9%", value: 1},
+                        {label: "物理ダメージ+50%, 攻撃力+18%", value: 2},
+                    ])
+            ));
+        }
+
+        return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.buffStacks = this.buffStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.buffStacks(obj.buffStacks);
+    }
+}
+
+
 // 追憶のしめ縄
 export class ShimenawaReminiscence extends ArtifactData
 {
@@ -1044,6 +1127,7 @@ export const artifacts = [
     new RetracingBolide(),
     new BlizzardStrayer(),
     new HeartOfDepth(),
+    new PaleFlame(),
     new ShimenawaReminiscence(),
     new EmblemOfSeveredFate(),
     new HuskOfOpulentDreams(),
