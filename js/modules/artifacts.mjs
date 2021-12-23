@@ -259,7 +259,7 @@ export class Lavawalker extends ArtifactData
 }
 
 
-// 雷を鎮める尊者
+// 烈火を渡る賢者
 export class LavawalkerViewModel extends ArtifactViewModel
 {
     constructor(parent, bonusType)
