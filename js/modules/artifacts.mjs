@@ -239,6 +239,54 @@ export class ThundersootherViewModel extends ArtifactViewModel
 }
 
 
+// 雷のような怒り
+export class ThunderingFury extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            "thundering_fury",
+            "雷のような怒り",
+            "雷怒",
+        );
+    }
+
+
+    newViewModel(bonusType)
+    {
+        return new ThunderingFuryViewModel(this, bonusType);
+    }
+}
+
+
+// 雷のような怒り
+export class ThunderingFuryViewModel extends ArtifactViewModel
+{
+    // TODO: 4セット効果のスキルクールタイム減少効果は未実装
+
+    constructor(parent, bonusType)
+    {
+        super(parent, bonusType);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseElectroDmg.value += 0.15;
+
+        if(this.bonusType == 4) {
+            calc.baseOverloadedBonus.value += 0.40;
+            calc.baseElectroChargedBonus.value += 0.40;
+            calc.baseSuperconductBonus.value += 0.40;
+        }
+
+        return calc;
+    }
+}
+
+
 // 烈火を渡る賢者
 export class Lavawalker extends ArtifactData
 {
@@ -838,6 +886,7 @@ export const artifacts = [
     new GladiatorsFinale(),
     new WanderersTroupe(),
     new Thundersoother(),
+    new ThunderingFury(),
     new Lavawalker(),
     new CrimsonWitchOfFlames(),
     new RetracingBolide(),
