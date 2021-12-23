@@ -288,3 +288,92 @@ export class EngulfingLightningViewModel extends Base.WeaponViewModel
         this.useEffect(obj.useEffect);
     }
 }
+
+
+
+// 西風長槍
+export class FavoniusLance extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "favonius_lance",
+            "西風長槍",
+            4,
+            "Polearm",
+            565,
+            "baseRecharge",
+            0.306
+        );
+    }
+}
+
+
+//「漁獲」
+export class TheCatch extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "the_catch",
+            "漁獲",
+            4,
+            "Polearm",
+            510,
+            "baseRecharge",
+            0.459
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new TheCatchViewModel(this);
+    }
+
+
+    static effectTable = [
+        [0.16, 0.060],
+        [0.20, 0.075],
+        [0.24, 0.090],
+        [0.28, 0.105],
+        [0.32, 0.120],
+    ];
+}
+
+
+//「漁獲」
+export class TheCatchViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseBurstDmg.value += TheCatch.effectTable[this.rank()][0];
+
+        let data = this.toJS();
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let NewCalc = class extends CalcType {
+            #dataTheCatch = data;
+
+            crtRate(attackProps) {
+                if(attackProps.isBurst || false) {
+                    return super.crtRate(attackProps).add(TheCatch.effectTable[this.#dataTheCatch.rank][1]);
+                } else {
+                    return super.crtRate(attackProps);
+                }
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+        return calc;
+    }
+}
+
+

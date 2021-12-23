@@ -36,7 +36,9 @@ export const weapons = [
     new Polearm.StaffOfHoma(),
     new Polearm.EngulfingLightning(),
     // 長柄武器, 星4
+    new Polearm.FavoniusLance(),
     new Polearm.DragonsBane(),
+    new Polearm.TheCatch(),
     // 片手剣, 星5
     new Sword.PrimordialJadeCutter(),
 ];
