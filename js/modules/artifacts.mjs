@@ -167,6 +167,151 @@ export class WanderersTroupeViewModel extends ArtifactViewModel
 }
 
 
+// 雷を鎮める尊者
+export class Thundersoother extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            "thundersoother",
+            "雷を鎮める尊者",
+            "雷討",
+        );
+    }
+
+
+    newViewModel(bonusType)
+    {
+        return new ThundersootherViewModel(this, bonusType);
+    }
+}
+
+
+// 雷を鎮める尊者
+export class ThundersootherViewModel extends ArtifactViewModel
+{
+    constructor(parent, bonusType)
+    {
+        super(parent, bonusType);
+        this.useEffect4 = ko.observable(true);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        if(this.bonusType == 4 && this.useEffect4()) {
+            calc.baseAllDmg.value += 0.35;
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        var list = [];
+
+        if(this.bonusType == '4') {
+            list.push(
+                Widget.buildViewHTML(target, "ダメージバフ",
+                    Widget.checkBoxViewHTML("useEffect4", "ダメージ+35%"))
+                );
+        }
+
+        return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useEffect4 = this.useEffect4();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.useEffect4(obj.useEffect4);
+    }
+}
+
+
+// 烈火を渡る賢者
+export class Lavawalker extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            "lavawalker",
+            "烈火を渡る賢者",
+            "火渡",
+        );
+    }
+
+
+    newViewModel(bonusType)
+    {
+        return new LavawalkerViewModel(this, bonusType);
+    }
+}
+
+
+// 雷を鎮める尊者
+export class LavawalkerViewModel extends ArtifactViewModel
+{
+    constructor(parent, bonusType)
+    {
+        super(parent, bonusType);
+        this.useEffect4 = ko.observable(true);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        if(this.bonusType == 4 && this.useEffect4()) {
+            calc.baseAllDmg.value += 0.35;
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        var list = [];
+
+        if(this.bonusType == '4') {
+            list.push(
+                Widget.buildViewHTML(target, "ダメージバフ",
+                    Widget.checkBoxViewHTML("useEffect4", "ダメージ+35%"))
+                );
+        }
+
+        return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useEffect4 = this.useEffect4();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.useEffect4(obj.useEffect4);
+    }
+}
+
+
+
 // 燃え盛る炎の魔女
 export class CrimsonWitchOfFlames extends ArtifactData
 {
@@ -692,6 +837,8 @@ export class HuskOfOpulentDreamsViewModel extends ArtifactViewModel
 export const artifacts = [
     new GladiatorsFinale(),
     new WanderersTroupe(),
+    new Thundersoother(),
+    new Lavawalker(),
     new CrimsonWitchOfFlames(),
     new RetracingBolide(),
     new BlizzardStrayer(),
