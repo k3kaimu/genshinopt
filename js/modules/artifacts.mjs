@@ -444,6 +444,80 @@ export class CrimsonWitchOfFlamesViewModel extends ArtifactViewModel
 }
 
 
+// 旧貴族のしつけ
+export class NoblesseOblige extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            'noblesse_oblige',
+            "旧貴族のしつけ",
+            "旧貴族",
+        );
+    }
+
+
+    newViewModel(type)
+    {
+        return new NoblesseObligeViewModel(this, type);
+    }
+}
+
+
+// 旧貴族のしつけ
+export class NoblesseObligeViewModel extends ArtifactViewModel
+{
+    constructor(parent, bonusType)
+    {
+        super(parent, bonusType);
+        this.useEffect4 = ko.observable(true);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseBurstDmg.value += 0.20;
+
+        if(this.bonusType == 4 && this.useEffect4()) {
+            calc.rateAtk.value += 0.2;
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        var list = [];
+
+        if(this.bonusType == '4') {
+            list.push(
+                Widget.buildViewHTML(target, "爆発後バフ",
+                    Widget.checkBoxViewHTML("useEffect4", "攻撃力+20%"))
+                );
+        }
+
+        return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useEffect4 = this.useEffect4();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.useEffect4(obj.useEffect4);
+    }
+}
+
+
 // 逆飛びの流星
 export class RetracingBolide extends ArtifactData
 {
@@ -889,6 +963,7 @@ export const artifacts = [
     new ThunderingFury(),
     new Lavawalker(),
     new CrimsonWitchOfFlames(),
+    new NoblesseOblige(),
     new RetracingBolide(),
     new BlizzardStrayer(),
     new HeartOfDepth(),
