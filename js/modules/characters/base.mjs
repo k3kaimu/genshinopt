@@ -1,3 +1,5 @@
+import * as Calc from '/js/modules/dmg-calc.mjs';
+
 export class CharacterData
 {
     constructor(id, name, rarity, elem, weaponType, bAtk, bDef, bHP, bBonusType, bBonusValue) {
@@ -63,6 +65,29 @@ export class CharacterData
 }
 
 
+export class AttackEvaluator
+{
+    constructor(vm, presetAttackObject)
+    {
+        this.cvm = vm;      // ViewModel of character 
+        Object.assign(this, presetAttackObject);
+    }
+
+
+    evaluate(calc, additionalProps = {})
+    {
+        let scales = [this.dmgScale(this.cvm)].flat();
+        let dmg = Calc.VGData.zero();
+        let newProps = {...additionalProps, ...this.attackProps};
+        scales.forEach(s => {
+            dmg = dmg.add(calc.calculate(s, newProps).total());
+        });
+       
+        return dmg;
+    }
+}
+
+
 export class CharacterViewModel
 {
     constructor(ch)
@@ -113,6 +138,20 @@ export class CharacterViewModel
     // typeof(return): string[]
     viewHTMLList(target){
         return [];
+    }
+
+
+    presetAttacks() {
+        let attacks = Object.getPrototypeOf(this.parent).constructor.presetAttacks;
+        let ret = [];
+        attacks.forEach(a => {
+            if("newEvaluator" in a)
+                ret.push(a.newEvaluator(this, a));
+            else
+                ret.push(new AttackEvaluator(this, a));
+        });
+
+        return ret;
     }
 
 

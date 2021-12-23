@@ -374,9 +374,9 @@ $(function(){
 
         this.attackOptions = ko.pureComputed(function(){
             if(this.selectedChar() == undefined)
-                return Data.CharacterData.presetAttacks;
+                return [];
             else
-                return Object.getPrototypeOf(this.selectedChar()).constructor.presetAttacks;
+                return this.characterViewModel().presetAttacks();
         }, this);
 
 
@@ -493,16 +493,9 @@ $(function(){
                         calc.artMastery.value = x[6];
                     }
 
-                    let dmgScales = attackType.dmgScale(setting.character);
-                    if(!Array.isArray(dmgScales))
-                        dmgScales = [dmgScales];
-
                     function objfunc(x) {
                         setArg(x);
-                        let dmg = Calc.VGData.zero();
-                        dmgScales.forEach(e => {
-                            dmg = dmg.add(calc.calculate(e, attackType.attackProps).total());
-                        });
+                        let dmg = attackType.evaluate(calc);
 
                         if(setting.powRecharge.isEnabled) {
                             return dmg.mul(calc.recharge(attackType.attackProps).pow_number(setting.powRecharge.exp));
@@ -653,7 +646,7 @@ $(function(){
                 this.dmgExpected = {};
                 this.dmgCrt = {};
                 this.dmgNonCrt = {};
-                Object.getPrototypeOf(e.setting.character.parent).constructor.presetAttacks.forEach(attackType => {
+                e.setting.character.presetAttacks().forEach(attackType => {
                     this.dmgExpected[attackType.label] = ko.observable();
                     this.dmgCrt[attackType.label] = ko.observable();
                     this.dmgNonCrt[attackType.label] = ko.observable();
@@ -661,17 +654,10 @@ $(function(){
 
                 this.isOpen.subscribe(function(newVal){
                     if(newVal && !this.doneCalc) {
-                        Object.getPrototypeOf(e.setting.character.parent).constructor.presetAttacks.forEach(attackType => {
-                            let scales = [attackType.dmgScale(e.setting.character)].flat();
-
-                            let expected = Calc.VGData.zero();
-                            let crt = Calc.VGData.zero();
-                            let noncrt = Calc.VGData.zero();
-                            scales.forEach(s => {
-                                expected = expected.add(e.calc.calculate(s, attackType.attackProps).total());
-                                crt = crt.add(e.calc.calculate(s, {isForcedCritical: true, ...attackType.attackProps}).total());
-                                noncrt = noncrt.add(e.calc.calculate(s, {isForcedNonCritical: true, ...attackType.attackProps}).total());
-                            });
+                        e.setting.character.presetAttacks().forEach(attackType => {
+                            let expected = attackType.evaluate(e.calc, {});
+                            let crt = attackType.evaluate(e.calc, {isForcedCritical: true});
+                            let noncrt = attackType.evaluate(e.calc, {isForcedNonCritical: true});
 
                             this.dmgExpected[attackType.label](expected);
                             this.dmgCrt[attackType.label](crt);
