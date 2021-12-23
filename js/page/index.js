@@ -457,7 +457,7 @@ $(function(){
 
             this.doneOptimizedCount(0);
 
-            if(allpatterns.length > 200 || (this.useGlobalOpt() && Number(this.numOfEvalGlobalOpt()) * allpatterns.length > 200 )) {
+            if(allpatterns.length > 200 || (this.useGlobalOpt() && Number(this.numOfEvalGlobalOpt()) * allpatterns.length > 1000 )) {
                 $('#optimizationProgress').modal('show');
             }
 
