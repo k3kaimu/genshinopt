@@ -518,6 +518,82 @@ export class NoblesseObligeViewModel extends ArtifactViewModel
 }
 
 
+// 血染めの騎士道
+export class BloodstainedChivalry extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            'bloodstained_chivalry',
+            "血染めの騎士道",
+            "血染",
+        );
+    }
+
+
+    newViewModel(type)
+    {
+        return new BloodstainedChivalryViewModel(this, type);
+    }
+}
+
+
+// 血染めの騎士道
+export class BloodstainedChivalryViewModel extends ArtifactViewModel
+{
+    // TODO: 4セット効果のスタミナ消費減少は未対応
+
+    constructor(parent, bonusType)
+    {
+        super(parent, bonusType);
+        this.useEffect4 = ko.observable(true);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.basePhysicalDmg.value += 0.25;
+
+        if(this.bonusType == 4 && this.useEffect4()) {
+            calc.baseChargedDmg.value += 0.5;
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        var list = [];
+
+        if(this.bonusType == '4') {
+            list.push(
+                Widget.buildViewHTML(target, "敵を倒した後のバフ",
+                    Widget.checkBoxViewHTML("useEffect4", "重撃ダメージ+50%"))
+                );
+        }
+
+        return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useEffect4 = this.useEffect4();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.useEffect4(obj.useEffect4);
+    }
+}
+
+
 // 逆飛びの流星
 export class RetracingBolide extends ArtifactData
 {
@@ -964,6 +1040,7 @@ export const artifacts = [
     new Lavawalker(),
     new CrimsonWitchOfFlames(),
     new NoblesseOblige(),
+    new BloodstainedChivalry(),
     new RetracingBolide(),
     new BlizzardStrayer(),
     new HeartOfDepth(),
