@@ -129,13 +129,13 @@ export class RaidenShogun extends Base.CharacterData
             attackProps: { isBurst: true, isElectro:true }
         },
         {
-            id: "burst_dmg",
+            id: "burst_normal_1",
             label: "夢想の一心1段目",
             dmgScale(vm){ return RaidenShogun.burstTalentTable[vm.burstRank()-1][4] + RaidenShogun.burstTalentTable[vm.burstRank()-1][2] * vm.chakraStacks(); },
             attackProps: { isBurst: true, isElectro:true }
         },
         {
-            id: "burst_dmg",
+            id: "burst_charged",
             label: "夢想の一心重撃",
             dmgScale(vm){ return RaidenShogun.burstTalentTable[vm.burstRank()-1][9] + RaidenShogun.burstTalentTable[vm.burstRank()-1][2] * vm.chakraStacks()*2; },
             attackProps: { isBurst: true, isElectro:true }
