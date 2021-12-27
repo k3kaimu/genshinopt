@@ -212,7 +212,7 @@ export class PrototypeArchaicViewModel extends Base.WeaponViewModel
                 if(hasAnyPropertiesWithSameValue(attackProps, {isNormal: true, isCharged: true})) {
                     let newProps = shallowDup(attackProps);
                     // 元々の攻撃の属性や攻撃種類を削除する
-                    newProps = Calc.deleteAllElementFromAttackProps(attackProps);
+                    newProps = Calc.deleteAllElementFromAttackProps(newProps);
                     newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
 
                     newProps.isPhysical = true;   // 物理攻撃
