@@ -309,6 +309,92 @@ export class FavoniusLance extends Base.WeaponData
 }
 
 
+// 死闘の槍
+export class Deathmatch extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "deathmatch",
+            "死闘の槍",
+            4,
+            "Polearm",
+            454,
+            "baseCrtRate",
+            0.368
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new DeathmatchViewModel(this);
+    }
+
+
+    static effectTable = [
+        [0.16, 0.20, 0.24, 0.28, 0.32], // 2人以上
+        [0.24, 0.30, 0.36, 0.42, 0.48], // 2人未満
+    ];
+}
+
+
+// 死闘の槍
+export class DeathmatchViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.isTwoOrHigh = ko.observable(0);    // true = 1, false = 0
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        if(this.isTwoOrHigh() == 1) {
+            calc.rateAtk.value += Deathmatch.effectTable[0][this.rank()];
+            calc.rateDef.value += Deathmatch.effectTable[0][this.rank()];
+        } else {
+            calc.rateAtk.value += Deathmatch.effectTable[1][this.rank()];
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "剣闘士",
+                Widget.selectViewHTML("isTwoOrHigh", [
+                    {value: 1, label: `攻撃力/防御力+${textPercentageFix(Deathmatch.effectTable[0][this.rank()], 0)}`},
+                    {value: 0, label: `攻撃力+${textPercentageFix(Deathmatch.effectTable[1][this.rank()], 0) }`},
+                ])
+            ));
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.isTwoOrHigh = this.isTwoOrHigh();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.isTwoOrHigh(obj.isTwoOrHigh);
+    }
+}
+
+
 //「漁獲」
 export class TheCatch extends Base.WeaponData
 {
