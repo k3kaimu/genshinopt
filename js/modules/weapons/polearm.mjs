@@ -211,6 +211,108 @@ export class SkywardSpineViewModel extends Base.WeaponViewModel
 }
 
 
+// 破天の槍
+export class VortexVanquisher extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "vortex_vanquisher",
+            "破天の槍",
+            5,
+            "Polearm",
+            608,
+            "rateAtk",
+            0.496
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new VortexVanquisherViewModel(this);
+    }
+
+
+    static effectTable = [
+        [0.20, 0.25, 0.30, 0.35, 0.40], //シールド強化
+        [0.04, 0.05, 0.06, 0.07, 0.08]  // 攻撃力%
+    ];
+}
+
+
+// 破天の槍
+export class VortexVanquisherViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.isShielded = ko.observable(true);
+        this.effectStacks = ko.observable(5);
+    }
+
+
+    rateAtkEffect(numStacks)
+    {
+        if(this.isShielded()) {
+            return VortexVanquisher.effectTable[1][this.rank()] * Number(numStacks) * 2;
+        } else {
+            return VortexVanquisher.effectTable[1][this.rank()] * Number(numStacks);
+        }
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseRateShieldStrength.value += VortexVanquisher.effectTable[0][this.rank()];
+        calc.rateAtk.value += this.rateAtkEffect(this.effectStacks());
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "金璋君臨",
+                Widget.checkBoxViewHTML("isShielded", "シールド状態")
+                +
+                Widget.selectViewHTML("effectStacks", [
+                    {value: 0, label: `攻撃力+${textPercentageFix(this.rateAtkEffect(0), 0)}`},
+                    {value: 1, label: `攻撃力+${textPercentageFix(this.rateAtkEffect(1), 0)}`},
+                    {value: 2, label: `攻撃力+${textPercentageFix(this.rateAtkEffect(2), 0)}`},
+                    {value: 3, label: `攻撃力+${textPercentageFix(this.rateAtkEffect(3), 0)}`},
+                    {value: 4, label: `攻撃力+${textPercentageFix(this.rateAtkEffect(4), 0)}`},
+                    {value: 5, label: `攻撃力+${textPercentageFix(this.rateAtkEffect(5), 0)}`},
+                ])
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.isShielded = this.isShielded();
+        obj.effectStacks = this.effectStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.isShielded(obj.isShielded);
+        this.effectStacks(obj.effectStacks);
+    }
+}
+
+
 
 // 匣中滅龍
 export class DragonsBane extends Base.WeaponData
