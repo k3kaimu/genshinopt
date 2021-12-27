@@ -2,6 +2,99 @@ import * as Base from '/js/modules/weapons/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
 
 
+// 和璞鳶
+export class PrimordialJadeWingedSpear extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "primordial_jade_winged_spear",
+            "和璞鳶",
+            5,
+            "Polearm",
+            674,
+            "baseCrtRate",
+            0.221
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new PrimordialJadeWingedSpearViewModel(this);
+    }
+
+
+    static effectTable = [
+        [0.032, 0.039, 0.046, 0.053, 0.06], //攻撃力%
+        [0.12, 0.15, 0.18, 0.21, 0.24]      //ダメバフ
+    ]
+}
+
+
+// 和璞鳶
+export class PrimordialJadeWingedSpearViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.effectStacks = ko.observable(7);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.rateAtk.value += PrimordialJadeWingedSpear.effectTable[0][this.rank()] * Number(this.effectStacks());
+        
+        if(Number(this.effectStacks()) == 7) {
+            calc.baseAllDmg.value += PrimordialJadeWingedSpear.effectTable[1][this.rank()];
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "正義を貫く鳶の槍",
+                Widget.selectViewHTML("effectStacks", [
+                    {value: 0, label: `攻撃力+${textPercentageFix(PrimordialJadeWingedSpear.effectTable[0][this.rank()] * 0 , 1)}`},
+                    {value: 1, label: `攻撃力+${textPercentageFix(PrimordialJadeWingedSpear.effectTable[0][this.rank()] * 1 , 1)}`},
+                    {value: 2, label: `攻撃力+${textPercentageFix(PrimordialJadeWingedSpear.effectTable[0][this.rank()] * 2 , 1)}`},
+                    {value: 3, label: `攻撃力+${textPercentageFix(PrimordialJadeWingedSpear.effectTable[0][this.rank()] * 3 , 1)}`},
+                    {value: 4, label: `攻撃力+${textPercentageFix(PrimordialJadeWingedSpear.effectTable[0][this.rank()] * 4 , 1)}`},
+                    {value: 5, label: `攻撃力+${textPercentageFix(PrimordialJadeWingedSpear.effectTable[0][this.rank()] * 5 , 1)}`},
+                    {value: 6, label: `攻撃力+${textPercentageFix(PrimordialJadeWingedSpear.effectTable[0][this.rank()] * 6 , 1)}`},
+                    {value: 7, label: `攻撃力+${textPercentageFix(PrimordialJadeWingedSpear.effectTable[0][this.rank()] * 7 , 1)}，ダメージ+${textPercentageFix(PrimordialJadeWingedSpear.effectTable[1][this.rank()], 0)}`},
+                ])
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.effectStacks = this.effectStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.effectStacks(obj.effectStacks);
+    }
+}
+
+
+
 // 匣中滅龍
 export class DragonsBane extends Base.WeaponData
 {

@@ -33,6 +33,7 @@ export const weapons = [
     new Claymore.PrototypeArchaic(),
     new Claymore.SerpentSpine(),
     // 長柄武器, 星5
+    new Polearm.PrimordialJadeWingedSpear(),
     new Polearm.StaffOfHoma(),
     new Polearm.EngulfingLightning(),
     // 長柄武器, 星4
