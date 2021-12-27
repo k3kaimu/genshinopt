@@ -1,3 +1,4 @@
+import * as Calc from '/js/modules/dmg-calc.mjs';
 import * as Base from '/js/modules/weapons/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
 
@@ -90,6 +91,122 @@ export class PrimordialJadeWingedSpearViewModel extends Base.WeaponViewModel
     fromJS(obj) {
         super.fromJS(obj);
         this.effectStacks(obj.effectStacks);
+    }
+}
+
+
+// 天空の脊
+export class SkywardSpine extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "skyward_spine",
+            "天空の脊",
+            5,
+            "Polearm",
+            674,
+            "baseRecharge",
+            0.368
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new SkywardSpineViewModel(this);
+    }
+
+
+    static effectTable = [
+        [0.08, 0.10, 0.12, 0.14, 0.16], //会心率
+        [0.40, 0.55, 0.70, 0.85, 1.00]  //範囲ダメージ
+    ]
+}
+
+
+// 天空の脊
+export class SkywardSpineViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.useEffect = ko.observable(false);
+        this.perAttack = ko.observable(4);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseCrtRate.value += SkywardSpine.effectTable[0][this.rank()];
+
+        if(! this.useEffect())
+            return calc;
+
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let scale = SkywardSpine.effectTable[1][this.rank()];
+        let perAttack_ = Number(this.perAttack());
+
+        let NewCalc = class extends CalcType {
+            #scaleOfSkywardSpine = scale;
+            #perAttackOfSkywardSpine = perAttack_;
+
+            chainedAttackDmg(attackProps) {
+                let superValue = super.chainedAttackDmg(attackProps);
+
+                if(hasAnyPropertiesWithSameValue(attackProps, {isNormal: true, isCharged: true})) {
+                    let newProps = {...attackProps};
+                    // 元々の攻撃の属性や攻撃種類を削除する
+                    newProps = Calc.deleteAllElementFromAttackProps(attackProps);
+                    newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
+
+                    newProps.isPhysical = true;   // 物理攻撃
+                    newProps.isChainable = false; // この攻撃では追撃は発生しない
+                    return superValue.add(super.calculateNormalDmg(this.#scaleOfSkywardSpine, newProps).div(this.#perAttackOfSkywardSpine));
+                } else {
+                    // 通常攻撃でも重撃でもないので，追撃は発生しない
+                    return superValue;
+                }
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "通常/重撃時：追加ダメージ",
+                Widget.checkBoxViewHTML("useEffect",
+                    `${Widget.spanText("perAttack()")}回に1回${textPercentageFix(SkywardSpine.effectTable[1][this.rank()], 0)}物理ダメージ`)
+                +
+                Widget.sliderViewHTML("perAttack", 1, 10, 1, `発生頻度`, {disable: "!useEffect()"})
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.perAttack = this.perAttack();
+        obj.useEffect = this.useEffect();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.perAttack(obj.perAttack);
+        this.useEffect(obj.useEffect);
     }
 }
 
