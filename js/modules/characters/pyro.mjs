@@ -110,50 +110,53 @@ export class HuTao extends Base.CharacterData
         return new HuTaoViewModel(this);
     }
 
-    static chargedDmgScaleTable = [
-        1.360,          // lv. 1
-        1.452,
-        1.545,
-        1.669,
-        1.761,
-        1.869,
-        2.009,
-        2.148,
-        2.287,
-        2.426,
-        2.565,          // lv. 11
+    static normalTalentTable = [
+    //  0:1段目,   1:2段目,   2:3段目,   3:4段目,   4:5段目,           5:6段目,   6:重撃,     7:落下,    8:低空,  9:高空
+        [46.9/100, 48.3/100, 61.1/100, 65.6/100, 33.3/100+35.2/100, 86.0/100, 136.0/100, 65.4/100, 131/100, 163/100],
+        [50.1/100, 51.5/100, 65.2/100, 70.1/100, 35.5/100+37.6/100, 91.8/100, 145.2/100, 69.9/100, 140/100, 175/100],
+        [53.3/100, 54.8/100, 69.4/100, 74.6/100, 37.8/100+40.0/100, 97.7/100, 154.5/100, 74.3/100, 149/100, 186/100],
+        [57.5/100, 59.2/100, 74.9/100, 80.6/100, 40.8/100+43.2/100, 105.5/100, 166.9/100, 80.3/100, 161/100, 201/100],
+        [60.7/100, 62.5/100, 79.1/100, 85.0/100, 43.1/100+45.6/100, 111.4/100, 176.1/100, 84.7/100, 169/100, 212/100],
+        [64.5/100, 66.3/100, 83.9/100, 90.3/100, 45.8/100+48.4/100, 118.2/100, 186.9/100, 90.0/100, 180/100, 225/100],
+        [69.3/100, 71.3/100, 90.2/100, 97.0/100, 49.2/100+52.0/100, 127.0/100, 200.9/100, 96.6/100, 193/100, 241/100],
+        [74.1/100, 76.2/100, 96.4/100, 103.7/100, 52.6/100+55.6/100, 135.8/100, 214.8/100, 103.3/100, 207/100, 258/100],
+        [78.9/100, 81.2/100, 102.7/100, 110.4/100, 56.0/100+59.2/100, 144.6/100, 228.7/100, 110.0/100, 220/100, 275/100],
+        [83.7/100, 86.1/100, 108.9/100, 117.1/100, 59.4/100+62.8/100, 153.4/100, 242.6/100, 116.7/100, 233/100, 292/100],
+        [88.4/100, 91.0/100, 115.2/100, 123.8/100, 62.8/100+66.4/100, 162.1/100, 256.5/100, 123.4/100, 247/100, 308/100],
     ];
 
-    static skillScaleTable = [
-        0.0384,         // lv. 1
-        0.0407,
-        0.0430,
-        0.0460,
-        0.0483,
-        0.0506,
-        0.0536,
-        0.0566,
-        0.0596,
-        0.0626,
-        0.0656,
-        0.0685,
-        0.0715,         // lv. 13
+    static skillTalentTable = [
+    // 0:攻撃力上昇, 1:血梅香ダメージ
+        [3.84/100, 64/100],
+        [4.07/100, 69/100],
+        [4.30/100, 74/100],
+        [4.60/100, 80/100],
+        [4.83/100, 85/100],
+        [5.06/100, 90/100],
+        [5.36/100, 96/100],
+        [5.66/100, 102/100],
+        [5.96/100, 109/100],
+        [6.26/100, 115/100],
+        [6.56/100, 122/100],
+        [6.85/100, 128/100],
+        [7.15/100, 136/100],
     ];
 
-    static burstDmgScaleTable = [
-        3.03,           // lv. 1
-        3.21,
-        3.40,
-        3.63,
-        3.81,
-        4.00,
-        4.23,
-        4.47,
-        4.70,
-        4.94,
-        5.18,
-        5.41,
-        5.65,           // lv. 13
+    static burstTalentTable = [
+    //  0:ダメージ, 1:低HPダメージ, 2:回復, 3:低HP回復
+        [303/100, 379/100, 6.26/100, 8.35/100],
+        [321/100, 402/100, 6.64/100, 8.85/100],
+        [340/100, 424/100, 7.01/100, 9.35/100],
+        [363/100, 454/100, 7.50/100, 10.00/100],
+        [381/100, 477/100, 7.88/100, 10.50/100],
+        [400/100, 499/100, 8.25/100, 11.00/100],
+        [423/100, 529/100, 8.74/100, 11.65/100],
+        [447/100, 558/100, 9.23/100, 12.30/100],
+        [470/100, 588/100, 9.71/100, 12.95/100],
+        [494/100, 617/100, 10.20/100, 13.60/100],
+        [518/100, 647/100, 10.69/100, 14.25/100],
+        [541/100, 676/100, 11.18/100, 14.90/100],
+        [565/100, 706/100, 11.66/100, 15.55/100],
     ];
 
 
@@ -161,25 +164,25 @@ export class HuTao extends Base.CharacterData
         {
             id: "charged",
             label: "重撃",
-            dmgScale(vm){ return HuTao.chargedDmgScaleTable[vm.normalRank()-1] },
+            dmgScale(vm){ return HuTao.normalTalentTable[vm.normalRank()-1][6]; },
             attackProps: { isCharged: true, isPhysical: true }
         },
         {
             id: "charged_skill",
             label: "スキル中重撃",
-            dmgScale(vm){ return HuTao.chargedDmgScaleTable[vm.normalRank()-1] },
+            dmgScale(vm){ return HuTao.normalTalentTable[vm.normalRank()-1][6]; },
             attackProps: { isPyro: true, isCharged: true, isNowHuTaoSkill: true }
         },
         {
             id: "burst",
-            label: "爆発",
-            dmgScale(vm){ return HuTao.burstDmgScaleTable[vm.burstRank()-1] },
+            label: "爆発（低HP）",
+            dmgScale(vm){ return HuTao.burstTalentTable[vm.burstRank()-1][1]; },
             attackProps: { isPyro: true, isBurst: true }
         },
         {
             id: "burst_skill",
-            label: "スキル中爆発",
-            dmgScale(vm){ return HuTao.burstDmgScaleTable[vm.burstRank()-1] },
+            label: "スキル中爆発（低HP）",
+            dmgScale(vm){ return HuTao.burstTalentTable[vm.burstRank()-1][1]; },
             attackProps: { isPyro: true, isBurst: true, isNowHuTaoSkill: true }
         }
     ];
@@ -216,12 +219,12 @@ export class HuTaoViewModel extends PyroCharacterViewModel
 
         let CalcType = Object.getPrototypeOf(calc).constructor;
         let NewCalc = class extends CalcType {
-            hutaoSkillScale = HuTao.skillScaleTable[skillRank_-1];
+            #hutaoSkillScale = HuTao.skillTalentTable[skillRank_-1][0];
 
             atk(attackProps) {
                 let dst = undefined;
                 if(attackProps.isNowHuTaoSkill || false)
-                    dst = super.atk(attackProps).add(this.hp(attackProps).mul(this.hutaoSkillScale).min_number(4 * this.baseAtk.value));
+                    dst = super.atk(attackProps).add(this.hp(attackProps).mul(this.#hutaoSkillScale).min_number(4 * this.baseAtk.value));
                 else
                     dst = super.atk(attackProps);
 
