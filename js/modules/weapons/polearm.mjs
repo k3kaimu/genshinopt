@@ -121,7 +121,7 @@ export class SkywardSpine extends Base.WeaponData
     static effectTable = [
         [0.08, 0.10, 0.12, 0.14, 0.16], //会心率
         [0.40, 0.55, 0.70, 0.85, 1.00]  //範囲ダメージ
-    ]
+    ];
 }
 
 
