@@ -900,3 +900,22 @@ export function deleteAllAttackTypeFromAttackProps(props)
 
     return deleteProperties(shallowDup(props), types);
 }
+
+
+export function royalCriticalRate(baseCrtRate, incP)
+{
+    const p = baseCrtRate;
+    const x = incP;
+
+    let r = 1;
+    let ret = 0;
+    for(let n = 1; n < 6; ++n) {
+        const q = Math.min(p + (n-1) * x, 1);
+        ret += n * q * r;
+        r *= (1 - q);
+    }
+
+    const p5 = Math.min(p + 5 * x, 1);
+    ret += r * (1 + 5*p5)/p5;
+    return 1/ret;
+}
