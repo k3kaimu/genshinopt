@@ -621,6 +621,101 @@ export class FavoniusLance extends Base.WeaponData
 }
 
 
+// 千岩長槍
+export class LithicSpear extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "lithic_spear",
+            "千岩長槍",
+            4,
+            "Polearm",
+            565,
+            "rateAtk",
+            0.276
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new LithicSpearViewModel(this);
+    }
+
+
+    static effectTable = [
+        [0.07, 0.08, 0.09, 0.10, 0.11],
+        [0.03, 0.04, 0.05, 0.06, 0.07]
+    ];
+}
+
+
+// 千岩長槍
+export class LithicSpearViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.buffStacks = ko.observable(2);
+    }
+
+
+    buffEffect(numStacks)
+    {
+        numStacks = Number(numStacks);
+        return [
+            LithicSpear.effectTable[0][this.rank()] * numStacks,
+            LithicSpear.effectTable[1][this.rank()] * numStacks
+        ];
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        let eff = this.buffEffect(this.buffStacks());
+        calc.rateAtk.value += eff[0];
+        calc.baseCrtRate.value += eff[1];
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(Widget.buildViewHTML(target, "千岩訣・同心",
+            Widget.selectViewHTML("buffStacks", [
+                {value: 0, label: `攻撃力+${textPercentageFix(this.buffEffect(0)[0], 0)}，会心率+${textPercentageFix(this.buffEffect(0)[1], 0)}`},
+                {value: 1, label: `攻撃力+${textPercentageFix(this.buffEffect(1)[0], 0)}，会心率+${textPercentageFix(this.buffEffect(1)[1], 0)}`},
+                {value: 2, label: `攻撃力+${textPercentageFix(this.buffEffect(2)[0], 0)}，会心率+${textPercentageFix(this.buffEffect(2)[1], 0)}`},
+                {value: 3, label: `攻撃力+${textPercentageFix(this.buffEffect(3)[0], 0)}，会心率+${textPercentageFix(this.buffEffect(3)[1], 0)}`},
+                {value: 4, label: `攻撃力+${textPercentageFix(this.buffEffect(4)[0], 0)}，会心率+${textPercentageFix(this.buffEffect(4)[1], 0)}`},
+            ])
+        ));
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.buffStacks = this.buffStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.buffStacks(obj.buffStacks);
+    }
+}
+
+
 // 死闘の槍
 export class Deathmatch extends Base.WeaponData
 {
