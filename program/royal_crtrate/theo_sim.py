@@ -25,7 +25,7 @@ def simulate(nTrial, p, x):
 def theory(p, x):
     r = 1
     ret = 0
-    for n in range(1, 5):
+    for n in range(1, 6):
         q = min(p + (n-1) * x, 1)
         ret += n * q * r
         r *= (1 - q)
@@ -45,7 +45,7 @@ ax = fig.add_subplot(111)
 ax.plot(theoPs, [theory(p, incP) for p in theoPs], label="theo.", color='C0')
 ax.scatter(simPs, [simulate(10000, p, incP) for p in simPs], label="sim.", marker='x', color='C1')
 ax.set_xlabel("Base CrtRate")
-ax.set_ylabel("Effective Increase of CrtRate")
+ax.set_ylabel("Effective CrtRate")
 ax.legend()
 fig.savefig("theo_sim.png")
 

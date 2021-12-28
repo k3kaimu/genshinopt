@@ -414,9 +414,7 @@ $$
 $$
 
 以下の図は，理論で導出した実質的な確率と，1万回のシミュレーション結果です．
-ちょっとずれているのでもしかしたら理論式が間違っているかもしれませんが，まあまあシミュレーション結果と合っているので良しとしてください．
-なにぶん，私は確率や統計に疎いため．．．
+まあまあシミュレーション結果と合っているので良しとしてください．
 ちなみに，[プログラムの詳細はこちらから参照できます](https://github.com/k3kaimu/genshinopt/blob/master/program/royal_crtrate/theo_sim.py)．
 
 ![CrtRate of Royal Weapons]({{ site.baseurl }}/program/royal_crtrate/theo_sim.png)
-
