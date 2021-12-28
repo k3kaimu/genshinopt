@@ -925,6 +925,93 @@ export class BlackcliffPoleViewModel extends Base.WeaponViewModel
         super.fromJS(obj);
         this.effectStacks(obj.effectStacks);
     }
+
+}
+
+// 星鎌・試作
+export class PrototypeStarglitter extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "prototype_starglitter",
+            "星鎌・試作",
+            4,
+            "Polearm",
+            510,
+            "baseRecharge",
+            0.459
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new PrototypeStarglitterViewModel(this);
+    }
+
+
+    static effectTable = [0.08, 0.10, 0.12, 0.14, 0.16];
+}
+
+
+// 星鎌・試作
+export class PrototypeStarglitterViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.effectStacks = ko.observable(1);
+    }
+
+
+    incDmg(numStacks)
+    {
+        return Number(numStacks) * PrototypeStarglitter.effectTable[this.rank()];
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseNormalDmg.value += this.incDmg(this.effectStacks());
+        calc.baseChargedDmg.value += this.incDmg(this.effectStacks());
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "魔力親和",
+                Widget.selectViewHTML("effectStacks", [
+                    {value: 0, label: `通常攻撃/重撃+${textPercentageFix(this.incDmg(0), 0)}`},
+                    {value: 1, label: `通常攻撃/重撃+${textPercentageFix(this.incDmg(1), 0)}`},
+                    {value: 2, label: `通常攻撃/重撃+${textPercentageFix(this.incDmg(2), 0)}`},
+                ])
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.effectStacks = this.effectStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.effectStacks(obj.effectStacks);
+    }
 }
 
 
