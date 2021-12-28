@@ -341,6 +341,7 @@ export class DragonsBane extends Base.WeaponData
 }
 
 
+// 匣中滅龍
 export class DragonsBaneViewModel extends Base.WeaponViewModel
 {
     constructor(parent)
@@ -395,7 +396,6 @@ export class DragonsBaneViewModel extends Base.WeaponViewModel
         this.useEffect(obj.useEffect);
     }
 }
-
 
 
 // 護摩の杖
