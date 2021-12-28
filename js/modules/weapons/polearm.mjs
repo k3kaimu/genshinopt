@@ -764,13 +764,12 @@ export class RoyalSpearViewModel extends Base.WeaponViewModel
 
             let CalcType = Object.getPrototypeOf(calc).constructor;
             let NewCalc = class extends CalcType {
-                #addCrtRateRoyal = {};
                 #incRoyal = incP;
 
                 crtRate(attackProps)
                 {
-                    if(attackProps in this.#addCrtRateRoyal) {
-                        return super.crtRate(attackProps).add(this.#addCrtRateRoyal[attackProps]);
+                    if(hasAnyProperties(attackProps, ["incCrtRateRoyalSpear"])) {
+                        return super.crtRate(attackProps).add(attackProps.incCrtRateRoyalSpear);
                     } else {
                         return super.crtRate(attackProps);
                     }
@@ -778,9 +777,10 @@ export class RoyalSpearViewModel extends Base.WeaponViewModel
     
                 calculate(dmgScale, attackProps)
                 {
-                    if(!(attackProps in this.#addCrtRateRoyal)) {
-                        const cr = this.crtRate().value;
-                        this.#addCrtRateRoyal[attackProps] = Calc.royalCriticalRate(cr, this.#incRoyal) - cr;
+                    if(!hasAnyProperties(attackProps, ["incCrtRateRoyalSpear"])) {
+                        attackProps = {...attackProps};
+                        const cr = this.crtRate(attackProps).value;
+                        attackProps.incCrtRateRoyalSpear = Calc.royalCriticalRate(cr, this.#incRoyal) - cr;
                     }
 
                     return super.calculate(dmgScale, attackProps);
