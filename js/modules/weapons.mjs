@@ -42,6 +42,7 @@ export const weapons = [
     new Polearm.FavoniusLance(),
     new Polearm.DragonsBane(),
     new Polearm.LithicSpear(),
+    new Polearm.RoyalSpear(),
     new Polearm.Deathmatch(),
     new Polearm.TheCatch(),
     // 片手剣, 星5

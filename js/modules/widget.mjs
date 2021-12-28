@@ -90,7 +90,7 @@ export function selectViewHTML(observableStr, options, labelHTML = undefined, ot
 
     if(labelHTML == undefined) {
         return `<div class="form-group m-0">
-            <select class="custom-select" data-bind="value:  ${observableStr}">
+            <select class="custom-select" data-bind="value: ${observableStr}, ${buildBindAttr(otherBindAttr)}">
                 ${ops}
             </select>
         </div>`;

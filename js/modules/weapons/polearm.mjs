@@ -715,6 +715,132 @@ export class LithicSpearViewModel extends Base.WeaponViewModel
 }
 
 
+// 旧貴族猟槍
+export class RoyalSpear extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "royal_spear",
+            "旧貴族猟槍",
+            4,
+            "Polearm",
+            565,
+            "rateAtk",
+            0.276
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new RoyalSpearViewModel(this);
+    }
+
+
+    static effectTable = [0.08, 0.10, 0.12, 0.14, 0.16];
+}
+
+
+// 旧貴族猟槍
+export class RoyalSpearViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.selType = ko.observable("effective");  // effective | constant
+        this.buffStacks = ko.observable(1);         // for this.selType() == "constant"
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        if(this.selType() == "constant") {
+            calc.baseCrtRate.value += this.crtIncrease(this.buffStacks());
+        } else {
+            let incP = RoyalSpear.effectTable[this.rank()];
+
+            let CalcType = Object.getPrototypeOf(calc).constructor;
+            let NewCalc = class extends CalcType {
+                #addCrtRateRoyal = {};
+                #incRoyal = incP;
+
+                crtRate(attackProps)
+                {
+                    if(attackProps in this.#addCrtRateRoyal) {
+                        return super.crtRate(attackProps).add(this.#addCrtRateRoyal[attackProps]);
+                    } else {
+                        return super.crtRate(attackProps);
+                    }
+                }
+    
+                calculate(dmgScale, attackProps)
+                {
+                    if(!(attackProps in this.#addCrtRateRoyal)) {
+                        const cr = this.crtRate().value;
+                        this.#addCrtRateRoyal[attackProps] = Calc.royalCriticalRate(cr, this.#incRoyal) - cr;
+                    }
+
+                    return super.calculate(dmgScale, attackProps);
+                }
+            };
+    
+            calc = Object.assign(new NewCalc(), calc);
+        }
+
+        return calc;
+    }
+
+
+    crtIncrease(numStacks)
+    {
+        return RoyalSpear.effectTable[this.rank()] * Number(numStacks);
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(Widget.buildViewHTML(target, "集中",
+            Widget.radioViewHTML("selType", [
+                {value: "effective", label: "実質的な会心率の上昇量を利用"},
+                {value: "constant", label: "固定の会心率の上昇量を利用"},
+            ])
+            +
+            Widget.selectViewHTML("buffStacks", [
+                {value: 0, label: `会心率+${textPercentageFix(this.crtIncrease(0), 0)}`},
+                {value: 1, label: `会心率+${textPercentageFix(this.crtIncrease(1), 0)}`},
+                {value: 2, label: `会心率+${textPercentageFix(this.crtIncrease(2), 0)}`},
+                {value: 3, label: `会心率+${textPercentageFix(this.crtIncrease(3), 0)}`},
+                {value: 4, label: `会心率+${textPercentageFix(this.crtIncrease(4), 0)}`},
+                {value: 5, label: `会心率+${textPercentageFix(this.crtIncrease(5), 0)}`},
+            ], undefined, {visible: "selType() == 'constant'"})
+        ));
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.selType = this.selType();
+        obj.buffStacks = this.buffStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.selType(obj.selType);
+        this.buffStacks(obj.buffStacks);
+    }
+}
+
+
 // 死闘の槍
 export class Deathmatch extends Base.WeaponData
 {
