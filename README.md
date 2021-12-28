@@ -19,3 +19,12 @@
 + [ ] キャラの実装
 + [ ] 武器の実装
 + [ ] 聖遺物の実装
++ [ ] 旧貴族武器の実装
+
+## 参考資料
+
+キャラ・武器などのデータは原神Wikiを参考にしています．
+また，ソースコード中の英語名などは英Wiki（Genshin Impact Wiki - Fandom）を参考にしています．
+
++ [原神 Wiki](https://wikiwiki.jp/genshinwiki/)
++ [Genshin Impact Wiki](https://genshin-impact.fandom.com/wiki/Genshin_Impact)
