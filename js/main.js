@@ -95,6 +95,9 @@ function textNumber(value, digit=3)
 
 function isValidNumber(value)
 {
+    if(value == null)
+        return false;
+
     value = Number(value);
 
     if(value == undefined || isNaN(value))
@@ -111,6 +114,7 @@ runUnittest(function(){
     console.assert(isValidNumber(-1));
     console.assert(!isValidNumber(NaN));
     console.assert(!isValidNumber(undefined));
+    console.assert(!isValidNumber(null));
 });
 
 
