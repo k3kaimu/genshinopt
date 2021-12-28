@@ -841,6 +841,93 @@ export class RoyalSpearViewModel extends Base.WeaponViewModel
 }
 
 
+// 黒岩の突槍
+export class BlackcliffPole extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "blackcliff_pole",
+            "黒岩の突槍",
+            4,
+            "Polearm",
+            510,
+            "baseCrtDmg",
+            0.551
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new BlackcliffPoleViewModel(this);
+    }
+
+
+    static effectTable = [0.12, 0.15, 0.18, 0.21, 0.24];
+}
+
+
+// 黒岩の突槍
+export class BlackcliffPoleViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.effectStacks = ko.observable(3);
+    }
+
+
+    incRateAtk(numStacks)
+    {
+        return Number(numStacks) * BlackcliffPole.effectTable[this.rank()];
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.rateAtk.value += this.incRateAtk(this.effectStacks());
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "勝ちに乗じる",
+                Widget.selectViewHTML("effectStacks", [
+                    {value: 0, label: `攻撃力+${textPercentageFix(this.incRateAtk(0), 0)}`},
+                    {value: 1, label: `攻撃力+${textPercentageFix(this.incRateAtk(1), 0)}`},
+                    {value: 2, label: `攻撃力+${textPercentageFix(this.incRateAtk(2), 0)}`},
+                    {value: 3, label: `攻撃力+${textPercentageFix(this.incRateAtk(3), 0)}`}
+                ])
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.effectStacks = this.effectStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.effectStacks(obj.effectStacks);
+    }
+}
+
+
 // 死闘の槍
 export class Deathmatch extends Base.WeaponData
 {
