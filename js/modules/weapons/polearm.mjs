@@ -928,6 +928,7 @@ export class BlackcliffPoleViewModel extends Base.WeaponViewModel
 
 }
 
+
 // 星鎌・試作
 export class PrototypeStarglitter extends Base.WeaponData
 {
