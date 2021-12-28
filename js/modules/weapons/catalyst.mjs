@@ -52,49 +52,51 @@ export class TheWidsithViewModel extends Base.WeaponViewModel
     {
         calc = super.applyDmgCalc(calc);
 
-        let useAtkUp_ = this.useAtkUp();
-        let useDmgUp_ = this.useDmgUp();
-        let useMryUp_ = this.useMryUp();
-        let rank_ = this.rank();
+        let data = this.toJS();
 
         let CalcType = Object.getPrototypeOf(calc).constructor;
         let NewCalc = class extends CalcType {
-            #useAtkUpWidsith = useAtkUp_;
-            #useDmgUpWidsith = useDmgUp_;
-            #useMryUpWidsith = useMryUp_;
-            #rankWidsith = rank_;
-            #isNestedWidsith = false;
+            #dataWidsith = data;
+
+            atk(attackProps) {
+                if(attackProps.isWidsithAtkUp || false)
+                    return super.atk(attackProps).add(this.baseAtk.mul( TheWidsith.buffInc[this.#dataWidsith.rank].atk ));
+                else
+                    return super.atk(attackProps);
+            }
+
+            allDmgBuff(attackProps) {
+                if(attackProps.isWidsithDmgUp || false)
+                    return super.allDmgBuff(attackProps).add(TheWidsith.buffInc[this.#dataWidsith.rank].dmg);
+                else
+                    return super.allDmgBuff(attackProps);
+            }
+
+            mastery(attackProps) {
+                if(attackProps.isWidsithMryUp || false)
+                    return super.mastery(attackProps).add(TheWidsith.buffInc[this.#dataWidsith.rank].mry);
+                else
+                    return super.mastery(attackProps);
+            }
 
             calculate(dmgScale, attackProps)
             {
-                if(this.#isNestedWidsith) {
+                if(attackProps.isWidsithAtkUp || attackProps.isWidsithDmgUp || attackProps.isWidsithMryUp || false) {
                     return super.calculate(dmgScale, attackProps);
                 }
 
                 let dmgs = [];
 
-                if(this.#useAtkUpWidsith) {
-                    this.rateAtk.value += TheWidsith.buffInc[this.#rankWidsith].atk;
-                    this.#isNestedWidsith = true;
-                    dmgs.push(super.calculate(dmgScale, attackProps));
-                    this.rateAtk.value -= TheWidsith.buffInc[this.#rankWidsith].atk;
-                    this.#isNestedWidsith = false;
+                if(this.#dataWidsith.useAtkUp) {
+                    dmgs.push(super.calculate(dmgScale, {...attackProps, isWidsithAtkUp: true}));
                 }
 
-                if(this.#useDmgUpWidsith) {
-                    this.baseAllDmg.value += TheWidsith.buffInc[this.#rankWidsith].dmg;
-                    this.#isNestedWidsith = true;
-                    dmgs.push(super.calculate(dmgScale, attackProps));
-                    this.baseAllDmg.value -= TheWidsith.buffInc[this.#rankWidsith].dmg;
-                    this.#isNestedWidsith = false;
+                if(this.#dataWidsith.useDmgUp) {
+                    dmgs.push(super.calculate(dmgScale, {...attackProps, isWidsithDmgUp: true}));
                 }
 
-                if(this.#useMryUpWidsith) {
-                    this.baseMastery.value += TheWidsith.buffInc[this.#rankWidsith].mry;
-                    this.#isNestedWidsith = true;
-                    dmgs.push(super.calculate(dmgScale, attackProps));
-                    this.baseMastery.value -= TheWidsith.buffInc[this.#rankWidsith].mry;
-                    this.#isNestedWidsith = false;
+                if(this.#dataWidsith.useMryUp) {
+                    dmgs.push(super.calculate(dmgScale, {...attackProps, isWidsithMryUp: true}));
                 }
 
                 if(dmgs.length == 0) {
