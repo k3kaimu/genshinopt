@@ -10,7 +10,7 @@ title: ダメージ期待値比較ツール
   <label for="select-character">キャラクター</label>
   <div class="input-group" id="select-character">
     <div class="input-group-prepend">
-      <select class="custom-select" id="selectCharacterElement" data-bind="value: selCharElem">
+      <select class="custom-select" id="selectCharacterElement" data-bind="value: selCharElem, visible: selectedChar() == undefined">
         <option selected value="ALL">元素</option>
         <option value="Anemo">風</option>
         <option value="Geo">岩</option>
@@ -21,7 +21,7 @@ title: ダメージ期待値比較ツール
       </select>
     </div>
     <div class="input-group-prepend input-group-append">
-      <select class="custom-select" id="selectCharacterRarity" data-bind="value: selCharRarity">
+      <select class="custom-select" id="selectCharacterRarity" data-bind="value: selCharRarity, visible: selectedChar() == undefined">
         <option selected value="ALL">星</option>
         <option value="5">星5</option>
         <option value="4">星4</option>
@@ -102,7 +102,7 @@ title: ダメージ期待値比較ツール
       <div class="input-group">
         <div class="input-group-prepend input-group-append">
           <span class="input-group-text" data-bind="text: '#W' + ($index() + 1)"></span>
-          <select class="custom-select" data-bind="value: $data.selWeaponRarity">
+          <select class="custom-select" data-bind="value: $data.selWeaponRarity, visible: $data.selectedWeapon() == undefined">
             <option selected value="ALL">星</option>
             <option value="5">星5</option>
             <option value="4">星4</option>
@@ -110,7 +110,7 @@ title: ダメージ期待値比較ツール
           </select>
         </div>
         <select data-bind="options: $data.selWeaponList,
-                          optionsText: 'name',
+                          optionsText: function(o) { return '★' + o.rarity + ' ' + o.name },
                           value: $data.selectedWeapon,
                           optionsCaption: '-武器選択-',
                           css: {'border-danger': $data.selectedWeapon() == undefined}"
