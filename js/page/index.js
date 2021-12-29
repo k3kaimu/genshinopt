@@ -542,7 +542,7 @@ $(function(){
                 });
 
                 this.optimizedResults(results);
-                $('#optimizationProgress').modal('hide');
+                setTimeout(() => { $('#optimizationProgress').modal('hide'); }, 300);
                 $("html,body").animate({scrollTop:$('#scrollTargetAfterOptimization').offset().top});
 
                 const encodedURL = `${location.pathname}?ver=${Migrator.indexDataMigrator.currentVersion()}&data=${encodeToURI(this.toJS())}`;
