@@ -222,9 +222,10 @@ function processTasksOnIdle(tasks, onFinish)
         return;
     }
 
-    function runTasks(deadline) {
+    async function runTasks(deadline) {
         while(tasks.length && deadline.timeRemaining() > 0){
-            tasks.shift()();
+            let task = tasks.shift();
+            await task();
         }
         
         if(tasks.length){
