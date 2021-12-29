@@ -215,6 +215,7 @@ export class AratakiIttoViewModel extends Base.CharacterViewModel
 }
 
 
+// ノエル
 export class Noelle extends Base.CharacterData
 {
     constructor()
@@ -329,7 +330,7 @@ export class Noelle extends Base.CharacterData
 }
 
 
-
+// ノエル
 export class NoelleViewModel extends Base.CharacterViewModel
 {
     constructor(parent)
