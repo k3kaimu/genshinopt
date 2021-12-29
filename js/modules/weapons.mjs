@@ -23,6 +23,8 @@ export const weapons = [
     // 弓, 星4
     new Bow.Rust(),
     new Bow.PrototypeCrescent(),
+    // 法器，星5,
+    new Catalyst.MemoryOfDust(),
     // 法器，星4
     new Catalyst.TheWidsith(),
     new Catalyst.MappaMare(),

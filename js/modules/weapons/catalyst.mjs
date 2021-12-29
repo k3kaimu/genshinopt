@@ -3,6 +3,108 @@ import * as Calc from '/js/modules/dmg-calc.mjs'
 import * as Widget from '/js/modules/widget.mjs'
 
 
+// 浮世の錠
+export class MemoryOfDust extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "memory_of_dust",
+            "浮世の錠",
+            5,
+            "Catalyst",
+            608,
+            "rateAtk",
+            0.496
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new MemoryOfDustViewModel(this);
+    }
+
+
+    static effectTable = [
+        [0.20, 0.25, 0.30, 0.35, 0.40], //シールド強化
+        [0.04, 0.05, 0.06, 0.07, 0.08]  // 攻撃力%
+    ];
+}
+
+
+// 浮世の錠
+export class MemoryOfDustViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.isShielded = ko.observable(true);
+        this.effectStacks = ko.observable(5);
+    }
+
+
+    rateAtkEffect(numStacks)
+    {
+        if(this.isShielded()) {
+            return MemoryOfDust.effectTable[1][this.rank()] * Number(numStacks) * 2;
+        } else {
+            return MemoryOfDust.effectTable[1][this.rank()] * Number(numStacks);
+        }
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseRateShieldStrength.value += MemoryOfDust.effectTable[0][this.rank()];
+        calc.rateAtk.value += this.rateAtkEffect(this.effectStacks());
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "金璋君臨",
+                Widget.checkBoxViewHTML("isShielded", "シールド状態")
+                +
+                Widget.selectViewHTML("effectStacks", [
+                    {value: 0, label: `攻撃力+${textPercentageFix(this.rateAtkEffect(0), 0)}`},
+                    {value: 1, label: `攻撃力+${textPercentageFix(this.rateAtkEffect(1), 0)}`},
+                    {value: 2, label: `攻撃力+${textPercentageFix(this.rateAtkEffect(2), 0)}`},
+                    {value: 3, label: `攻撃力+${textPercentageFix(this.rateAtkEffect(3), 0)}`},
+                    {value: 4, label: `攻撃力+${textPercentageFix(this.rateAtkEffect(4), 0)}`},
+                    {value: 5, label: `攻撃力+${textPercentageFix(this.rateAtkEffect(5), 0)}`},
+                ])
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.isShielded = this.isShielded();
+        obj.effectStacks = this.effectStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.isShielded(obj.isShielded);
+        this.effectStacks(obj.effectStacks);
+    }
+}
+
+
 // 流浪楽章
 export class TheWidsith extends Base.WeaponData
 {
