@@ -373,6 +373,10 @@ export class BeidouViewModel extends Base.CharacterViewModel
     }
 
 
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+
+
     applyDmgCalc(calc)
     {
         calc = super.applyDmgCalc(calc);
