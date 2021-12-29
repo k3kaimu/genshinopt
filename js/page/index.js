@@ -465,7 +465,7 @@ $(function(){
             let results = [];
 
             allpatterns.forEach(setting => {
-                function task(){
+                async function task(){
                     let calc = new Calc.DamageCalculator();
                     calc = setting.character.applyDmgCalc(calc);
                     calc = setting.weapon.applyDmgCalc(calc);
@@ -504,23 +504,21 @@ $(function(){
                         }
                     }
 
-                    let x0 = [0, 0, 0, 0, 0, 0, 0];
+                    const x0 = [0, 0, 0, 0, 0, 0, 0];
 
                     if(total_cost == 0) {
                         results.push({dmg: objfunc(x0).value, calc: calc, setting: setting});
                     } else {
                         let opt = undefined;
                         if(setting.globalOpt.isEnabled) {
-                            // opt = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.GN_ISRES, x0, 1e-2, setting.globalOpt.maxEval);
-                            // opt = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, opt.opt_result.x, 1e-3, 1000);
-                            opt = applyGlobalOptimize(calc, objfunc, total_cost, nlopt.Algorithm.GN_ISRES, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, setting.globalOpt.maxEval, 1000);
+                            opt = await applyGlobalOptimize(calc, objfunc, total_cost, nlopt.Algorithm.GN_ISRES, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, setting.globalOpt.maxEval, 1000);
 
                             // 局所最適化のみ
-                            let local = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
-                            if(opt.value < local.value)
+                            let local = await applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
+                            if(opt == undefined || !opt.success || opt.value < local.value)
                                 opt = local;    // 局所最適化の方が性能が良かったのでそちらを採用
                         } else {
-                            opt = applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
+                            opt = await applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
                         }
                         
                         console.assert(opt.opt_result.success);
@@ -550,6 +548,7 @@ $(function(){
                 const encodedURL = `${location.pathname}?ver=${Migrator.indexDataMigrator.currentVersion()}&data=${encodeToURI(this.toJS())}`;
                 this.savedURL(`${location.protocol}//${location.host}${encodedURL}`);
                 history.replaceState('', '', encodedURL);
+                // nlopt.GC.flush();
             }
 
             processTasksOnIdle(tasks, onFinish.bind(this));

@@ -26,6 +26,15 @@
 window.global = window;
 
 
+function reload_js(src) {
+    $('script[src="' + src + '"]').remove();
+    $('<script>').attr('src', src).appendTo('head');
+}
+
+
+reload_js('/js/nlopt-js.js');
+
+
 if(location.href.endsWith('unittest/')) {
     window.runUnittest = function(func) { func(); }; 
 } else {
@@ -118,55 +127,63 @@ runUnittest(function(){
 });
 
 
-function applyOptimize(calc, objfunc, total_cost, algoritm, x0, tol, maxEval) {
+function makeOptimizer(calc, objfunc, total_cost, algorithm, tol, maxEval)
+{
+    const opt = new nlopt.Optimize(algorithm, 7);
+
+    opt.setMaxObjective((x, grad) => {
+        var dmg = objfunc(x);
+        dmg = dmg.log();
+
+        if(grad) {
+            for(let i = 0; i < 7; ++i)
+                grad[i] = dmg.grad[i];
+        }
+
+        return dmg.value;
+    }, tol);
+
+    
+    opt.addInequalityConstraint((x, grad) => {
+        var cost = calc.calcSubOptionCost(x);
+        if(grad) {
+            for(let i = 0; i < 7; ++i)
+                grad[i] = cost.grad[i];
+        }
+
+        return cost.value - total_cost;
+    }, tol);
+
+    opt.setUpperBounds(calc.calcUpperBounds(total_cost, objfunc));
+    opt.setLowerBounds([0, 0, 0, 0, 0, 0, 0]);
+    opt.setMaxeval(maxEval);
+
+    return opt;
+}
+
+
+async function applyOptimize(calc, objfunc, total_cost, algorithm, x0, tol, maxEval, retry = 3) {
     let VGData = Object.getPrototypeOf(calc.baseAtk).constructor;
 
     let doCalcExprTextLast = VGData.doCalcExprText;
     VGData.doCalcExprText = false;
     let returnValue = undefined;
-    try {
-        const opt = new nlopt.Optimize(algoritm, 7);
+    let failed = 0;
 
-        opt.setMaxObjective((x, grad) => {
-            var dmg = objfunc(x);
-            dmg = dmg.log();
+    while(returnValue == undefined && failed < retry) {
+        try {
+            const opt = makeOptimizer(calc, objfunc, total_cost, algorithm, tol, maxEval);
+            let result = opt.optimize(x0);
 
-            if(grad) {
-                for(let i = 0; i < 7; ++i)
-                    grad[i] = dmg.grad[i];
-            }
-
-            return dmg.value;
-        }, tol);
-
-        
-        opt.addInequalityConstraint((x, grad) => {
-            var cost = calc.calcSubOptionCost(x);
-            if(grad) {
-                for(let i = 0; i < 7; ++i)
-                    grad[i] = cost.grad[i];
-            }
-
-            return cost.value - total_cost;
-        }, tol);
-
-        opt.setUpperBounds(calc.calcUpperBounds(total_cost, objfunc));
-        opt.setLowerBounds([0, 0, 0, 0, 0, 0, 0]);
-        opt.setMaxeval(maxEval);
-
-        let result = opt.optimize(x0);
-
-        // calc.artRateAtk.value = result.x[0];
-        // calc.artRateDef.value = result.x[1];
-        // calc.artRateHP.value = result.x[2];
-        // calc.artCrtRate.value = result.x[3];
-        // calc.artCrtDmg.value = result.x[4];
-        // calc.artRecharge.value = result.x[5];
-        // calc.artMastery.value = result.x[6];
-
-        returnValue = {opt_result: result, calc: calc, value: Math.exp(result.value)};
-    }catch(ex) {
-        console.log(ex);
+            returnValue = {success: result.success, opt_result: result, calc: calc, value: Math.exp(result.value)};
+        } catch(ex) {
+            console.log(ex);
+            console.log("reload NLopt-js");
+            reload_js('/js/nlopt-js.js');
+            await nlopt.ready;
+            ++failed;
+            console.log(failed);
+        }
     }
 
     VGData.doCalcExprText = doCalcExprTextLast;
@@ -174,19 +191,27 @@ function applyOptimize(calc, objfunc, total_cost, algoritm, x0, tol, maxEval) {
 }
 
 
-function applyGlobalOptimize(calc, objfunc, total_cost, globalAlgorithm, localAlgorithm, x0, tol, maxEvalGlobal, maxEvalLocal)
+async function applyGlobalOptimize(calc, objfunc, total_cost, globalAlgorithm, localAlgorithm, x0, tol, maxEvalGlobal, maxEvalLocal)
 {
     function globalObjFunc(x)
     {
-        let opt = applyOptimize(calc, objfunc, total_cost, localAlgorithm, x, tol, maxEvalLocal);
-        return objfunc(opt.opt_result.x);
+        let opt = applyOptimize(calc, objfunc, total_cost, localAlgorithm, x, tol, maxEvalLocal, 1);
+
+        if(opt.success)
+            return objfunc(opt.opt_result.x);
+        else
+            return objfunc(x0);
     }
 
+    let ret = await applyOptimize(calc, globalObjFunc, total_cost, globalAlgorithm, x0, tol, maxEvalGlobal);
 
-    let ret = applyOptimize(calc, globalObjFunc, total_cost, globalAlgorithm, x0, tol, maxEvalGlobal);
-
-    // 大域最適化の結果を使って局所最適化をする
-    return applyOptimize(calc, objfunc, total_cost, localAlgorithm, ret.opt_result.x, tol, maxEvalLocal);;
+    if(ret.success) {
+        // 大域最適化の結果を使って局所最適化をする
+        return applyOptimize(calc, objfunc, total_cost, localAlgorithm, ret.opt_result.x, tol, maxEvalLocal);
+    } else {
+        // 大域最適化は諦めて，局所最適化アルゴリズムに任せる
+        return applyOptimize(calc, objfunc, total_cost, localAlgorithm, x0, tol, maxEvalLocal);
+    }
 }
 
 
