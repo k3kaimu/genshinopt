@@ -297,6 +297,7 @@ export class SerpentSpine extends Base.WeaponData
 }
 
 
+// 螭龍の剣
 export class SerpentSpineViewModel extends Base.WeaponViewModel
 {
     constructor(parent)
