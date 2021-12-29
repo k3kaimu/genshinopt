@@ -352,3 +352,117 @@ export class SerpentSpineViewModel extends Base.WeaponViewModel
         this.buffStacks(obj.buffStacks);
     }
 }
+
+
+// 銜玉の海皇
+export class LuxuriousSeaLord extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "luxurious_sea_lord",
+            "銜玉の海皇",
+            4,
+            "Claymore",
+            454,
+            "rateAtk",
+            0.551
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new LuxuriousSeaLordViewModel(this);
+    }
+
+
+    static effectTable = [
+        [0.12, 0.15, 0.18, 0.21, 0.24],
+        [1.00, 1.25, 1.50, 1.75, 2.00]
+    ];
+}
+
+
+// 銜玉の海皇
+export class LuxuriousSeaLordViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.useEffect = ko.observable(false);
+        this.perAttack = ko.observable(1);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseBurstDmg.value += LuxuriousSeaLord.effectTable[0][this.rank()];
+
+        if(! this.useEffect())
+            return calc;
+
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let data = this.toJS();
+
+        let NewCalc = class extends CalcType {
+            #dMaguro = data;
+
+            chainedAttackDmg(attackProps) {
+                let superValue = super.chainedAttackDmg(attackProps);
+
+                if(attackProps.isBurst || false) {
+                    let newProps = {...attackProps};
+                    // 元々の攻撃の属性や攻撃種類を削除する
+                    newProps = Calc.deleteAllElementFromAttackProps(newProps);
+                    newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
+
+                    newProps.isPhysical = true;   // 物理攻撃
+                    newProps.isChainable = false; // この攻撃では追撃は発生しない
+                    return superValue.add(super.calculateNormalDmg(LuxuriousSeaLord.effectTable[1][this.#dMaguro.rank], newProps).div(this.#dMaguro.perAttack));
+                } else {
+                    // 元素爆発ではないので追撃は発生しない
+                    return superValue;
+                }
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "爆発時追加ダメージ",
+                Widget.checkBoxViewHTML("useEffect",
+                    `${Widget.spanText("perAttack()")}回に1回${textPercentageFix(LuxuriousSeaLord.effectTable[1][this.rank()], 0)}物理ダメージ`)
+                +
+                Widget.sliderViewHTML("perAttack", 1, 20, 1, `発生頻度`, {disable: "!useEffect()"})
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.perAttack = this.perAttack();
+        obj.useEffect = this.useEffect();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.perAttack(obj.perAttack);
+        this.useEffect(obj.useEffect);
+    }
+}

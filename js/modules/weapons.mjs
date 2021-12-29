@@ -34,6 +34,7 @@ export const weapons = [
     new Claymore.Whiteblind(),
     new Claymore.PrototypeArchaic(),
     new Claymore.SerpentSpine(),
+    new Claymore.LuxuriousSeaLord(),
     // 長柄武器, 星5
     new Polearm.PrimordialJadeWingedSpear(),
     new Polearm.SkywardSpine(),
