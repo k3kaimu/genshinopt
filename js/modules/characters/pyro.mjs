@@ -643,7 +643,7 @@ export class Xiangling extends Base.CharacterData
 
 
 // 香菱
-export class XianglingViewModel extends Base.CharacterViewModel
+export class XianglingViewModel extends PyroCharacterViewModel
 {
     // 2凸効果の爆縮ダメージは未実装
 
