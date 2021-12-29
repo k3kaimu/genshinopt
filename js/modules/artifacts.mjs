@@ -594,6 +594,127 @@ export class BloodstainedChivalryViewModel extends ArtifactViewModel
 }
 
 
+// 悠久の磐岩
+export class ArchaicPetra extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            'archaic_petra',
+            "悠久の磐岩",
+            "悠久",
+        );
+    }
+
+
+    newViewModel(type)
+    {
+        return new ArchaicPetraViewModel(this, type);
+    }
+}
+
+
+// 悠久の磐岩
+export class ArchaicPetraViewModel extends ArtifactViewModel
+{
+    constructor(parent, type)
+    {
+        super(parent, type);
+        this.useEffect4 = ko.observable(true);
+        this.selectedElem = ko.observable('Character');
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseGeoDmg.value += 0.15;
+
+        if(this.bonusType == 4 && this.useEffect4()) {
+            // calc.baseChargedDmg.value += 0.5;
+            let elem = this.selectedElem();
+            if(elem == 'Character') {
+                elem = calc.character.elem;
+            }
+
+            switch(this.selectedElem()) {
+                case 'Anemo':
+                case 'Geo':
+                    break;
+
+                case 'ALL':
+                    calc.baseCryoDmg.value += 0.35;
+                    calc.baseDendroDmg.value += 0.35;
+                    calc.baseElectroDmg.value += 0.35;
+                    calc.baseHydroDmg.value += 0.35;
+                    calc.basePyroDmg.value += 0.35;
+                    break;
+
+                case 'Cryo':
+                    calc.baseCryoDmg.value += 0.35;
+                    break;
+                case 'Dendro':
+                    calc.baseDendroDmg.value += 0.35;
+                    break;
+                case 'Electro':
+                    calc.baseElectroDmg.value += 0.35;
+                    break;
+                case 'Hydro':
+                    calc.baseHydroDmg.value += 0.35;
+                    break;
+                case 'Pyro':
+                    calc.basePyroDmg.value += 0.35;
+                    break;
+                default:
+                    console.assert(0, elem);
+            }
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        var list = [];
+
+        if(this.bonusType == '4') {
+            list.push(
+                Widget.buildViewHTML(target, "元素ダメージバフ",
+                    Widget.selectViewHTML("selectedElem", [
+                        {value: 'ALL', label: '全元素ダメージ+35%（岩/風以外）'},
+                        {value: 'Character', label: 'キャラ元素のダメージ+35%（岩/風以外）'},
+                        {value: 'Cryo', label: '氷元素ダメージ+35%'},
+                        {value: 'Electro', label: '雷元素ダメージ+35%'},
+                        {value: 'Pyro', label: '炎元素ダメージ+35%'},
+                        {value: 'Hydro', label: '水元素ダメージ+35%'},
+                        {value: 'Dendro', label: '草元素ダメージ+35%'},
+                    ])
+                    ));
+        }
+
+        return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useEffect4 = this.useEffect4();
+        obj.selectedElem = this.selectedElem();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.useEffect4(obj.useEffect4);
+        this.selectedElem(obj.selectedElem);
+    }
+}
+
+
 // 逆飛びの流星
 export class RetracingBolide extends ArtifactData
 {
@@ -1124,6 +1245,7 @@ export const artifacts = [
     new CrimsonWitchOfFlames(),
     new NoblesseOblige(),
     new BloodstainedChivalry(),
+    new ArchaicPetra(),
     new RetracingBolide(),
     new BlizzardStrayer(),
     new HeartOfDepth(),
