@@ -188,6 +188,7 @@ export class MappaMare extends Base.WeaponData
 }
 
 
+// 万国諸海の図譜
 export class MappaMareViewModel extends Base.WeaponViewModel
 {
     constructor(parent)
