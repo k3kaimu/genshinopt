@@ -241,3 +241,226 @@ export class RaidenShogunViewModel extends Base.CharacterViewModel
         obj.useSkillEffect = this.useSkillEffect();
     }
 }
+
+
+// 北斗
+export class Beidou extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "beidou",
+            "北斗",
+            4,
+            "Electro",
+            "Claymore",
+            225,        /* bAtk */
+            648,        /* bDef */
+            13050,      /* bHP */
+            "baseElectroDmg",  /* bBonusType */
+            0.24        /* bBonusValue */
+        )
+    }
+
+
+    newViewModel()
+    {
+        return new BeidouViewModel(this);
+    }
+
+
+    static normalTalentTable = [
+    //  0~4: 通常攻撃1~5段, 5:連続重撃, 6:重撃終了, 7:落下, 8:低空, 9:高空
+        [71.1/100, 70.9/100, 88.3/100, 86.5/100, 112/100, 56.2/100, 102/100, 74.6/100, 149/100, 186/100],
+        [76.9/100, 76.6/100, 95.5/100, 93.6/100, 121/100, 60.8/100, 110/100, 80.7/100, 161/100, 201/100],
+        [82.7/100, 82.4/100, 103/100, 101/100, 130/100, 65.4/100, 118/100, 86.7/100, 173/100, 217/100],
+        [91.0/100, 90.6/100, 113/100, 111/100, 143/100, 71.9/100, 130/100, 95.4/100, 191/100, 238/100],
+        [96.8/100, 96.4/100, 120/100, 118/100, 153/100, 76.5/100, 139/100, 101/100, 203/100, 253/100],
+        [103/100, 103/100, 128/100, 126/100, 163/100, 81.8/100, 148/100, 108.4/100, 217/100, 271/100],
+        [112/100, 112/100, 140/100, 137/100, 177/100, 88.9/100, 161/100, 118.0/100, 236/100, 295/100],
+        [122/100, 121/100, 151/100, 148/100, 192/100, 96.1/100, 174/100, 127/100, 255/100, 318/100],
+        [131/100, 130/100, 162/100, 159/100, 206/100, 103/100, 187/100, 137/100, 274/100, 342/100],
+        [141/100, 140/100, 175/100, 171/100, 222/100, 111/100, 201/100, 147.4/100, 295/100, 368/100],
+        [152/100, 151/100, 189/100, 185/100, 240/100, 120/100, 218/100, 157.8/100, 316/100, 394/100],
+    ];
+
+    static skillTalentTable = [
+    //  0:シールドHP比, 1:シールド加算, 2:基礎ダメージ, 3:加算ダメージ
+        [0.144, 1386, 1.22, 1.60],
+        [0.155, 1525, 1.31, 1.72],
+        [0.166, 1675, 1.40, 1.84],
+        [0.180, 1837, 1.52, 2.00],
+        [0.191, 2010, 1.61, 2.12],
+        [0.202, 2195, 1.70, 2.24],
+        [0.216, 2392, 1.82, 2.40],
+        [0.230, 2600, 1.95, 2.56],
+        [0.245, 2819, 2.07, 2.72],
+        [0.259, 3050, 2.19, 2.88],
+        [0.274, 3293, 2.31, 3.04],
+        [0.288, 3547, 2.43, 3.20],
+        [0.306, 3813, 2.58, 3.40],
+    ];
+
+    static burstTalentTable = [
+    //  0:爆発ダメージ，1:稲妻ダメージ, 2:ダメージ軽減
+        [1.22, 0.960, 0.20],
+        [1.31, 1.03, 0.21],
+        [1.40, 1.10, 0.22],
+        [1.52, 1.20, 0.24],
+        [1.61, 1.27, 0.25],
+        [1.70, 1.34, 0.26],
+        [1.82, 1.44, 0.28],
+        [1.95, 1.54, 0.30],
+        [2.07, 1.63, 0.32],
+        [2.19, 1.73, 0.34],
+        [2.31, 1.82, 0.35],
+        [2.43, 1.92, 0.36],
+        [2.58, 2.04, 0.37],
+        [2.74, 2.14, 0.38],
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_1",
+            label: "通常1〜5段累計",
+            dmgScale(vm){ return Beidou.normalTalentTable[vm.normalRank()-1].slice(0, 5); },
+            attackProps: { isNormal: true, isPhysical: true }
+        },
+        {
+            id: "charged_cont",
+            label: "重撃（継続）",
+            dmgScale(vm){ return Beidou.normalTalentTable[vm.normalRank()-1][5]; },
+            attackProps: { isCharged: true, isPhysical: true }
+        },
+        {
+            id: "charged_last",
+            label: "重撃（終了）",
+            dmgScale(vm){ return Beidou.normalTalentTable[vm.normalRank()-1][6]; },
+            attackProps: { isCharged: true, isPhysical: true }
+        },
+        {
+            id: "skill_3",
+            label: "元素スキル（最大）",
+            dmgScale(vm){ return Beidou.skillTalentTable[vm.skillRank()-1][2] + Beidou.skillTalentTable[vm.skillRank()-1][3]*2; },
+            attackProps: { isSkill: true, isElectro: true }
+        },
+        {
+            id: "burst_dmg",
+            label: "元素爆発",
+            dmgScale(vm){ return Beidou.burstTalentTable[vm.burstRank()-1][0]; },
+            attackProps: { isBurst: true, isElectro: true }
+        },
+        {
+            id: "burst_dmg",
+            label: "元素爆発・雷追撃ダメージ",
+            dmgScale(vm){ return Beidou.burstTalentTable[vm.burstRank()-1][1]; },
+            attackProps: { isBurst: true, isElectro: true }
+        },
+    ];
+}
+
+
+// 北斗
+export class BeidouViewModel extends Base.CharacterViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.useC4Effect = ko.observable(true);
+        this.useC6Effect = ko.observable(true);
+        this.useDmgUpEffect = ko.observable(true);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        if(this.useDmgUpEffect()) {
+            calc.baseNormalDmg.value += 0.15;
+            calc.baseChargedDmg.value += 0.15;
+        }
+
+        if(this.useC4Effect() && this.constell() >= 4) {
+            let CalcType = Object.getPrototypeOf(calc).constructor;
+            let NewCalc = class extends CalcType {
+                chainedAttackDmg(attackProps) {
+                    let superValue = super.chainedAttackDmg(attackProps);
+    
+                    if(attackProps.isNormal || false) {
+                        let newProps = {...attackProps};
+                        // 元々の攻撃の属性や攻撃種類を削除する
+                        newProps = Calc.deleteAllElementFromAttackProps(newProps);
+                        newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
+    
+                        newProps.isElectro = true;      // 雷攻撃
+                        newProps.isChainable = false;   // この攻撃では追撃は発生しない
+                        return superValue.add(super.calculateNormalDmg(0.2, newProps));
+                    } else {
+                        // 通常攻撃ではないので，追撃は発生しない
+                        return superValue;
+                    }
+                }
+            };
+    
+            calc = Object.assign(new NewCalc(), calc);
+        }
+
+        if(this.useC6Effect() && this.constell() >= 6) {
+            calc.baseElectroResis.value -= 0.15;
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let ret = super.viewHTMLList(target);
+
+        ret.push(
+            Widget.buildViewHTML(target, "満天の霹靂（固有天賦）",
+                Widget.checkBoxViewHTML("useDmgUpEffect", `通常攻撃/重撃ダメージ+15%`)
+            )
+        );
+
+        if(this.constell() >= 4) {
+            ret.push(
+                Widget.buildViewHTML(target, "星に導かれた岸線（4凸）",
+                    Widget.checkBoxViewHTML("useC4Effect", `通常攻撃に20%の雷ダメージを追加`)
+                )
+            );
+        }
+
+
+        if(this.constell() >= 6) {
+            ret.push(
+                Widget.buildViewHTML(target, "北斗の祓い（6凸）",
+                    Widget.checkBoxViewHTML("useC6Effect", `雷元素耐性-15%`)
+                )
+            );
+        }
+
+        return ret;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useC4Effect = this.useC4Effect();
+        obj.useC6Effect = this.useC6Effect();
+        obj.useDmgUpEffect = this.useDmgUpEffect();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+
+        obj.useC4Effect = this.useC4Effect();
+        obj.useC6Effect = this.useC6Effect();
+        obj.useDmgUpEffect = this.useDmgUpEffect();
+    }
+}
