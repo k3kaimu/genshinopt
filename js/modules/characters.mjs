@@ -18,11 +18,11 @@ import * as Pyro from '/js/modules/characters/pyro.mjs';
 
 
 export const characters = [
-    new Anemo.TravelerAnemo(),
+    // new Anemo.TravelerAnemo(),
     new Cryo.Ganyu(),
     new Electro.RaidenShogun(),
-    new Electro.TravelerElectro(),
-    new Geo.TravelerGeo(),
+    // new Electro.TravelerElectro(),
+    // new Geo.TravelerGeo(),
     new Geo.AratakiItto(),
     new Geo.Noelle(),
     new Hydro.Tartaglia(),
