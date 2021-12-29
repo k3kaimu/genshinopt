@@ -1,4 +1,6 @@
 import * as Base from '/js/modules/characters/base.mjs';
+import * as Widget from '/js/modules/widget.mjs';
+import * as Calc from '/js/modules/dmg-calc.mjs';
 
 // 旅人（岩）
 export class TravelerGeo extends Base.CharacterData
@@ -375,5 +377,177 @@ export class NoelleViewModel extends Base.CharacterViewModel
 
         calc = Object.assign(new NewCalc(), calc);
         return calc;
+    }
+}
+
+
+// 凝光
+export class Ningguang extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "ningguang",
+            "凝光",
+            4,
+            "Geo",
+            "Catalyst",
+            212,        /* bAtk */
+            573,        /* bDef */
+            9787,      /* bHP */
+            "baseGeoDmg",  /* bBonusType */
+            0.24        /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new NingguangViewModel(this);
+    }
+
+
+    static normalTalentTable = [
+    //  0:通常,     1:重撃,  2:星璇,    3:落下,    4:低空,  5:高空
+        [28.0/100, 174/100, 49.6/100, 56.8/100, 114/100, 142/100],
+        [30.1/100, 187/100, 53.3/100, 61.5/100, 123/100, 153/100],
+        [32.2/100, 200/100, 57.0/100, 66.1/100, 132/100, 165/100],
+        [35.0/100, 218/100, 62.0/100, 72.7/100, 145/100, 182/100],
+        [37.1/100, 231/100, 65.7/100, 77.3/100, 155/100, 193/100],
+        [39.2/100, 244/100, 69.4/100, 82.6/100, 165/100, 206/100],
+        [42.0/100, 261/100, 74.4/100, 89.9/100, 180/100, 224/100],
+        [44.8/100, 279/100, 79.4/100, 97.1/100, 194/100, 243/100],
+        [47.6/100, 296/100, 84.3/100, 104/100, 209/100, 261/100],
+        [50.4/100, 313/100, 89.3/100, 112.3/100, 225/100, 281/100],
+        [53.3/100, 331/100, 94.4/100, 120.3/100, 240/100, 300/100],
+    ];
+
+    static skillTalentTable = [
+    // 0:HP,   1:ダメージ
+        [0.501, 2.30],
+        [0.531, 2.48],
+        [0.561, 2.65],
+        [0.600, 2.88],
+        [0.630, 3.05],
+        [0.660, 3.23],
+        [0.699, 3.46],
+        [0.738, 3.69],
+        [0.777, 3.92],
+        [0.816, 4.15],
+        [0.855, 4.38],
+        [0.894, 4.61],
+        [0.933, 4.90],
+    ];
+
+    static burstTalentTable = [
+        0.870,
+        0.935,
+        1.00,
+        1.09,
+        1.15,
+        1.22,
+        1.30,
+        1.39,
+        1.48,
+        1.57,
+        1.65,
+        1.74,
+        1.85,
+        1.96,
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_1",
+            label: "通常1回",
+            dmgScale: vm => Ningguang.normalTalentTable[vm.normalRank()-1][0],
+            attackProps: { isNormal: true, isGeo: true },
+        },
+        {
+            id: "charged_with_gems",
+            label: "重撃+星璇",
+            dmgScale: vm => [Ningguang.normalTalentTable[vm.normalRank()-1][1], new Array(Number(vm.gemStacks())).fill(Ningguang.normalTalentTable[vm.normalRank()-1][2]) ].flat() ,
+            attackProps: { isCharged: true, isGeo: true },
+        },
+        {
+            id: "skill",
+            label: "元素スキル",
+            dmgScale: vm => Ningguang.skillTalentTable[vm.skillRank()-1][1],
+            attackProps: { isSkill: true, isGeo: true },
+        },
+        {
+            id: "burst",
+            label: "元素爆発（12発）",
+            dmgScale: vm => new Array(12).fill(Ningguang.burstTalentTable[vm.burstRank()-1]),
+            attackProps: { isBurst: true, isGeo: true },
+        }
+    ];
+}
+
+
+// 凝光
+export class NingguangViewModel extends Base.CharacterViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.gemStacks = ko.observable(3);
+        this.useByobuBuff = ko.observable(true);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        if(this.useByobuBuff()) {
+            calc.baseGeoDmg.value += 0.12;
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let ret = super.viewHTMLList(target);
+
+        let options = [
+            {value: 0, label: "0個"},
+            {value: 1, label: "1個"},
+            {value: 2, label: "2個"},
+            {value: 3, label: "3個"},
+        ];
+
+        // 6凸効果
+        if(this.constell() >= 6) {
+            options.push({value: 7, label: "7個"});
+        }
+
+        ret.push(
+            Widget.buildViewHTML(target, "星璇スタック数",
+                Widget.selectViewHTML("gemStacks", options))
+        );
+
+        ret.push(
+            Widget.buildViewHTML(target, "備えあれば憂いなし",
+                Widget.checkBoxViewHTML("useByobuBuff", "岩元素ダメージ+12%"))
+        );
+
+        return ret;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.gemStacks = this.gemStacks();
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.gemStacks(obj.gemStacks);
     }
 }
