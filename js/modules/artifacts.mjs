@@ -638,7 +638,7 @@ export class ArchaicPetraViewModel extends ArtifactViewModel
                 elem = calc.character.elem;
             }
 
-            switch(this.selectedElem()) {
+            switch(elem) {
                 case 'Anemo':
                 case 'Geo':
                     break;
@@ -682,15 +682,17 @@ export class ArchaicPetraViewModel extends ArtifactViewModel
         if(this.bonusType == '4') {
             list.push(
                 Widget.buildViewHTML(target, "元素ダメージバフ",
+                    Widget.checkBoxViewHTML("useEffect4", "特定元素のダメージ+35%")
+                    +
                     Widget.selectViewHTML("selectedElem", [
-                        {value: 'ALL', label: '全元素ダメージ+35%（岩/風以外）'},
-                        {value: 'Character', label: 'キャラ元素のダメージ+35%（岩/風以外）'},
-                        {value: 'Cryo', label: '氷元素ダメージ+35%'},
-                        {value: 'Electro', label: '雷元素ダメージ+35%'},
-                        {value: 'Pyro', label: '炎元素ダメージ+35%'},
-                        {value: 'Hydro', label: '水元素ダメージ+35%'},
-                        {value: 'Dendro', label: '草元素ダメージ+35%'},
-                    ])
+                        {value: 'ALL', label: '全元素（岩/風以外）'},
+                        {value: 'Character', label: 'キャラ元素（岩/風以外）'},
+                        {value: 'Cryo', label: '氷元素'},
+                        {value: 'Electro', label: '雷元素'},
+                        {value: 'Pyro', label: '炎元素'},
+                        {value: 'Hydro', label: '水元素'},
+                        {value: 'Dendro', label: '草元素'},
+                    ], undefined, {"disable": "!useEffect4()"})
                     ));
         }
 
