@@ -15,7 +15,7 @@ title: 理想期待値比較
 <div class="mb-5">
   <div data-bind="foreach: comparingWeaponList">
     <div class="mb-3" data-bind="with: $data">
-      {% include ui/weapon_selector.html target_from_root="$root.comparingWeaponList()[${$index()}]" index="$index()" remove="() => $root.comparingWeaponList.remove($data)" %}
+      {% include ui/weapon_selector.html isList=true target_from_root="$root.comparingWeaponList()[${$index()}]" index="$index()" remove="() => $root.comparingWeaponList.remove($data)" %}
     </div>
   </div>
   <button type="button" class="btn btn-outline-primary" data-bind="click: addComparingWeapon()">+追加</button>
@@ -64,7 +64,7 @@ title: 理想期待値比較
 <div class="mb-3">
   <div data-bind="foreach: comparingArtifactList">
     <div class="mb-3" data-bind="with: $data">
-      {% include ui/artifact_selector.html target_from_root="$root.comparingArtifactList()[${$index()}]" index="$index()" remove="() => $root.comparingArtifactList.remove($data)" %}
+      {% include ui/artifact_selector.html isList=true target_from_root="$root.comparingArtifactList()[${$index()}]" index="$index()" remove="() => $root.comparingArtifactList.remove($data)" %}
     </div>
   </div>
 

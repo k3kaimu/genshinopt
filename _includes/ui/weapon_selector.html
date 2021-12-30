@@ -24,9 +24,11 @@
         <option value="4">4凸</option>
       </select>
     </div>
+    {% if include.isList %}
     <div class="input-group-append">
       <button type="button" class="btn btn-outline-danger" data-bind="click: {{ include.remove }}">-削除</button>
     </div>
+    {% endif %}
 </div>
 <div class="row" data-bind="foreach: viewModel().viewHTMLList(`{{ include.target_from_root }}.viewModel`)">
   <div class="col-sm-6">

@@ -14,9 +14,11 @@
                     optionsCaption: '-聖遺物セット2選択-',
                     css: {'border-danger': selected2() == undefined}"
                     class="custom-select" aria-label="聖遺物セット2選択"></select>
+  {% if include.isList %}
   <div class="input-group-append">
     <button type="button" class="btn btn-outline-danger" data-bind="click: {{ include.remove }}">-削除</button>
   </div>
+  {% endif %}
 </div>
 <div class="row">
   <!-- ko foreach: viewModel1().viewHTMLList(`{{ include.target_from_root }}.viewModel1`) -->
