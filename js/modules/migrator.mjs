@@ -34,3 +34,16 @@ class DataObjectMigrator
 
 
 export let indexDataMigrator = new DataObjectMigrator();
+
+// v0 -> v1
+indexDataMigrator.appendPatch(function(obj){
+    let ch = obj.character;
+    let at = obj.attack;
+
+    obj.character = {
+        vm: ch,
+        attack: at
+    };
+
+    return obj;
+});

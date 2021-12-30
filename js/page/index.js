@@ -40,7 +40,6 @@ $(function(){
                 this.viewModel(newCharacter.newViewModel());
         }.bind(this));
 
-
         this.attackOptions = ko.pureComputed(function(){
             if(this.selected() == undefined)
                 return [];
@@ -48,8 +47,27 @@ $(function(){
                 return this.viewModel().presetAttacks();
         }, this);
 
-
         this.selectedAttack = ko.observable();
+
+        this.toJS = function() {
+            let obj = {};
+            obj.vm = this.viewModel().toJS();
+            obj.attack = {id: this.selectedAttack().id};
+
+            return obj;
+        }.bind(this);
+
+        this.fromJS = function(obj) {
+            this.selected(Data.lookupCharacter(obj.vm.parent_id));
+            let charVM = this.viewModel();
+            charVM.fromJS(obj.vm);
+            this.viewModel(charVM);
+
+            this.attackOptions().forEach(e => {
+                if(e.id == obj.attack.id)
+                    this.selectedAttack(e);
+            });
+        }.bind(this);
     }
 
 
@@ -326,8 +344,6 @@ $(function(){
 
     function ViewModel() {
         this.readyNLopt = ko.observable();
-
-        // this.selectedChar = ko.observable();
     
         this.characterSelector = new CharacterSelector();
         this.selectedChar = this.characterSelector.selected;
@@ -706,7 +722,8 @@ $(function(){
         this.toJS = function(){
             let obj = {};
 
-            obj.character = this.characterSelector.viewModel().toJS();
+            obj.character = this.characterSelector.toJS();
+
             obj.weapons = [];
             this.comparingWeaponList().forEach(w => {
                 obj.weapons.push(w.toJS());
@@ -717,7 +734,6 @@ $(function(){
                 obj.artifacts.push(a.toJS());
             });
 
-            obj.attack = {id: this.characterSelector.selectedAttack().id};
             obj.totcost = this.optTotalCost();
             obj.buff = this.externalBuff.toJS();
 
@@ -748,10 +764,7 @@ $(function(){
 
 
         this.fromJS = function(obj){
-            this.characterSelector.selected(Data.lookupCharacter(obj.character.parent_id));
-            let charVM = this.characterSelector.viewModel();
-            charVM.fromJS(obj.character);
-            this.characterSelector.viewModel(charVM);
+            this.characterSelector.fromJS(obj.character);
 
             this.comparingWeaponList([]);
             obj.weapons.forEach(w => {
@@ -765,11 +778,6 @@ $(function(){
                 let adata = new ComparingArtifactData(this);
                 adata.fromJS(a);
                 this.comparingArtifactList.push(adata);
-            });
-
-            this.characterSelector.attackOptions().forEach(e => {
-                if(e.id == obj.attack.id)
-                    this.characterSelector.selectedAttack(e);
             });
 
             this.optTotalCost(obj.totcost);
@@ -805,7 +813,10 @@ $(function(){
 
     function loadDataFromURI(version, uri)
     {
+        let odata = decodeFromURI(uri);
+        console.log(odata);
         let migrated = Migrator.indexDataMigrator.migrate(version, decodeFromURI(uri));
+        console.log(migrated);
         viewModel.fromJS(migrated);
     }
 
