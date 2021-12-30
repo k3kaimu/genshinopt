@@ -6,54 +6,6 @@ import * as UI from '/js/modules/ui.mjs'
 
 
 $(function(){
-    function ComparingWeaponData(selectedChar)
-    {
-        this.weapons = Data.weapons;
-        this.selWeaponRarity = ko.observable();
-        this.selectedWeapon = ko.observable();
-        this.selWeaponList = ko.pureComputed(function(){
-            var list = [];
-            var rarity = this.selWeaponRarity();
-            var ch = selectedChar();
-
-            this.weapons.forEach(e => {
-                if(!(rarity == "ALL" || e.rarity == rarity))
-                    return;
-
-                if(ch != undefined && ch.weaponType != e.weaponType)
-                    return;
-
-                list.push(e);
-            });
-
-            return list;
-        }, this);
-
-        this.weaponViewModel = ko.observable(new Data.WeaponViewModel());
-        this.selectedWeapon.subscribe(function(newWeaponData){
-            if(newWeaponData == undefined) {
-                this.weaponViewModel(new Data.WeaponViewModel(undefined));
-            } else {
-                this.weaponViewModel(newWeaponData.newViewModel());
-            }
-        }.bind(this));
-
-        this.toJS  = function() {
-            let obj = {};
-            obj.weapon = this.weaponViewModel().toJS();
-            return obj;
-        }.bind(this);
-
-        this.fromJS = function(obj) {
-            this.selectedWeapon(Data.lookupWeapon(obj.weapon.parent_id));
-            
-            let w = this.weaponViewModel();
-            w.fromJS(obj.weapon);
-            this.weaponViewModel(w);
-        }.bind(this);
-    }
-
-
     function MultiWeaponAdderModal(parent)
     {
         this.parent = parent;
@@ -89,7 +41,7 @@ $(function(){
         this.addWeapons = function(){
             var removeList = [];
             this.parent.comparingWeaponList().forEach(e => {
-                if(e.selectedWeapon() == undefined)
+                if(e.selected() == undefined)
                     removeList.push(e);
             });
             
@@ -97,8 +49,8 @@ $(function(){
 
             this.weapons.forEach(e => {
                 if(e.checked()) {
-                    var wp = new ComparingWeaponData(this.parent.selectedChar);
-                    wp.selectedWeapon(e.weapon);
+                    var wp = new UI.WeaponSelector(this.parent.selectedChar);
+                    wp.selected(e.weapon);
                     this.parent.comparingWeaponList.push(wp);
                 }
             });
@@ -287,7 +239,7 @@ $(function(){
 
         this.addComparingWeapon = function()
         {
-            this.comparingWeaponList.push(new ComparingWeaponData(this.selectedChar));
+            this.comparingWeaponList.push(new UI.WeaponSelector(this.selectedChar));
         }.bind(this);
 
         
@@ -352,7 +304,7 @@ $(function(){
         this.allPatterns = ko.pureComputed(function(){
             let dst = [];
             this.comparingWeaponList().forEach((weapon, iwp) => {
-                if(weapon.selectedWeapon() == undefined)
+                if(weapon.selected() == undefined)
                     return;
 
                 this.comparingArtifactList().forEach((artifact, iatft) => {
@@ -373,7 +325,7 @@ $(function(){
                                 dst.push({
                                     character: this.characterSelector.viewModel(),
                                     attack: this.characterSelector.selectedAttack(),
-                                    weapon: weapon.weaponViewModel(),
+                                    weapon: weapon.viewModel(),
                                     iweapon: iwp,
                                     artifactSet1: artifact.artifact1ViewModel(),
                                     artifactSet2: artifact.artifact2ViewModel(),
@@ -662,7 +614,7 @@ $(function(){
             obj.weapons = [];
             this.comparingWeaponList().forEach(w => {
                 if(w.selected() != undefined)
-                obj.weapons.push(w.toJS());
+                    obj.weapons.push(w.toJS());
             });
 
             obj.artifacts = [];
@@ -707,7 +659,7 @@ $(function(){
 
             this.comparingWeaponList([]);
             obj.weapons.forEach(w => {
-                let wdata = new ComparingWeaponData(this.selectedChar);
+                let wdata = new UI.WeaponSelector(this.selectedChar);
                 wdata.fromJS(w);
                 this.comparingWeaponList.push(wdata);
             });

@@ -14,42 +14,8 @@ title: 理想期待値比較
 <h4 class="h4">比較する武器設定</h4>
 <div class="mb-5">
   <div data-bind="foreach: comparingWeaponList">
-    <div class="mb-3">
-      <div class="input-group">
-        <div class="input-group-prepend input-group-append">
-          <span class="input-group-text" data-bind="text: '#W' + ($index() + 1)"></span>
-          <select class="custom-select" data-bind="value: $data.selWeaponRarity, visible: $data.selectedWeapon() == undefined">
-            <option selected value="ALL">星</option>
-            <option value="5">星5</option>
-            <option value="4">星4</option>
-            <option value="3">星3</option>
-          </select>
-        </div>
-        <select data-bind="options: $data.selWeaponList,
-                          optionsText: function(o) { return '★' + o.rarity + ' ' + o.name },
-                          value: $data.selectedWeapon,
-                          optionsCaption: '-武器選択-',
-                          css: {'border-danger': $data.selectedWeapon() == undefined}"
-                          class="custom-select" aria-label="武器選択">
-        </select>
-        <div class="input-group-prepend input-group-append">
-          <select class="custom-select" data-bind="value: $data.weaponViewModel().rank">
-            <option selected value="0">無凸</option>
-            <option value="1">1凸</option>
-            <option value="2">2凸</option>
-            <option value="3">3凸</option>
-            <option value="4">4凸</option>
-          </select>
-        </div>
-        <div class="input-group-append">
-          <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.comparingWeaponList.remove($data)">-削除</button>
-        </div>
-      </div>
-      <div class="row" data-bind="foreach: $data.weaponViewModel().viewHTMLList('$root.comparingWeaponList()['+($index())+'].weaponViewModel')">
-        <div class="col-sm-6">
-          <div data-bind="htmlWithBinding: $data"></div>
-        </div>
-      </div>
+    <div class="mb-3" data-bind="with: $data">
+      {% include ui/weapon_selector.html target_from_root="$root.comparingWeaponList()[${$index()}]" index="$index()" remove="() => $root.comparingWeaponList.remove($data)" %}
     </div>
   </div>
   <button type="button" class="btn btn-outline-primary" data-bind="click: addComparingWeapon()">+追加</button>
