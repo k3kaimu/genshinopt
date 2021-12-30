@@ -661,11 +661,15 @@ $(function(){
 
             obj.weapons = [];
             this.comparingWeaponList().forEach(w => {
+                if(w.selected() != undefined)
                 obj.weapons.push(w.toJS());
             });
 
             obj.artifacts = [];
             this.comparingArtifactList().forEach(a => {
+                if(a.selectedArtifact1() == undefined || a.selectedArtifact2() == undefined)
+                    return;
+
                 obj.artifacts.push(a.toJS());
             });
 
