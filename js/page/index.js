@@ -2,19 +2,20 @@
 import * as Data from '/js/modules/data.mjs';
 import * as Calc from '/js/modules/dmg-calc.mjs';
 import * as Migrator from '/js/modules/migrator.mjs'
+import * as UI from '/js/modules/ui.mjs'
 
 
 $(function(){
-    function CharacterSelector(selectedChar)
+    function CharacterSelector()
     {
-        this.selectedChar = selectedChar;
+        this.selected = ko.observable();
         this.characters = Data.characters;
-        this.selCharElem = ko.observable();
-        this.selCharRarity = ko.observable();
-        this.selCharList = ko.pureComputed(function(){
+        this.elem = ko.observable();
+        this.rarity = ko.observable();
+        this.options = ko.pureComputed(function(){
             var list = [];
-            var elem = this.selCharElem();
-            var rarity = this.selCharRarity();
+            var elem = this.elem();
+            var rarity = this.rarity();
             
 
             this.characters.forEach(e => {
@@ -29,6 +30,26 @@ $(function(){
 
             return list;
         }, this);
+
+        this.viewModel = ko.observable(new Data.CharacterViewModel(undefined));
+
+        this.selected.subscribe(function(newCharacter){
+            if(newCharacter == undefined)
+                this.viewModel(new Data.CharacterViewModel(undefined));
+            else
+                this.viewModel(newCharacter.newViewModel());
+        }.bind(this));
+
+
+        this.attackOptions = ko.pureComputed(function(){
+            if(this.selected() == undefined)
+                return [];
+            else
+                return this.viewModel().presetAttacks();
+        }, this);
+
+
+        this.selectedAttack = ko.observable();
     }
 
 
@@ -306,22 +327,10 @@ $(function(){
     function ViewModel() {
         this.readyNLopt = ko.observable();
 
-        this.selectedChar = ko.observable();
-        // this.selConstellation = ko.observable();
-        // this.selNormalTalentRank = ko.observable();
-        // this.selSkillTalentRank = ko.observable();
-        // this.selBurstTalentRank = ko.observable();
+        // this.selectedChar = ko.observable();
     
-        this.characterSelector = new CharacterSelector(this.selectedChar);
-        this.characterViewModel = ko.observable(new Data.CharacterViewModel(undefined));
-
-        this.selectedChar.subscribe(function(newCharacter){
-            if(newCharacter == undefined)
-                this.characterViewModel(new Data.CharacterViewModel(undefined));
-            else
-                this.characterViewModel(newCharacter.newViewModel());
-        }.bind(this));
-
+        this.characterSelector = new CharacterSelector();
+        this.selectedChar = this.characterSelector.selected;
 
         this.comparingWeaponList = ko.observableArray();
 
@@ -371,17 +380,6 @@ $(function(){
             { value: "Heal",    label: "与える治癒効果",    checked: ko.observable(false) },
         ];
 
-
-        this.attackOptions = ko.pureComputed(function(){
-            if(this.selectedChar() == undefined)
-                return [];
-            else
-                return this.characterViewModel().presetAttacks();
-        }, this);
-
-
-        this.selectedAttack = ko.observable();
-
         this.externalBuff = new ExternalBuff();
 
         this.optTotalCost = ko.observable();
@@ -422,8 +420,8 @@ $(function(){
                                 if(! hat.checked()) return;
 
                                 dst.push({
-                                    character: this.characterViewModel(),
-                                    attack: this.selectedAttack(),
+                                    character: this.characterSelector.viewModel(),
+                                    attack: this.characterSelector.selectedAttack(),
                                     weapon: weapon.weaponViewModel(),
                                     iweapon: iwp,
                                     artifactSet1: artifact.artifact1ViewModel(),
@@ -708,7 +706,7 @@ $(function(){
         this.toJS = function(){
             let obj = {};
 
-            obj.character = this.characterViewModel().toJS();
+            obj.character = this.characterSelector.viewModel().toJS();
             obj.weapons = [];
             this.comparingWeaponList().forEach(w => {
                 obj.weapons.push(w.toJS());
@@ -719,7 +717,7 @@ $(function(){
                 obj.artifacts.push(a.toJS());
             });
 
-            obj.attack = {id: this.selectedAttack().id};
+            obj.attack = {id: this.characterSelector.selectedAttack().id};
             obj.totcost = this.optTotalCost();
             obj.buff = this.externalBuff.toJS();
 
@@ -750,10 +748,10 @@ $(function(){
 
 
         this.fromJS = function(obj){
-            this.selectedChar(Data.lookupCharacter(obj.character.parent_id));
-            let charVM = this.characterViewModel();
+            this.characterSelector.selected(Data.lookupCharacter(obj.character.parent_id));
+            let charVM = this.characterSelector.viewModel();
             charVM.fromJS(obj.character);
-            this.characterViewModel(charVM);
+            this.characterSelector.viewModel(charVM);
 
             this.comparingWeaponList([]);
             obj.weapons.forEach(w => {
@@ -769,9 +767,9 @@ $(function(){
                 this.comparingArtifactList.push(adata);
             });
 
-            this.attackOptions().forEach(e => {
+            this.characterSelector.attackOptions().forEach(e => {
                 if(e.id == obj.attack.id)
-                    this.selectedAttack(e);
+                    this.characterSelector.selectedAttack(e);
             });
 
             this.optTotalCost(obj.totcost);
