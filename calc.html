@@ -1,0 +1,21 @@
+---
+layout: page
+modules_js: ['/js/page/calc.js']
+title: ダメージ計算（作成中）
+---
+
+<h4 class="h4">キャラ設定</h4>
+<div class="mb-5" data-bind="with: characterSelector">
+{% include ui/character_selector.html target_from_root="$root.characterSelector" %}
+</div>
+
+<h4 class="h4">キャラ設定</h4>
+<div class="mb-5" data-bind="with: weaponSelector">
+{% include ui/weapon_selector.html target_from_root="$root.weaponSelector" %}
+</div>
+
+<h4 class="h4">聖遺物設定</h4>
+<div class="mb-5" data-bind="with: artifactSelector">
+{% include ui/artifact_selector.html target_from_root="$root.artifactSelector" %}
+</div>
+
