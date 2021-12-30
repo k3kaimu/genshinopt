@@ -70,90 +70,6 @@ $(function(){
     }
 
 
-    function ComparingArtifactData(parent)
-    {
-        this.artifacts = Data.artifacts;
-        this.selectedArtifact1 = ko.observable();
-        this.selectedArtifact2 = ko.observable();
-        this.artifact1ViewModel = ko.observable(new Data.ArtifactViewModel(undefined));
-        this.artifact2ViewModel = ko.observable(new Data.ArtifactViewModel(undefined));
-
-        this.setViewModel = function(sel1, sel2, vm1, vm2){
-            if(sel1.id == sel2.id) {
-                vm1(sel1.newViewModel(4));
-                vm2(new Data.ArtifactViewModel());
-            } else {
-                vm1(sel1.newViewModel(2));
-                vm2(sel2.newViewModel(2));
-            }
-        }.bind(this);
-
-        this.selectedArtifact1.subscribe(function(newArt){
-            let art2 = this.selectedArtifact2();
-            if(newArt == undefined) {
-                this.artifact1ViewModel(new Data.ArtifactViewModel(undefined, 2));
-                if(art2 != undefined)
-                    this.artifact2ViewModel(art2.newViewModel(2));
-
-                return;
-            }
-
-            if(art2 != undefined)
-                this.setViewModel(newArt, art2, this.artifact1ViewModel, this.artifact2ViewModel);
-            else
-                this.artifact1ViewModel(newArt.newViewModel(2));
-        }.bind(this));
-
-        this.selectedArtifact2.subscribe(function(newArt){
-            let art1 = this.selectedArtifact1();
-            if(newArt == undefined) {
-                this.artifact2ViewModel(new Data.ArtifactViewModel(undefined, 2));
-                if(art1 != undefined)
-                    this.artifact1ViewModel(art1.newViewModel(2));
-
-                return;
-            }
-
-            if(art1 != undefined)
-                this.setViewModel(art1, newArt, this.artifact1ViewModel, this.artifact2ViewModel);
-            else
-                this.artifact2ViewModel(newArt.newViewModel(2));
-        }.bind(this));
-
-
-        this.toJS = function(){
-            let obj = {};
-            obj.art1 = this.artifact1ViewModel().toJS();
-
-            if(this.artifact2ViewModel().parent)
-                obj.art2 = this.artifact2ViewModel().toJS();
-
-            return obj;
-        }.bind(this);
-
-        this.fromJS = function(obj){
-            this.selectedArtifact1(Data.lookupArtifact(obj.art1.parent_id));
-
-            if(obj.art2 == undefined) {
-                // art1と同じ
-                this.selectedArtifact2(Data.lookupArtifact(obj.art1.parent_id));
-            } else {
-                this.selectedArtifact2(Data.lookupArtifact(obj.art2.parent_id));
-            }
-
-            let a1 = this.artifact1ViewModel();
-            a1.fromJS(obj.art1);
-            this.artifact1ViewModel(a1);
-
-            if(!(obj.art2 == undefined)) {
-                let a2 = this.artifact2ViewModel();
-                a2.fromJS(obj.art2);
-                this.artifact2ViewModel(a2);
-            }
-        }.bind(this);
-    }
-
-
     function ExternalBuff()
     {
         this.addAtk = ko.observable();
@@ -253,7 +169,7 @@ $(function(){
 
         this.addComparingArtifact = function()
         {
-            this.comparingArtifactList.push(new ComparingArtifactData(this));
+            this.comparingArtifactList.push(new UI.ArtifactSelector());
         }.bind(this);
 
         this.clockMainStatus = [
@@ -308,8 +224,8 @@ $(function(){
                     return;
 
                 this.comparingArtifactList().forEach((artifact, iatft) => {
-                    if(artifact.selectedArtifact1() == undefined
-                    || artifact.selectedArtifact2() == undefined) {
+                    if(artifact.selected1() == undefined
+                    || artifact.selected2() == undefined) {
                         return;
                     }
 
@@ -327,8 +243,8 @@ $(function(){
                                     attack: this.characterSelector.selectedAttack(),
                                     weapon: weapon.viewModel(),
                                     iweapon: iwp,
-                                    artifactSet1: artifact.artifact1ViewModel(),
-                                    artifactSet2: artifact.artifact2ViewModel(),
+                                    artifactSet1: artifact.viewModel1(),
+                                    artifactSet2: artifact.viewModel2(),
                                     iartifact: iatft,
                                     clock: clock,
                                     cup: cup,
@@ -619,7 +535,7 @@ $(function(){
 
             obj.artifacts = [];
             this.comparingArtifactList().forEach(a => {
-                if(a.selectedArtifact1() == undefined || a.selectedArtifact2() == undefined)
+                if(a.selected1() == undefined || a.selected2() == undefined)
                     return;
 
                 obj.artifacts.push(a.toJS());
@@ -666,7 +582,7 @@ $(function(){
 
             this.comparingArtifactList([]);
             obj.artifacts.forEach(a => {
-                let adata = new ComparingArtifactData(this);
+                let adata = new UI.ArtifactSelector();
                 adata.fromJS(a);
                 this.comparingArtifactList.push(adata);
             });

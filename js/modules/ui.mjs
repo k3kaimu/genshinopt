@@ -112,3 +112,87 @@ export function WeaponSelector(selectedChar)
         this.viewModel(w);
     }.bind(this);
 }
+
+
+export function ArtifactSelector()
+{
+    this.artifacts = Data.artifacts;
+    this.selected1 = ko.observable();
+    this.selected2 = ko.observable();
+    this.viewModel1 = ko.observable(new Data.ArtifactViewModel(undefined));
+    this.viewModel2 = ko.observable(new Data.ArtifactViewModel(undefined));
+
+    this.setViewModel = function(sel1, sel2, vm1, vm2){
+        if(sel1.id == sel2.id) {
+            vm1(sel1.newViewModel(4));
+            vm2(new Data.ArtifactViewModel());
+        } else {
+            vm1(sel1.newViewModel(2));
+            vm2(sel2.newViewModel(2));
+        }
+    }.bind(this);
+
+    this.selected1.subscribe(function(newArt){
+        let art2 = this.selected2();
+        if(newArt == undefined) {
+            this.viewModel1(new Data.ArtifactViewModel(undefined, 2));
+            if(art2 != undefined)
+                this.viewModel2(art2.newViewModel(2));
+
+            return;
+        }
+
+        if(art2 != undefined)
+            this.setViewModel(newArt, art2, this.viewModel1, this.viewModel2);
+        else
+            this.viewModel1(newArt.newViewModel(2));
+    }.bind(this));
+
+    this.selected2.subscribe(function(newArt){
+        let art1 = this.selected1();
+        if(newArt == undefined) {
+            this.viewModel2(new Data.ArtifactViewModel(undefined, 2));
+            if(art1 != undefined)
+                this.viewModel1(art1.newViewModel(2));
+
+            return;
+        }
+
+        if(art1 != undefined)
+            this.setViewModel(art1, newArt, this.viewModel1, this.viewModel2);
+        else
+            this.viewModel2(newArt.newViewModel(2));
+    }.bind(this));
+
+
+    this.toJS = function(){
+        let obj = {};
+        obj.art1 = this.viewModel1().toJS();
+
+        if(this.viewModel2().parent)
+            obj.art2 = this.viewModel2().toJS();
+
+        return obj;
+    }.bind(this);
+
+    this.fromJS = function(obj){
+        this.selected1(Data.lookupArtifact(obj.art1.parent_id));
+
+        if(obj.art2 == undefined) {
+            // art1と同じ
+            this.selected2(Data.lookupArtifact(obj.art1.parent_id));
+        } else {
+            this.selected2(Data.lookupArtifact(obj.art2.parent_id));
+        }
+
+        let a1 = this.viewModel1();
+        a1.fromJS(obj.art1);
+        this.viewModel1(a1);
+
+        if(!(obj.art2 == undefined)) {
+            let a2 = this.viewModel2();
+            a2.fromJS(obj.art2);
+            this.viewModel2(a2);
+        }
+    }.bind(this);
+}

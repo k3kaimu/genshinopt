@@ -1,0 +1,32 @@
+<div class="input-group">
+  <div class="input-group-prepend">
+    <span class="input-group-text" data-bind="text: '#A' + ({{ include.index }} + 1)"></span>
+  </div>
+  <select data-bind="options: artifacts,
+                    optionsText: 'name',
+                    value: selected1,
+                    optionsCaption: '-聖遺物セット1選択-',
+                    css: {'border-danger': selected1() == undefined}"
+                    class="custom-select" aria-label="聖遺物セット1選択"></select>
+  <select data-bind="options: artifacts,
+                    optionsText: 'name',
+                    value: selected2,
+                    optionsCaption: '-聖遺物セット2選択-',
+                    css: {'border-danger': selected2() == undefined}"
+                    class="custom-select" aria-label="聖遺物セット2選択"></select>
+  <div class="input-group-append">
+    <button type="button" class="btn btn-outline-danger" data-bind="click: {{ include.remove }}">-削除</button>
+  </div>
+</div>
+<div class="row">
+  <!-- ko foreach: viewModel1().viewHTMLList(`{{ include.target_from_root }}.viewModel1`) -->
+  <div class="col-sm-6">
+    <div data-bind="htmlWithBinding: $data"></div>
+  </div>
+  <!-- /ko -->
+  <!-- ko foreach: viewModel2().viewHTMLList(`{{ include.target_from_root }}.viewModel2`) -->
+  <div class="col-sm-6">
+    <div data-bind="htmlWithBinding: $data"></div>
+  </div>
+  <!-- /ko -->
+</div>
