@@ -1,87 +1,85 @@
 <div class="mb-3">
-    <label for="select-character">キャラクター</label>
-    <div class="input-group">
-      <div class="input-group-prepend">
-        <select class="custom-select" data-bind="value: elem">
-          <option selected value="ALL">元素</option>
-          <option value="Anemo">風</option>
-          <option value="Geo">岩</option>
-          <option value="Pyro">火</option>
-          <option value="Hydro">水</option>
-          <option value="Cryo">氷</option>
-          <option value="Electro">雷</option>
-        </select>
-      </div>
-      <div class="input-group-prepend input-group-append">
-        <select class="custom-select" data-bind="value: rarity, visible: selected() == undefined">
-          <option selected value="ALL">星</option>
-          <option value="5">星5</option>
-          <option value="4">星4</option>
-        </select>
-      </div>
-      <select data-bind="options: options,
-                          optionsText: 'name',
-                          value: selected,
-                          optionsCaption: '-キャラ選択-',
-                          css: {'border-danger': selected() == undefined}",
-                          class="custom-select" aria-label="キャラクター選択">
+  <label for="select-character">キャラクター</label>
+  <div class="input-group">
+    <div class="input-group-prepend">
+      <select class="custom-select" data-bind="value: elem">
+        <option selected value="ALL">元素</option>
+        <option value="Anemo">風</option>
+        <option value="Geo">岩</option>
+        <option value="Pyro">火</option>
+        <option value="Hydro">水</option>
+        <option value="Cryo">氷</option>
+        <option value="Electro">雷</option>
       </select>
-      <div class="input-group-append">
-        <select class="custom-select" aria-label="凸数" data-bind="value: viewModel().constell">
-          <option value="0">無凸</option>
-          <option value="1">1凸</option>
-          <option value="2">2凸</option>
-          <option value="3">3凸</option>
-          <option value="4">4凸</option>
-          <option value="5">5凸</option>
-          <option value="6">6凸</option>
-        </select>
-      </div>
+    </div>
+    <div class="input-group-prepend input-group-append">
+      <select class="custom-select" data-bind="value: rarity, visible: selected() == undefined">
+        <option selected value="ALL">星</option>
+        <option value="5">星5</option>
+        <option value="4">星4</option>
+      </select>
+    </div>
+    <select data-bind="options: options,
+                        optionsText: 'name',
+                        value: selected,
+                        optionsCaption: '-キャラ選択-',
+                        css: {'border-danger': selected() == undefined}",
+                        class="custom-select" aria-label="キャラクター選択">
+    </select>
+    <div class="input-group-append">
+      <select class="custom-select" aria-label="凸数" data-bind="value: viewModel().constell">
+        <option value="0">無凸</option>
+        <option value="1">1凸</option>
+        <option value="2">2凸</option>
+        <option value="3">3凸</option>
+        <option value="4">4凸</option>
+        <option value="5">5凸</option>
+        <option value="6">6凸</option>
+      </select>
     </div>
   </div>
+</div>
   
-  <div class="mb-3">
-    <div class="row" data-bind="with: viewModel()">
-      <div class="col-4">
-        <label for="select-talent-normal">通常天賦</label>
-        <select class="custom-select" aria-label="通常天賦" data-bind="value: normalRank, options: [...Array(maxNormalTalentRank()).keys()].map(i => i + 1)">
-        </select>
-      </div>
-      <div class="col-4">
-        <label for="select-talent-normal">スキル天賦</label>
-        <select class="custom-select" aria-label="スキル天賦" data-bind="value: skillRank, options: [...Array(maxSkillTalentRank()).keys()].map(i => i + 1)">
-        </select>
-      </div>
-      <div class="col-4">
-        <label for="select-talent-normal">爆発天賦</label>
-        <select class="custom-select" aria-label="爆発天賦" data-bind="value: burstRank, options: [...Array(maxBurstTalentRank()).keys()].map(i => i + 1)">
-        </select>
-      </div>
+<div class="mb-3">
+  <div class="row" data-bind="with: viewModel()">
+    <div class="col-4">
+      <label for="select-talent-normal">通常天賦</label>
+      <select class="custom-select" aria-label="通常天賦" data-bind="value: normalRank, options: [...Array(maxNormalTalentRank()).keys()].map(i => i + 1)">
+      </select>
+    </div>
+    <div class="col-4">
+      <label for="select-talent-normal">スキル天賦</label>
+      <select class="custom-select" aria-label="スキル天賦" data-bind="value: skillRank, options: [...Array(maxSkillTalentRank()).keys()].map(i => i + 1)">
+      </select>
+    </div>
+    <div class="col-4">
+      <label for="select-talent-normal">爆発天賦</label>
+      <select class="custom-select" aria-label="爆発天賦" data-bind="value: burstRank, options: [...Array(maxBurstTalentRank()).keys()].map(i => i + 1)">
+      </select>
     </div>
   </div>
-  
-  <div class="mb-3">
-    <div class="row">
-      <div class="col-12">
-        <select class="custom-select"
-          data-bind="options: attackOptions,
-                    optionsText: 'label',
-                    value: selectedAttack,
-                    optionsCaption: '-攻撃方法-',
-                    css: {'border-danger': selectedAttack() == undefined}">
-        </select>
-      </div>
+</div>
+
+<div class="mb-3">
+  <div class="row">
+    <div class="col-12">
+      <select class="custom-select"
+        data-bind="options: attackOptions,
+                  optionsText: 'label',
+                  value: selectedAttack,
+                  optionsCaption: '-攻撃方法-',
+                  css: {'border-danger': selectedAttack() == undefined}">
+      </select>
     </div>
   </div>
-  
-  
-  
-  <div class="mb-5 row">
-    <!-- ko if: viewModel() != undefined -->
-    <!-- ko foreach: viewModel().viewHTMLList('{{ include.target_from_root }}.viewModel()') -->
-    <div class="col-sm-6">
-      <div data-bind="htmlWithBinding: $data"></div>
-    </div>
-    <!-- /ko -->
-    <!-- /ko -->
+</div>
+
+<div class="mb-3 row">
+  <!-- ko if: viewModel() != undefined -->
+  <!-- ko foreach: viewModel().viewHTMLList('{{ include.target_from_root }}.viewModel()') -->
+  <div class="col-sm-6">
+    <div data-bind="htmlWithBinding: $data"></div>
   </div>
+  <!-- /ko -->
+  <!-- /ko -->
+</div>
