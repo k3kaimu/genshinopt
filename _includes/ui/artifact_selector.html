@@ -1,7 +1,10 @@
 <div class="input-group">
+
+  {% if include.isList %}
   <div class="input-group-prepend">
     <span class="input-group-text" data-bind="text: '#A' + ({{ include.index }} + 1)"></span>
   </div>
+  {% endif %}
   <select data-bind="options: artifacts,
                     optionsText: 'name',
                     value: selected1,

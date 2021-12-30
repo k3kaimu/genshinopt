@@ -1,6 +1,18 @@
 <div class="input-group">
-    <div class="input-group-prepend input-group-append">
+
+    {% if include.isList %}
+    <div class="input-group-prepend">
       <span class="input-group-text" data-bind="text: '#W' + ({{ include.index }} + 1)"></span>
+    </div>
+    {% endif %}
+
+    <div
+    {% if include.isList %}
+    class="input-group-prepend input-group-append"
+    {% else %}
+    class="input-group-prepend"
+    {% endif %}
+    >
       <select class="custom-select" data-bind="value: rarity, visible: selected() == undefined">
         <option selected value="ALL">星</option>
         <option value="5">星5</option>
@@ -15,13 +27,22 @@
                       css: {'border-danger': selected() == undefined}"
                       class="custom-select" aria-label="武器選択">
     </select>
-    <div class="input-group-prepend input-group-append">
+
+    <div 
+    {% if include.isList %}
+    class="input-group-prepend input-group-append"
+    {% else %}
+    class="input-group-append"
+    {% endif %}
+    >
+      
       <select class="custom-select" data-bind="value: viewModel().rank">
         <option selected value="0">無凸</option>
         <option value="1">1凸</option>
         <option value="2">2凸</option>
         <option value="3">3凸</option>
         <option value="4">4凸</option>
+      
       </select>
     </div>
     {% if include.isList %}
