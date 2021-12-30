@@ -6,71 +6,6 @@ import * as UI from '/js/modules/ui.mjs'
 
 
 $(function(){
-    function CharacterSelector()
-    {
-        this.selected = ko.observable();
-        this.characters = Data.characters;
-        this.elem = ko.observable();
-        this.rarity = ko.observable();
-        this.options = ko.pureComputed(function(){
-            var list = [];
-            var elem = this.elem();
-            var rarity = this.rarity();
-            
-
-            this.characters.forEach(e => {
-                if(!(elem == "ALL" || e.elem == elem))
-                    return;
-                
-                if(!(rarity == "ALL" || e.rarity == rarity))
-                    return;
-
-                list.push(e);
-            });
-
-            return list;
-        }, this);
-
-        this.viewModel = ko.observable(new Data.CharacterViewModel(undefined));
-
-        this.selected.subscribe(function(newCharacter){
-            if(newCharacter == undefined)
-                this.viewModel(new Data.CharacterViewModel(undefined));
-            else
-                this.viewModel(newCharacter.newViewModel());
-        }.bind(this));
-
-        this.attackOptions = ko.pureComputed(function(){
-            if(this.selected() == undefined)
-                return [];
-            else
-                return this.viewModel().presetAttacks();
-        }, this);
-
-        this.selectedAttack = ko.observable();
-
-        this.toJS = function() {
-            let obj = {};
-            obj.vm = this.viewModel().toJS();
-            obj.attack = {id: this.selectedAttack().id};
-
-            return obj;
-        }.bind(this);
-
-        this.fromJS = function(obj) {
-            this.selected(Data.lookupCharacter(obj.vm.parent_id));
-            let charVM = this.viewModel();
-            charVM.fromJS(obj.vm);
-            this.viewModel(charVM);
-
-            this.attackOptions().forEach(e => {
-                if(e.id == obj.attack.id)
-                    this.selectedAttack(e);
-            });
-        }.bind(this);
-    }
-
-
     function ComparingWeaponData(selectedChar)
     {
         this.weapons = Data.weapons;
@@ -345,7 +280,7 @@ $(function(){
     function ViewModel() {
         this.readyNLopt = ko.observable();
     
-        this.characterSelector = new CharacterSelector();
+        this.characterSelector = new UI.CharacterSelector();
         this.selectedChar = this.characterSelector.selected;
 
         this.comparingWeaponList = ko.observableArray();
@@ -813,10 +748,7 @@ $(function(){
 
     function loadDataFromURI(version, uri)
     {
-        let odata = decodeFromURI(uri);
-        console.log(odata);
         let migrated = Migrator.indexDataMigrator.migrate(version, decodeFromURI(uri));
-        console.log(migrated);
         viewModel.fromJS(migrated);
     }
 
