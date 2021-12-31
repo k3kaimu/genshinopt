@@ -146,12 +146,12 @@ export class SkywardSpineViewModel extends Base.WeaponViewModel
             return calc;
 
         let CalcType = Object.getPrototypeOf(calc).constructor;
-        let scale = SkywardSpine.effectTable[1][this.rank()];
-        let perAttack_ = Number(this.perAttack());
+        let data = this.toJS();
+        data.scale = SkywardSpine.effectTable[1][this.rank()];
+        data.perAttack = Number(data.perAttack);
 
         let NewCalc = class extends CalcType {
-            #scaleOfSkywardSpine = scale;
-            #perAttackOfSkywardSpine = perAttack_;
+            #dSkySpn = data;
 
             chainedAttackDmg(attackProps) {
                 let superValue = super.chainedAttackDmg(attackProps);
@@ -164,7 +164,7 @@ export class SkywardSpineViewModel extends Base.WeaponViewModel
 
                     newProps.isPhysical = true;   // 物理攻撃
                     newProps.isChainable = false; // この攻撃では追撃は発生しない
-                    return superValue.add(super.calculateNormalDmg(this.#scaleOfSkywardSpine, newProps).div(this.#perAttackOfSkywardSpine));
+                    return superValue.add(super.calculateNormalDmg(this.#dSkySpn.scale, newProps).div(this.#dSkySpn.perAttack));
                 } else {
                     // 通常攻撃でも重撃でもないので，追撃は発生しない
                     return superValue;

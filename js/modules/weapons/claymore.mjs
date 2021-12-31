@@ -199,12 +199,11 @@ export class PrototypeArchaicViewModel extends Base.WeaponViewModel
             return calc;
 
         let CalcType = Object.getPrototypeOf(calc).constructor;
-        let scale = PrototypeArchaic.additionalScale[this.rank()];
-        let perAttack_ = Number(this.perAttack());
+        let data = this.toJS();
+        data.scale = PrototypeArchaic.additionalScale[this.rank()];
 
         let NewCalc = class extends CalcType {
-            scaleOfPrototypeArchaic = scale;
-            perAttackOfPrototypeArchaic = perAttack_;
+            #dProtoArch = data;
 
             chainedAttackDmg(attackProps) {
                 let superValue = super.chainedAttackDmg(attackProps);
@@ -217,7 +216,7 @@ export class PrototypeArchaicViewModel extends Base.WeaponViewModel
 
                     newProps.isPhysical = true;   // 物理攻撃
                     newProps.isChainable = false; // この攻撃では追撃は発生しない
-                    return superValue.add(super.calculateNormalDmg(this.scaleOfPrototypeArchaic, newProps).div(this.perAttackOfPrototypeArchaic));
+                    return superValue.add(super.calculateNormalDmg(this.#dProtoArch.scale, newProps).div(Number(this.#dProtoArch.perAttack)));
                 } else {
                     // 通常攻撃でも重撃でもないので，追撃は発生しない
                     return superValue;
@@ -421,7 +420,7 @@ export class LuxuriousSeaLordViewModel extends Base.WeaponViewModel
 
                     newProps.isPhysical = true;   // 物理攻撃
                     newProps.isChainable = false; // この攻撃では追撃は発生しない
-                    return superValue.add(super.calculateNormalDmg(LuxuriousSeaLord.effectTable[1][this.#dMaguro.rank], newProps).div(this.#dMaguro.perAttack));
+                    return superValue.add(super.calculateNormalDmg(LuxuriousSeaLord.effectTable[1][this.#dMaguro.rank], newProps).div(Number(this.#dMaguro.perAttack)));
                 } else {
                     // 元素爆発ではないので追撃は発生しない
                     return superValue;
