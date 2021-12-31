@@ -1332,6 +1332,54 @@ export class DragonspineSpearViewModel extends Base.WeaponViewModel
 }
 
 
+// 喜多院十文字槍
+export class KitainCrossSpear extends Base.WeaponData
+{
+    // TODO: 元素エネルギー回復効果は未実装
+    constructor()
+    {
+        super(
+            "kitain_cross_spear",
+            "喜多院十文字槍",
+            4,
+            "Polearm",
+            565,
+            "baseMastery",
+            110
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new KitainCrossSpearViewModel(this);
+    }
+
+
+    static effectTable = [0.06, 0.075, 0.09, 0.105, 0.12];
+}
+
+
+// 喜多院十文字槍
+export class KitainCrossSpearViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseSkillDmg.value += KitainCrossSpear.effectTable[this.rank()];
+
+        return calc;
+    }
+}
+
+
 //「漁獲」
 export class TheCatch extends Base.WeaponData
 {

@@ -51,6 +51,7 @@ export const weapons = [
     new Polearm.CrescentPike(),
     new Polearm.Deathmatch(),
     new Polearm.DragonspineSpear(),
+    new Polearm.KitainCrossSpear(),
     new Polearm.TheCatch(),
     // 片手剣, 星5
     new Sword.PrimordialJadeCutter(),
