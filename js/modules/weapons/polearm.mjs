@@ -1332,8 +1332,6 @@ export class DragonspineSpearViewModel extends Base.WeaponViewModel
 }
 
 
-// ドラゴンスピア
-
 //「漁獲」
 export class TheCatch extends Base.WeaponData
 {
