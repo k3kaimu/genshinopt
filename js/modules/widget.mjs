@@ -72,12 +72,18 @@ export function checkBoxViewHTML(observableStr, labelHTML, otherBindAttr = undef
 
 export function sliderViewHTML(observableStr, min, max, step, labelHTML, otherBindAttr = undefined)
 {
-    return `<div class="form-group row m-0">
-        <label class="col-sm-5 col-form-label">${labelHTML}</label>
-        <div class="col-sm-7 mt-sm-2">
+    if(labelHTML == undefined) {
+        return `<div class="mt-sm-2">
         <input type="range" data-bind="value: ${observableStr}, ${buildBindAttr(otherBindAttr)}" class="form-control-range" min="${min}" max="${max}" step="${step}">
-        </div>
-    </div>`;
+        </div>`
+    } else {
+        return `<div class="form-group row m-0">
+            <label class="col-sm-5 col-form-label">${labelHTML}</label>
+            <div class="col-sm-7 mt-sm-2">
+            <input type="range" data-bind="value: ${observableStr}, ${buildBindAttr(otherBindAttr)}" class="form-control-range" min="${min}" max="${max}" step="${step}">
+            </div>
+        </div>`;
+    }
 }
 
 

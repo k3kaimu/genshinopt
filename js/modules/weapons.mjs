@@ -53,6 +53,7 @@ export const weapons = [
     new Polearm.DragonspineSpear(),
     new Polearm.KitainCrossSpear(),
     new Polearm.TheCatch(),
+    new Polearm.WavebreakersFin(),
     // 片手剣, 星5
     new Sword.PrimordialJadeCutter(),
 ];

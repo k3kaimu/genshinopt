@@ -1380,6 +1380,92 @@ export class KitainCrossSpearViewModel extends Base.WeaponViewModel
 }
 
 
+// 斬波のひれ長
+export class WavebreakersFin extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "wavebreakers_fin",
+            "斬波のひれ長",
+            4,
+            "Polearm",
+            620,
+            "rateAtk",
+            0.138
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new WavebreakersFinViewModel(this);
+    }
+
+
+    static effectTable = [
+        [0.0012, 0.0015, 0.0018, 0.0021, 0.0024],
+        [0.40, 0.50, 0.60, 0.70, 0.80]
+    ];
+}
+
+
+// 斬波のひれ長
+export class WavebreakersFinViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.totalBurstEnergy = ko.observable(320);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        let rank_ = this.rank();
+
+        calc.baseBurstDmg.value += Math.min(
+            Number(this.totalBurstEnergy()) * WavebreakersFin.effectTable[0][rank_],
+            WavebreakersFin.effectTable[1][rank_]
+        );
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "波を統べる海祇の民",
+                `チームの累計元素爆発エネルギー：` + Widget.spanInteger("totalBurstEnergy()")
+                +
+                Widget.sliderViewHTML("totalBurstEnergy", 120, 330, 10, undefined)
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.totalBurstEnergy = this.totalBurstEnergy();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.totalBurstEnergy(obj.totalBurstEnergy);
+    }
+}
+
+
 //「漁獲」
 export class TheCatch extends Base.WeaponData
 {
