@@ -50,6 +50,7 @@ export const weapons = [
     new Polearm.PrototypeStarglitter(),
     new Polearm.CrescentPike(),
     new Polearm.Deathmatch(),
+    new Polearm.DragonspineSpear(),
     new Polearm.TheCatch(),
     // 片手剣, 星5
     new Sword.PrimordialJadeCutter(),

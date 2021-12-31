@@ -1204,6 +1204,136 @@ export class DeathmatchViewModel extends Base.WeaponViewModel
 }
 
 
+// ドラゴンスピア
+export class DragonspineSpear extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "dragonspine_spear",
+            "ドラゴンスピア",
+            4,
+            "Polearm",
+            454,
+            "basePhysicalDmg",
+            0.69
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new DragonspineSpearViewModel(this);
+    }
+
+
+    static effectTable = [
+        [0.80, 0.95, 1.10, 1.25, 1.40],
+        [2.00, 2.40, 2.80, 3.20, 3.60]
+    ];
+}
+
+
+// ドラゴンスピア
+export class DragonspineSpearViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.useEffect = ko.observable(false);
+        this.perAttack = ko.observable(20);
+        this.isCryo = ko.observable(false);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        if(! this.useEffect())
+            return calc;
+
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let data = this.toJS();
+        data.scale = this.addAttackScale();
+
+        let NewCalc = class extends CalcType {
+            #dDrgSpnSpr = data;
+
+            chainedAttackDmg(attackProps) {
+                let superValue = super.chainedAttackDmg(attackProps);
+
+                if(hasAnyPropertiesWithSameValue(attackProps, {isNormal: true, isCharged: true})) {
+                    let newProps = shallowDup(attackProps);
+                    // 元々の攻撃の属性や攻撃種類を削除する
+                    newProps = Calc.deleteAllElementFromAttackProps(newProps);
+                    newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
+
+                    newProps.isPhysical = true;   // 物理攻撃
+                    newProps.isChainable = false; // この攻撃では追撃は発生しない
+                    return superValue.add(super.calculateNormalDmg(this.#dDrgSpnSpr.scale, newProps).div(Number(this.#dDrgSpnSpr.perAttack)));
+                } else {
+                    // 通常攻撃でも重撃でもないので，追撃は発生しない
+                    return superValue;
+                }
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+        return calc;
+    }
+
+
+    addAttackScale()
+    {
+        if(this.isCryo()) {
+            return DragonspineSpear.effectTable[1][this.rank()];
+        } else {
+            return DragonspineSpear.effectTable[0][this.rank()];
+        }
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "霜の埋葬",
+                Widget.checkBoxViewHTML("useEffect",
+                    `通常/重撃の${Widget.spanText("perAttack()")}回に1回${textPercentageFix(this.addAttackScale(), 0)}物理ダメージ`)
+                +
+                Widget.checkBoxViewHTML("isCryo", "敵：氷元素の付着中", {disable: "!useEffect()"})
+                +
+                Widget.sliderViewHTML("perAttack", 1, 20, 1, `発生頻度`, {disable: "!useEffect()"})
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.perAttack = this.perAttack();
+        obj.useEffect = this.useEffect();
+        obj.isCryo = this.isCryo();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.perAttack(obj.perAttack);
+        this.useEffect(obj.useEffect);
+        this.isCryo(obj.isCryo);
+    }
+}
+
+
+// ドラゴンスピア
+
 //「漁獲」
 export class TheCatch extends Base.WeaponData
 {
