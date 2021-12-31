@@ -1016,6 +1016,108 @@ export class PrototypeStarglitterViewModel extends Base.WeaponViewModel
 }
 
 
+// 流月の針
+export class CrescentPike extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "crescent_pike",
+            "流月の針",
+            4,
+            "Polearm",
+            565,
+            "basePhysicalDmg",
+            0.345
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new CrescentPikeViewModel(this);
+    }
+
+
+    static effectTable = [0.2, 0.25, 0.3, 0.35, 0.4];
+}
+
+
+// 流月の針
+export class CrescentPikeViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.useEffect = ko.observable(false);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        if(! this.useEffect())
+            return calc;
+
+        let data = this.toJS();
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let NewCalc = class extends CalcType {
+            #dCrescentPike = data;
+
+            chainedAttackDmg(attackProps) {
+                let superValue = super.chainedAttackDmg(attackProps);
+
+                if(hasAnyPropertiesWithSameValue(attackProps, {isNormal: true, isCharged: true})) {
+                    let newProps = shallowDup(attackProps);
+                    // 元々の攻撃の属性や攻撃種類を削除する
+                    newProps = Calc.deleteAllElementFromAttackProps(newProps);
+                    newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
+
+                    newProps.isPhysical = true;   // 物理攻撃
+                    newProps.isChainable = false; // この攻撃では追撃は発生しない
+                    return superValue.add(super.calculateNormalDmg(CrescentPike.effectTable[this.#dCrescentPike.rank], newProps));
+                } else {
+                    // 通常攻撃でも重撃でもないので，追撃は発生しない
+                    return superValue;
+                }
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "注入の針",
+                Widget.checkBoxViewHTML("useEffect", `通常/重撃時に${textPercentageFix(CrescentPike.effectTable[this.rank()], 0)}物理ダメージ`)
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useEffect = this.useEffect();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.useEffect(obj.useEffect);
+    }
+}
+
+
 // 死闘の槍
 export class Deathmatch extends Base.WeaponData
 {

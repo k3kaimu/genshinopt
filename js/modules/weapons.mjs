@@ -48,6 +48,7 @@ export const weapons = [
     new Polearm.RoyalSpear(),
     new Polearm.BlackcliffPole(),
     new Polearm.PrototypeStarglitter(),
+    new Polearm.CrescentPike(),
     new Polearm.Deathmatch(),
     new Polearm.TheCatch(),
     // 片手剣, 星5
