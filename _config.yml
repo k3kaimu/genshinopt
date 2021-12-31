@@ -8,7 +8,7 @@
 title: Genshin Opt
 brief-intro: 原神の聖遺物の最適化ができるサイトです
 baseurl: ""
-url: "http://genshinopt.toyohashi.nagoya"
+url: "https://genshinopt.toyohashi.nagoya"
 
 permalink: /:year/:month/:day/:title/
 
