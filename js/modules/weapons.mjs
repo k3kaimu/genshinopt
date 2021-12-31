@@ -54,6 +54,8 @@ export const weapons = [
     new Polearm.KitainCrossSpear(),
     new Polearm.TheCatch(),
     new Polearm.WavebreakersFin(),
+    // 長柄武器, 星3
+    new Polearm.BlackTassel(),
     // 片手剣, 星5
     new Sword.PrimordialJadeCutter(),
 ];

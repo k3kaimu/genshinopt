@@ -1534,3 +1534,79 @@ export class TheCatchViewModel extends Base.WeaponViewModel
 }
 
 
+// 黒纓槍
+export class BlackTassel extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "black_tassel",
+            "黒纓槍",
+            3,
+            "Polearm",
+            354,
+            "rateHP",
+            0.469
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new BlackTasselViewModel(this);
+    }
+
+
+    static effectTable = [0.40, 0.50, 0.60, 0.70, 0.80];
+}
+
+
+// 黒纓槍
+export class BlackTasselViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.useEffect = ko.observable(false);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        if(this.useEffect()) {
+            calc.baseAllDmg.value += BlackTassel.effectTable[this.rank()];
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "スライム殺し",
+                Widget.checkBoxViewHTML("useEffect", `ダメージ+${textPercentageFix(BlackTassel.effectTable[this.rank()], 0)}`)
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useEffect = this.useEffect();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.useEffect(obj.useEffect);
+    }
+}
