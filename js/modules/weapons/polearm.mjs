@@ -1546,3 +1546,59 @@ export class BlackTasselViewModel extends Base.WeaponViewModel
         this.useEffect(obj.useEffect);
     }
 }
+
+
+// 鉾槍
+export class Halberd extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "halberd",
+            "鉾槍",
+            3,
+            "Polearm",
+            447,
+            "rateAtk",
+            0.234
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new HalberdViewModel(this);
+    }
+
+
+    static effectTable = [1.60, 2.00, 2.40, 2.80, 3.20];
+}
+
+
+// 鉾槍
+export class HalberdViewModel extends Base.LikePrototypeArchaicViewModel
+{
+    constructor(parent)
+    {
+        super(
+            parent,
+            1,
+            20,
+            20,
+            {isNormal: true},
+            "通常攻撃時追加ダメージ"
+        );
+    }
+
+
+    chainedAttackProps(parentAttackProps)
+    {
+        return {isPhysical: true, isChainable: false};
+    }
+
+
+    chainedAttackScale(parentAttackProps)
+    {
+        return Halberd.effectTable[this.rank()];
+    }
+}
