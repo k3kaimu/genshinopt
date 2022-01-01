@@ -1602,3 +1602,50 @@ export class HalberdViewModel extends Base.LikePrototypeArchaicViewModel
         return Halberd.effectTable[this.rank()];
     }
 }
+
+
+// 白纓槍
+export class WhiteTassel extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "white_tassel",
+            "白纓槍",
+            3,
+            "Polearm",
+            401,
+            "baseCrtRate",
+            0.234
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new WhiteTasselViewModel(this);
+    }
+
+
+    static effectTable = [0.24, 0.30, 0.36, 0.42, 0.48];
+}
+
+
+// 白纓槍
+export class WhiteTasselViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        calc.baseNormalDmg.value += WhiteTassel.effectTable[this.rank()];
+
+        return calc;
+    }
+}

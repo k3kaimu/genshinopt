@@ -57,6 +57,7 @@ export const weapons = [
     // 長柄武器, 星3
     new Polearm.BlackTassel(),
     new Polearm.Halberd(),
+    new Polearm.WhiteTassel(),
     // 片手剣, 星5
     new Sword.PrimordialJadeCutter(),
 ];
