@@ -1,3 +1,5 @@
+import * as Calc from '/js/modules/dmg-calc.mjs';
+
 
 export class WeaponData
 {
@@ -99,5 +101,52 @@ export class WeaponViewModel
 
     fromJS(obj) {
         this.rank(obj.rank);
+    }
+}
+
+
+
+export class WeaponWithChainedAttack extends WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+    }
+
+
+    checkChainedAttack(parentAttackProps)
+    {
+        return false;
+    }
+
+
+    calcChainedAttackDmg(calc, parentAttackProps)
+    {
+        return Calc.VGData.zero();
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        calc = super.applyDmgCalc(calc);
+
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let vm = this;
+        let NewCalc = class extends CalcType {
+            #vmWeapon = vm;
+
+            chainedAttackDmg(attackProps) {
+                let superValue = super.chainedAttackDmg(attackProps);
+
+                if(this.#vmWeapon.checkChainedAttack(attackProps)) {
+                    return superValue.add(this.#vmWeapon.calcChainedAttackDmg(calc, attackProps));
+                } else {
+                    return superValue;
+                }
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+        return calc;
     }
 }
