@@ -1,4 +1,5 @@
 import * as Calc from '/js/modules/dmg-calc.mjs';
+import * as Widget from '/js/modules/widget.mjs';
 
 
 export class WeaponData
@@ -148,5 +149,84 @@ export class WeaponWithChainedAttack extends WeaponViewModel
 
         calc = Object.assign(new NewCalc(), calc);
         return calc;
+    }
+}
+
+
+export class LikePrototypeArchaicViewModel extends WeaponWithChainedAttack
+{
+    constructor(parent, min, max, init, condProps, sliderHTMLTitle)
+    {
+        super(parent);
+        this.useEffect = ko.observable(false);
+        this.perAttack = ko.observable(init);
+        this.minPerAttack = min;
+        this.maxPerAttack = max;
+        this.condProps = condProps;
+        this.sliderHTMLTitle = sliderHTMLTitle;
+    }
+
+
+    chainedAttackProps(parentAttackProps)
+    {
+        return {};
+    }
+
+
+    chainedAttackScale(parentAttackProps)
+    {
+        return 0;
+    }
+
+
+    checkChainedAttack(attackProps)
+    {
+        return this.useEffect() && hasAnyPropertiesWithSameValue(attackProps, this.condProps);
+    }
+
+
+    calcChainedAttackDmg(calc, attackProps)
+    {
+        let newProps = shallowDup(attackProps);
+        // 元々の攻撃の属性や攻撃種類を削除する
+        newProps = Calc.deleteAllElementFromAttackProps(newProps);
+        newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
+
+        newProps = Object.assign(newProps, this.chainedAttackProps(attackProps));
+        let scale = this.chainedAttackScale(attackProps);
+        return calc.calculateNormalDmg(scale, newProps).div(Number(this.perAttack()));
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, this.sliderHTMLTitle,
+                Widget.checkBoxViewHTML("useEffect",
+                    `${Widget.spanText("perAttack()")}回に1回追加ダメージ`)
+                +
+                Widget.sliderViewHTML("perAttack", this.minPerAttack, this.maxPerAttack, 1, `発生頻度`, {disable: "!useEffect()"})
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.perAttack = this.perAttack();
+        obj.useEffect = this.useEffect();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.perAttack(obj.perAttack);
+        this.useEffect(obj.useEffect);
     }
 }

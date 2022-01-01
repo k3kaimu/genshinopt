@@ -181,71 +181,30 @@ export class PrototypeArchaic extends Base.WeaponData
 
 
 // 古華・試作, viewmodel
-export class PrototypeArchaicViewModel extends Base.WeaponWithChainedAttack
+export class PrototypeArchaicViewModel extends Base.LikePrototypeArchaicViewModel
 {
     constructor(parent)
     {
-        super(parent);
-        this.useEffect = ko.observable(false);
-        this.perAttack = ko.observable(10);
-    }
-
-
-    checkChainedAttack(attackProps)
-    {
-        return this.useEffect() && hasAnyPropertiesWithSameValue(attackProps, {isNormal: true, isCharged: true});
-    }
-
-
-    calcChainedAttackDmg(calc, attackProps)
-    {
-        let newProps = shallowDup(attackProps);
-        // 元々の攻撃の属性や攻撃種類を削除する
-        newProps = Calc.deleteAllElementFromAttackProps(newProps);
-        newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
-
-        newProps.isPhysical = true;   // 物理攻撃
-        newProps.isChainable = false; // この攻撃では追撃は発生しない
-        return calc.calculateNormalDmg(PrototypeArchaic.additionalScale[this.rank()], newProps).div(Number(this.perAttack()));
-    }
-
-
-    addAttackPercentageText()
-    {
-        return textPercentageFix(PrototypeArchaic.additionalScale[this.rank()], 0);
-    }
-
-
-    viewHTMLList(target)
-    {
-        let dst = super.viewHTMLList(target);
-
-        dst.push(
-            Widget.buildViewHTML(target, "通常/重撃時：追加ダメージ",
-                Widget.checkBoxViewHTML("useEffect",
-                    `${Widget.spanText("perAttack()")}回に1回${Widget.spanText("addAttackPercentageText()")}物理ダメージ`)
-                +
-                Widget.sliderViewHTML("perAttack", 1, 20, 1, `発生頻度`, {disable: "!useEffect()"})
-            )
+        super(
+            parent,
+            1,
+            20,
+            10,
+            {isNormal: true, isCharged: true},
+            "粉砕"
         );
-
-        return dst;
     }
 
 
-    toJS() {
-        let obj = super.toJS();
-        obj.perAttack = this.perAttack();
-        obj.useEffect = this.useEffect();
-
-        return obj;
+    chainedAttackProps(parentAttackProps)
+    {
+        return {isPhysical: true, isChainable: false};
     }
 
 
-    fromJS(obj) {
-        super.fromJS(obj);
-        this.perAttack(obj.perAttack);
-        this.useEffect(obj.useEffect);
+    chainedAttackScale(parentAttackProps)
+    {
+        return PrototypeArchaic.additionalScale[this.rank()];
     }
 }
 
