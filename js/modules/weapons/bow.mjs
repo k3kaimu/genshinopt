@@ -129,78 +129,38 @@ export class SkywardHarp extends Base.WeaponData
 
 
 // 天空の翼, viewmodel
-export class SkywardHarpViewModel extends Base.WeaponViewModel
+export class SkywardHarpViewModel extends Base.LikePrototypeArchaicViewModel
 {
     constructor(parent)
     {
-        super(parent);
-        this.useEffect = ko.observable(false);
-        this.perAttack = ko.observable(5);
+        super(
+            parent,
+            1,
+            20,
+            5,
+            {},
+            "攻撃命中時追加ダメージ"
+        );
+    }
+
+
+    chainedAttackProps(parentAttackProps)
+    {
+        return {isPhysical: true, isChainable: false};
+    }
+
+
+    chainedAttackScale(parentAttackProps)
+    {
+        return 1.25;
     }
 
 
     applyDmgCalc(calc)
     {
         calc = super.applyDmgCalc(calc);
-
         calc.baseCrtDmg.value += SkywardHarp.addCrtDmg[this.rank()];
-
-        if(! this.useEffect())
-            return calc;
-
-        let CalcType = Object.getPrototypeOf(calc).constructor;
-        let perAttack_ = Number(this.perAttack());
-
-        let NewCalc = class extends CalcType {
-            perAttackOfSkywardHarp = perAttack_;
-
-            chainedAttackDmg(attackProps) {
-                let superValue = super.chainedAttackDmg(attackProps);
-
-                let newProps = shallowDup(attackProps);
-                // 元々の攻撃の属性や攻撃種類を削除する
-                newProps = Calc.deleteAllElementFromAttackProps(newProps);
-                newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
-
-                newProps.isPhysical = true;   // 物理攻撃
-                newProps.isChainable = false; // この攻撃では追撃は発生しない
-                return superValue.add(super.calculateNormalDmg(1.25, newProps).div(this.perAttackOfSkywardHarp));
-            }
-        };
-
-        calc = Object.assign(new NewCalc(), calc);
         return calc;
-    }
-
-
-    viewHTMLList(target)
-    {
-        let dst = super.viewHTMLList(target);
-
-        dst.push(
-            Widget.buildViewHTML(target, "追加ダメージ",
-                Widget.checkBoxViewHTML("useEffect",
-                    `${Widget.spanText("perAttack()")}回に1回125%物理ダメージ`)
-                +
-                Widget.sliderViewHTML("perAttack", 1, 20, 1, `発生頻度`, {disable: "!useEffect()"})
-            )
-        );
-
-        return dst;
-    }
-
-
-    toJS() {
-        let obj = super.toJS();
-        obj.perAttack = this.perAttack();
-
-        return obj;
-    }
-
-
-    fromJS(obj) {
-        super.fromJS(obj);
-        this.perAttack(obj.perAttack);
     }
 }
 

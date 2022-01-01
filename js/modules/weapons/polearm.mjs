@@ -126,13 +126,30 @@ export class SkywardSpine extends Base.WeaponData
 
 
 // 天空の脊
-export class SkywardSpineViewModel extends Base.WeaponViewModel
+export class SkywardSpineViewModel extends Base.LikePrototypeArchaicViewModel
 {
     constructor(parent)
     {
-        super(parent);
-        this.useEffect = ko.observable(false);
-        this.perAttack = ko.observable(4);
+        super(
+            parent,
+            1,
+            10,
+            4,
+            {isNormal: true, isCharged: true},
+            "黒翼を切り裂く鋭牙（通常/重撃時追加ダメージ）"
+        );
+    }
+
+
+    chainedAttackProps(parentAttackProps)
+    {
+        return {isPhysical: true, isChainable: false};
+    }
+
+
+    chainedAttackScale(parentAttackProps)
+    {
+        return SkywardSpine.effectTable[1][this.rank()];
     }
 
 
@@ -142,71 +159,7 @@ export class SkywardSpineViewModel extends Base.WeaponViewModel
 
         calc.baseCrtRate.value += SkywardSpine.effectTable[0][this.rank()];
 
-        if(! this.useEffect())
-            return calc;
-
-        let CalcType = Object.getPrototypeOf(calc).constructor;
-        let data = this.toJS();
-        data.scale = SkywardSpine.effectTable[1][this.rank()];
-        data.perAttack = Number(data.perAttack);
-
-        let NewCalc = class extends CalcType {
-            #dSkySpn = data;
-
-            chainedAttackDmg(attackProps) {
-                let superValue = super.chainedAttackDmg(attackProps);
-
-                if(hasAnyPropertiesWithSameValue(attackProps, {isNormal: true, isCharged: true})) {
-                    let newProps = {...attackProps};
-                    // 元々の攻撃の属性や攻撃種類を削除する
-                    newProps = Calc.deleteAllElementFromAttackProps(newProps);
-                    newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
-
-                    newProps.isPhysical = true;   // 物理攻撃
-                    newProps.isChainable = false; // この攻撃では追撃は発生しない
-                    return superValue.add(super.calculateNormalDmg(this.#dSkySpn.scale, newProps).div(this.#dSkySpn.perAttack));
-                } else {
-                    // 通常攻撃でも重撃でもないので，追撃は発生しない
-                    return superValue;
-                }
-            }
-        };
-
-        calc = Object.assign(new NewCalc(), calc);
         return calc;
-    }
-
-
-    viewHTMLList(target)
-    {
-        let dst = super.viewHTMLList(target);
-
-        dst.push(
-            Widget.buildViewHTML(target, "通常/重撃時：追加ダメージ",
-                Widget.checkBoxViewHTML("useEffect",
-                    `${Widget.spanText("perAttack()")}回に1回${textPercentageFix(SkywardSpine.effectTable[1][this.rank()], 0)}物理ダメージ`)
-                +
-                Widget.sliderViewHTML("perAttack", 1, 10, 1, `発生頻度`, {disable: "!useEffect()"})
-            )
-        );
-
-        return dst;
-    }
-
-
-    toJS() {
-        let obj = super.toJS();
-        obj.perAttack = this.perAttack();
-        obj.useEffect = this.useEffect();
-
-        return obj;
-    }
-
-
-    fromJS(obj) {
-        super.fromJS(obj);
-        this.perAttack(obj.perAttack);
-        this.useEffect(obj.useEffect);
     }
 }
 
@@ -1235,7 +1188,7 @@ export class DragonspineSpear extends Base.WeaponData
 
 
 // ドラゴンスピア
-export class DragonspineSpearViewModel extends Base.WeaponViewModel
+export class DragonspineSpearViewModel extends Base.WeaponWithChainedAttack
 {
     constructor(parent)
     {
@@ -1246,41 +1199,24 @@ export class DragonspineSpearViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    checkChainedAttack(attackProps)
     {
-        calc = super.applyDmgCalc(calc);
+        return this.useEffect() && hasAnyPropertiesWithSameValue(attackProps, {isNormal: true, isCharged: true});
+    }
 
-        if(! this.useEffect())
-            return calc;
 
-        let CalcType = Object.getPrototypeOf(calc).constructor;
-        let data = this.toJS();
-        data.scale = this.addAttackScale();
+    calcChainedAttackDmg(calc, attackProps)
+    {
+        let newProps = shallowDup(attackProps);
+        // 元々の攻撃の属性や攻撃種類を削除する
+        newProps = Calc.deleteAllElementFromAttackProps(newProps);
+        newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
 
-        let NewCalc = class extends CalcType {
-            #dDrgSpnSpr = data;
+        newProps.isPhysical = true;
+        newProps.isChainable = false;
 
-            chainedAttackDmg(attackProps) {
-                let superValue = super.chainedAttackDmg(attackProps);
-
-                if(hasAnyPropertiesWithSameValue(attackProps, {isNormal: true, isCharged: true})) {
-                    let newProps = shallowDup(attackProps);
-                    // 元々の攻撃の属性や攻撃種類を削除する
-                    newProps = Calc.deleteAllElementFromAttackProps(newProps);
-                    newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
-
-                    newProps.isPhysical = true;   // 物理攻撃
-                    newProps.isChainable = false; // この攻撃では追撃は発生しない
-                    return superValue.add(super.calculateNormalDmg(this.#dDrgSpnSpr.scale, newProps).div(Number(this.#dDrgSpnSpr.perAttack)));
-                } else {
-                    // 通常攻撃でも重撃でもないので，追撃は発生しない
-                    return superValue;
-                }
-            }
-        };
-
-        calc = Object.assign(new NewCalc(), calc);
-        return calc;
+        let scale = this.addAttackScale();
+        return calc.calculateNormalDmg(scale, newProps).div(Number(this.perAttack()));
     }
 
 
@@ -1299,7 +1235,7 @@ export class DragonspineSpearViewModel extends Base.WeaponViewModel
         let dst = super.viewHTMLList(target);
 
         dst.push(
-            Widget.buildViewHTML(target, "霜の埋葬",
+            Widget.buildViewHTML(target, "通常/重撃時追加ダメージ",
                 Widget.checkBoxViewHTML("useEffect",
                     `通常/重撃の${Widget.spanText("perAttack()")}回に1回${textPercentageFix(this.addAttackScale(), 0)}物理ダメージ`)
                 +
