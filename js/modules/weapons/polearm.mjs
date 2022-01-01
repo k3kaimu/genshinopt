@@ -136,7 +136,7 @@ export class SkywardSpineViewModel extends Base.LikePrototypeArchaicViewModel
             10,
             4,
             {isNormal: true, isCharged: true},
-            "黒翼を切り裂く鋭牙（通常/重撃時追加ダメージ）"
+            "通常/重撃時追加ダメージ"
         );
     }
 
