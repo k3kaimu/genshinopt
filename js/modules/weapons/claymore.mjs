@@ -181,7 +181,7 @@ export class PrototypeArchaic extends Base.WeaponData
 
 
 // 古華・試作, viewmodel
-export class PrototypeArchaicViewModel extends Base.WeaponViewModel
+export class PrototypeArchaicViewModel extends Base.WeaponWithChainedAttack
 {
     constructor(parent)
     {
@@ -191,41 +191,22 @@ export class PrototypeArchaicViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    checkChainedAttack(attackProps)
     {
-        calc = super.applyDmgCalc(calc);
+        return this.useEffect() && hasAnyPropertiesWithSameValue(attackProps, {isNormal: true, isCharged: true});
+    }
 
-        if(! this.useEffect())
-            return calc;
 
-        let CalcType = Object.getPrototypeOf(calc).constructor;
-        let data = this.toJS();
-        data.scale = PrototypeArchaic.additionalScale[this.rank()];
+    calcChainedAttackDmg(calc, attackProps)
+    {
+        let newProps = shallowDup(attackProps);
+        // 元々の攻撃の属性や攻撃種類を削除する
+        newProps = Calc.deleteAllElementFromAttackProps(newProps);
+        newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
 
-        let NewCalc = class extends CalcType {
-            #dProtoArch = data;
-
-            chainedAttackDmg(attackProps) {
-                let superValue = super.chainedAttackDmg(attackProps);
-
-                if(hasAnyPropertiesWithSameValue(attackProps, {isNormal: true, isCharged: true})) {
-                    let newProps = shallowDup(attackProps);
-                    // 元々の攻撃の属性や攻撃種類を削除する
-                    newProps = Calc.deleteAllElementFromAttackProps(newProps);
-                    newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
-
-                    newProps.isPhysical = true;   // 物理攻撃
-                    newProps.isChainable = false; // この攻撃では追撃は発生しない
-                    return superValue.add(super.calculateNormalDmg(this.#dProtoArch.scale, newProps).div(Number(this.#dProtoArch.perAttack)));
-                } else {
-                    // 通常攻撃でも重撃でもないので，追撃は発生しない
-                    return superValue;
-                }
-            }
-        };
-
-        calc = Object.assign(new NewCalc(), calc);
-        return calc;
+        newProps.isPhysical = true;   // 物理攻撃
+        newProps.isChainable = false; // この攻撃では追撃は発生しない
+        return calc.calculateNormalDmg(PrototypeArchaic.additionalScale[this.rank()], newProps).div(Number(this.perAttack()));
     }
 
 
