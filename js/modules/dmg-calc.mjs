@@ -628,20 +628,20 @@ export class DamageCalculator
     }
 
 
-    dup() {
-        let ctor = new Object.getPrototypeOf(this).constructor;
-        let newObj = new ctor;
-        newObj = Object.assign(newObj, this);
-        newObj.postCopyDup();
+    // dup() {
+    //     let ctor = Object.getPrototypeOf(this).constructor;
+    //     let newObj = new ctor;
+    //     newObj = Object.assign(newObj, this);
+    //     newObj.postCopyDup();
 
-        return newObj;
-    }
+    //     return newObj;
+    // }
 
 
-    copyFrom(rhs) {
-        Object.assign(this, rhs);
-        this.postCopyDup();
-    }
+    // copyFrom(rhs) {
+    //     Object.assign(this, rhs);
+    //     this.postCopyDup();
+    // }
 
 
     calculate(dmgScale, attackProps)
