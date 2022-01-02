@@ -920,3 +920,94 @@ export function royalCriticalRate(baseCrtRate, incP)
     ret += r * (1 + 5*p5)/p5;
     return 1/ret;
 }
+
+
+
+export function makeOptimizer(calc, objfunc, total_cost, algorithm, tol, maxEval)
+{
+    const opt = new nlopt.Optimize(algorithm, 7);
+
+    opt.setMaxObjective((x, grad) => {
+        var dmg = objfunc(x);
+        dmg = dmg.log();
+
+        if(grad) {
+            for(let i = 0; i < 7; ++i)
+                grad[i] = dmg.grad[i];
+        }
+
+        return dmg.value;
+    }, tol);
+
+    
+    opt.addInequalityConstraint((x, grad) => {
+        var cost = calc.calcSubOptionCost(x);
+        if(grad) {
+            for(let i = 0; i < 7; ++i)
+                grad[i] = cost.grad[i];
+        }
+
+        return cost.value - total_cost;
+    }, tol);
+
+    opt.setUpperBounds(calc.calcUpperBounds(total_cost, objfunc));
+    opt.setLowerBounds([0, 0, 0, 0, 0, 0, 0]);
+    opt.setMaxeval(maxEval);
+
+    return opt;
+}
+
+
+
+export async function applyOptimize(calc, objfunc, total_cost, algorithm, x0, tol, maxEval, retry = 3) {
+    let VGData = Object.getPrototypeOf(calc.baseAtk).constructor;
+
+    let doCalcExprTextLast = VGData.doCalcExprText;
+    VGData.doCalcExprText = false;
+    let returnValue = undefined;
+    let failed = 0;
+
+    while(returnValue == undefined && failed < retry) {
+        try {
+            const opt = makeOptimizer(calc, objfunc, total_cost, algorithm, tol, maxEval);
+            let result = opt.optimize(x0);
+
+            returnValue = {success: result.success, opt_result: result, calc: calc, value: Math.exp(result.value)};
+        } catch(ex) {
+            console.log(ex);
+            console.log("reload NLopt-js");
+            reload_js('/js/nlopt-js.js');
+            await nlopt.ready;
+            ++failed;
+            console.log(failed);
+        }
+    }
+
+    VGData.doCalcExprText = doCalcExprTextLast;
+    return returnValue;
+}
+
+
+
+export async function applyGlobalOptimize(calc, objfunc, total_cost, globalAlgorithm, localAlgorithm, x0, tol, maxEvalGlobal, maxEvalLocal)
+{
+    function globalObjFunc(x)
+    {
+        let opt = applyOptimize(calc, objfunc, total_cost, localAlgorithm, x, tol, maxEvalLocal, 1);
+
+        if(opt.success)
+            return objfunc(opt.opt_result.x);
+        else
+            return objfunc(x0);
+    }
+
+    let ret = await applyOptimize(calc, globalObjFunc, total_cost, globalAlgorithm, x0, tol, maxEvalGlobal);
+
+    if(ret.success) {
+        // 大域最適化の結果を使って局所最適化をする
+        return applyOptimize(calc, objfunc, total_cost, localAlgorithm, ret.opt_result.x, tol, maxEvalLocal);
+    } else {
+        // 大域最適化は諦めて，局所最適化アルゴリズムに任せる
+        return applyOptimize(calc, objfunc, total_cost, localAlgorithm, x0, tol, maxEvalLocal);
+    }
+}

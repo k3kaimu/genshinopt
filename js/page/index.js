@@ -328,14 +328,14 @@ $(function(){
                     } else {
                         let opt = undefined;
                         if(setting.globalOpt.isEnabled) {
-                            opt = await applyGlobalOptimize(calc, objfunc, total_cost, nlopt.Algorithm.GN_ISRES, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, setting.globalOpt.maxEval, 1000);
+                            opt = await Calc.applyGlobalOptimize(calc, objfunc, total_cost, nlopt.Algorithm.GN_ISRES, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, setting.globalOpt.maxEval, 1000);
 
                             // 局所最適化のみ
-                            let local = await applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
+                            let local = await Calc.applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
                             if(opt == undefined || !opt.success || opt.value < local.value)
                                 opt = local;    // 局所最適化の方が性能が良かったのでそちらを採用
                         } else {
-                            opt = await applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
+                            opt = await Calc.applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
                         }
                         
                         console.assert(opt.opt_result.success);
