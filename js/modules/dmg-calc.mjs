@@ -5,6 +5,7 @@ export class VGData
 {
     // for debug
     static doCalcExprText = false;
+    static DIM = 7;
 
     constructor(value, gradVec)
     {
@@ -88,7 +89,7 @@ export class VGData
     dup() {
         var dst = VGData.zero();
         dst.value = this.value;
-        for(let i = 0; i < 7; ++i) {
+        for(let i = 0; i < VGData.DIM; ++i) {
             dst.grad[i] = this.grad[i];
         }
 
@@ -101,7 +102,7 @@ export class VGData
     add_VGData(rhs) {
         var dst = VGData.zero();
         dst.value = this.value + rhs.value;
-        for(let i = 0; i < 7; ++i) {
+        for(let i = 0; i < VGData.DIM; ++i) {
             dst.grad[i] = this.grad[i] + rhs.grad[i];
         }
 
@@ -116,7 +117,7 @@ export class VGData
     add_number(rhs) {
         var dst = VGData.zero();
         dst.value = this.value + rhs;
-        for(let i = 0; i < 7; ++i) {
+        for(let i = 0; i < VGData.DIM; ++i) {
             dst.grad[i] = this.grad[i];
         }
 
@@ -140,7 +141,7 @@ export class VGData
     sub_VGData(rhs) {
         var dst = VGData.zero();
         dst.value = this.value - rhs.value;
-        for(let i = 0; i < 7; ++i) {
+        for(let i = 0; i < VGData.DIM; ++i) {
             dst.grad[i] = this.grad[i] - rhs.grad[i];
         }
 
@@ -155,7 +156,7 @@ export class VGData
     sub_number(rhs) {
         var dst = VGData.zero();
         dst.value = this.value - rhs;
-        for(let i = 0; i < 7; ++i) {
+        for(let i = 0; i < VGData.DIM; ++i) {
             dst.grad[i] = this.grad[i];
         }
 
@@ -180,7 +181,7 @@ export class VGData
     mul_VGData(rhs) {
         var dst = VGData.zero();
         dst.value = this.value * rhs.value;
-        for(let i = 0; i < 7; ++i) {
+        for(let i = 0; i < VGData.DIM; ++i) {
             dst.grad[i] = this.grad[i] * rhs.value + this.value * rhs.grad[i];
         }
 
@@ -195,7 +196,7 @@ export class VGData
     mul_number(rhs) {
         var dst = VGData.zero();
         dst.value = this.value * rhs;
-        for(let i = 0; i < 7; ++i) {
+        for(let i = 0; i < VGData.DIM; ++i) {
             dst.grad[i] = this.grad[i] * rhs;
         }
 
@@ -219,7 +220,7 @@ export class VGData
     div_VGData(rhs) {
         var dst = VGData.zero();
         dst.value = this.value / rhs.value;
-        for(let i = 0; i < 7; ++i) {
+        for(let i = 0; i < VGData.DIM; ++i) {
             dst.grad[i] = (this.grad[i] * rhs.value - this.value * rhs.grad[i])/(rhs.value * rhs.value);
         }
 
@@ -234,7 +235,7 @@ export class VGData
     div_number(rhs) {
         var dst = VGData.zero();
         dst.value = this.value / rhs;
-        for(let i = 0; i < 7; ++i) {
+        for(let i = 0; i < VGData.DIM; ++i) {
             dst.grad[i] = this.grad[i] / rhs;
         }
 
@@ -259,7 +260,7 @@ export class VGData
     inv() {
         var dst = VGData.zero();
         dst.value = 1 / this.value;
-        for(let i = 0; i < 7; ++i) {
+        for(let i = 0; i < VGData.DIM; ++i) {
             dst.grad[i] = -this.grad[i] / (this.value * this.value);
         }
 
@@ -278,7 +279,7 @@ export class VGData
 
         // d/dx f(x)^a = a f(x)^{a-1} f'(x)
         const pm1 = Math.pow(this.value, num-1) * num;
-        for(let i = 0; i < 7; ++i) {
+        for(let i = 0; i < VGData.DIM; ++i) {
             dst.grad[i] = pm1 * this.grad[i]
         }
 
@@ -326,7 +327,7 @@ export class VGData
     log() {
         var dst = VGData.zero();
         dst.value = Math.log(this.value);
-        for(let i = 0; i < 7; ++i) {
+        for(let i = 0; i < VGData.DIM; ++i) {
             dst.grad[i] = this.grad[i] / this.value;
         }
 
@@ -868,7 +869,7 @@ export class DamageCalculator
             cost / 6.2 * 19];
 
         var grad = objfunc([0, 0, 0, 0, 0, 0, 0]).grad;
-        for(let i = 0; i < 7; ++i)
+        for(let i = 0; i < VGData.DIM; ++i)
             if(grad[i] < 1e-4)
                 rect[i] = 0;
         
