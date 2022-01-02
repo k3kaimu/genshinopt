@@ -7,11 +7,22 @@ export class VGData
     static doCalcExprText = false;
     static DIM = 7;
 
+    #value;
+    #grad;
+    #exprText;
+
     constructor(value, gradVec)
     {
-        this.value = value;
-        this.grad = gradVec;    // double[7]: [rateAtk, rateDef, rateHP, crtRate, crtDmg, recharge, mastery]
-        this.exprText = null;
+        this.#value = value;
+        this.#grad = gradVec;    // double[7]: [rateAtk, rateDef, rateHP, crtRate, crtDmg, recharge, mastery]
+        this.#exprText = null;
+    }
+
+    get value() { return this.#value; }
+    get grad() { return this.#grad; }
+
+    set value(v) {
+        this.#value = v;
     }
 
 
@@ -75,25 +86,25 @@ export class VGData
 
 
     toExprText() {
-        if(this.exprText)
-            return "(" + this.exprText + ")";
+        if(this.#exprText)
+            return "(" + this.#exprText + ")";
         else {
-            if(this.value < 1e-6)
+            if(this.#value < 1e-6)
                 return "0";
             else
-                return VGData.textValue(this.value, 4);
+                return VGData.textValue(this.#value, 4);
         }
     }
 
 
     dup() {
         var dst = VGData.zero();
-        dst.value = this.value;
+        dst.#value = this.#value;
         for(let i = 0; i < VGData.DIM; ++i) {
-            dst.grad[i] = this.grad[i];
+            dst.#grad[i] = this.#grad[i];
         }
 
-        dst.exprText = this.exprText;
+        dst.#exprText = this.#exprText;
 
         return dst;
     }
@@ -101,13 +112,13 @@ export class VGData
 
     add_VGData(rhs) {
         var dst = VGData.zero();
-        dst.value = this.value + rhs.value;
+        dst.#value = this.#value + rhs.#value;
         for(let i = 0; i < VGData.DIM; ++i) {
-            dst.grad[i] = this.grad[i] + rhs.grad[i];
+            dst.#grad[i] = this.#grad[i] + rhs.#grad[i];
         }
 
         if(VGData.doCalcExprText) {
-            dst.exprText = this.toExprText() + " + " + rhs.toExprText();
+            dst.#exprText = this.toExprText() + " + " + rhs.toExprText();
         }
 
         return dst;
@@ -116,13 +127,13 @@ export class VGData
 
     add_number(rhs) {
         var dst = VGData.zero();
-        dst.value = this.value + rhs;
+        dst.#value = this.#value + rhs;
         for(let i = 0; i < VGData.DIM; ++i) {
-            dst.grad[i] = this.grad[i];
+            dst.#grad[i] = this.#grad[i];
         }
 
         if(VGData.doCalcExprText) {
-            dst.exprText = this.toExprText() + " + " + VGData.textValue(rhs);
+            dst.#exprText = this.toExprText() + " + " + VGData.textValue(rhs);
         }
 
         return dst;
@@ -140,13 +151,13 @@ export class VGData
 
     sub_VGData(rhs) {
         var dst = VGData.zero();
-        dst.value = this.value - rhs.value;
+        dst.#value = this.#value - rhs.#value;
         for(let i = 0; i < VGData.DIM; ++i) {
-            dst.grad[i] = this.grad[i] - rhs.grad[i];
+            dst.#grad[i] = this.#grad[i] - rhs.#grad[i];
         }
 
         if(VGData.doCalcExprText) {
-            dst.exprText = this.toExprText() + " - " + rhs.toExprText();
+            dst.#exprText = this.toExprText() + " - " + rhs.toExprText();
         }
 
         return dst;
@@ -155,13 +166,13 @@ export class VGData
     
     sub_number(rhs) {
         var dst = VGData.zero();
-        dst.value = this.value - rhs;
+        dst.#value = this.#value - rhs;
         for(let i = 0; i < VGData.DIM; ++i) {
-            dst.grad[i] = this.grad[i];
+            dst.#grad[i] = this.#grad[i];
         }
 
         if(VGData.doCalcExprText) {
-            dst.exprText = this.toExprText() + " - " + VGData.textValue(rhs);
+            dst.#exprText = this.toExprText() + " - " + VGData.textValue(rhs);
         }
 
 
@@ -180,13 +191,13 @@ export class VGData
 
     mul_VGData(rhs) {
         var dst = VGData.zero();
-        dst.value = this.value * rhs.value;
+        dst.#value = this.#value * rhs.#value;
         for(let i = 0; i < VGData.DIM; ++i) {
-            dst.grad[i] = this.grad[i] * rhs.value + this.value * rhs.grad[i];
+            dst.#grad[i] = this.#grad[i] * rhs.#value + this.#value * rhs.#grad[i];
         }
 
         if(VGData.doCalcExprText) {
-            dst.exprText = this.toExprText() + " * " + rhs.toExprText();
+            dst.#exprText = this.toExprText() + " * " + rhs.toExprText();
         }
 
         return dst;
@@ -195,13 +206,13 @@ export class VGData
 
     mul_number(rhs) {
         var dst = VGData.zero();
-        dst.value = this.value * rhs;
+        dst.#value = this.#value * rhs;
         for(let i = 0; i < VGData.DIM; ++i) {
-            dst.grad[i] = this.grad[i] * rhs;
+            dst.#grad[i] = this.#grad[i] * rhs;
         }
 
         if(VGData.doCalcExprText) {
-            dst.exprText = this.toExprText() + " * " + VGData.textValue(rhs);
+            dst.#exprText = this.toExprText() + " * " + VGData.textValue(rhs);
         }
 
         return dst;
@@ -219,13 +230,13 @@ export class VGData
 
     div_VGData(rhs) {
         var dst = VGData.zero();
-        dst.value = this.value / rhs.value;
+        dst.#value = this.#value / rhs.#value;
         for(let i = 0; i < VGData.DIM; ++i) {
-            dst.grad[i] = (this.grad[i] * rhs.value - this.value * rhs.grad[i])/(rhs.value * rhs.value);
+            dst.#grad[i] = (this.#grad[i] * rhs.#value - this.#value * rhs.#grad[i])/(rhs.#value * rhs.#value);
         }
 
         if(VGData.doCalcExprText) {
-            dst.exprText = this.toExprText() + " / " + rhs.toExprText();
+            dst.#exprText = this.toExprText() + " / " + rhs.toExprText();
         }
 
         return dst;
@@ -234,13 +245,13 @@ export class VGData
 
     div_number(rhs) {
         var dst = VGData.zero();
-        dst.value = this.value / rhs;
+        dst.#value = this.#value / rhs;
         for(let i = 0; i < VGData.DIM; ++i) {
-            dst.grad[i] = this.grad[i] / rhs;
+            dst.#grad[i] = this.#grad[i] / rhs;
         }
 
         if(VGData.doCalcExprText) {
-            dst.exprText = this.toExprText() + " / " + VGData.textValue(rhs);
+            dst.#exprText = this.toExprText() + " / " + VGData.textValue(rhs);
         }
 
         return dst;
@@ -259,13 +270,13 @@ export class VGData
     // 逆数
     inv() {
         var dst = VGData.zero();
-        dst.value = 1 / this.value;
+        dst.#value = 1 / this.#value;
         for(let i = 0; i < VGData.DIM; ++i) {
-            dst.grad[i] = -this.grad[i] / (this.value * this.value);
+            dst.#grad[i] = -this.#grad[i] / (this.#value * this.#value);
         }
 
         if(VGData.doCalcExprText) {
-            dst.exprText = "1/" + this.toExprText();
+            dst.#exprText = "1/" + this.toExprText();
         }
 
         return dst;
@@ -275,12 +286,12 @@ export class VGData
     // 累乗
     pow_number(num) {
         let dst = VGData.zero();
-        dst.value = Math.pow(this.value, num);
+        dst.#value = Math.pow(this.#value, num);
 
         // d/dx f(x)^a = a f(x)^{a-1} f'(x)
-        const pm1 = Math.pow(this.value, num-1) * num;
+        const pm1 = Math.pow(this.#value, num-1) * num;
         for(let i = 0; i < VGData.DIM; ++i) {
-            dst.grad[i] = pm1 * this.grad[i]
+            dst.#grad[i] = pm1 * this.#grad[i]
         }
 
         return dst;
@@ -290,7 +301,7 @@ export class VGData
     // Math.min(this, num)
     min_number(num) {
         let dst = undefined;
-        if(this.value > num) {
+        if(this.#value > num) {
             dst = VGData.constant(num);
         } else {
             dst = VGData.zero().add(this);
@@ -298,7 +309,7 @@ export class VGData
 
         if(VGData.doCalcExprText) {
             let str = "Math.min(" + this.toExprText() + ", " + VGData.textValue(num) + ")";
-            dst.exprText = str;
+            dst.#exprText = str;
         }
 
         return dst;
@@ -308,7 +319,7 @@ export class VGData
     // Math.max(this, num)
     max_number(num) {
         let dst = undefined;
-        if(this.value > num) {
+        if(this.#value > num) {
             dst = VGData.zero().add(this);
         } else {
             dst = VGData.constant(num);
@@ -316,7 +327,7 @@ export class VGData
 
         if(VGData.doCalcExprText) {
             let str = "Math.max(" + this.toExprText() + ", " + VGData.textValue(num) + ")";
-            dst.exprText = str;
+            dst.#exprText = str;
         }
 
         return dst;
@@ -326,13 +337,13 @@ export class VGData
     // natural log
     log() {
         var dst = VGData.zero();
-        dst.value = Math.log(this.value);
+        dst.#value = Math.log(this.#value);
         for(let i = 0; i < VGData.DIM; ++i) {
-            dst.grad[i] = this.grad[i] / this.value;
+            dst.#grad[i] = this.#grad[i] / this.#value;
         }
 
         if(VGData.doCalcExprText) {
-            dst.exprText = "log" + this.toExprText();
+            dst.#exprText = "log" + this.toExprText();
         }
 
         return dst;
