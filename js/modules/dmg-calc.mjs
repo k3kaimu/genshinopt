@@ -932,7 +932,7 @@ export function makeOptimizer(calc, objfunc, total_cost, algorithm, tol, maxEval
         dmg = dmg.log();
 
         if(grad) {
-            for(let i = 0; i < 7; ++i)
+            for(let i = 0; i < VGData.DIM; ++i)
                 grad[i] = dmg.grad[i];
         }
 
@@ -943,7 +943,7 @@ export function makeOptimizer(calc, objfunc, total_cost, algorithm, tol, maxEval
     opt.addInequalityConstraint((x, grad) => {
         var cost = calc.calcSubOptionCost(x);
         if(grad) {
-            for(let i = 0; i < 7; ++i)
+            for(let i = 0; i < VGData.DIM; ++i)
                 grad[i] = cost.grad[i];
         }
 
@@ -960,8 +960,6 @@ export function makeOptimizer(calc, objfunc, total_cost, algorithm, tol, maxEval
 
 
 export async function applyOptimize(calc, objfunc, total_cost, algorithm, x0, tol, maxEval, retry = 3) {
-    let VGData = Object.getPrototypeOf(calc.baseAtk).constructor;
-
     let doCalcExprTextLast = VGData.doCalcExprText;
     VGData.doCalcExprText = false;
     let returnValue = undefined;
