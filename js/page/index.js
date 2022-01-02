@@ -85,7 +85,9 @@ $(function(){
         this.recharge = ko.observable();
         this.resisDown = ko.observable();
 
-        this.applyDmgCalcImpl = function(calc){
+        this.applyDmgCalc = function(calc){
+            Calc.VGData.pushContext('ExternalBuff');
+
             calc.addAtk.value += Number(this.addAtk() || 0);
             calc.rateAtk.value += Number(this.rateAtk() || 0);
             calc.addDef.value += Number(this.addDef() || 0);
@@ -98,6 +100,7 @@ $(function(){
             calc.baseAllDmg.value += Number(this.dmgBuff() || 0);
             calc.baseRecharge.value += Number(this.recharge() || 0);
             calc.baseAllResis.value -= Number(this.resisDown() || 0);
+            Calc.VGData.popContext();
 
             return calc;
         }.bind(this);
@@ -284,19 +287,21 @@ $(function(){
             allpatterns.forEach(setting => {
                 async function task(){
                     let calc = new Calc.DamageCalculator();
-                    calc = setting.character.applyDmgCalcImpl(calc);
-                    calc = setting.weapon.applyDmgCalcImpl(calc);
-                    calc = setting.artifactSet1.applyDmgCalcImpl(calc);
-                    calc = setting.artifactSet2.applyDmgCalcImpl(calc);
+                    calc = setting.character.applyDmgCalc(calc);
+                    calc = setting.weapon.applyDmgCalc(calc);
+                    calc = setting.artifactSet1.applyDmgCalc(calc);
+                    calc = setting.artifactSet2.applyDmgCalc(calc);
 
+                    Calc.VGData.pushContext('Artifact');
                     calc.addAtk.value += 311;
-                    calc.addHP.value += 4780;   
+                    calc.addHP.value += 4780;
+                    Calc.VGData.popContext();
 
                     [setting.clock, setting.cup, setting.hat].forEach(e => {
-                        calc = Data.applyDmgCalcImplArtifactMainStatus(calc, setting.character.parent, e.value);
+                        calc = Data.applyDmgCalcArtifactMainStatus(calc, setting.character.parent, e.value);
                     });
 
-                    calc = setting.exbuff.applyDmgCalcImpl(calc);
+                    calc = setting.exbuff.applyDmgCalc(calc);
 
                     let attackType = setting.attack;
 

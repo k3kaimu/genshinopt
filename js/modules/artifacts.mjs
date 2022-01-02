@@ -1,3 +1,4 @@
+import * as Calc from '/js/modules/dmg-calc.mjs';
 import * as Widget from '/js/modules/widget.mjs';
 
 
@@ -25,6 +26,15 @@ export class ArtifactViewModel
     {
         this.parent = data;
         this.bonusType = bonusType;
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        Calc.VGData.pushContext('Artifact');
+        calc = this.applyDmgCalcImpl(calc);
+        Calc.VGData.popContext();
+        return calc;
     }
 
 
@@ -1277,8 +1287,9 @@ runUnittest(function(){
 
 
 // statusType: "ATK%", "DEF%", "HP%", "Mastery", "Recharge", "PhyDmg", "ElmDmg", "CrtRate", "CrtDmg", "Heal"
-export function applyDmgCalcImplArtifactMainStatus(calc, character, statusType)
+export function applyDmgCalcArtifactMainStatus(calc, character, statusType)
 {
+    Calc.VGData.pushContext('Artifact');
     switch(statusType) {
         case "ATK%":
             calc.rateAtk.value += 0.466;
@@ -1346,6 +1357,7 @@ export function applyDmgCalcImplArtifactMainStatus(calc, character, statusType)
             console.log("Unknown value: ", e.value);
     }
 
+    Calc.VGData.popContext();
     return calc;
 }
 

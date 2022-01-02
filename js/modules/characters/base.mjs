@@ -105,6 +105,15 @@ export class CharacterViewModel
     maxBurstTalentRank() { return 10; }
 
 
+    applyDmgCalc(calc)
+    {
+        Calc.VGData.pushContext('Character');
+        calc = this.applyDmgCalcImpl(calc);
+        Calc.VGData.popContext();
+        return calc;
+    }
+
+
     applyDmgCalcImpl(calc)
     {
         calc.character = this.parent;

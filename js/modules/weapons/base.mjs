@@ -56,6 +56,15 @@ export class WeaponViewModel
     }
 
 
+    applyDmgCalc(calc)
+    {
+        Calc.VGData.pushContext('Weapon');
+        calc = this.applyDmgCalcImpl(calc);
+        Calc.VGData.popContext();
+        return calc;
+    }
+
+
     applyDmgCalcImpl(calc)
     {
         calc.weapon = this.parent;

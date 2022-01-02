@@ -27,13 +27,12 @@ export class VGData
 
     set value(v) {
         if(VGData.doCalcExprText)  {
-            if(this.value == 0 && this.#exprText == null && this.#annotate == null) {
-                this.#exprText = VGData.textValue(v);
-            } else {
-                let diff = v - this.#value;
-                let op = diff >= 0 ? '+' : '-';
-                this.#exprText = `${this.toExprText()} + ${VGData.textValue(Math.abs(diff))}`;
-            }
+            let diff = v - this.#value;
+            let op = diff >= 0 ? '+' : '-';
+            let txt = VGData.textValue(Math.abs(diff));
+            txt = (VGData.context == undefined) ? txt : `[${VGData.context}]{${txt}}(${txt})`;
+
+            this.#exprText = `${this.toExprText()} ${op} ${txt}`;
         }
 
         this.#value = v;
