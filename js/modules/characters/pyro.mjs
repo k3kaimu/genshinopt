@@ -32,9 +32,9 @@ export class PyroCharacterViewModel extends Base.CharacterViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         let prob = Number(this.reactionProb());
         let type = this.reactionType();
@@ -203,9 +203,9 @@ export class HuTaoViewModel extends PyroCharacterViewModel
     maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.lowHP()) {
             calc.basePyroDmg.value += 0.33;
@@ -426,9 +426,9 @@ export class YoimiyaViewModel extends Base.CharacterViewModel
     maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.basePyroDmg.value += Number(this.skillStacks()) * 0.02;
 
@@ -656,9 +656,9 @@ export class XianglingViewModel extends PyroCharacterViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.useAtkIncEffect()) {
             calc.rateAtk.value += 0.1;
@@ -859,9 +859,9 @@ export class YanfeiViewModel extends PyroCharacterViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.useBurstEffect()) {
             // 重撃ダメージアップ

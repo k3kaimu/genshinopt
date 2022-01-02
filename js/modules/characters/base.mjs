@@ -105,7 +105,7 @@ export class CharacterViewModel
     maxBurstTalentRank() { return 10; }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
         calc.character = this.parent;
 

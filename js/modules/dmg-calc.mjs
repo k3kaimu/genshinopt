@@ -3,6 +3,8 @@
 // 値と勾配ベクトルを保持するデータ
 export class VGData
 {
+    static #contexts = [];
+
     // for debug
     static doCalcExprText = false;
     static DIM = 7;
@@ -10,19 +12,51 @@ export class VGData
     #value;
     #grad;
     #exprText;
+    #annotate;
 
     constructor(value, gradVec)
     {
         this.#value = value;
         this.#grad = gradVec;    // double[7]: [rateAtk, rateDef, rateHP, crtRate, crtDmg, recharge, mastery]
         this.#exprText = null;
+        this.#annotate = null;
     }
 
     get value() { return this.#value; }
     get grad() { return this.#grad; }
 
     set value(v) {
+        if(VGData.doCalcExprText)  {
+            if(this.value == 0 && this.#exprText == null && this.#annotate == null) {
+                this.#exprText = VGData.textValue(v);
+            } else {
+                let diff = v - this.#value;
+                let op = diff >= 0 ? '+' : '-';
+                this.#exprText = `${this.toExprText()} + ${VGData.textValue(Math.abs(diff))}`;
+            }
+        }
+
         this.#value = v;
+    }
+
+
+    static pushContext(ctx)
+    {
+        this.#contexts.push(ctx);
+    }
+
+
+    static popContext()
+    {
+        this.#contexts.pop();
+    }
+
+
+    static get context() {
+        if(this.#contexts.length == 0)
+            return undefined;
+        else
+            return this.#contexts.at(-1);
     }
 
 
@@ -77,23 +111,39 @@ export class VGData
 
     static textValue(value)
     {
-        if(value >= 1000) {
-            return "" + value;
-        } else {
-            return textNumber(value, 4);
-        }
+        let fix = Number(value).toFixed(4);
+        let str = "" + value;
+        return fix.length < str.length ? fix : str;
     }
 
 
     toExprText() {
-        if(this.#exprText)
-            return "(" + this.#exprText + ")";
-        else {
+        let isConstant = false;
+
+        let text = this.#exprText;
+        if(text == null) {
             if(this.#value < 1e-6)
-                return "0";
+                text = "0";
             else
-                return VGData.textValue(this.#value, 4);
+                text = VGData.textValue(this.#value);
+
+            isConstant = true;
         }
+
+        if(this.#annotate)
+            return `[${this.#annotate}]{${VGData.textValue(this.#value)}}(${text})`;
+        else {
+            if(isConstant)
+                return text;
+            else
+                return `(${text})`;
+        }
+    }
+
+
+    as(annotate) {
+        this.#annotate = annotate;
+        return this;
     }
 
 
@@ -382,8 +432,8 @@ export class Attacks
         let chains = {};
         attacks.forEach((e, i) => {
             const p = probs[i];
-            newAttacks.damage = newAttacks.damage.add(e.damage.mul(p));
-            newAttacks.chained = newAttacks.chained.add(e.chained.mul(p));
+            newAttacks.damage = newAttacks.damage.add(e.damage.mul( VGData.constant(p).as('Prob') ));
+            newAttacks.chained = newAttacks.chained.add(e.chained.mul( VGData.constant(p).as('Prob') ));
         });
 
         return newAttacks;
@@ -701,12 +751,13 @@ export class DamageCalculator
 
         var dmgbuff = this.calculateTotalDmgBuff(attackProps);
 
-        let dmg = this.atk(attackProps).mul(dmgScale).add(this.increaseDamage(attackProps));
+        let dmg = this.atk(attackProps).as('ATK').mul(VGData.constant(dmgScale).as('TalentDMGScale'))
+                    .add(this.increaseDamage(attackProps).as('incDMG'));
 
         if(attackProps.isForcedCritical || false)
         {
             // critical
-            dmg = dmg.mul(this.crtDmg(attackProps).add(1));
+            dmg = dmg.mul(this.crtDmg(attackProps).as('CrtDMG').add(1));
         }
         else if(attackProps.isForcedNonCritical || false)
         {
@@ -716,16 +767,16 @@ export class DamageCalculator
         else
         {
             // expected value
-            dmg = dmg.mul(this.crtRate(attackProps).min_number(1).max_number(0).mul(this.crtDmg(attackProps)).add(1));
+            dmg = dmg.mul(this.crtRate(attackProps).as('CrtRate').min_number(1).max_number(0).mul(this.crtDmg(attackProps).as('CrtDMG')).add(1));
         }
         
         // damage buffs
-        dmg = dmg.mul(dmgbuff.add(1));
+        dmg = dmg.mul(dmgbuff.as('DMGBuff').add(1));
         
         return dmg
-                .mul(this.calculateVaporizeMeltBonus(attackProps))
-                .mul(this.calcAttenuationByEnemy(attackProps, 90, 90))
-                .mul(this.calculateTotalResistanceBonus(attackProps));
+                .mul(this.calculateVaporizeMeltBonus(attackProps).as('VapMeltBonus'))
+                .mul(this.calcAttenuationByEnemy(attackProps, 90, 90).as('LvlAtt'))
+                .mul(this.calculateTotalResistanceBonus(attackProps).as('Resis'));
     }
 
 
@@ -742,8 +793,8 @@ export class DamageCalculator
     }
 
 
-    atk(attackProps) { return this.baseAtk.mul(this.rateAtk.add(1).add(this.artRateAtk)).add(this.addAtk); }
-    def(attackProps) { return this.baseDef.mul(this.rateDef.add(1).add(this.artRateDef)).add(this.addDef); }
+    atk(attackProps) { return this.baseAtk.as('baseAtk').mul(this.rateAtk.add(this.artRateAtk.as('artRateAtk')).as('rateAtk').add(1)).add(this.addAtk.as('addAtk')); }
+    def(attackProps) { return this.baseDef.as('baseDef').mul(this.rateDef.add(this.artRateDef.as('artRateDef')).as('rateDef').add(1)).add(this.addDef.as('addDef')); }
     hp(attackProps) { return this.baseHP.mul(this.rateHP.add(1).add(this.artRateHP)).add(this.addHP); }
     crtRate(attackProps) { return this.baseCrtRate.add(this.artCrtRate); }
     crtDmg(attackProps) { return this.baseCrtDmg.add(this.artCrtDmg); }

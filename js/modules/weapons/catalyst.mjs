@@ -54,9 +54,9 @@ export class MemoryOfDustViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseRateShieldStrength.value += MemoryOfDust.effectTable[0][this.rank()];
         calc.rateAtk.value += this.rateAtkEffect(this.effectStacks());
@@ -150,9 +150,9 @@ export class TheWidsithViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         let data = this.toJS();
 
@@ -300,9 +300,9 @@ export class MappaMareViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         let dmgbuff = MappaMare.buffInc[this.rank()] * Number(this.buffStacks());
 

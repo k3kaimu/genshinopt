@@ -122,9 +122,9 @@ export class GanyuViewModel extends Base.CharacterViewModel
     maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.useCryoDmgInc()) {
             calc.baseCryoDmg.value += 0.2;

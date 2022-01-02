@@ -175,9 +175,9 @@ export class AratakiIttoViewModel extends Base.CharacterViewModel
     maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         let data = this.toJS();
         let CalcType = Object.getPrototypeOf(calc).constructor;
@@ -345,9 +345,9 @@ export class NoelleViewModel extends Base.CharacterViewModel
     maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.constell() >= 2) {
             calc.baseChargedDmg.value += 0.15;
@@ -501,9 +501,9 @@ export class NingguangViewModel extends Base.CharacterViewModel
     maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.useByobuBuff()) {
             calc.baseGeoDmg.value += 0.12;

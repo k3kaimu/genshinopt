@@ -51,9 +51,9 @@ export class AmosBowViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         let dmgInc = this.totalDmgInc(this.stacksDmgInc());
         calc.baseNormalDmg.value += dmgInc;
@@ -156,9 +156,9 @@ export class SkywardHarpViewModel extends Base.LikePrototypeArchaicViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
         calc.baseCrtDmg.value += SkywardHarp.addCrtDmg[this.rank()];
         return calc;
     }
@@ -209,9 +209,9 @@ export class ThunderingPulseViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.rateAtk.value += ThunderingPulse.subSkill[this.rank()].atk;
         calc.baseNormalDmg.value += ThunderingPulse.subSkill[this.rank()].dmg[this.buffStacks()];
@@ -298,9 +298,9 @@ export class PolarStarViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseSkillDmg.value += PolarStar.subSkill[this.rank()].dmg;
         calc.baseBurstDmg.value += PolarStar.subSkill[this.rank()].dmg;
@@ -381,9 +381,9 @@ export class RustViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseNormalDmg.value += Rust.addNormalDmg[this.rank()];
         calc.baseChargedDmg.value -= 0.1;
@@ -429,9 +429,9 @@ export class PrototypeCrescentViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.useAddRateAtk()) {
             calc.rateAtk.value += PrototypeCrescent.addAtk[this.rank()];

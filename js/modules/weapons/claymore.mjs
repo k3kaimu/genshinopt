@@ -41,9 +41,9 @@ export class RedhornStonethresherViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         let data = this.toJS();
         calc.rateDef.value += RedhornStonethresher.defInc[data.rank];
@@ -105,9 +105,9 @@ export class WhiteblindViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
         calc.rateAtk.value += Number(this.buffStacks()) * Whiteblind.buffInc[this.rank()];
         calc.rateDef.value += Number(this.buffStacks()) * Whiteblind.buffInc[this.rank()];
         return calc;
@@ -246,9 +246,9 @@ export class SerpentSpineViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
         calc.baseAllDmg.value +=  Number(this.buffStacks()) * SerpentSpine.buffInc[this.rank()];
         return calc;
     }
@@ -351,9 +351,9 @@ export class LuxuriousSeaLordViewModel extends Base.LikePrototypeArchaicViewMode
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseBurstDmg.value += LuxuriousSeaLord.effectTable[0][this.rank()];
 

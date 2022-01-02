@@ -85,7 +85,7 @@ $(function(){
         this.recharge = ko.observable();
         this.resisDown = ko.observable();
 
-        this.applyDmgCalc = function(calc){
+        this.applyDmgCalcImpl = function(calc){
             calc.addAtk.value += Number(this.addAtk() || 0);
             calc.rateAtk.value += Number(this.rateAtk() || 0);
             calc.addDef.value += Number(this.addDef() || 0);
@@ -284,19 +284,19 @@ $(function(){
             allpatterns.forEach(setting => {
                 async function task(){
                     let calc = new Calc.DamageCalculator();
-                    calc = setting.character.applyDmgCalc(calc);
-                    calc = setting.weapon.applyDmgCalc(calc);
-                    calc = setting.artifactSet1.applyDmgCalc(calc);
-                    calc = setting.artifactSet2.applyDmgCalc(calc);
+                    calc = setting.character.applyDmgCalcImpl(calc);
+                    calc = setting.weapon.applyDmgCalcImpl(calc);
+                    calc = setting.artifactSet1.applyDmgCalcImpl(calc);
+                    calc = setting.artifactSet2.applyDmgCalcImpl(calc);
 
                     calc.addAtk.value += 311;
                     calc.addHP.value += 4780;   
 
                     [setting.clock, setting.cup, setting.hat].forEach(e => {
-                        calc = Data.applyDmgCalcArtifactMainStatus(calc, setting.character.parent, e.value);
+                        calc = Data.applyDmgCalcImplArtifactMainStatus(calc, setting.character.parent, e.value);
                     });
 
-                    calc = setting.exbuff.applyDmgCalc(calc);
+                    calc = setting.exbuff.applyDmgCalcImpl(calc);
 
                     let attackType = setting.attack;
 
@@ -471,6 +471,9 @@ $(function(){
                 this.isOpen.subscribe(function(newVal){
                     if(newVal && !this.doneCalc) {
                         e.setting.character.presetAttacks().forEach(attackType => {
+                            let oldValue = Calc.VGData.doCalcExprText;
+                            Calc.VGData.doCalcExprText = true;                            
+
                             let expected = attackType.evaluate(e.calc, {});
                             let crt = attackType.evaluate(e.calc, {isForcedCritical: true});
                             let noncrt = attackType.evaluate(e.calc, {isForcedNonCritical: true});
@@ -478,6 +481,8 @@ $(function(){
                             this.dmgExpected[attackType.label](expected);
                             this.dmgCrt[attackType.label](crt);
                             this.dmgNonCrt[attackType.label](noncrt);
+
+                            Calc.VGData.doCalcExprText = oldValue;
                         });
                         this.doneCalc = true;
                     }

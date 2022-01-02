@@ -56,7 +56,7 @@ export class WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
         calc.weapon = this.parent;
 
@@ -127,9 +127,9 @@ export class WeaponWithChainedAttack extends WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         let CalcType = Object.getPrototypeOf(calc).constructor;
         let vm = this;

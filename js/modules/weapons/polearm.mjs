@@ -43,9 +43,9 @@ export class PrimordialJadeWingedSpearViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.rateAtk.value += PrimordialJadeWingedSpear.effectTable[0][this.rank()] * Number(this.effectStacks());
         
@@ -153,9 +153,9 @@ export class SkywardSpineViewModel extends Base.LikePrototypeArchaicViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseCrtRate.value += SkywardSpine.effectTable[0][this.rank()];
 
@@ -215,9 +215,9 @@ export class VortexVanquisherViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseRateShieldStrength.value += VortexVanquisher.effectTable[0][this.rank()];
         calc.rateAtk.value += this.rateAtkEffect(this.effectStacks());
@@ -305,9 +305,9 @@ export class StaffOfHomaViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         let r = this.rank();
         calc.rateHP.value += StaffOfHoma.addRateHP[r];
@@ -412,9 +412,9 @@ export class EngulfingLightningViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.useEffect()) {
             calc.baseRecharge.value += EngulfingLightning.effectTable[this.rank()][2];
@@ -526,9 +526,9 @@ export class DragonsBaneViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.useEffect()) {
             calc.baseAllDmg.value += DragonsBane.dmgBuff[this.rank()];
@@ -623,9 +623,9 @@ export class LithicSpearViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         let eff = this.buffEffect(this.buffStacks());
         calc.rateAtk.value += eff[0];
@@ -706,9 +706,9 @@ export class RoyalSpearViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.selType() == "constant") {
             calc.baseCrtRate.value += this.crtIncrease(this.buffStacks());
@@ -837,9 +837,9 @@ export class BlackcliffPoleViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.rateAtk.value += this.incRateAtk(this.effectStacks());
 
@@ -925,9 +925,9 @@ export class PrototypeStarglitterViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseNormalDmg.value += this.incDmg(this.effectStacks());
         calc.baseChargedDmg.value += this.incDmg(this.effectStacks());
@@ -1006,9 +1006,9 @@ export class CrescentPikeViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(! this.useEffect())
             return calc;
@@ -1111,9 +1111,9 @@ export class DeathmatchViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.isTwoOrHigh() == 1) {
             calc.rateAtk.value += Deathmatch.effectTable[0][this.rank()];
@@ -1305,9 +1305,9 @@ export class KitainCrossSpearViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseSkillDmg.value += KitainCrossSpear.effectTable[this.rank()];
 
@@ -1356,9 +1356,9 @@ export class WavebreakersFinViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         let rank_ = this.rank();
 
@@ -1444,9 +1444,9 @@ export class TheCatchViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseBurstDmg.value += TheCatch.effectTable[this.rank()][0];
 
@@ -1507,9 +1507,9 @@ export class BlackTasselViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.useEffect()) {
             calc.baseAllDmg.value += BlackTassel.effectTable[this.rank()];
@@ -1640,9 +1640,9 @@ export class WhiteTasselViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseNormalDmg.value += WhiteTassel.effectTable[this.rank()];
 

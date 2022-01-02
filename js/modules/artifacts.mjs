@@ -28,7 +28,7 @@ export class ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
         return calc;
     }
@@ -82,9 +82,9 @@ export class GladiatorsFinaleViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.rateAtk.value += 0.18;
 
@@ -139,9 +139,9 @@ export class WanderersTroupeViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseMastery.value += 80;
 
@@ -197,9 +197,9 @@ export class ThundersootherViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.bonusType == 4 && this.useEffect4()) {
             calc.baseAllDmg.value += 0.35;
@@ -270,9 +270,9 @@ export class ThunderingFuryViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseElectroDmg.value += 0.15;
 
@@ -317,9 +317,9 @@ export class LavawalkerViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         if(this.bonusType == 4 && this.useEffect4()) {
             calc.baseAllDmg.value += 0.35;
@@ -390,9 +390,9 @@ export class CrimsonWitchOfFlamesViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         let bonusValue = 0.15;
         if(this.bonusType == '4') {
@@ -474,9 +474,9 @@ export class NoblesseObligeViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseBurstDmg.value += 0.20;
 
@@ -550,9 +550,9 @@ export class BloodstainedChivalryViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.basePhysicalDmg.value += 0.25;
 
@@ -625,9 +625,9 @@ export class ArchaicPetraViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseGeoDmg.value += 0.15;
 
@@ -747,9 +747,9 @@ export class RetracingBolideViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseRateShieldStrength.value += 0.35;
 
@@ -822,9 +822,9 @@ export class BlizzardStrayerViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseCryoDmg.value += 0.15;
 
@@ -900,9 +900,9 @@ export class HeartOfDepthViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseHydroDmg.value += 0.15;
 
@@ -974,9 +974,9 @@ export class PaleFlameViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.basePhysicalDmg.value += 0.25;
 
@@ -1057,9 +1057,9 @@ export class ShimenawaReminiscenceViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.rateAtk.value += 0.18;
 
@@ -1131,9 +1131,9 @@ export class EmblemOfSeveredFateViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.baseRecharge.value += 0.2;
 
@@ -1186,9 +1186,9 @@ export class HuskOfOpulentDreamsViewModel extends ArtifactViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         calc.rateDef.value += 0.3;
 
@@ -1277,7 +1277,7 @@ runUnittest(function(){
 
 
 // statusType: "ATK%", "DEF%", "HP%", "Mastery", "Recharge", "PhyDmg", "ElmDmg", "CrtRate", "CrtDmg", "Heal"
-export function applyDmgCalcArtifactMainStatus(calc, character, statusType)
+export function applyDmgCalcImplArtifactMainStatus(calc, character, statusType)
 {
     switch(statusType) {
         case "ATK%":

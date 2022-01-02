@@ -38,9 +38,9 @@ export class PrimordialJadeCutterViewModel extends Base.WeaponViewModel
     }
 
 
-    applyDmgCalc(calc)
+    applyDmgCalcImpl(calc)
     {
-        calc = super.applyDmgCalc(calc);
+        calc = super.applyDmgCalcImpl(calc);
 
         let data = this.toJS();
         data.atkInc = PrimordialJadeCutter.atkInc[data.rank];
