@@ -420,19 +420,18 @@ export class Attacks
     }
 
 
-    static expect(probs, attacks)
+    static expect(probs, attacks, labels)
     {
-        console.assert(probs.length == attacks.length, `(probs.length == ${probs.length}) and (attacks.length == ${attacks.length})`);
+        console.assert(probs.length == attacks.length && probs.length == labels.length, `(probs.length == ${probs.length}) and (attacks.length == ${attacks.length})`);
 
         if(probs.length == 0)
             return new Attacks(VGData.zero());
 
         let newAttacks = new Attacks(VGData.zero());
-        let chains = {};
         attacks.forEach((e, i) => {
             const p = probs[i];
-            newAttacks.damage = newAttacks.damage.add(e.damage.mul( VGData.constant(p).as('Prob') ));
-            newAttacks.chained = newAttacks.chained.add(e.chained.mul( VGData.constant(p).as('Prob') ));
+            newAttacks.damage = newAttacks.damage.add(e.damage.as(labels[i]).mul( VGData.constant(p).as('Prob') ));
+            newAttacks.chained = newAttacks.chained.add(e.chained.as(labels[i]).mul( VGData.constant(p).as('Prob') ));
         });
 
         return newAttacks;

@@ -188,17 +188,21 @@ export class TheWidsithViewModel extends Base.WeaponViewModel
                 }
 
                 let dmgs = [];
+                let lbls = [];
 
                 if(this.#dataWidsith.useAtkUp) {
                     dmgs.push(super.calculate(dmgScale, {...attackProps, isWidsithAtkUp: true}));
+                    lbls.push('流浪楽章::攻撃力UP');
                 }
 
                 if(this.#dataWidsith.useDmgUp) {
                     dmgs.push(super.calculate(dmgScale, {...attackProps, isWidsithDmgUp: true}));
+                    lbls.push('流浪楽章::ダメージバフUP');
                 }
 
                 if(this.#dataWidsith.useMryUp) {
                     dmgs.push(super.calculate(dmgScale, {...attackProps, isWidsithMryUp: true}));
+                    lbls.push('流浪楽章::元素熟知UP');
                 }
 
                 if(dmgs.length == 0) {
@@ -210,7 +214,7 @@ export class TheWidsithViewModel extends Base.WeaponViewModel
                 for(let i = 0; i < dmgs.length; ++i)
                     probs.push(1.0 / dmgs.length);
 
-                return Calc.Attacks.expect(probs, dmgs);
+                return Calc.Attacks.expect(probs, dmgs, lbls);
             }
         };
 

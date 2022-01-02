@@ -54,8 +54,10 @@ export class PyroCharacterViewModel extends Base.CharacterViewModel
                     // 元素反応あり
                     newProps[this.reactionType] = true;
                     let dmg2 = super.calculate(dmgScale, newProps);
+
+                    let txtReact = (this.reactionType == "isVaporize") ? "蒸発" : "溶解";
         
-                    return Calc.Attacks.expect([1 - this.reactionProb, this.reactionProb], [dmg1, dmg2]);
+                    return Calc.Attacks.expect([1 - this.reactionProb, this.reactionProb], [dmg1, dmg2], [`${txtReact}反応なし`, `${txtReact}反応あり`]);
                 } else {
                     // 攻撃が炎ではないので，元素反応なし
                     return super.calculate(dmgScale, attackProps);
