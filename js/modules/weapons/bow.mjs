@@ -112,7 +112,6 @@ runUnittest(function(){
                 "stacksDmgInc": 5
             },
             "expected": {
-                "Anemo": {},
                 "normal_100": 746.2050393599999,
                 "normal_elem_100": 746.2050393599999,
                 "skill_100": 490.92436799999996,
@@ -205,7 +204,6 @@ runUnittest(function(){
                 "useEffect": false
             },
             "expected": {
-                "Anemo": {},
                 "normal_100": 423.81144000000006,
                 "normal_elem_100": 423.81144000000006,
                 "skill_100": 423.81144000000006,
@@ -319,7 +317,6 @@ runUnittest(function(){
                 "buffStacks": 3
             },
             "expected": {
-                "Anemo": {},
                 "normal_100": 569.0221488,
                 "normal_elem_100": 569.0221488,
                 "skill_100": 406.444392,
@@ -436,7 +433,6 @@ runUnittest(function(){
                 "buffStacks": 3
             },
             "expected": {
-                "Anemo": {},
                 "normal_100": 508.86154799999997,
                 "normal_elem_100": 508.86154799999997,
                 "skill_100": 569.92493376,
@@ -508,7 +504,6 @@ runUnittest(function(){
                 "rank": 0
             },
             "expected": {
-                "Anemo": {},
                 "normal_100": 559.306377,
                 "normal_elem_100": 559.306377,
                 "skill_100": 399.50455500000004,
@@ -610,7 +605,6 @@ runUnittest(function(){
                 "useAddRateAtk": true
             },
             "expected": {
-                "Anemo": {},
                 "normal_100": 501.289155,
                 "normal_elem_100": 501.289155,
                 "skill_100": 501.289155,

@@ -117,7 +117,6 @@ runUnittest(function(){
                 "effectStacks": 5
             },
             "expected": {
-                "Anemo": {},
                 "normal_100": 622.187568,
                 "normal_elem_100": 622.187568,
                 "skill_100": 622.187568,
@@ -306,7 +305,6 @@ runUnittest(function(){
                 "useMryUp": true
             },
             "expected": {
-                "Anemo": {},
                 "normal_100": 394.80456599999997,
                 "normal_elem_100": 394.80456599999997,
                 "skill_100": 394.80456599999997,
@@ -420,7 +418,6 @@ runUnittest(function(){
                 "buffStacks": 2
             },
             "expected": {
-                "Anemo": {},
                 "normal_100": 308.2275,
                 "normal_elem_100": 357.5439,
                 "skill_100": 357.5439,

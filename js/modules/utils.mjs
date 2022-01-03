@@ -52,7 +52,6 @@ export function makeUnittestForWeapon(id, elem)
 
     let results = {};
     let cvm = (new Data.TestCharacter(elem, w.weaponType)).newViewModel();
-    results[elem] = {};
 
     let calc = new Calc.DamageCalculator();
     calc = cvm.applyDmgCalc(calc);
@@ -72,8 +71,6 @@ export function checkUnittestForWeapon(weapon, elem, setting)
     let w = weapon;
     let wvm = w.newViewModel();
     wvm.fromJS(setting.vm);
-
-    let results = {};
 
     let ok = true;
     let cvm = (new Data.TestCharacter(elem, w.weaponType)).newViewModel();
