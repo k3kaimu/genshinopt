@@ -52,7 +52,7 @@ export class WeaponViewModel
     constructor(data)
     {
         this.parent = data;
-        this.rank = ko.observable();
+        this.rank = ko.observable(0);
     }
 
 
