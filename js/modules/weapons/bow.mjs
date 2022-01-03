@@ -1,6 +1,7 @@
 import * as Base from '/js/modules/weapons/base.mjs';
 import * as Calc from '/js/modules/dmg-calc.mjs';
 import * as Widget from '/js/modules/widget.mjs';
+import * as Utils from '/js/modules/utils.mjs';
 
 
 
@@ -100,6 +101,33 @@ export class AmosBowViewModel extends Base.WeaponViewModel
 
 
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new AmosBow(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "amos_bow",
+                "rank": 0,
+                "stacksDmgInc": 5
+            },
+            "expected": {
+                "Anemo": {},
+                "normal_100": 746.2050393599999,
+                "normal_elem_100": 746.2050393599999,
+                "skill_100": 490.92436799999996,
+                "burst_100": 490.92436799999996
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new AmosBow().newViewModel()
+    ));
+});
+
+
+
 // 天空の翼
 export class SkywardHarp extends Base.WeaponData
 {
@@ -163,6 +191,33 @@ export class SkywardHarpViewModel extends Base.LikePrototypeArchaicViewModel
         return calc;
     }
 }
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new SkywardHarp(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "skyward_harp",
+                "rank": 0,
+                "perAttack": 5,
+                "useEffect": false
+            },
+            "expected": {
+                "Anemo": {},
+                "normal_100": 423.81144000000006,
+                "normal_elem_100": 423.81144000000006,
+                "skill_100": 423.81144000000006,
+                "burst_100": 423.81144000000006
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new SkywardHarp().newViewModel()
+    ));
+});
 
 
 
@@ -251,6 +306,32 @@ export class ThunderingPulseViewModel extends Base.WeaponViewModel
         this.buffStacks(obj.buffStacks);
     }
 }
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new ThunderingPulse(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "thundering_pulse",
+                "rank": 0,
+                "buffStacks": 3
+            },
+            "expected": {
+                "Anemo": {},
+                "normal_100": 569.0221488,
+                "normal_elem_100": 569.0221488,
+                "skill_100": 406.444392,
+                "burst_100": 406.444392
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new ThunderingPulse().newViewModel()
+    ));
+});
 
 
 
@@ -344,6 +425,31 @@ export class PolarStarViewModel extends Base.WeaponViewModel
 }
 
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new PolarStar(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "polar_star",
+                "rank": 0,
+                "buffStacks": 3
+            },
+            "expected": {
+                "Anemo": {},
+                "normal_100": 508.86154799999997,
+                "normal_elem_100": 508.86154799999997,
+                "skill_100": 569.92493376,
+                "burst_100": 569.92493376
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new PolarStar().newViewModel()
+    ));
+});
+
 
 // 弓蔵
 export class Rust extends Base.WeaponData
@@ -392,6 +498,30 @@ export class RustViewModel extends Base.WeaponViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new Rust(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "rust",
+                "rank": 0
+            },
+            "expected": {
+                "Anemo": {},
+                "normal_100": 559.306377,
+                "normal_elem_100": 559.306377,
+                "skill_100": 399.50455500000004,
+                "burst_100": 399.50455500000004
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Rust().newViewModel()
+    ));
+});
+
 
 // 澹月・試作
 export class PrototypeCrescent extends Base.WeaponData
@@ -420,6 +550,7 @@ export class PrototypeCrescent extends Base.WeaponData
 }
 
 
+// 澹月・試作
 export class PrototypeCrescentViewModel extends Base.WeaponViewModel
 {
     constructor(parent)
@@ -466,3 +597,29 @@ export class PrototypeCrescentViewModel extends Base.WeaponViewModel
         this.useAddRateAtk(obj.useAddRateAtk);
     }
 }
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new PrototypeCrescent(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "prototype_crescent",
+                "rank": 0,
+                "useAddRateAtk": true
+            },
+            "expected": {
+                "Anemo": {},
+                "normal_100": 501.289155,
+                "normal_elem_100": 501.289155,
+                "skill_100": 501.289155,
+                "burst_100": 501.289155
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new PrototypeCrescent().newViewModel()
+    ));
+});
