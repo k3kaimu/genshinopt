@@ -1,7 +1,7 @@
 import * as Calc from '/js/modules/dmg-calc.mjs';
 import * as Base from '/js/modules/weapons/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
-
+import * as Utils from '/js/modules/utils.mjs';
 
 // 和璞鳶
 export class PrimordialJadeWingedSpear extends Base.WeaponData
@@ -94,6 +94,30 @@ export class PrimordialJadeWingedSpearViewModel extends Base.WeaponViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new PrimordialJadeWingedSpear(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "primordial_jade_winged_spear",
+                "rank": 0,
+                "effectStacks": 7
+            },
+            "expected": {
+                "normal_100": 555.1153461504001,
+                "normal_elem_100": 555.1153461504001,
+                "skill_100": 555.1153461504001,
+                "burst_100": 555.1153461504001
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new PrimordialJadeWingedSpear().newViewModel()
+    ));
+});
+
 
 // 天空の脊
 export class SkywardSpine extends Base.WeaponData
@@ -162,6 +186,31 @@ export class SkywardSpineViewModel extends Base.LikePrototypeArchaicViewModel
         return calc;
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new SkywardSpine(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "skyward_spine",
+                "rank": 0,
+                "perAttack": 4,
+                "useEffect": false
+            },
+            "expected": {
+                "normal_100": 375.46740000000005,
+                "normal_elem_100": 375.46740000000005,
+                "skill_100": 375.46740000000005,
+                "burst_100": 375.46740000000005
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new SkywardSpine().newViewModel()
+    ));
+});
 
 
 // 破天の槍
@@ -265,6 +314,31 @@ export class VortexVanquisherViewModel extends Base.WeaponViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new VortexVanquisher(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "vortex_vanquisher",
+                "rank": 0,
+                "isShielded": true,
+                "effectStacks": 5
+            },
+            "expected": {
+                "normal_100": 622.187568,
+                "normal_elem_100": 622.187568,
+                "skill_100": 622.187568,
+                "burst_100": 622.187568
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new VortexVanquisher().newViewModel()
+    ));
+});
+
 
 // 護摩の杖
 export class StaffOfHoma extends Base.WeaponData
@@ -366,6 +440,30 @@ export class StaffOfHomaViewModel extends Base.WeaponViewModel
         this.selLowHighHP(obj.selLowHighHP);
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new StaffOfHoma(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "staff_of_homa",
+                "rank": 0,
+                "selLowHighHP": "lowHP"
+            },
+            "expected": {
+                "normal_100": 442.03698,
+                "normal_elem_100": 442.03698,
+                "skill_100": 442.03698,
+                "burst_100": 442.03698
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new StaffOfHoma().newViewModel()
+    ));
+});
 
 
 // 草薙の稲光
@@ -469,6 +567,30 @@ export class EngulfingLightningViewModel extends Base.WeaponViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new EngulfingLightning(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "engulfing_lightning",
+                "rank": 0,
+                "useEffect": true
+            },
+            "expected": {
+                "normal_100": 406.35148824000004,
+                "normal_elem_100": 406.35148824000004,
+                "skill_100": 406.35148824000004,
+                "burst_100": 406.35148824000004
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new EngulfingLightning().newViewModel()
+    ));
+});
+
 
 
 // 西風長槍
@@ -487,6 +609,29 @@ export class FavoniusLance extends Base.WeaponData
         );
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new FavoniusLance(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "favonius_lance",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 308.2275,
+                "normal_elem_100": 308.2275,
+                "skill_100": 308.2275,
+                "burst_100": 308.2275
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new FavoniusLance().newViewModel()
+    ));
+});
 
 
 // 匣中滅龍
@@ -571,6 +716,30 @@ export class DragonsBaneViewModel extends Base.WeaponViewModel
         this.useEffect(obj.useEffect);
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new DragonsBane(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "dragons_bane",
+                "rank": 0,
+                "useEffect": true
+            },
+            "expected": {
+                "normal_100": 308.13480000000004,
+                "normal_elem_100": 308.13480000000004,
+                "skill_100": 308.13480000000004,
+                "burst_100": 308.13480000000004
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new DragonsBane().newViewModel()
+    ));
+});
 
 
 // 千岩長槍
@@ -666,6 +835,30 @@ export class LithicSpearViewModel extends Base.WeaponViewModel
         this.buffStacks(obj.buffStacks);
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new LithicSpear(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "lithic_spear",
+                "rank": 0,
+                "buffStacks": 2
+            },
+            "expected": {
+                "normal_100": 451.70470800000004,
+                "normal_elem_100": 451.70470800000004,
+                "skill_100": 451.70470800000004,
+                "burst_100": 451.70470800000004
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new LithicSpear().newViewModel()
+    ));
+});
 
 
 // 旧貴族猟槍
@@ -793,6 +986,31 @@ export class RoyalSpearViewModel extends Base.WeaponViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new RoyalSpear(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "royal_spear",
+                "rank": 0,
+                "selType": "effective",
+                "buffStacks": 1
+            },
+            "expected": {
+                "normal_100": 432.28420916129016,
+                "normal_elem_100": 432.28420916129016,
+                "skill_100": 432.28420916129016,
+                "burst_100": 432.28420916129016
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new RoyalSpear().newViewModel()
+    ));
+});
+
 
 // 黒岩の突槍
 export class BlackcliffPole extends Base.WeaponData
@@ -881,6 +1099,30 @@ export class BlackcliffPoleViewModel extends Base.WeaponViewModel
 
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new BlackcliffPole(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "blackcliff_pole",
+                "rank": 0,
+                "effectStacks": 3
+            },
+            "expected": {
+                "normal_100": 394.80456599999997,
+                "normal_elem_100": 394.80456599999997,
+                "skill_100": 394.80456599999997,
+                "burst_100": 394.80456599999997
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new BlackcliffPole().newViewModel()
+    ));
+});
+
 
 // 星鎌・試作
 export class PrototypeStarglitter extends Base.WeaponData
@@ -967,6 +1209,30 @@ export class PrototypeStarglitterViewModel extends Base.WeaponViewModel
         this.effectStacks(obj.effectStacks);
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new PrototypeStarglitter(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "prototype_starglitter",
+                "rank": 0,
+                "effectStacks": 1
+            },
+            "expected": {
+                "normal_100": 305.35380000000004,
+                "normal_elem_100": 305.35380000000004,
+                "skill_100": 282.735,
+                "burst_100": 282.735
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new PrototypeStarglitter().newViewModel()
+    ));
+});
 
 
 // 流月の針
@@ -1070,6 +1336,30 @@ export class CrescentPikeViewModel extends Base.WeaponViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new CrescentPike(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "crescent_pike",
+                "rank": 0,
+                "useEffect": false
+            },
+            "expected": {
+                "normal_100": 414.5659875,
+                "normal_elem_100": 308.2275,
+                "skill_100": 308.2275,
+                "burst_100": 308.2275
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new CrescentPike().newViewModel()
+    ));
+});
+
 
 // 死闘の槍
 export class Deathmatch extends Base.WeaponData
@@ -1155,6 +1445,30 @@ export class DeathmatchViewModel extends Base.WeaponViewModel
         this.isTwoOrHigh(obj.isTwoOrHigh);
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new Deathmatch(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "deathmatch",
+                "rank": 0,
+                "isTwoOrHigh": 0
+            },
+            "expected": {
+                "normal_100": 386.66230559999997,
+                "normal_elem_100": 386.66230559999997,
+                "skill_100": 386.66230559999997,
+                "burst_100": 386.66230559999997
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Deathmatch().newViewModel()
+    ));
+});
 
 
 // ドラゴンスピア
@@ -1267,6 +1581,32 @@ export class DragonspineSpearViewModel extends Base.WeaponWithChainedAttack
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new DragonspineSpear(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "dragonspine_spear",
+                "rank": 0,
+                "perAttack": 20,
+                "useEffect": false,
+                "isCryo": false
+            },
+            "expected": {
+                "normal_100": 433.95651000000004,
+                "normal_elem_100": 256.779,
+                "skill_100": 256.779,
+                "burst_100": 256.779
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new DragonspineSpear().newViewModel()
+    ));
+});
+
 
 // 喜多院十文字槍
 export class KitainCrossSpear extends Base.WeaponData
@@ -1314,6 +1654,29 @@ export class KitainCrossSpearViewModel extends Base.WeaponViewModel
         return calc;
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new KitainCrossSpear(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "kitain_cross_spear",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 308.2275,
+                "normal_elem_100": 308.2275,
+                "skill_100": 326.7211500000001,
+                "burst_100": 308.2275
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new KitainCrossSpear().newViewModel()
+    ));
+});
 
 
 // 斬波のひれ長
@@ -1401,6 +1764,30 @@ export class WavebreakersFinViewModel extends Base.WeaponViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new WavebreakersFin(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "wavebreakers_fin",
+                "rank": 0,
+                "totalBurstEnergy": 320
+            },
+            "expected": {
+                "normal_100": 379.77335999999997,
+                "normal_elem_100": 379.77335999999997,
+                "skill_100": 379.77335999999997,
+                "burst_100": 525.6063302399999
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new WavebreakersFin().newViewModel()
+    ));
+});
+
 
 //「漁獲」
 export class TheCatch extends Base.WeaponData
@@ -1468,6 +1855,29 @@ export class TheCatchViewModel extends Base.WeaponViewModel
         return calc;
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new TheCatch(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "the_catch",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 282.735,
+                "normal_elem_100": 282.735,
+                "skill_100": 282.735,
+                "burst_100": 339.43571999999995
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new TheCatch().newViewModel()
+    ));
+});
 
 
 // 黒纓槍
@@ -1547,6 +1957,30 @@ export class BlackTasselViewModel extends Base.WeaponViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new BlackTassel(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "black_tassel",
+                "rank": 0,
+                "useEffect": false
+            },
+            "expected": {
+                "normal_100": 210.429,
+                "normal_elem_100": 210.429,
+                "skill_100": 210.429,
+                "burst_100": 210.429
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new BlackTassel().newViewModel()
+    ));
+});
+
 
 // 鉾槍
 export class Halberd extends Base.WeaponData
@@ -1603,6 +2037,31 @@ export class HalberdViewModel extends Base.LikePrototypeArchaicViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new Halberd(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "halberd",
+                "rank": 0,
+                "perAttack": 20,
+                "useEffect": false
+            },
+            "expected": {
+                "normal_100": 312.861573,
+                "normal_elem_100": 312.861573,
+                "skill_100": 312.861573,
+                "burst_100": 312.861573
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Halberd().newViewModel()
+    ));
+});
+
 
 // 白纓槍
 export class WhiteTassel extends Base.WeaponData
@@ -1649,3 +2108,26 @@ export class WhiteTasselViewModel extends Base.WeaponViewModel
         return calc;
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new WhiteTassel(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "white_tassel",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 327.1946832,
+                "normal_elem_100": 327.1946832,
+                "skill_100": 263.86668000000003,
+                "burst_100": 263.86668000000003
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new WhiteTassel().newViewModel()
+    ));
+});
