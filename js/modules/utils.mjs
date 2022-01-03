@@ -6,6 +6,7 @@ export function makeUnittestForCharacter(id)
 {
     let c = Data.lookupCharacter(id);
     let cvm = c.newViewModel();
+    cvm.constell(6);
     let cvmobj = cvm.toJS();
 
     let calc = new Calc.DamageCalculator();
@@ -22,9 +23,9 @@ export function makeUnittestForCharacter(id)
 }
 
 
-export function checkUnittestForCharacter(setting)
+export function checkUnittestForCharacter(character, setting)
 {
-    let c = Data.lookupCharacter(setting.vm.parent_id);
+    let c = character;
     let cvm = c.newViewModel();
     cvm.fromJS(setting.vm);
 
@@ -34,17 +35,9 @@ export function checkUnittestForCharacter(setting)
     calc = (new Data.TestArtifact()).newViewModel(4).applyDmgCalc(calc);
 
     let ok = true;
-    let results = [];
     cvm.presetAttacks().forEach(e => {
-        // results.push({id:e.id, value: e.evaluate(calc).value});
         let val = e.evaluate(calc).value;
-        // search
         ok = ok && ( Math.round(val) == Math.round(setting.expected[e.id]) );
-        // setting.expected.forEach(r => {
-        //     if(r.id == e.id) {
-        //         ok = ok && ( Math.round(val) == Math.round(r.value) );
-        //     }
-        // });
     });
 
     return ok;
@@ -74,9 +67,9 @@ export function makeUnittestForWeapon(id, elem)
 }
 
 
-export function checkUnittestForWeapon(setting, elem)
+export function checkUnittestForWeapon(weapon, elem, setting)
 {
-    let w = Data.lookupWeapon(setting.vm.parent_id);
+    let w = weapon;
     let wvm = w.newViewModel();
     wvm.fromJS(setting.vm);
 
@@ -121,11 +114,11 @@ export function makeUnittestForArtifact(id, elem, type)
 }
 
 
-export function checkUnittestForArtifact(setting, elem, type)
+export function checkUnittestForArtifact(artifact, elem, type, setting)
 {
     let cvm = (new Data.TestCharacter(elem, type)).newViewModel();
     let wvm = (new Data.TestWeapon(type)).newViewModel();
-    let avm = Data.lookupArtifact(setting.vm.parent_id).newViewModel(4);
+    let avm = artifact.newViewModel(4);
     avm.fromJS(setting.vm);
 
     let calc = new Calc.DamageCalculator();

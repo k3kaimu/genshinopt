@@ -34,9 +34,16 @@ function reload_js(src) {
 
 reload_js('/js/nlopt-js.js');
 
-
 if(location.host.startsWith('localhost')) {
-    window.runUnittest = function(func) { func(); }; 
+    window.unittest_functions = [];
+    window.runUnittest = function(func) {
+        unittest_functions.push(func); 
+    };
+
+    setTimeout(() => {
+        window.unittest_functions.forEach(fn => fn());
+        console.log("Done all tests");
+    }, 2000);
 } else {
     window.runUnittest = function(func) { };
 }
