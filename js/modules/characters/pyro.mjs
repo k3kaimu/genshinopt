@@ -400,7 +400,7 @@ export class Yoimiya extends Base.CharacterData
             attackProps: { isPyro: true, isBurst: true }
         },
         {
-            id: "burst",
+            id: "burst_add",
             label: "元素爆発中の追加爆発",
             dmgScale(vm){ return Yoimiya.burstTalentTable[vm.burstRank()-1][1]; },
             attackProps: { isPyro: true, isBurst: true }
