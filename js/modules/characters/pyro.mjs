@@ -1,6 +1,7 @@
 import * as Base from '/js/modules/characters/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
 import * as Calc from '/js/modules/dmg-calc.mjs';
+import * as Utils from '/js/modules/utils.mjs';
 
 
 export class PyroCharacterViewModel extends Base.CharacterViewModel
@@ -295,6 +296,37 @@ runUnittest(function(){
 });
 
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new HuTao(),
+        {
+            "vm": {
+                "parent_id": "hu_tao",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "reactionType": "isVaporize",
+                "reactionProb": 0,
+                "lowHP": true,
+                "useC6Effect": false
+            },
+            "expected": {
+                "charged": 356.67827874,
+                "charged_skill": 1911.3245908698614,
+                "burst": 1219.6619200080002,
+                "burst_skill": 4914.118318458585
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new HuTao().newViewModel()
+    ));
+});
+
+
+// 宵宮
 export class Yoimiya extends Base.CharacterData
 {
     constructor()
@@ -532,6 +564,38 @@ export class YoimiyaViewModel extends Base.CharacterViewModel
 }
 
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Yoimiya(),
+        {
+            "vm": {
+                "parent_id": "yoimiya",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "skillStacks": 10,
+                "useC1Effect": true,
+                "useC2Effect": true,
+                "useC6Effect": true
+            },
+            "expected": {
+                "normal_1": 396.19515636,
+                "full_charged": 1011.8189322899999,
+                "full_charged_additional": 402.80943276000005,
+                "normal_1_skill": 1011.4931130345361,
+                "burst": 1035.7956842400001,
+                "burst_add": 992.63753073
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Yoimiya().newViewModel()
+    ));
+});
+
+
 // 香菱
 export class Xiangling extends Base.CharacterData
 {
@@ -729,6 +793,39 @@ export class XianglingViewModel extends PyroCharacterViewModel
         this.useC6Effect(obj.useC6Effect);
     }
 }
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Xiangling(),
+        {
+            "vm": {
+                "parent_id": "xiangling",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "reactionType": "isVaporize",
+                "reactionProb": 0,
+                "useAtkIncEffect": true,
+                "useC1Effect": true,
+                "useC6Effect": true
+            },
+            "expected": {
+                "normal_total": 1097.0688093750002,
+                "charged": 506.58300000000014,
+                "skill": 559.813791796875,
+                "burst_first": 1179.639828125,
+                "burst_cont": 489.370234375
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Xiangling().newViewModel()
+    ));
+});
+
 
 
 // 煙緋
@@ -959,3 +1056,36 @@ export class YanfeiViewModel extends PyroCharacterViewModel
         this.useBurstEffect(obj.useBurstEffect);
     }
 }
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Yanfei(),
+        {
+            "vm": {
+                "parent_id": "yanfei",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "reactionType": "isVaporize",
+                "reactionProb": 0,
+                "countSeals": 4,
+                "useC2Effect": true,
+                "useBurstEffect": true
+            },
+            "expected": {
+                "normal_1": 303.43895999999995,
+                "charged_without_additional": 1185.5844,
+                "charged": 1313.26272,
+                "additional_only": 127.67832000000001,
+                "skill": 882.7315199999999,
+                "burst": 950.1623999999999
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Yanfei().newViewModel()
+    ));
+});
