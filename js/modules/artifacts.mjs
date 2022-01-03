@@ -12,9 +12,9 @@ export class ArtifactData
     }
 
 
-    newViewModel()
+    newViewModel(bonusType)
     {
-        return new ArtifactViewModel(this);
+        return new ArtifactViewModel(this, bonusType);
     }
 }
 
