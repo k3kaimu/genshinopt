@@ -1,6 +1,7 @@
 import * as Calc from '/js/modules/dmg-calc.mjs';
 import * as Base from '/js/modules/weapons/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
+import * as Utils from '/js/modules/utils.mjs';
 
 
 // 赤角石塵滅砕
@@ -66,6 +67,29 @@ export class RedhornStonethresherViewModel extends Base.WeaponViewModel
         return calc;
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new RedhornStonethresher(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "redhorn_stonethresher",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 359.80201800000003,
+                "normal_elem_100": 359.80201800000003,
+                "skill_100": 310.30749000000003,
+                "burst_100": 310.30749000000003
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new RedhornStonethresher().newViewModel()
+    ));
+});
 
 
 // 白影の剣
@@ -151,6 +175,30 @@ export class WhiteblindViewModel extends Base.WeaponViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new Whiteblind(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "whiteblind",
+                "rank": 0,
+                "buffStacks": 4
+            },
+            "expected": {
+                "normal_100": 350.5914,
+                "normal_elem_100": 350.5914,
+                "skill_100": 350.5914,
+                "burst_100": 350.5914
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Whiteblind().newViewModel()
+    ));
+});
+
 
 // 古華・試作
 export class PrototypeArchaic extends Base.WeaponData
@@ -177,7 +225,6 @@ export class PrototypeArchaic extends Base.WeaponData
 
     static additionalScale = [2.4, 3.0, 3.6, 4.2, 4.8];
 }
-
 
 
 // 古華・試作, viewmodel
@@ -207,6 +254,31 @@ export class PrototypeArchaicViewModel extends Base.LikePrototypeArchaicViewMode
         return PrototypeArchaic.additionalScale[this.rank()];
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new PrototypeArchaic(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "prototype_archaic",
+                "rank": 0,
+                "perAttack": 10,
+                "useEffect": false
+            },
+            "expected": {
+                "normal_100": 393.29828999999995,
+                "normal_elem_100": 393.29828999999995,
+                "skill_100": 393.29828999999995,
+                "burst_100": 393.29828999999995
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new PrototypeArchaic().newViewModel()
+    ));
+});
 
 
 // 螭龍の剣
@@ -293,6 +365,31 @@ export class SerpentSpineViewModel extends Base.WeaponViewModel
 }
 
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new SerpentSpine(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "serpent_spine",
+                "rank": 0,
+                "buffStacks": 5
+            },
+            "expected": {
+                "normal_100": 426.64986000000005,
+                "normal_elem_100": 426.64986000000005,
+                "skill_100": 426.64986000000005,
+                "burst_100": 426.64986000000005
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new SerpentSpine().newViewModel()
+    ));
+});
+
+
 // 銜玉の海皇
 export class LuxuriousSeaLord extends Base.WeaponData
 {
@@ -361,3 +458,28 @@ export class LuxuriousSeaLordViewModel extends Base.LikePrototypeArchaicViewMode
     }
 
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new LuxuriousSeaLord(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "luxurious_sea_lord",
+                "rank": 0,
+                "perAttack": 1,
+                "useEffect": false
+            },
+            "expected": {
+                "normal_100": 398.2642290000001,
+                "normal_elem_100": 398.2642290000001,
+                "skill_100": 398.2642290000001,
+                "burst_100": 446.0559364800001
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new LuxuriousSeaLord().newViewModel()
+    ));
+});
