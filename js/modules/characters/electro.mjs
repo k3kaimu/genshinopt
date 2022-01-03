@@ -1,6 +1,7 @@
 import * as Base from '/js/modules/characters/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
 import * as Calc from '/js/modules/dmg-calc.mjs';
+import * as Utils from '/js/modules/utils.mjs';
 
 
 // 旅人（雷）
@@ -111,7 +112,7 @@ export class RaidenShogun extends Base.CharacterData
             attackProps: { isNormal: true, isPhysical: true }
         },
         {
-            id: "normal_1",
+            id: "charged_1",
             label: "通常重撃",
             dmgScale(vm){ return RaidenShogun.normalTalentTable[vm.normalRank()-1][5]; },
             attackProps: { isCharged: true, isPhysical: true }
@@ -229,7 +230,6 @@ export class RaidenShogunViewModel extends Base.CharacterViewModel
         obj.chakraStacks = this.chakraStacks();
         obj.useSkillEffect = this.useSkillEffect();
 
-
         return obj;
     }
 
@@ -237,10 +237,36 @@ export class RaidenShogunViewModel extends Base.CharacterViewModel
     fromJS(obj) {
         super.fromJS(obj);
 
-        obj.chakraStacks = this.chakraStacks();
-        obj.useSkillEffect = this.useSkillEffect();
+        this.chakraStacks(obj.chakraStacks);
+        this.useSkillEffect(obj.useSkillEffect);
     }
 }
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new RaidenShogun(),
+        {
+            "vm": {
+                "parent_id": "raiden_shogun",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "chakraStacks": 60,
+                "useSkillEffect": true
+            },
+            "expected": {
+                "normal_1": 189.11529,
+                "charged_1": 475.38596250000006,
+                "skill_dmg": 583.70538168,
+                "burst_dmg": 5590.645797342856,
+                "burst_normal_1": 773.0198810357142,
+                "burst_charged": 1952.2643035821427
+            }
+        }
+    ));
+});
 
 
 // 北斗
