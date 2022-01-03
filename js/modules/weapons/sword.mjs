@@ -1,5 +1,5 @@
 import * as Base from '/js/modules/weapons/base.mjs';
-
+import * as Utils from '/js/modules/utils.mjs';
 
 // 磐岩結緑
 export class PrimordialJadeCutter extends Base.WeaponData
@@ -60,3 +60,25 @@ export class PrimordialJadeCutterViewModel extends Base.WeaponViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new PrimordialJadeCutter(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "primordial_jade_cutter",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 457.90002000000004,
+                "normal_elem_100": 457.90002000000004,
+                "skill_100": 457.90002000000004,
+                "burst_100": 457.90002000000004
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new PrimordialJadeCutter().newViewModel()
+    ));
+});
