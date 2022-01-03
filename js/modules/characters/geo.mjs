@@ -1,6 +1,7 @@
 import * as Base from '/js/modules/characters/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
 import * as Calc from '/js/modules/dmg-calc.mjs';
+import * as Utils from '/js/modules/utils.mjs';
 
 // 旅人（岩）
 export class TravelerGeo extends Base.CharacterData
@@ -217,6 +218,39 @@ export class AratakiIttoViewModel extends Base.CharacterViewModel
 }
 
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new AratakiItto(),
+        {
+            "vm": {
+                "parent_id": "arataki_itto",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9
+            },
+            "expected": {
+                "normal_1": 327.6111384,
+                "charged": 450.41589431999995,
+                "sakagesa_cont": 666.969345,
+                "sakagesa_last": 1163.7276688799998,
+                "skill": 1174.539933,
+                "normal_1_burst": 1047.9421009512,
+                "charged_burst": 1440.7623040557598,
+                "sakagesa_cont_burst": 1665.0621466290002,
+                "sakagesa_last_burst": 3254.0617274558394,
+                "skill_burst": 3757.0451696190003
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new AratakiItto().newViewModel()
+    ));
+});
+
+
+
 // ノエル
 export class Noelle extends Base.CharacterData
 {
@@ -379,6 +413,34 @@ export class NoelleViewModel extends Base.CharacterViewModel
         return calc;
     }
 }
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Noelle(),
+        {
+            "vm": {
+                "parent_id": "noelle",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9
+            },
+            "expected": {
+                "normal_1": 274.26206249999996,
+                "charged": 202.72695075,
+                "burst_impact": 891.55088235,
+                "burst_first": 1235.6582404500002,
+                "normal_1_burst": 1133.990157375,
+                "charged_burst": 838.2142418445001
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Noelle().newViewModel()
+    ));
+});
 
 
 // 凝光
@@ -555,3 +617,30 @@ export class NingguangViewModel extends Base.CharacterViewModel
         this.gemStacks(obj.gemStacks);
     }
 }
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Ningguang(),
+        {
+            "vm": {
+                "parent_id": "ningguang",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "gemStacks": 3
+            },
+            "expected": {
+                "normal_1": 129.0220848,
+                "charged_with_gems": 1487.8197971999998,
+                "skill": 1062.5348159999999,
+                "burst": 4813.9332479999985
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Ningguang().newViewModel()
+    ));
+});
