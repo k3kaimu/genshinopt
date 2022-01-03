@@ -208,7 +208,7 @@ export class GanyuViewModel extends Base.CharacterViewModel
 }
 
 runUnittest(function(){
-    Utils.checkUnittestForCharacter(
+    console.assert(Utils.checkUnittestForCharacter(
         new Ganyu(),
         {
             "vm": {
@@ -228,5 +228,5 @@ runUnittest(function(){
                 "burst_dmg": 369.54826737499997
             }
         }
-    );
+    ));
 });
