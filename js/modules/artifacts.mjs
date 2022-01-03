@@ -102,13 +102,14 @@ export class GladiatorsFinaleViewModel extends ArtifactViewModel
             return calc;
 
         // when bonusType == 4 as follows:
+        let ctx = Calc.VGData.context;
         let CalcType = Object.getPrototypeOf(calc).constructor;
         let NewCalcGladiatorsFinale = class extends CalcType {
             normalDmgBuff() {
                 if(this.character.weaponType == 'Sword'
                 || this.character.weaponType == 'Claymore'
                 || this.character.weaponType == 'Polearm') {
-                    return super.normalDmgBuff().add(0.35);
+                    return super.normalDmgBuff().add(Calc.VGData.constant(0.35).as(ctx));
                 } else {
                     return super.normalDmgBuff();
                 }
@@ -159,12 +160,14 @@ export class WanderersTroupeViewModel extends ArtifactViewModel
             return calc;
 
         // when bonusType == 4 as follows:
+        let ctx = Calc.VGData.context;
+        console.log(ctx);
         let CalcType = Object.getPrototypeOf(calc).constructor;
         let NewCalcWanderersTroupe = class extends CalcType {
             chargedDmgBuff() {
                 if(this.character.weaponType == 'Catalyst'
                 || this.character.weaponType == 'Bow') {
-                    return super.chargedDmgBuff().add(0.35);
+                    return super.chargedDmgBuff().add(Calc.VGData.constant(0.35).as(ctx));
                 } else {
                     return super.chargedDmgBuff();
                 }
@@ -1148,13 +1151,14 @@ export class EmblemOfSeveredFateViewModel extends ArtifactViewModel
         calc.baseRecharge.value += 0.2;
 
         if(this.bonusType == '4') {
+            let ctx = Calc.VGData.context;
             let CalcType = Object.getPrototypeOf(calc).constructor;
             let NewCalc = class extends CalcType {
                 burstDmgBuff(attackProps) {
                     let val = super.burstDmgBuff(attackProps);
                     let rec = this.recharge(attackProps);
 
-                    return val.add(rec.mul(0.25).min_number(0.75));
+                    return val.add(rec.mul(0.25).min_number(0.75).as(ctx));
                 }
             };
 
