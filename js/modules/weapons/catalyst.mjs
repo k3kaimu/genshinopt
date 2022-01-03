@@ -1,6 +1,7 @@
 import * as Base from '/js/modules/weapons/base.mjs'
 import * as Calc from '/js/modules/dmg-calc.mjs'
 import * as Widget from '/js/modules/widget.mjs'
+import * as Utils from '/js/modules/utils.mjs';
 
 
 // 浮世の錠
@@ -103,6 +104,32 @@ export class MemoryOfDustViewModel extends Base.WeaponViewModel
         this.effectStacks(obj.effectStacks);
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new MemoryOfDust(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "memory_of_dust",
+                "rank": 0,
+                "isShielded": true,
+                "effectStacks": 5
+            },
+            "expected": {
+                "Anemo": {},
+                "normal_100": 622.187568,
+                "normal_elem_100": 622.187568,
+                "skill_100": 622.187568,
+                "burst_100": 622.187568
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new MemoryOfDust().newViewModel()
+    ));
+});
 
 
 // 流浪楽章
@@ -266,6 +293,33 @@ export class TheWidsithViewModel extends Base.WeaponViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new TheWidsith(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "the_widsith",
+                "rank": 0,
+                "useAtkUp": true,
+                "useDmgUp": true,
+                "useMryUp": true
+            },
+            "expected": {
+                "Anemo": {},
+                "normal_100": 394.80456599999997,
+                "normal_elem_100": 394.80456599999997,
+                "skill_100": 394.80456599999997,
+                "burst_100": 394.80456599999997
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new TheWidsith().newViewModel()
+    ));
+});
+
 
 // 万国諸海の図譜
 export class MappaMare extends Base.WeaponData
@@ -355,4 +409,27 @@ export class MappaMareViewModel extends Base.WeaponViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new MappaMare(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "mappa_mare",
+                "rank": 0,
+                "buffStacks": 2
+            },
+            "expected": {
+                "Anemo": {},
+                "normal_100": 308.2275,
+                "normal_elem_100": 357.5439,
+                "skill_100": 357.5439,
+                "burst_100": 357.5439
+            }
+        }
+    ));
 
+    console.assert(Utils.checkSerializationUnittest(
+        new MappaMare().newViewModel()
+    ));
+});
