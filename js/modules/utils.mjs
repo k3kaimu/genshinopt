@@ -136,3 +136,30 @@ export function checkUnittestForArtifact(artifact, elem, type, setting)
 
     return ok;
 }
+
+
+export function checkSerializationUnittest(vm)
+{
+    let obj = vm.toJS();
+    let keys = Object.keys(obj);
+    
+    keys.forEach(k => {
+        let v = obj[k];
+        if((typeof v) === "number") {
+            obj[k] += 1;
+        } else if((typeof v) === "boolean") {
+            obj[k] = !obj[k];
+        }
+    });
+
+    vm.fromJS(obj);
+    let newobj = vm.toJS(obj);
+
+    let ok = true;
+    keys.forEach(k => {
+        ok = ok && (obj[k] == newobj[k]);
+    });
+
+    return ok;
+}
+
