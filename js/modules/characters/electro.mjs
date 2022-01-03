@@ -489,9 +489,9 @@ export class BeidouViewModel extends Base.CharacterViewModel
     fromJS(obj) {
         super.fromJS(obj);
 
-        obj.useC4Effect = this.useC4Effect();
-        obj.useC6Effect = this.useC6Effect();
-        obj.useDmgUpEffect = this.useDmgUpEffect();
+        this.useC4Effect(obj.useC4Effect);
+        this.useC6Effect(obj.useC6Effect);
+        this.useDmgUpEffect(obj.useDmgUpEffect);
     }
 }
 
@@ -519,5 +519,9 @@ runUnittest(function(){
                 "burst_dmg_add": 473.260821875
             }
         }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Beidou().newViewModel()
     ));
 });
