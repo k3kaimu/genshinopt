@@ -35,7 +35,7 @@ function reload_js(src) {
 reload_js('/js/nlopt-js.js');
 
 
-if(location.href.endsWith('unittest/')) {
+if(location.host.startsWith('localhost')) {
     window.runUnittest = function(func) { func(); }; 
 } else {
     window.runUnittest = function(func) { };

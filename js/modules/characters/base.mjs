@@ -182,3 +182,97 @@ export class CharacterViewModel
         this.burstRank(obj.burstRank);
     }
 }
+
+
+// テスト用キャラクター
+export class TestCharacter extends CharacterData
+{
+    constructor(elem, type)
+    {
+        super(
+            "test_character",
+            "テスト用キャラクター",
+            1,
+            elem,
+            type,
+            100,            /* bAtk */
+            200,            /* bDef */
+            10000,          /* bHP */
+            "baseCrtDmg",   /* bBonusType */
+            0.100           /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new TestCharacterViewModel(this);
+    }
+}
+
+
+// テスト用キャラクター
+export class TestCharacterViewModel extends CharacterViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+    }
+
+
+    makeIsElementTrue()
+    {
+        switch(this.parent.elem) {
+            case 'Anemo':
+                return {isAnemo: true};
+            case 'Cryo':
+                return {isCryo: true};
+            case 'Dendro':
+                return {isDendro: true};
+            case 'Electro':
+                return {isElectro: true};
+            case 'Geo':
+                return {isGeo: true};
+            case 'Hydro':
+                return {isHydro: true};
+            case 'Pyro':
+                return {isPyro: true};
+        }
+
+        return {};
+    }
+
+
+    presetAttacks() {
+        let attacks = Object.getPrototypeOf(this.parent).constructor.presetAttacks.slice(0);
+        attacks.push(
+        {
+            id: 'normal_elem_100',
+            label: "通常元素攻撃（100%）",
+            dmgScale(vm){ return 1; },
+            attackProps: { isNormal: true, ...this.makeIsElementTrue() }
+        },
+        {
+            id: 'skill_100',
+            label: "元素スキル（100%）",
+            dmgScale(vm){ return 1; },
+            attackProps: { isSkill: true, ...this.makeIsElementTrue() }
+        },
+        {
+            id: 'burst_100',
+            label: "元素爆発（100%）",
+            dmgScale(vm){ return 1; },
+            attackProps: { isBurst: true, ...this.makeIsElementTrue() }
+        });
+
+        let ret = [];
+        attacks.forEach(a => {
+            if("newEvaluator" in a)
+                ret.push(a.newEvaluator(this, a));
+            else
+                ret.push(new AttackEvaluator(this, a));
+        });
+
+        return ret;
+    }
+}

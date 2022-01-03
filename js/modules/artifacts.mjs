@@ -64,6 +64,20 @@ export class ArtifactViewModel
 }
 
 
+// テスト用聖遺物
+export class TestArtifact extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            "test_artifact",
+            "テスト用聖遺物",
+            "テスト",
+        );
+    }
+}
+
+
 // 剣闘士のフィナーレ
 export class GladiatorsFinale extends ArtifactData
 {

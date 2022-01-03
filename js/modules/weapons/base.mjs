@@ -239,3 +239,21 @@ export class LikePrototypeArchaicViewModel extends WeaponWithChainedAttack
         this.useEffect(obj.useEffect);
     }
 }
+
+
+// テスト用武器
+export class TestWeapon extends WeaponData
+{
+    constructor(type)
+    {
+        super(
+            "test_weapon",
+            "テスト用武器",
+            1,
+            type,
+            200,
+            "baseCrtRate",
+            0.100
+        );
+    }
+}
