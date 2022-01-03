@@ -229,4 +229,8 @@ runUnittest(function(){
             }
         }
     ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Ganyu().newViewModel()
+    ));
 });

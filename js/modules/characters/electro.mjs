@@ -266,6 +266,10 @@ runUnittest(function(){
             }
         }
     ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new RaidenShogun().newViewModel()
+    ));
 });
 
 
