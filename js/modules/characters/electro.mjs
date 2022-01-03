@@ -378,7 +378,7 @@ export class Beidou extends Base.CharacterData
             attackProps: { isBurst: true, isElectro: true }
         },
         {
-            id: "burst_dmg",
+            id: "burst_dmg_add",
             label: "元素爆発・雷追撃ダメージ",
             dmgScale(vm){ return Beidou.burstTalentTable[vm.burstRank()-1][1]; },
             attackProps: { isBurst: true, isElectro: true }
@@ -494,3 +494,30 @@ export class BeidouViewModel extends Base.CharacterViewModel
         obj.useDmgUpEffect = this.useDmgUpEffect();
     }
 }
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Beidou(),
+        {
+            "vm": {
+                "parent_id": "beidou",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "useC4Effect": true,
+                "useC6Effect": true,
+                "useDmgUpEffect": true
+            },
+            "expected": {
+                "normal_1": 2153.434625,
+                "charged_cont": 243.52579687499994,
+                "charged_last": 442.1293593749999,
+                "skill_3": 2180.4839093749997,
+                "burst_dmg": 601.0122093749999,
+                "burst_dmg_add": 473.260821875
+            }
+        }
+    ));
+});
