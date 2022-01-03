@@ -1,6 +1,7 @@
 import * as Base from '/js/modules/characters/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
 import * as Calc from '/js/modules/dmg-calc.mjs';
+import * as Utils from '/js/modules/utils.mjs';
 
 
 // 甘雨
@@ -205,3 +206,27 @@ export class GanyuViewModel extends Base.CharacterViewModel
         this.stacksC4Effect(obj.stacksC4Effect);
     }
 }
+
+runUnittest(function(){
+    Utils.checkUnittestForCharacter(
+        new Ganyu(),
+        {
+            "vm": {
+                "parent_id": "ganyu",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "useCryoDmgInc": false,
+                "useC1Effect": true,
+                "stacksC4Effect": 0
+            },
+            "expected": {
+                "charged2": 782.6660252500001,
+                "charged2_flower": 1328.37811625,
+                "skill_dmg": 695.620268,
+                "burst_dmg": 369.54826737499997
+            }
+        }
+    );
+});
