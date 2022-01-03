@@ -1,5 +1,6 @@
 import * as Calc from '/js/modules/dmg-calc.mjs';
 import * as Widget from '/js/modules/widget.mjs';
+import * as Utils from '/js/modules/utils.mjs';
 
 
 export class ArtifactData
@@ -135,6 +136,31 @@ export class GladiatorsFinaleViewModel extends ArtifactViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new GladiatorsFinale(),
+        "Anemo",
+        "Sword",
+        {
+            "vm": {
+                "parent_id": "gladiators_finale",
+                "bonusType": 4
+            },
+            "expected": {
+                "normal_100": 234.40995000000004,
+                "normal_elem_100": 234.40995000000004,
+                "skill_100": 173.637,
+                "burst_100": 173.637
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new GladiatorsFinale().newViewModel(4)
+    ));
+});
+
+
 
 // 大地を流浪する楽団
 export class WanderersTroupe extends ArtifactData
@@ -175,7 +201,6 @@ export class WanderersTroupeViewModel extends ArtifactViewModel
 
         // when bonusType == 4 as follows:
         let ctx = Calc.VGData.context;
-        console.log(ctx);
         let CalcType = Object.getPrototypeOf(calc).constructor;
         let NewCalcWanderersTroupe = class extends CalcType {
             chargedDmgBuff() {
@@ -192,6 +217,30 @@ export class WanderersTroupeViewModel extends ArtifactViewModel
         return calc;
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new WanderersTroupe(),
+        "Anemo",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "wanderers_troupe",
+                "bonusType": 4
+            },
+            "expected": {
+                "normal_100": 147.15,
+                "normal_elem_100": 147.15,
+                "skill_100": 147.15,
+                "burst_100": 147.15
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new WanderersTroupe().newViewModel(4)
+    ));
+});
 
 
 // 雷を鎮める尊者
@@ -265,6 +314,31 @@ export class ThundersootherViewModel extends ArtifactViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new Thundersoother(),
+        "Anemo",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "thundersoother",
+                "bonusType": 4,
+                "useEffect4": true
+            },
+            "expected": {
+                "normal_100": 198.65250000000003,
+                "normal_elem_100": 198.65250000000003,
+                "skill_100": 198.65250000000003,
+                "burst_100": 198.65250000000003
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Thundersoother().newViewModel(4)
+    ));
+});
+
 
 // 雷のような怒り
 export class ThunderingFury extends ArtifactData
@@ -312,6 +386,30 @@ export class ThunderingFuryViewModel extends ArtifactViewModel
         return calc;
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new ThunderingFury(),
+        "Electro",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "thundering_fury",
+                "bonusType": 4
+            },
+            "expected": {
+                "normal_100": 147.15,
+                "normal_elem_100": 169.2225,
+                "skill_100": 169.2225,
+                "burst_100": 169.2225
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new ThunderingFury().newViewModel(4)
+    ));
+});
 
 
 // 烈火を渡る賢者
@@ -385,6 +483,30 @@ export class LavawalkerViewModel extends ArtifactViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new Lavawalker(),
+        "Pyro",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "lavawalker",
+                "bonusType": 4,
+                "useEffect4": true
+            },
+            "expected": {
+                "normal_100": 198.65250000000003,
+                "normal_elem_100": 198.65250000000003,
+                "skill_100": 198.65250000000003,
+                "burst_100": 198.65250000000003
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Lavawalker().newViewModel(4)
+    ));
+});
 
 
 // 燃え盛る炎の魔女
@@ -470,6 +592,31 @@ export class CrimsonWitchOfFlamesViewModel extends ArtifactViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new CrimsonWitchOfFlames(),
+        "Pyro",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "crimson_witch_of_flames",
+                "bonusType": 4,
+                "buffStacks": 3
+            },
+            "expected": {
+                "normal_100": 147.15,
+                "normal_elem_100": 202.33125,
+                "skill_100": 202.33125,
+                "burst_100": 202.33125
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new CrimsonWitchOfFlames().newViewModel(4)
+    ));
+});
+
 
 // 旧貴族のしつけ
 export class NoblesseOblige extends ArtifactData
@@ -543,6 +690,31 @@ export class NoblesseObligeViewModel extends ArtifactViewModel
         this.useEffect4(obj.useEffect4);
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new NoblesseOblige(),
+        "Pyro",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "noblesse_oblige",
+                "bonusType": 4,
+                "useEffect4": true
+            },
+            "expected": {
+                "normal_100": 176.58,
+                "normal_elem_100": 176.58,
+                "skill_100": 176.58,
+                "burst_100": 211.89600000000002
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new NoblesseOblige().newViewModel(4)
+    ));
+});
 
 
 // 血染めの騎士道
@@ -619,6 +791,31 @@ export class BloodstainedChivalryViewModel extends ArtifactViewModel
         this.useEffect4(obj.useEffect4);
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new BloodstainedChivalry(),
+        "Pyro",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "bloodstained_chivalry",
+                "bonusType": 4,
+                "useEffect4": true
+            },
+            "expected": {
+                "normal_100": 183.9375,
+                "normal_elem_100": 147.15,
+                "skill_100": 147.15,
+                "burst_100": 147.15
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new BloodstainedChivalry().newViewModel(4)
+    ));
+});
 
 
 // 悠久の磐岩
@@ -743,6 +940,32 @@ export class ArchaicPetraViewModel extends ArtifactViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new ArchaicPetra(),
+        "Geo",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "archaic_petra",
+                "bonusType": 4,
+                "useEffect4": true,
+                "selectedElem": "Character"
+            },
+            "expected": {
+                "normal_100": 147.15,
+                "normal_elem_100": 169.2225,
+                "skill_100": 169.2225,
+                "burst_100": 169.2225
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new ArchaicPetra().newViewModel(4)
+    ));
+});
+
 
 // 逆飛びの流星
 export class RetracingBolide extends ArtifactData
@@ -817,6 +1040,31 @@ export class RetracingBolideViewModel extends ArtifactViewModel
         this.useEffect4(obj.useEffect4);
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new RetracingBolide(),
+        "Geo",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "retracing_bolide",
+                "bonusType": 4,
+                "useEffect4": true
+            },
+            "expected": {
+                "normal_100": 206.01,
+                "normal_elem_100": 206.01,
+                "skill_100": 147.15,
+                "burst_100": 147.15
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new RetracingBolide().newViewModel(4)
+    ));
+});
 
 
 // 氷風を彷徨う勇士
@@ -896,6 +1144,31 @@ export class BlizzardStrayerViewModel extends ArtifactViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new BlizzardStrayer(),
+        "Cryo",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "blizzard_strayer",
+                "bonusType": 4,
+                "addCrtRate": 0.2
+            },
+            "expected": {
+                "normal_100": 163.35,
+                "normal_elem_100": 187.8525,
+                "skill_100": 187.8525,
+                "burst_100": 187.8525
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new BlizzardStrayer().newViewModel(4)
+    ));
+});
+
 
 // 沈淪の心
 export class HeartOfDepth extends ArtifactData
@@ -969,6 +1242,31 @@ export class HeartOfDepthViewModel extends ArtifactViewModel
         this.buffEffect(obj.buffEffect);
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new HeartOfDepth(),
+        "Hydro",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "heart_of_depth",
+                "bonusType": 4,
+                "buffEffect": true
+            },
+            "expected": {
+                "normal_100": 191.29500000000002,
+                "normal_elem_100": 213.3675,
+                "skill_100": 169.2225,
+                "burst_100": 169.2225
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new HeartOfDepth().newViewModel(4)
+    ));
+});
 
 
 // 蒼白の炎
@@ -1053,6 +1351,31 @@ export class PaleFlameViewModel extends ArtifactViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new PaleFlame(),
+        "Hydro",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "pale_flame",
+                "bonusType": 4,
+                "buffStacks": 2
+            },
+            "expected": {
+                "normal_100": 260.4555,
+                "normal_elem_100": 173.637,
+                "skill_100": 173.637,
+                "burst_100": 173.637
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new PaleFlame().newViewModel(4)
+    ));
+});
+
 
 // 追憶のしめ縄
 export class ShimenawaReminiscence extends ArtifactData
@@ -1128,6 +1451,31 @@ export class ShimenawaReminiscenceViewModel extends ArtifactViewModel
     }
 }
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new ShimenawaReminiscence(),
+        "Hydro",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "shimenawa_reminiscence",
+                "bonusType": 4,
+                "buffEffect": true
+            },
+            "expected": {
+                "normal_100": 260.4555,
+                "normal_elem_100": 260.4555,
+                "skill_100": 173.637,
+                "burst_100": 173.637
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new ShimenawaReminiscence().newViewModel(4)
+    ));
+});
+
 
 // 絶縁の旗印
 export class EmblemOfSeveredFate extends ArtifactData
@@ -1182,6 +1530,30 @@ export class EmblemOfSeveredFateViewModel extends ArtifactViewModel
         return calc;
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new EmblemOfSeveredFate(),
+        "Hydro",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "emblem_of_severed_fate",
+                "bonusType": 4
+            },
+            "expected": {
+                "normal_100": 147.15,
+                "normal_elem_100": 147.15,
+                "skill_100": 147.15,
+                "burst_100": 191.29500000000002
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new EmblemOfSeveredFate().newViewModel(4)
+    ));
+});
 
 
 // 華館夢醒形骸記
@@ -1263,6 +1635,31 @@ export class HuskOfOpulentDreamsViewModel extends ArtifactViewModel
         this.buffStacks(obj.buffStacks);
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new HuskOfOpulentDreams(),
+        "Hydro",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "husk_of_opulent_dreams",
+                "bonusType": 4,
+                "buffStacks": 4
+            },
+            "expected": {
+                "normal_100": 147.15,
+                "normal_elem_100": 147.15,
+                "skill_100": 147.15,
+                "burst_100": 147.15
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new HuskOfOpulentDreams().newViewModel(4)
+    ));
+});
 
 
 
