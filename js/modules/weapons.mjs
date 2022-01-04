@@ -60,6 +60,8 @@ export const weapons = [
     new Polearm.WhiteTassel(),
     // 片手剣, 星5
     new Sword.PrimordialJadeCutter(),
+    // 片手剣, 星4
+    new Sword.CinnabarSpindle(),
 ];
 
 
