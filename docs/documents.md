@@ -371,15 +371,12 @@ $$
 \text{聖遺物スコア偏差値}(X) = 50 + 10 \times \frac{X - 16.7}{11.9} \approx 50 + 10 \times \frac{X - 17}{12}
 $$
 
-![Distribution of single artifact score]({{ site.baseurl }}/program/artifact_dist/single_artifact_score.png)
-
+<img src="{{ site.baseurl }}/program/artifact_dist/single_artifact_score.png" class="img-fluid" alt="Distribution of single artifact score">
 
 以下の図は，5部位の聖遺物のスコアの和のヒストグラムと，それと同一の平均値と分散を持つガウス分布の確率密度関数を表示しています．
 5部位の聖遺物スコアの和の分布は，非常に綺麗にガウス分布に近似できそうです．
 
-
-![Distribution of five artifacts score]({{ site.baseurl }}/program/artifact_dist/sum5a_artifact_score.png)
-
+<img src="{{ site.baseurl }}/program/artifact_dist/sum5a_artifact_score.png" class="img-fluid" alt="Distribution of five artifacts score">
 
 
 #### 旧貴族武器の会心率について
@@ -417,4 +414,4 @@ $$
 まあまあシミュレーション結果と合っているので良しとしてください．
 ちなみに，[プログラムの詳細はこちらから参照できます](https://github.com/k3kaimu/genshinopt/blob/master/program/royal_crtrate/theo_sim.py)．
 
-![CrtRate of Royal Weapons]({{ site.baseurl }}/program/royal_crtrate/theo_sim.png)
+<img src="{{ site.baseurl }}/program/royal_crtrate/theo_sim.png" class="img-fluid" alt="CrtRate of Royal Weapons">
