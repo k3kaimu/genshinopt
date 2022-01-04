@@ -286,22 +286,27 @@ $(function(){
 
             allpatterns.forEach(setting => {
                 async function task(){
+                    let oldsetting = Calc.VGData.doCalcExprText;
+                    Calc.VGData.doCalcExprText = true;
                     let calc = new Calc.DamageCalculator();
-                    calc = setting.character.applyDmgCalc(calc);
-                    calc = setting.weapon.applyDmgCalc(calc);
-                    calc = setting.artifactSet1.applyDmgCalc(calc);
-                    calc = setting.artifactSet2.applyDmgCalc(calc);
+                    {
+                        calc = setting.character.applyDmgCalc(calc);
+                        calc = setting.weapon.applyDmgCalc(calc);
+                        calc = setting.artifactSet1.applyDmgCalc(calc);
+                        calc = setting.artifactSet2.applyDmgCalc(calc);
 
-                    Calc.VGData.pushContext('Artifact');
-                    calc.addAtk.value += 311;
-                    calc.addHP.value += 4780;
-                    Calc.VGData.popContext();
+                        Calc.VGData.pushContext('Artifact');
+                        calc.addAtk.value += 311;
+                        calc.addHP.value += 4780;
+                        Calc.VGData.popContext();
 
-                    [setting.clock, setting.cup, setting.hat].forEach(e => {
-                        calc = Data.applyDmgCalcArtifactMainStatus(calc, setting.character.parent, e.value);
-                    });
+                        [setting.clock, setting.cup, setting.hat].forEach(e => {
+                            calc = Data.applyDmgCalcArtifactMainStatus(calc, setting.character.parent, e.value);
+                        });
 
-                    calc = setting.exbuff.applyDmgCalc(calc);
+                        calc = setting.exbuff.applyDmgCalc(calc);
+                    }
+                    Calc.VGData.doCalcExprText = oldsetting;
 
                     let attackType = setting.attack;
 
