@@ -250,6 +250,272 @@ runUnittest(function(){
 });
 
 
+// アルベド
+export class Albedo extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "albedo",
+            "アルベド",
+            5,
+            "Geo",
+            "Sword",
+            251,        /* bAtk */
+            876,        /* bDef */
+            13226,      /* bHP */
+            "baseGeoDmg",  /* bBonusType */
+            0.288       /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new AlbedoViewModel(this);
+    }
+
+
+    static normalTalentTable = [
+    //  0:1段,     1:2段,     2:3段,    3:4段,     4:5段,    5:重撃,                6:落下,   7:低空,   8:高空
+        [36.7/100, 36.7/100, 47.5/100, 49.8/100, 62.1/100, [47.3/100, 60.2/100], 63.9/100, 128/100, 160/100],
+        [39.7/100, 39.7/100, 51.3/100, 53.8/100, 67.1/100, [51.2/100, 65.1/100], 69.1/100, 138/100, 173/100],
+        [42.7/100, 42.7/100, 55.2/100, 57.9/100, 72.2/100, [55.0/100, 70.0/100], 74.3/100, 149/100, 186/100],
+        [47.0/100, 47.0/100, 60.7/100, 63.6/100, 79.4/100, [60.5/100, 77.0/100], 81.8/100, 164/100, 204/100],
+        [50.0/100, 50.0/100, 64.6/100, 67.7/100, 84.4/100, [64.4/100, 81.9/100], 87.0/100, 174/100, 217/100],
+        [53.4/100, 53.4/100, 69.0/100, 72.3/100, 90.2/100, [68.8/100, 87.5/100], 92.9/100, 186/100, 232/100],
+        [58.1/100, 58.1/100, 75.0/100, 78.7/100, 98.2/100, [74.8/100, 95.2/100], 101.1/100, 202/100, 253/100],
+        [62.8/100, 62.8/100, 81.1/100, 85.0/100, 106.1/100, [80.9/100, 102.9/100], 109.3/100, 219/100, 273/100],
+        [67.5/100, 67.5/100, 87.2/100, 91.4/100, 114.0/100, [86.9/100, 110.6/100], 117.5/100, 235/100, 293/100],
+        [72.6/100, 72.6/100, 93.8/100, 98.3/100, 122.7/100, [93.5/100, 119.0/100], 126.4/100, 253/100, 316/100],
+        [78.5/100, 78.5/100, 101.4/100, 106.3/100, 132.6/100, [101.1/100, 128.6/100], 135.3/100, 271/100, 338/100],
+    ];
+
+
+    static skillTalentTable = [
+    //   0:スキルダメージ, 1:花ダメージ（防御参照）
+        [1.30, 1.34],
+        [1.40, 1.44],
+        [1.50, 1.54],
+        [1.63, 1.67],
+        [1.73, 1.77],
+        [1.83, 1.87],
+        [1.96, 2.00],
+        [2.09, 2.14],
+        [2.22, 2.27],
+        [2.35, 2.40],
+        [2.48, 2.54],
+        [2.61, 2.67],
+        [2.77, 2.84],
+    ];
+
+
+    static burstTalentTable = [
+    // 0:爆発ダメージ，1:生滅の花
+        [3.67, 0.720],
+        [3.95, 0.774],
+        [4.22, 0.828],
+        [4.59, 0.900],
+        [4.87, 0.954],
+        [5.14, 1.008],
+        [5.51, 1.080],
+        [5.88, 1.152],
+        [6.24, 1.224],
+        [6.61, 1.296],
+        [6.98, 1.368],
+        [7.34, 1.440],
+        [7.80, 1.530],
+        [8.26, 1.620],
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_total",
+            label: "通常1〜5段累計",
+            dmgScale(vm){ return Albedo.normalTalentTable[vm.normalRank()-1].slice(0, 5); },
+            attackProps: { isNormal: true, isPhysical: true }
+        },
+        {
+            id: "charged",
+            label: "重撃",
+            dmgScale(vm){ return Albedo.normalTalentTable[vm.normalRank()-1][5]; },
+            attackProps: { isCharged: true, isPhysical: true }
+        },
+        {
+            id: "skill_flower",
+            label: "元素スキル：刹那の花",
+            dmgScale(vm) { return 0; },     // increseDmgで計算する
+            attackProps: { isSkill: true, isGeo: true, isAlbedoSkillFlower: true }
+        },
+        {
+            id: "burst_total",
+            label: "元素爆発（初撃+花x7）",
+            dmgScale(vm) { return [Albedo.burstTalentTable[vm.burstRank()-1][0], ...new Array(7).fill(Albedo.burstTalentTable[vm.burstRank()-1][1])]; },
+            attackProps: { isBurst: true, isGeo: true }
+        }
+    ];
+}
+
+
+// アルベド
+export class AlbedoViewModel extends Base.CharacterViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.useDmgUpTalent = ko.observable(true);  // 白亜色の気迫
+        this.useMryUpTalent = ko.observable(true);  // ホムンクルスの天智
+        this.stackOfC2Effect = ko.observable(4);    // 2凸効果生滅カウント
+        this.useC4Effect = ko.observable(true);     // 4凸効果
+        this.useC6Effect = ko.observable(true);     // 6凸効果
+    }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        if(this.useMryUpTalent()) {
+            calc.baseMastery.value += 125;
+        }
+
+        if(this.constell() >= 4 && this.useC4Effect()) {
+            calc.basePlungeDmg.value += 0.30;
+        }
+
+        if(this.constell() >= 6 && this.useC6Effect()) {
+            calc.baseAllDmg.value += 0.17;
+        }
+
+        let ctx = Calc.VGData.context;
+        let data = this.toJS();
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let NewCalc = class extends CalcType {
+            #dAlbedo = data;
+
+            allDmgBuff(attackProps) {
+                if(attackProps.isAlbedoSkillFlower && this.#dAlbedo.useDmgUpTalent) {
+                    return super.allDmgBuff(attackProps).add(Calc.VGData.constant(0.25).as(ctx));
+                } else {
+                    return super.allDmgBuff(attackProps);
+                }
+            }
+
+            increaseDamage(attackProps) {
+
+                if(attackProps.isAlbedoSkillFlower) {
+                    // 刹那の花の防御参照ダメージ
+                    return super.increaseDamage(attackProps).add(this.def(attackProps).mul(Albedo.skillTalentTable[this.#dAlbedo.skillRank-1][1]).as(ctx));
+                } else if(attackProps.isBurst && this.#dAlbedo.constell >= 2) {
+                    // 2凸効果の爆発ダメージ
+                    return super.increaseDamage(attackProps).add(this.def(attackProps).mul(0.3 * Number(this.#dAlbedo.stackOfC2Effect)).as(ctx));
+                } else {
+                    return super.increaseDamage(attackProps);
+                }
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let ret = super.viewHTMLList(target);
+
+        ret.push(
+            Widget.buildViewHTML(target, "白亜色の気迫",
+                Widget.checkBoxViewHTML("useDmgUpTalent", "刹那の花ダメージ+25%"))
+        );
+
+        ret.push(
+            Widget.buildViewHTML(target, "ホムンクルスの天智",
+                Widget.checkBoxViewHTML("useMryUpTalent", "元素熟知+125"))
+        );
+
+        if(this.constell() >= 2) {
+            ret.push(
+                Widget.buildViewHTML(target, "生滅カウント（2凸効果）",
+                    Widget.selectViewHTML("stackOfC2Effect", [
+                        {value: 0, label: "0個（爆発ダメージ+0%防御力）"},
+                        {value: 1, label: "1個（爆発ダメージ+30%防御力）"},
+                        {value: 2, label: "2個（爆発ダメージ+60%防御力）"},
+                        {value: 3, label: "3個（爆発ダメージ+90%防御力）"},
+                        {value: 4, label: "4個（爆発ダメージ+120%防御力）"},
+                    ])
+                ));
+        }
+
+        if(this.constell() >= 4) {
+            ret.push(Widget.buildViewHTML(target, "聖なる堕落（4凸効果）", 
+                Widget.checkBoxViewHTML("useC4Effect", "落下攻撃ダメージ+30%")));
+        }
+
+        if(this.constell() >= 6) {
+            ret.push(Widget.buildViewHTML(target, "無垢なる土（6凸効果）", 
+                Widget.checkBoxViewHTML("useC6Effect", "ダメージ+17%")));
+        }
+
+        return ret;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useDmgUpTalent = this.useDmgUpTalent();
+        obj.useMryUpTalent = this.useMryUpTalent();
+        obj.stackOfC2Effect = this.stackOfC2Effect();
+        obj.useC4Effect = this.useC4Effect();
+        obj.useC6Effect = this.useC6Effect();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+
+        this.useDmgUpTalent(obj.useDmgUpTalent);
+        this.useMryUpTalent(obj.useMryUpTalent);
+        this.stackOfC2Effect(obj.stackOfC2Effect);
+        this.useC4Effect(obj.useC4Effect);
+        this.useC6Effect(obj.useC6Effect);
+    }
+}
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Albedo(),
+        {
+            "vm": {
+                "parent_id": "albedo",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "useDmgUpTalent": true,
+                "useMryUpTalent": true,
+                "stackOfC2Effect": 4,
+                "useC4Effect": true,
+                "useC6Effect": true
+            },
+            "expected": {
+                "normal_total": 1091.49331005,
+                "charged": 504.1392159374999,
+                "skill_flower": 1643.0047074000001,
+                "burst_total": 10641.68520246
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Albedo().newViewModel()
+    ));
+});
+
 
 // ノエル
 export class Noelle extends Base.CharacterData

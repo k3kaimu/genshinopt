@@ -25,6 +25,7 @@ export const characters = [
     // new Electro.TravelerElectro(),
     // new Geo.TravelerGeo(),
     new Geo.AratakiItto(),
+    new Geo.Albedo(),
     new Geo.Noelle(),
     new Geo.Ningguang(),
     new Hydro.Tartaglia(),
