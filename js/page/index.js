@@ -468,9 +468,9 @@ $(function(){
                 this.dmgCrt = {};
                 this.dmgNonCrt = {};
                 e.setting.character.presetAttacks().forEach(attackType => {
-                    this.dmgExpected[attackType.label] = ko.observable();
-                    this.dmgCrt[attackType.label] = ko.observable();
-                    this.dmgNonCrt[attackType.label] = ko.observable();
+                    this.dmgExpected[attackType.id] = ko.observable();
+                    this.dmgCrt[attackType.id] = ko.observable();
+                    this.dmgNonCrt[attackType.id] = ko.observable();
                 });
 
                 this.isOpen.subscribe(function(newVal){
@@ -483,9 +483,9 @@ $(function(){
                             let crt = attackType.evaluate(e.calc, {isForcedCritical: true});
                             let noncrt = attackType.evaluate(e.calc, {isForcedNonCritical: true});
 
-                            this.dmgExpected[attackType.label](expected);
-                            this.dmgCrt[attackType.label](crt);
-                            this.dmgNonCrt[attackType.label](noncrt);
+                            this.dmgExpected[attackType.id](expected);
+                            this.dmgCrt[attackType.id](crt);
+                            this.dmgNonCrt[attackType.id](noncrt);
 
                             Calc.VGData.doCalcExprText = oldValue;
                         });

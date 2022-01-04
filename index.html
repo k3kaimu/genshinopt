@@ -374,19 +374,19 @@ title: 理想期待値比較
                         <tr>
                           <th scope="row">ダメージ期待値</th>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textInteger(optres.dmgExpected[attackType.label]().value)"></td>
+                          <td class="text-right" data-bind="text: textInteger(optres.dmgExpected[attackType.id]().value)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">会心ダメージ</th>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textInteger(optres.dmgCrt[attackType.label]().value)"></td>
+                          <td class="text-right" data-bind="text: textInteger(optres.dmgCrt[attackType.id]().value)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">非会心ダメージ</th>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textInteger(optres.dmgNonCrt[attackType.label]().value)"></td>
+                          <td class="text-right" data-bind="text: textInteger(optres.dmgNonCrt[attackType.id]().value)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
@@ -614,49 +614,49 @@ title: 理想期待値比較
                           <th scope="row">攻撃力</th>
                           <td class="text-right">4.7%</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label]().grad[0]/optres.dmgExpected[attackType.label]().value * 0.047, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[0]/optres.dmgExpected[attackType.id]().value * 0.047, 2)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">会心率</th>
                           <td class="text-right">3.1%</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label]().grad[3]/optres.dmgExpected[attackType.label]().value * 0.031, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[3]/optres.dmgExpected[attackType.id]().value * 0.031, 2)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">会心ダメージ</th>
                           <td class="text-right">6.2%</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label]().grad[4]/optres.dmgExpected[attackType.label]().value * 0.062, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[4]/optres.dmgExpected[attackType.id]().value * 0.062, 2)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">防御力</th>
                           <td class="text-right">5.8%</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label]().grad[1]/optres.dmgExpected[attackType.label]().value * 0.058, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[1]/optres.dmgExpected[attackType.id]().value * 0.058, 2)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">HP</th>
                           <td class="text-right">4.7%</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label]().grad[2]/optres.dmgExpected[attackType.label]().value * 0.047, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[2]/optres.dmgExpected[attackType.id]().value * 0.047, 2)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">チャージ効率</th>
                           <td class="text-right">5.2%</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label]().grad[5]/optres.dmgExpected[attackType.label]().value * 0.052, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[5]/optres.dmgExpected[attackType.id]().value * 0.052, 2)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">元素熟知</th>
                           <td class="text-right">19</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.label]().grad[6]/optres.dmgExpected[attackType.label]().value * 19, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[6]/optres.dmgExpected[attackType.id]().value * 19, 2)"></td>
                           <!-- /ko -->
                         </tr>
                       </tbody>
