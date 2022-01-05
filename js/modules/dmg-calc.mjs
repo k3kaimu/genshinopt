@@ -18,55 +18,87 @@ export class ASTNode
 
     toSimplify()
     {
-        if(this.op == 'constant') {
-            return this;
+        let newNode = new ASTNode(this.value, this.op, this.args, this.annotate);
+
+        if(newNode.op == 'constant') {
+            return newNode;
+        }
+
+        // 全引数を簡単化する
+        {
+            let newargs = [];
+            newNode.args.forEach(e => {
+                if(newNode.op == '+') {
+                    if(e.value == 0)
+                        return;
+                    else if(Math.abs(newNode.value) >= 0.1 && Math.abs(e.value) / newNode.value < 1e-6)
+                        return;
+                }
+
+                if(newNode.op == '*') {
+                    if(e.value == 1)
+                        return;
+                    else if(Math.abs(e.value - 1) < 1e-6)
+                        return;
+                }
+
+                newargs.push(e.toSimplify());
+            });
+            newNode.args = newargs;
+        }
+
+        // '+' と  '*'について展開する
+        if(newNode.op == '+' || newNode.op == '*') {
+            let newargs = [];
+            newNode.args.forEach(e => {
+                if(e.op == newNode.op && e.annotate == undefined) {
+                    e.args.forEach(ee => newargs.push(ee) );
+                } else {
+                    newargs.push(e);
+                }
+            });
+            
+            newNode.args = newargs;
         }
 
         // 全引数が定数かつannotateがundefinedの場合は定数を伝搬する
         {
             let isConst = true;
-            this.args.forEach(e => {
+            newNode.args.forEach(e => {
                 isConst = isConst && e.op == 'constant' && e.annotate == undefined;
             });
 
             if(isConst) {
-                return ASTNode.constant(this.value);
+                return ASTNode.constant(newNode.value, newNode.annotate);
             }
         }
 
-        if(this.op == '+') {
-            if(this.args[0].value == 0) {
-                return this.args[1].toSimplify();
-            } else if(this.args[1].value == 0) {
-                return this.args[0].toSimplify();
-            }
+        if(newNode.op == '+' || newNode.op == '*') {
+            if(newNode.args.length == 1 && newNode.annotate == undefined)
+                return newNode.args[0];
+            else if(newNode.args.length == 0 && newNode.op == '+')
+                return ASTNode.constant(0, newNode.annotate);
+            else if(newNode.args.length == 0 && newNoded.op == '*')
+                return ASTNode.constant(1, newNode.annotate);
         }
 
-        if(this.op == '*') {
-            if(this.args[0].value == 1) {
-                return this.args[1].toSimplify();
-            } else if(this.args[1].value == 1) {
-                return this.args[0].toSimplify();
-            }
-        }
-
-        if(this.op == 'max') {
-            if(this.args[0] >= this.args[1])
-                return this.args[0].toSimplify();
+        if(newNode.op == 'max') {
+            if(newNode.args[0] >= newNode.args[1])
+                return newNode.args[0].toSimplify();
             else
-                return this.args[1].toSimplify();
+                return newNode.args[1].toSimplify();
         }
 
-        if(this.op == 'min') {
-            if(this.args[0] <= this.args[1])
-                return this.args[0].toSimplify();
+        if(newNode.op == 'min') {
+            if(newNode.args[0] <= newNode.args[1])
+                return newNode.args[0].toSimplify();
             else
-                return this.args[1].toSimplify();
+                return newNode.args[1].toSimplify();
         }
 
-        let newargs = [];
-        this.args.forEach(e => newargs.push(e.toSimplify()) );
-        return new ASTNode(this.value, this.op, newargs, this.annotate);
+        // let newargs = [];
+        // this.args.forEach(e => newargs.push(e.toSimplify()) );
+        return newNode;
     }
 
 
@@ -77,19 +109,27 @@ export class ASTNode
         }
 
         if(this.op == '+' || this.op == '-') {
-            if(pp == '*' || pp == '/' || pp == '**') {
-                return `(${this.args[0].toExprText(this.op)} ${this.op} ${this.args[1].toExprText(this.op)})`;
-            } else {
-                return `${this.args[0].toExprText(this.op)} ${this.op} ${this.args[1].toExprText(this.op)}`;
-            }
+            let str = `${this.args[0].toExprText(this.op)}`;
+            this.args.slice(1).forEach(e => {
+                str += ` ${this.op} ${e.toExprText(this.op)}`;
+            });
+
+            if(pp == '*' || pp == '/' || pp == '**')
+                return '(' + str + ')';
+            else
+                return str;
         }
 
         if(this.op == '*' || this.op == '/') {
-            if(pp == '**' || (this.op == '*' && pp == '/')) {
-                return `(${this.args[0].toExprText(this.op)} ${this.op} ${this.args[1].toExprText(this.op)})`;
-            } else {
-                return `${this.args[0].toExprText(this.op)} ${this.op} ${this.args[1].toExprText(this.op)}`;
-            }
+            let str = `${this.args[0].toExprText(this.op)}`;
+            this.args.slice(1).forEach(e => {
+                str += ` ${this.op} ${e.toExprText(this.op)}`;
+            });
+
+            if(pp == '**' || (this.op == '*' && pp == '/'))
+                return '(' + str + ')';
+            else
+                return str;
         }
 
         if(this.op == '**') {
@@ -308,6 +348,12 @@ export class VGData
 
     as(annotate) {
         this.#annotate = annotate;
+
+        if(this.#astnode == null)
+            this.#astnode = ASTNode.constant(this.#value, annotate);
+        else
+            this.#astnode.annotate = annotate;
+
         return this;
     }
 
