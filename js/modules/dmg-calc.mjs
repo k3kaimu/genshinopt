@@ -22,6 +22,18 @@ export class ASTNode
             return this;
         }
 
+        // 全引数が定数かつannotateがundefinedの場合は定数を伝搬する
+        {
+            let isConst = true;
+            this.args.forEach(e => {
+                isConst = isConst && e.op == 'constant' && e.annotate == undefined;
+            });
+
+            if(isConst) {
+                return ASTNode.constant(this.value);
+            }
+        }
+
         if(this.op == '+') {
             if(this.args[0].value == 0) {
                 return this.args[1].toSimplify();
