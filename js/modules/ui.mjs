@@ -1,4 +1,5 @@
 import * as Data from '/js/modules/data.mjs';
+import * as Calc from '/js/modules/dmg-calc.mjs';
 
 
 export function CharacterSelector()
@@ -194,5 +195,83 @@ export function ArtifactSelector()
             a2.fromJS(obj.art2);
             this.viewModel2(a2);
         }
+    }.bind(this);
+}
+
+
+export function ExternalBuffSetting()
+{
+    this.addAtk = ko.observable();
+    this.rateAtk = ko.observable();
+    this.addDef = ko.observable();
+    this.rateDef = ko.observable();
+    this.addHP = ko.observable();
+    this.rateHP = ko.observable();
+    this.crtRate = ko.observable();
+    this.crtDmg = ko.observable();
+    this.mastery = ko.observable();
+    this.dmgBuff = ko.observable();
+    this.recharge = ko.observable();
+    this.resisDown = ko.observable();
+
+    this.applyDmgCalc = function(calc){
+        Calc.VGData.pushContext('ExternalBuff');
+
+        calc.addAtk.value += Number(this.addAtk() || 0);
+        calc.rateAtk.value += Number(this.rateAtk() || 0);
+        calc.addDef.value += Number(this.addDef() || 0);
+        calc.rateDef.value += Number(this.rateDef() || 0);
+        calc.addHP.value += Number(this.addHP() || 0);
+        calc.rateHP.value += Number(this.rateHP() || 0);
+        calc.baseCrtRate.value += Number(this.crtRate() || 0);
+        calc.baseCrtDmg.value += Number(this.crtDmg() || 0);
+        calc.baseMastery.value += Number(this.mastery() || 0);
+        calc.baseAllDmg.value += Number(this.dmgBuff() || 0);
+        calc.baseRecharge.value += Number(this.recharge() || 0);
+        calc.baseAllResis.value -= Number(this.resisDown() || 0);
+        Calc.VGData.popContext();
+
+        return calc;
+    }.bind(this);
+
+    this.textInputCSS = function(value) {
+        if(isValidNumber(value) && value != 0)
+            return "text-success";
+        else if(!isValidNumber(value) && value != undefined)
+            return "text-danger";
+        else
+            return "";
+    }.bind(this);
+
+    this.toJS = function(){
+        let obj = {};
+        obj.addAtk = this.addAtk();
+        obj.rateAtk = this.rateAtk();
+        obj.addDef = this.addDef();
+        obj.rateDef = this.rateDef();
+        obj.addHP = this.addHP();
+        obj.rateHP = this.rateHP();
+        obj.crtRate = this.crtRate();
+        obj.crtDmg = this.crtDmg();
+        obj.mastery = this.mastery();
+        obj.dmgBuff = this.dmgBuff();
+        obj.recharge = this.recharge();
+        obj.resisDown = this.resisDown();
+        return obj;
+    }.bind(this);
+
+    this.fromJS = function(obj) {
+        this.addAtk(obj.addAtk);
+        this.rateAtk(obj.rateAtk);
+        this.addDef(obj.addDef);
+        this.rateDef(obj.rateDef);
+        this.addHP(obj.addHP);
+        this.rateHP(obj.rateHP);
+        this.crtRate(obj.crtRate);
+        this.crtDmg(obj.crtDmg);
+        this.mastery(obj.mastery);
+        this.dmgBuff(obj.dmgBuff);
+        this.recharge(obj.recharge);
+        this.resisDown(obj.resisDown);
     }.bind(this);
 }
