@@ -150,7 +150,8 @@ function processTasksOnIdle(tasks, onFinish)
         if(tasks.length){
             requestIdleCallback(runTasks);
         } else {
-            onFinish();
+            if(onFinish)
+                onFinish();
         }
     }
 
