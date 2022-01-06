@@ -617,3 +617,108 @@ runUnittest(function(){
         new PrototypeCrescent().newViewModel()
     ));
 });
+
+
+// 黒岩の戦弓
+export class BlackcliffWarbow extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "blackcliff_warbow",
+            "黒岩の戦弓",
+            4,
+            "Bow",
+            565,
+            "baseCrtDmg",
+            0.368
+        );
+    }
+
+    newViewModel()
+    {
+        return new BlackcliffWarbowViewModel(this);
+    }
+
+    static effectTable = [0.12, 0.15, 0.18, 0.21, 0.24];
+}
+
+
+// 黒岩の戦弓 viewmodel
+export class BlackcliffWarbowViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.effectStacks = ko.observable(3);
+    }
+
+    incRateAtk(numStacks)
+    {
+        return Number(numStacks) * BlackcliffWarbow.effectTable[this.rank()];
+    }
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        calc.rateAtk.value += this.incRateAtk(this.effectStacks());
+
+        return calc;
+    }
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "勝ちに乗じる",
+                Widget.selectViewHTML("effectStacks", [
+                    {value: 0, label: `攻撃力+${textPercentageFix(this.incRateAtk(0), 0)}`},
+                    {value: 1, label: `攻撃力+${textPercentageFix(this.incRateAtk(1), 0)}`},
+                    {value: 2, label: `攻撃力+${textPercentageFix(this.incRateAtk(2), 0)}`},
+                    {value: 3, label: `攻撃力+${textPercentageFix(this.incRateAtk(3), 0)}`}
+                ])
+            )
+        );
+
+        return dst;
+    }
+
+    toJS() {
+        let obj = super.toJS();
+        obj.effectStacks = this.effectStacks();
+
+        return obj;
+    }
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.effectStacks(obj.effectStacks);
+    }
+}
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new BlackcliffWarbow(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "blackcliff_warbow",
+                "rank": 0,
+                "effectStacks": 3
+            },
+            "expected": {
+                "normal_100": 426.67783199999997,
+                "normal_elem_100": 426.67783199999997,
+                "skill_100": 426.67783199999997,
+                "burst_100": 426.67783199999997
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new BlackcliffWarbow().newViewModel()
+    ));
+});
