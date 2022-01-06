@@ -29,6 +29,7 @@ export const characters = [
     new Geo.Noelle(),
     new Geo.Ningguang(),
     new Hydro.Tartaglia(),
+    new Pyro.Klee(),
     new Pyro.HuTao(),
     new Pyro.Yoimiya(),
     new Pyro.Xiangling(),

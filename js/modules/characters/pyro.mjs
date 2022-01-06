@@ -88,6 +88,256 @@ export class PyroCharacterViewModel extends Base.CharacterViewModel
 }
 
 
+// クレー
+export class Klee extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "klee",
+            "クレー",
+            5,
+            "Pyro",
+            "Catalyst",
+            311,            /* bAtk */
+            615,            /* bDef */
+            10287,          /* bHP */
+            "basePyroDmg",   /* bBonusType */
+            0.288           /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new KleeViewModel(this);
+    }
+
+
+    static normalTalentTable = [
+    //  0:1段,     1:2段      2:3段     3:重撃,   4:落下,   5:低空,   6:高空
+        [72.2/100, 62.4/100, 89.9/100, 157/100, 56.8/100, 114/100, 142/100],
+        [77.6/100, 67.1/100, 96.7/100, 169/100, 61.5/100, 123/100, 153/100],
+        [83.0/100, 71.8/100, 103/100, 181/100, 66.1/100, 132/100, 165/100],
+        [90.2/100, 78.0/100, 112/100, 197/100, 72.7/100, 145/100, 182/100],
+        [95.6/100, 72.7/100, 119/100, 209/100, 77.3/100, 155/100, 193/100],
+        [101/100, 87.4/100, 126/100, 220/100, 82.6/100, 165/100, 206/100],
+        [108/100, 93.6/100, 135/100, 236/100, 89.9/100, 180/100, 224/100],
+        [115/100, 100/100, 144/100, 252/100, 97.1/100, 194/100, 243/100],
+        [123/100, 106/100, 153/100, 268/100, 104/100, 209/100, 261/100],
+        [130/100, 112/100, 162/100, 283/100, 112/100, 225/100, 281/100],
+        [137/100, 119/100, 171/100, 300/100, 120/100, 240/100, 300/100],
+    ];
+
+
+    static skillTalentTable = [
+    // 　0:ボンボン爆弾, 1:トラップ
+        [95.2/100, 32.8/100],
+        [102/100, 35.3/100],
+        [109/100, 37.7/100],
+        [119/100, 41.0/100],
+        [126/100, 43.5/100],
+        [133/100, 45.9/100],
+        [143/100, 49.2/100],
+        [152/100, 52.5/100],
+        [162/100, 55.8/100],
+        [171/100, 59.0/100],
+        [181/100, 62.3/100],
+        [190/100, 65.6/100],
+        [202/100, 70.0/100],
+    ];
+
+    static burstTalentTable = [
+        0.426,
+        0.458,
+        0.490,
+        0.533,
+        0.565,
+        0.597,
+        0.640,
+        0.682,
+        0.725,
+        0.768,
+        0.810,
+        0.853,
+        0.906,
+        0.960,
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_total",
+            label: "通常3段累計",
+            dmgScale(vm){ return Klee.normalTalentTable[vm.normalRank()-1].slice(0, 3); },
+            attackProps: { isNormal: true, isPyro: true }
+        },
+        {
+            id: "charged",
+            label: "重撃",
+            dmgScale(vm){ return Klee.normalTalentTable[vm.normalRank()-1][3]; },
+            attackProps: { isCharged: true, isPyro: true }
+        },
+        {
+            id: "skill_total",
+            label: "ボンボン爆弾3回+トラップ",
+            dmgScale(vm){ return [...new Array(3).fill(Klee.skillTalentTable[vm.skillRank()-1][0]), Klee.skillTalentTable[vm.skillRank()-1][1]]; },
+            attackProps: { isSkill: true, isPyro: true }
+        },
+        {
+            id: "burst_total",
+            label: "元素爆発19発",
+            dmgScale(vm){ return new Array(19).fill(Klee.burstTalentTable[vm.burstRank()-1]); },
+            attackProps: { isBurst: true, isPyro: true }
+        },
+    ];
+}
+
+
+// クレー
+export class KleeViewModel extends PyroCharacterViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.useDmgUpTalent = ko.observable(true);  // こんこんプレゼント, 重撃ダメージ+50%
+        this.useC2Effect = ko.observable(true);     // 2凸効果, 防御ダウン
+        this.useC6Effect = ko.observable(true);     // 6凸効果，ドッカン花火後炎ダメ+10%
+    }
+
+
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        if(this.useDmgUpTalent()) {
+            calc.baseChargedDmg.value += 0.5;
+        }
+
+        if(this.constell() >= 2 && this.useC2Effect()) {
+            calc.baseEnemyRateDef.value -= 0.23;
+        }
+
+        if(this.constell() >= 6 && this.useC6Effect()) {
+            calc.basePyroDmg.value += 0.1;
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let ret = super.viewHTMLList(target);
+
+        ret.push(
+            Widget.buildViewHTML(target, "こんこんプレゼント",
+                Widget.checkBoxViewHTML("useDmgUpTalent", "重撃ダメージ+50%"))
+        );
+        
+        if(this.constell() >= 2) {
+            ret.push(Widget.buildViewHTML(target, "弾丸の破片（2凸効果）",
+                Widget.checkBoxViewHTML("useC2Effect", "敵の防御力-23%")));
+        }
+
+        if(this.constell() >= 6) {
+            ret.push(Widget.buildViewHTML(target, "火力全開（6凸効果）",
+                Widget.checkBoxViewHTML("useC6Effect", "炎ダメージ+10%")));
+        }
+
+        return ret;
+    }
+
+
+    presetAttacks()
+    {
+        let attacks = super.presetAttacks();
+        
+        if(this.constell() >= 1) {
+            // ゴロゴロコンボ
+            attacks.push(new Base.AttackEvaluator(
+                this,
+                {
+                    id: "chained_reactions",
+                    label: "ゴロゴロコンボ（1凸効果）",
+                    dmgScale(vm){ return Klee.burstTalentTable[vm.burstRank()-1] * 1.2; },
+                    attackProps: { isPyro: true }
+                }
+            ));
+        }
+
+        if(this.constell() >= 4) {
+            // 一触即発
+            attacks.push(new Base.AttackEvaluator(
+                this,
+                {
+                    id: "sparkly_explosion",
+                    label: "一触即発（4凸効果）",
+                    dmgScale(vm){ return 5.55; },
+                    attackProps: { isPyro: true, isBurst: true }
+                }
+            ));
+        }
+
+        return attacks;
+    }
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useDmgUpTalent = this.useDmgUpTalent();
+        obj.useC2Effect = this.useC2Effect();
+        obj.useC6Effect = this.useC6Effect();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+
+        this.useDmgUpTalent(obj.useDmgUpTalent);
+        this.useC2Effect(obj.useC2Effect);
+        this.useC6Effect(obj.useC6Effect);
+    }
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Klee(),
+        {
+            "vm": {
+                "parent_id": "klee",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "reactionType": "isVaporize",
+                "reactionProb": 0,
+                "useDmgUpTalent": true,
+                "useC2Effect": true,
+                "useC6Effect": true
+            },
+            "expected": {
+                "normal_total": 1480.987648474576,
+                "charged": 1413.3033599999997,
+                "skill_total": 2100.5212249830506,
+                "burst_total": 5340.472475847453,
+                "chained_reactions": 337.2929984745761,
+                "sparkly_explosion": 2151.6967144067785
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Klee().newViewModel()
+    ));
+});
+
+
 // 胡桃
 export class HuTao extends Base.CharacterData
 {

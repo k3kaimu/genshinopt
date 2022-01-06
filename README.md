@@ -28,3 +28,7 @@
 
 + [原神 Wiki](https://wikiwiki.jp/genshinwiki/)
 + [Genshin Impact Wiki](https://genshin-impact.fandom.com/wiki/Genshin_Impact)
+
+## 不具合・未確認の内容
+
++ クレーの1凸及び4凸効果が元素爆発扱いなのか不明．現在は1凸効果は元素爆発ではなく，4凸効果は元素爆発扱いとして実装中
