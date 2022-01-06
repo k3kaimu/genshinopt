@@ -118,13 +118,53 @@ title: 理想期待値比較
 </div>
 
 
+<h4 class="h4">比較するバフ設定</h4>
+<div class="mb-5">
+  <div class="card" id="external_buff_list">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs" role="tablist">
+        <!-- ko foreach: { data: comparingExternalBuffList, as: 'externalBuff' }  -->
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" data-bind="attr: {href: `#external_buff_tab_${externalBuffIndex()}` }" role="tab">
+            <span data-bind="text: `#B${externalBuffIndex()+1}`"></span>
+          </a>
+        </li>
+        <!-- /ko -->
+        <li class="nav-item ml-auto">
+          <button type="button" class="btn btn btn-outline-primary ml-2" data-bind="click: addComparingExternalBuff">+追加</button>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <div class="tab-content">
+        <!-- ko foreach: { data: comparingExternalBuffList, as: 'externalBuff' }  -->
+        <div class="tab-pane fade" data-bind="attr: {id: `external_buff_tab_${externalBuffIndex()}` }" role="tabpanel">
+          <div class="mb-3" data-bind="with: externalBuff">
+            {% include ui/external_buff_setting.html isEnableCollapse=false %}
+          </div>
+          <div class="row">
+            <div class="col-sm-6">
+              <button type="button" data-bind="click: () => $root.dupComparingExternalBuff(externalBuffIndex())" class="btn btn-outline-primary btn-block">この設定を複製</button>
+            </div>
+            <div class="col-sm-6">
+              <button type="button" data-bind="click: () => $root.removeComparingExternalBuff(externalBuffIndex())" class="btn btn-outline-danger btn-block">この設定を削除</button>
+            </div>
+          </div>
+        </div>
+        <!-- /ko -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 
 <div class="mb-5">
   <button type="button" class="btn btn-outline-primary btn-block" data-toggle="collapse" data-target="#buffSetting">他キャラや飯バフなどの詳細設定（上級者向け）</button>
-  <div class="collapse mt-2" id="buffSetting">
+  <div class="collapse mt-2" id="buffSetting" data-bind="with: externalBuff">
     <p class="text-danger">
       注意：百分率（%）の欄は倍率値を入力してください（例：33% -> 0.33）
     </p>
-    <div class="form-row" data-bind="with: externalBuff">
+    <div class="form-row">
       <div class="col-sm-3 col-6">
         <label data-bind="css: textInputCSS(addAtk())">攻撃力実数</label>
         <input type="text" class="form-control" data-bind="value: addAtk, css: textInputCSS(addAtk())" placeholder="例：1000">
@@ -177,7 +217,7 @@ title: 理想期待値比較
   </div>
 </div>
 
-
+ -->
 
 
 
@@ -667,7 +707,6 @@ title: 理想期待値比較
                   </p>
                 </div>
               </div>
-
             </div>
           </div>
         </div>

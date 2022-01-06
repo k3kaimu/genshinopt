@@ -48,3 +48,10 @@ indexDataMigrator.appendPatch(function(obj){
 
     return obj;
 });
+
+
+// index: v1 -> v2
+indexDataMigrator.appendPatch(function(obj){
+    obj.buff = [obj.buff];
+    return obj;
+});

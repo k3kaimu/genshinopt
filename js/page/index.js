@@ -69,85 +69,6 @@ $(function(){
         }.bind(this);
     }
 
-
-    function ExternalBuff()
-    {
-        this.addAtk = ko.observable();
-        this.rateAtk = ko.observable();
-        this.addDef = ko.observable();
-        this.rateDef = ko.observable();
-        this.addHP = ko.observable();
-        this.rateHP = ko.observable();
-        this.crtRate = ko.observable();
-        this.crtDmg = ko.observable();
-        this.mastery = ko.observable();
-        this.dmgBuff = ko.observable();
-        this.recharge = ko.observable();
-        this.resisDown = ko.observable();
-
-        this.applyDmgCalc = function(calc){
-            Calc.VGData.pushContext('ExternalBuff');
-
-            calc.addAtk.value += Number(this.addAtk() || 0);
-            calc.rateAtk.value += Number(this.rateAtk() || 0);
-            calc.addDef.value += Number(this.addDef() || 0);
-            calc.rateDef.value += Number(this.rateDef() || 0);
-            calc.addHP.value += Number(this.addHP() || 0);
-            calc.rateHP.value += Number(this.rateHP() || 0);
-            calc.baseCrtRate.value += Number(this.crtRate() || 0);
-            calc.baseCrtDmg.value += Number(this.crtDmg() || 0);
-            calc.baseMastery.value += Number(this.mastery() || 0);
-            calc.baseAllDmg.value += Number(this.dmgBuff() || 0);
-            calc.baseRecharge.value += Number(this.recharge() || 0);
-            calc.baseAllResis.value -= Number(this.resisDown() || 0);
-            Calc.VGData.popContext();
-
-            return calc;
-        }.bind(this);
-
-        this.textInputCSS = function(value) {
-            if(isValidNumber(value) && value != 0)
-                return "text-success";
-            else if(!isValidNumber(value) && value != undefined)
-                return "text-danger";
-            else
-                return "";
-        }.bind(this);
-
-        this.toJS = function(){
-            let obj = {};
-            obj.addAtk = this.addAtk();
-            obj.rateAtk = this.rateAtk();
-            obj.addDef = this.addDef();
-            obj.rateDef = this.rateDef();
-            obj.addHP = this.addHP();
-            obj.rateHP = this.rateHP();
-            obj.crtRate = this.crtRate();
-            obj.crtDmg = this.crtDmg();
-            obj.mastery = this.mastery();
-            obj.dmgBuff = this.dmgBuff();
-            obj.recharge = this.recharge();
-            obj.resisDown = this.resisDown();
-            return obj;
-        }.bind(this);
-
-        this.fromJS = function(obj) {
-            this.addAtk(obj.addAtk);
-            this.rateAtk(obj.rateAtk);
-            this.addDef(obj.addDef);
-            this.rateDef(obj.rateDef);
-            this.addHP(obj.addHP);
-            this.rateHP(obj.rateHP);
-            this.crtRate(obj.crtRate);
-            this.crtDmg(obj.crtDmg);
-            this.mastery(obj.mastery);
-            this.dmgBuff(obj.dmgBuff);
-            this.recharge(obj.recharge);
-            this.resisDown(obj.resisDown);
-        }.bind(this);
-    }
-
-
     function ViewModel() {
         this.readyNLopt = ko.observable();
     
@@ -202,7 +123,32 @@ $(function(){
             { value: "Heal",    label: "与える治癒効果",    checked: ko.observable(false) },
         ];
 
-        this.externalBuff = new ExternalBuff();
+        this.comparingExternalBuffList = ko.observableArray();
+
+        this.selectLastOfExternalBuffList = function() {
+            $(`#external_buff_list .nav-link`).removeClass("active");
+            $(`#external_buff_list .tab-pane`).removeClass("active");
+
+            let lastIndex = this.comparingExternalBuffList().length;
+            $(`#external_buff_list ul li:nth-child(${lastIndex}) a`).tab('show');
+        }.bind(this);
+
+        this.addComparingExternalBuff = function(){
+            this.comparingExternalBuffList.push(new UI.ExternalBuffSetting());
+            this.selectLastOfExternalBuffList();
+        }.bind(this);
+
+        this.dupComparingExternalBuff = function(index){
+            let srcObj = this.comparingExternalBuffList()[index].toJS();
+            this.addComparingExternalBuff();
+            this.comparingExternalBuffList().at(-1).fromJS(srcObj);
+        }.bind(this);
+
+        this.removeComparingExternalBuff = function(index) {
+            let target = this.comparingExternalBuffList()[index];
+            this.comparingExternalBuffList.remove(target);
+            this.selectLastOfExternalBuffList();
+        }.bind(this);
 
         this.optTotalCost = ko.observable();
 
@@ -241,20 +187,30 @@ $(function(){
                             this.hatMainStatus.forEach(hat => {
                                 if(! hat.checked()) return;
 
-                                dst.push({
-                                    character: this.characterSelector.viewModel(),
-                                    attack: this.characterSelector.selectedAttack(),
-                                    weapon: weapon.viewModel(),
-                                    iweapon: iwp,
-                                    artifactSet1: artifact.viewModel1(),
-                                    artifactSet2: artifact.viewModel2(),
-                                    iartifact: iatft,
-                                    clock: clock,
-                                    cup: cup,
-                                    hat: hat,
-                                    exbuff: this.externalBuff,
-                                    powRecharge: { isEnabled: this.usePowRecharge(), exp: Number(this.exponentOfRecharge()) },
-                                    globalOpt: { isEnabled: this.useGlobalOpt(), maxEval: Number(this.numOfEvalGlobalOpt()) },
+                                let exbuffs = this.comparingExternalBuffList().slice(0);
+
+                                // バフ設定の個数が0なら，初期値を追加する
+                                if(exbuffs.length == 0) {
+                                    exbuffs.push(new UI.ExternalBuffSetting());
+                                }
+
+                                exbuffs.forEach((externalBuff, ibuff) => {
+                                    dst.push({
+                                        character: this.characterSelector.viewModel(),
+                                        attack: this.characterSelector.selectedAttack(),
+                                        weapon: weapon.viewModel(),
+                                        iweapon: iwp,
+                                        artifactSet1: artifact.viewModel1(),
+                                        artifactSet2: artifact.viewModel2(),
+                                        iartifact: iatft,
+                                        clock: clock,
+                                        cup: cup,
+                                        hat: hat,
+                                        exbuff: externalBuff,
+                                        iexbuff: ibuff,
+                                        powRecharge: { isEnabled: this.usePowRecharge(), exp: Number(this.exponentOfRecharge()) },
+                                        globalOpt: { isEnabled: this.useGlobalOpt(), maxEval: Number(this.numOfEvalGlobalOpt()) },
+                                    });
                                 });
                             });
                         })
@@ -394,15 +350,16 @@ $(function(){
             let ia = r.setting.iartifact;
 
             if(artname2 == undefined) {
-                return "#" + (index+1) + " : " + wname + "(#W" + (iw+1) + ")/" + artname1 + '4' + "(#A" + (ia+1) + ")";
+                return `#${index+1}：${wname}/${artname1}4（#W${r.setting.iweapon+1}/#A${r.setting.iartifact+1}/#B${r.setting.iexbuff+1}）`;
             } else {
-                return "#" + (index+1) + " : " + wname + "(#W" + (iw+1) + ")/" + artname1 + '2' + artname2 + "2(#A" + (ia+1) + ")";
+                return `#${index+1}：${wname}/${artname1}2${artname2}2（#W${r.setting.iweapon+1}/#A${r.setting.iartifact+1}/#B${r.setting.iexbuff+1}）`;
             }
         }.bind(this);
 
         this.textCardBodyOptimizedResult = function(index, r) {
             let line1 = "メイン：";
             line1 += r.setting.clock.label + "/" + r.setting.cup.label + "/" + r.setting.hat.label;
+            line1 = line1.replaceAll("ダメージ", "ダメ").replaceAll("キャラ", "");
 
             let line2 = "サブ累計：";
             let sp = "";
@@ -557,7 +514,7 @@ $(function(){
             });
 
             obj.totcost = this.optTotalCost();
-            obj.buff = this.externalBuff.toJS();
+            obj.buff = this.comparingExternalBuffList().map(a => a.toJS());
 
             obj.clock = {};
             this.clockMainStatus.forEach(c => {
@@ -603,7 +560,10 @@ $(function(){
             });
 
             this.optTotalCost(obj.totcost);
-            this.externalBuff.fromJS(obj.buff);
+            obj.buff.forEach(e => {
+                this.addComparingExternalBuff();
+                this.comparingExternalBuffList().at(-1).fromJS(e);
+            });
 
             this.clockMainStatus.forEach(c => {
                 c.checked(obj.clock[c.value]);
@@ -631,7 +591,10 @@ $(function(){
     ko.applyBindings(window.viewModel);
 
     // 初期設定
-    viewModel.setShownResult("ALL");
+    {
+        viewModel.setShownResult("ALL");
+        // viewModel.addComparingExternalBuff();
+    }
 
     function loadDataFromURI(version, uri)
     {
