@@ -102,10 +102,18 @@ export class ASTNode
     }
 
 
+    static textValue(value)
+    {
+        let fix = Number(value).toFixed(4);
+        let str = "" + value;
+        return fix.length < str.length ? fix : str;
+    }
+
+
     toExprText(pp = undefined)
     {
         if(this.op == 'constant') {
-            return VGData.textValue(this.value);
+            return ASTNode.textValue(this.value);
         }
 
         if(this.op == '+' || this.op == '-') {
@@ -201,7 +209,6 @@ export class VGData
 
     #value;
     #grad;
-    #exprText;
     #annotate;
     #astnode;
 
@@ -209,7 +216,6 @@ export class VGData
     {
         this.#value = value;
         this.#grad = gradVec;    // double[7]: [rateAtk, rateDef, rateHP, crtRate, crtDmg, recharge, mastery]
-        this.#exprText = null;
         this.#annotate = null;
         this.#astnode = null;
     }
@@ -221,11 +227,7 @@ export class VGData
         if(VGData.doCalcExprText)  {
             let diff = v - this.#value;
             let op = diff >= 0 ? '+' : '-';
-            let txt = VGData.textValue(Math.abs(diff));
-            txt = (VGData.context == undefined) ? txt : `[${VGData.context}]{${txt}}(${txt})`;
 
-            this.#exprText = `${this.toExprText()} ${op} ${txt}`;
-            
             if(op == '+') {
                 this.#astnode = ASTNode.add(this.toASTNode(), ASTNode.constant(diff, VGData.context));
             } else {
@@ -306,43 +308,12 @@ export class VGData
         return new VGData(value, [0, 0, 0, 0, 0, 0, 1]);
     }
 
-    static textValue(value)
-    {
-        let fix = Number(value).toFixed(4);
-        let str = "" + value;
-        return fix.length < str.length ? fix : str;
-    }
-
 
     toASTNode() {
         if(this.#astnode)
             return this.#astnode;
         else
             return ASTNode.constant(this.#value);
-    }
-
-
-    toExprText() {
-        let isConstant = false;
-
-        let text = this.#exprText;
-        if(text == null) {
-            if(this.#value < 1e-6)
-                text = "0";
-            else
-                text = VGData.textValue(this.#value);
-
-            isConstant = true;
-        }
-
-        if(this.#annotate)
-            return `[${this.#annotate}]{${VGData.textValue(this.#value)}}(${text})`;
-        else {
-            if(isConstant)
-                return text;
-            else
-                return `(${text})`;
-        }
     }
 
 
@@ -365,7 +336,6 @@ export class VGData
             dst.#grad[i] = this.#grad[i];
         }
 
-        dst.#exprText = this.#exprText;
         dst.#astnode = this.#astnode;
 
         return dst;
@@ -380,7 +350,6 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
-            dst.#exprText = this.toExprText() + " + " + rhs.toExprText();
             dst.#astnode = ASTNode.add(this.toASTNode(), rhs.toASTNode());
         }
 
@@ -396,7 +365,6 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
-            dst.#exprText = this.toExprText() + " + " + VGData.textValue(rhs);
             dst.#astnode = ASTNode.add(this.toASTNode(), ASTNode.constant(rhs));
         }
 
@@ -421,7 +389,6 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
-            dst.#exprText = this.toExprText() + " - " + rhs.toExprText();
             dst.#astnode = ASTNode.sub(this.toASTNode(), rhs.toASTNode());
         }
 
@@ -437,7 +404,6 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
-            dst.#exprText = this.toExprText() + " - " + VGData.textValue(rhs);
             dst.#astnode = ASTNode.sub(this.toASTNode(), ASTNode.constant(rhs));
         }
 
@@ -463,7 +429,6 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
-            dst.#exprText = this.toExprText() + " * " + rhs.toExprText();
             dst.#astnode = ASTNode.mul(this.toASTNode(), rhs.toASTNode());
         }
 
@@ -479,7 +444,6 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
-            dst.#exprText = this.toExprText() + " * " + VGData.textValue(rhs);
             dst.#astnode = ASTNode.mul(this.toASTNode(), ASTNode.constant(rhs));
         }
 
@@ -504,7 +468,6 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
-            dst.#exprText = this.toExprText() + " / " + rhs.toExprText();
             dst.#astnode = ASTNode.div(this.toASTNode(), rhs.toASTNode());
         }
 
@@ -520,7 +483,6 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
-            dst.#exprText = this.toExprText() + " / " + VGData.textValue(rhs);
             dst.#astnode = ASTNode.div(this.toASTNode(), ASTNode.constant(rhs));
         }
 
@@ -546,7 +508,6 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
-            dst.#exprText = "1/" + this.toExprText();
             dst.#astnode = ASTNode.div(ASTNode.constant(1), this.toASTNode());
         }
 
@@ -566,7 +527,6 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
-            dst.#exprText = "Math.pow(" + this.toExprText() + ", " + VGData.textValue(num) + ")";
             dst.#astnode = ASTNode.pow(this.toASTNode(), ASTNode.constant(num));
         }
 
@@ -584,8 +544,6 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
-            let str = "Math.min(" + this.toExprText() + ", " + VGData.textValue(num) + ")";
-            dst.#exprText = str;
             dst.#astnode = ASTNode.min(this.toASTNode(), ASTNode.constant(num));
         }
 
@@ -603,8 +561,6 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
-            let str = "Math.max(" + this.toExprText() + ", " + VGData.textValue(num) + ")";
-            dst.#exprText = str;
             dst.#astnode = ASTNode.max(this.toASTNode(), ASTNode.constant(num));
         }
 
@@ -621,7 +577,6 @@ export class VGData
         }
 
         if(VGData.doCalcExprText) {
-            dst.#exprText = "log" + this.toExprText();
             dst.#astnode = ASTNode.log(this.toASTNode());
         }
 
