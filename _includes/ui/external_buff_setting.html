@@ -1,5 +1,17 @@
 <div>
   <div>
+    <!-- ko foreach: selectedBuffList -->
+    <div class="input-group">
+      <select data-bind="options: $parent.buffEffects,
+                  optionsText: function(o) { return o.label; },
+                  value: $data.selected,
+                  optionsCaption: '-選択-'" class="custom-select" ></select>
+      <div class="input-group-append">
+        <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.selectedBuffList.remove($data)">-削除</button>
+      </div>
+    </div>
+    <!-- /ko -->
+    <button type="button" class="btn btn-outline-primary" data-bind="click: () => $parent.addBuff()">+追加</button>
     <p class="text-danger">
       注意：百分率（%）の欄は倍率値を入力してください（例：33% -> 0.33）
     </p>

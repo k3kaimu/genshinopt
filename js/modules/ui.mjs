@@ -201,6 +201,27 @@ export function ArtifactSelector()
 
 export function ExternalBuffSetting()
 {
+    function BuffItem() {
+        this.selected = ko.observable();
+        this.viewModel = ko.observable();
+
+        this.selected.subscribe(function(newItem){
+            if(newItem == undefined) {
+                this.viewModel(new Data.BufferEffectViewModel(undefined));
+            } else {
+                this.viewModel(newItem.newViewModel());
+            }
+        }.bind(this));
+    }
+
+
+    this.buffEffects = Data.bufferEffects;
+    this.selectedBuffList = ko.observableArray([new BuffItem()]);
+
+    this.addBuff = function(){
+        this.selectedBuffList.push(new BuffItem());
+    }.bind(this);
+
     this.addAtk = ko.observable();
     this.rateAtk = ko.observable();
     this.addDef = ko.observable();
@@ -216,6 +237,12 @@ export function ExternalBuffSetting()
 
     this.applyDmgCalc = function(calc){
         Calc.VGData.pushContext('ExternalBuff');
+
+        this.selectedBuffList().forEach(e => {
+            let sel = e.selected();
+            if(sel)
+                calc = e.viewModel().applyDmgCalc(calc);
+        });
 
         calc.addAtk.value += Number(this.addAtk() || 0);
         calc.rateAtk.value += Number(this.rateAtk() || 0);
@@ -245,6 +272,13 @@ export function ExternalBuffSetting()
 
     this.toJS = function(){
         let obj = {};
+
+        obj.buffItems = this.selectedBuffList().map(e => {
+            if(e.selected())
+                return e.viewModel().toJS();
+            else
+                return undefined;
+        }).filter(e => !!e);
         obj.addAtk = this.addAtk();
         obj.rateAtk = this.rateAtk();
         obj.addDef = this.addDef();
@@ -261,6 +295,14 @@ export function ExternalBuffSetting()
     }.bind(this);
 
     this.fromJS = function(obj) {
+        this.selectedBuffList([]);
+        obj.buffItems.forEach(e => {
+            let newItem = new BuffItem();
+            newItem.selected(Data.lookupBuffEffect(e.parent_id));
+            newItem.viewModel().fromJS(e);
+            this.selectedBuffList.push(newItem);
+        });
+
         this.addAtk(obj.addAtk);
         this.rateAtk(obj.rateAtk);
         this.addDef(obj.addDef);
