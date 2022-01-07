@@ -234,6 +234,7 @@ export function ExternalBuffSetting()
     this.dmgBuff = ko.observable();
     this.recharge = ko.observable();
     this.resisDown = ko.observable();
+    this.addIncDmg = ko.observable();
 
     this.applyDmgCalc = function(calc){
         Calc.VGData.pushContext('ExternalBuff');
@@ -256,6 +257,20 @@ export function ExternalBuffSetting()
         calc.baseAllDmg.value += Number(this.dmgBuff() || 0);
         calc.baseRecharge.value += Number(this.recharge() || 0);
         calc.baseAllResis.value -= Number(this.resisDown() || 0);
+        // calc.addIncreaseDmg.value += Number(this.addIncDmg() || 0);
+
+        let addDmgValue = Number(this.addIncDmg() || 0);
+        let ctx = Calc.VGData.context;
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let NewCalc = class extends CalcType {
+            #dExBuffAddIncDmg = addDmgValue;
+
+            increaseDamage(attackProps) {
+                return super.increaseDamage(attackProps).add(Calc.VGData.constant(this.#dExBuffAddIncDmg).as(ctx));
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
         Calc.VGData.popContext();
 
         return calc;
@@ -291,6 +306,7 @@ export function ExternalBuffSetting()
         obj.dmgBuff = this.dmgBuff();
         obj.recharge = this.recharge();
         obj.resisDown = this.resisDown();
+        obj.addIncDmg = this.addIncDmg();
         return obj;
     }.bind(this);
 
@@ -315,5 +331,6 @@ export function ExternalBuffSetting()
         this.dmgBuff(obj.dmgBuff);
         this.recharge(obj.recharge);
         this.resisDown(obj.resisDown);
+        this.addIncDmg(obj.addIncDmg);
     }.bind(this);
 }
