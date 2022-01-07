@@ -1033,7 +1033,7 @@ export class YunJin extends Base.CharacterData
         },
         {
             id: "burst_add",
-            label: "爆発追加ダメージ（天賦倍率x防御力）",
+            label: "爆発加算ダメージ（天賦倍率x防御力）",
             dmgScale: vm => 0,
             attackProps: { isYunJinBurstAddDmg: true, isChainable: false }
         }
