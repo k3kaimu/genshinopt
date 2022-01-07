@@ -1151,3 +1151,34 @@ export class YunJinViewModel extends Base.CharacterViewModel
         this.useC4Effect(obj.useC4Effect);
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new YunJin(),
+        {
+            "vm": {
+                "parent_id": "yun_jin",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "numElems": 4,
+                "useC2Effect": true,
+                "useC4Effect": true
+            },
+            "expected": {
+                "normal_1": 1004.498989875,
+                "charged": 422.931015,
+                "skill_short": 1080.130545,
+                "skill_long1": 1890.121932,
+                "skill_long2": 2700.539406,
+                "burst_dmg": 784.9569375000001,
+                "burst_add": 585.732
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new YunJin().newViewModel()
+    ));
+});
