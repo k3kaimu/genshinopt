@@ -874,6 +874,7 @@ export class NingguangViewModel extends Base.CharacterViewModel
     toJS() {
         let obj = super.toJS();
         obj.gemStacks = this.gemStacks();
+        obj.useByobuBuff = this.useByobuBuff();
         return obj;
     }
 
