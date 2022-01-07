@@ -82,8 +82,8 @@ export class PyroCharacterViewModel extends Base.CharacterViewModel
 
     fromJS(obj) {
         super.fromJS(obj);
-        this.reactionType(obj.reactionType);
-        this.reactionProb(obj.reactionProb);
+        this.reactionType(obj.reactionType || "isVaporize");
+        this.reactionProb(obj.reactionProb || 0);
     }
 }
 
