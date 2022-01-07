@@ -139,9 +139,11 @@ $(function(){
         }.bind(this);
 
         this.dupComparingExternalBuff = function(index){
-            let srcObj = this.comparingExternalBuffList()[index].toJS();
+            let list = this.comparingExternalBuffList();
+            let srcObj = list[index].toJS();
             this.addComparingExternalBuff();
-            this.comparingExternalBuffList().at(-1).fromJS(srcObj);
+
+            list[list.length - 1].fromJS(srcObj);
         }.bind(this);
 
         this.removeComparingExternalBuff = function(index) {
@@ -562,7 +564,9 @@ $(function(){
             this.optTotalCost(obj.totcost);
             obj.buff.forEach(e => {
                 this.addComparingExternalBuff();
-                this.comparingExternalBuffList().at(-1).fromJS(e);
+
+                let list = this.comparingExternalBuffList();
+                list[list.length - 1].fromJS(e);
             });
 
             this.clockMainStatus.forEach(c => {

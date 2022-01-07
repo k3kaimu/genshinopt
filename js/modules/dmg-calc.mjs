@@ -252,10 +252,10 @@ export class VGData
 
 
     static get context() {
-        if(this.#contexts.length == 0)
+        if(VGData.#contexts.length == 0)
             return undefined;
         else
-            return this.#contexts.at(-1);
+            return VGData.#contexts[VGData.#contexts.length - 1];
     }
 
 
