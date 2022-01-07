@@ -913,3 +913,241 @@ runUnittest(function(){
         new Ningguang().newViewModel()
     ));
 });
+
+
+
+// 雲菫
+export class YunJin extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "yun_jin",
+            "雲菫",
+            4,
+            "Geo",
+            "Polearm",
+            191,        /* bAtk */
+            734,        /* bDef */
+            10657,      /* bHP */
+            "baseRecharge",  /* bBonusType */
+            0.267       /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new YunJinViewModel(this);
+    }
+
+
+    static normalTalentTable = [
+    //   0:1段,  1:2段, 2:3段,          3:4段,          4:5段,     5:重撃,    6:落下,    7:低空, 8:高空 
+        [0.405, 0.402, [0.230, 0.275], [0.240, 0.288], 67.3/100, 121.7/100, 63.9/100, 1.28, 1.60],
+        [0.438, 0.435, [0.248, 0.298], [0.259, 0.312], 72.8/100, 131.6/100, 69.1/100, 1.38, 1.73],
+        [0.471, 0.468, [0.267, 0.320], [0.279, 0.335], 78.3/100, 141.5/100, 74.3/100, 1.49, 1.86],
+        [0.518, 0.515, [0.294, 0.352], [0.307, 0.369], 86.1/100, 155.7/100, 81.8/100, 1.64, 2.04],
+        [0.551, 0.548, [0.312, 0.374], [0.326, 0.392], 91.6/100, 165.6/100, 87.0/100, 1.74, 2.17],
+        [0.589, 0.585, [0.334, 0.400], [0.349, 0.419], 97.9/100, 176.9/100, 92.9/100, 1.86, 2.32],
+        [0.641, 0.637, [0.363, 0.435], [0.363, 0.435], 106.5/100, 192.4/100, 101.1/100, 2.02, 2.53],
+        [0.692, 0.686, [0.392, 0.470], [0.410, 0.492], 115.1/100, 208.0/100, 109.3/100, 2.19, 2.73],
+        [0.744, 0.739, [0.422, 0.506], [0.441, 0.529], 123.7/100, 223.6/100, 117.5/100, 2.35, 2.93],
+        [0.800, 0.796, [0.454, 0.544], [0.474, 0.570], 133.1/100, 240.6/100, 126.4/100, 2.53, 3.16],
+        [0.857, 0.852, [0.486, 0.582], [0.508, 0.610], 142.5/100, 260.0/100, 135.3/100, 2.71, 3.38],
+    ];
+
+
+    static skillTalentTable = [
+    //  0:1回押し, 1:1段,  2:2段, 3:シールドHP%, 4:シールド加算値
+        [1.491, 1.491, 1.491, 0.12, 1155],
+        [1.603, 2.805, 4.008, 0.13, 1271],
+        [1.715, 3.001, 4.287, 0.14, 1396],
+        [1.864, 3.262, 4.660, 0.15, 1531],
+        [1.976, 3.458, 4.940, 0.16, 1675],
+        [2.088, 3.653, 5.219, 0.17, 1830],
+        [2.237, 3.914, 5.592, 0.18, 1993],
+        [2.386, 4.175, 5.965, 0.19, 2167],
+        [2.535, 4.436, 6.338, 0.20, 2350],
+        [2.684, 4.697, 6.710, 0.22, 2542],
+        [2.833, 4.958, 7.083, 0.23, 2744],
+        [2.982, 5.219, 7.456, 0.24, 2956],
+        [3.169, 5.545, 7.922, 0.26, 3178],
+    ];
+
+
+    static burstTalentTable = [
+    //   0:ダメージ, 1:ダメージ増加効果防御%
+        [2.44, 0.32],
+        [2.62, 0.35],
+        [2.81, 0.37],
+        [3.05, 0.40],
+        [3.23, 0.43],
+        [3.42, 0.45],
+        [3.66, 0.48],
+        [3.90, 0.51],
+        [4.15, 0.55],
+        [4.39, 0.58],
+        [4.64, 0.61],
+        [4.88, 0.64],
+        [5.19, 0.68],
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_1",
+            label: "通常5段累計",
+            dmgScale: vm => YunJin.normalTalentTable[vm.normalRank()-1].slice(0, 5).flat(),
+            attackProps: { isNormal: true, isPhysical: true },
+        },
+        {
+            id: "charged",
+            label: "重撃",
+            dmgScale: vm => YunJin.normalTalentTable[vm.normalRank()-1][5],
+            attackProps: { isCharged: true, isPhysical: true },
+        },
+        {
+            id: "skill_short",
+            label: "元素スキル（短押し）",
+            dmgScale: vm => 0,
+            attackProps: { isSkill: true, isGeo: true, isYunJinSkillShort: true },
+        },
+        {
+            id: "skill_long1",
+            label: "元素スキル（長押し1段）",
+            dmgScale: vm => 0,
+            attackProps: { isSkill: true, isGeo: true, isYunJinSkillLong1: true },
+        },
+        {
+            id: "skill_long2",
+            label: "元素スキル（長押し2段）",
+            dmgScale: vm => 0,
+            attackProps: { isSkill: true, isGeo: true, isYunJinSkillLong2: true },
+        },
+        {
+            id: "burst_dmg",
+            label: "元素爆発ダメージ",
+            dmgScale: vm => YunJin.burstTalentTable[vm.burstRank()-1][0],
+            attackProps: { isBurst: true, isGeo: true },
+        },
+        {
+            id: "burst_add",
+            label: "爆発追加ダメージ（天賦倍率x防御力）",
+            dmgScale: vm => 0,
+            attackProps: { isYunJinBurstAddDmg: true, isChainable: false }
+        }
+    ];
+}
+
+
+// 雲菫
+export class YunJinViewModel extends Base.CharacterViewModel
+{
+    // TODO: 6凸効果は未実装
+
+    constructor(parent)
+    {
+        super(parent);
+        this.numElems = ko.observable(4);           // チーム内の属性数
+        this.useC2Effect = ko.observable(true);     // 2凸効果，通常攻撃+15%
+        this.useC4Effect = ko.observable(true);     // 4凸効果，防御力+20%
+    }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        let ctx = Calc.VGData.context;
+        let data = this.toJS();
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let NewCalc = class extends CalcType {
+            #dYunjin = data;
+
+            calculate(dmgScale, attackProps)
+            {
+                if(attackProps.isYunJinBurstAddDmg) {
+                    let scale = YunJin.burstTalentTable[this.#dYunjin.burstRank-1][1];
+                    scale += ([2.5, 5.0, 7.5, 11.5][Number(this.#dYunjin.numElems) - 1]) / 100;
+
+                    return new Calc.Attacks(this.def(attackProps).mul(scale).as(ctx));
+                } else
+                    return super.calculate(dmgScale, attackProps);
+            }
+
+            increaseDamage(attackProps) {
+                // 雲菫スキルダメージ
+                if(attackProps.isSkill && attackProps.isYunJinSkillShort) {
+                    return super.increaseDamage(attackProps).add(this.def(attackProps).mul(YunJin.skillTalentTable[this.#dYunjin.skillRank-1][0]).as(ctx));
+                } else if(attackProps.isSkill && attackProps.isYunJinSkillLong1) {
+                    return super.increaseDamage(attackProps).add(this.def(attackProps).mul(YunJin.skillTalentTable[this.#dYunjin.skillRank-1][1]).as(ctx));
+                } else if(attackProps.isSkill && attackProps.isYunJinSkillLong2) {
+                    return super.increaseDamage(attackProps).add(this.def(attackProps).mul(YunJin.skillTalentTable[this.#dYunjin.skillRank-1][2]).as(ctx));
+                } else {
+                    return super.increaseDamage(attackProps);
+                }
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+
+        if(this.constell() >= 2 && this.useC2Effect()) {
+            calc.baseNormalDmg.value += 0.15;
+        }
+
+        if(this.constell() >= 4 && this.useC4Effect()) {
+            calc.rateDef.value += 0.2;
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let ret = super.viewHTMLList(target);
+
+        ret.push(
+            Widget.buildViewHTML(target, "チーム内元素数",
+                Widget.selectViewHTML("numElems", [
+                {value: 1, label: "1種類"},
+                {value: 2, label: "2種類"},
+                {value: 3, label: "3種類"},
+                {value: 4, label: "4種類"}]))
+        );
+
+        if(this.constell() >= 2) {
+            ret.push(
+                Widget.buildViewHTML(target, "諸般切末（2凸効果）",
+                    Widget.checkBoxViewHTML("useC2Effect", "通常攻撃+15%"))
+            );
+        }
+
+        if(this.constell() >= 4) {
+            ret.push(
+                Widget.buildViewHTML(target, "昇堂吊雲（4凸効果）",
+                    Widget.checkBoxViewHTML("useC4Effect", "防御力+20%"))
+            );
+        }
+
+        return ret;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.numElems = this.numElems();
+        obj.useC2Effect = this.useC2Effect();
+        obj.useC4Effect = this.useC4Effect();
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.numElems(obj.numElems);
+        this.useC2Effect(obj.useC2Effect);
+        this.useC4Effect(obj.useC4Effect);
+    }
+}
