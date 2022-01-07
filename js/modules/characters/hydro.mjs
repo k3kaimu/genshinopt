@@ -221,12 +221,13 @@ runUnittest(function(){
                 "constell": 6,
                 "normalRank": 9,
                 "skillRank": 9,
-                "burstRank": 9
+                "burstRank": 9,
+                "reactionProb": 0
             },
             "expected": {
-                "bow_1": 183.7079325,
+                "bow_total": 1485.6591374999998,
                 "bow_charged": 658.6535276999999,
-                "sword_1": 222.88086198000005,
+                "sword_total": 1864.83231018,
                 "sword_charged": 757.9197939599999,
                 "bow_burst": 2007.1763901,
                 "sword_burst": 2462.9271723
