@@ -881,6 +881,7 @@ export class NingguangViewModel extends Base.CharacterViewModel
     fromJS(obj) {
         super.fromJS(obj);
         this.gemStacks(obj.gemStacks);
+        this.useByobuBuff(obj.useByobuBuff);
     }
 }
 
@@ -895,7 +896,8 @@ runUnittest(function(){
                 "normalRank": 9,
                 "skillRank": 9,
                 "burstRank": 9,
-                "gemStacks": 3
+                "gemStacks": 3,
+                "useByobuBuff": true,
             },
             "expected": {
                 "normal_1": 129.0220848,
