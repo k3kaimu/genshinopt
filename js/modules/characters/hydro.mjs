@@ -1,7 +1,82 @@
 import * as Base from '/js/modules/characters/base.mjs';
+import * as Widget from '/js/modules/widget.mjs';
+import * as Calc from '/js/modules/dmg-calc.mjs';
 import * as Utils from '/js/modules/utils.mjs';
 
 
+
+export class HydroCharacterViewModel extends Base.CharacterViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.reactionProb = ko.observable(0);
+    }
+
+
+    viewHTMLList(target){
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "蒸発反応",
+                Widget.sliderViewHTML("reactionProb", 0, 1, 0.1,
+                    `反応確率：` + Widget.spanPercentage("reactionProb()", 2))
+            )
+        );
+
+        return dst;
+    }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        let prob = Number(this.reactionProb());
+
+        let CalcType = Object.getPrototypeOf(calc).constructor;
+        let NewCalc = class extends CalcType {
+            reactionProb = prob;
+
+            calculate(dmgScale, attackProps) {
+                if(attackProps.isHydro || false) {
+                    let newProps = Object.assign({}, attackProps);
+        
+                    // 元素反応なし
+                    let dmg1 = super.calculate(dmgScale, newProps);
+
+                    // 元素反応あり
+                    newProps.isVaporize = true;
+                    let dmg2 = super.calculate(dmgScale, newProps);
+
+                    let txtReact = "蒸発";
+        
+                    return Calc.Attacks.expect([1 - this.reactionProb, this.reactionProb], [dmg1, dmg2], [`${txtReact}反応なし`, `${txtReact}反応あり`]);
+                } else {
+                    // 攻撃が水ではないので，元素反応なし
+                    return super.calculate(dmgScale, attackProps);
+                }
+            }
+        };
+
+        calc = Object.assign(new NewCalc(), calc);
+        return calc;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.reactionProb = this.reactionProb();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.reactionProb(obj.reactionProb || 0);
+    }
+}
 
 export class Tartaglia extends Base.CharacterData
 {
