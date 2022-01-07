@@ -692,7 +692,7 @@ export class Yoimiya extends Base.CharacterData
 
 
 // 宵宮
-export class YoimiyaViewModel extends Base.CharacterViewModel
+export class YoimiyaViewModel extends PyroCharacterViewModel
 {
     // 天賦「炎昼の風物詩」はサポート能力のため無視
 
