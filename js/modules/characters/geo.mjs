@@ -404,7 +404,7 @@ export class AlbedoViewModel extends Base.CharacterViewModel
 
             increaseDamage(attackProps) {
 
-                if(attackProps.isAlbedoSkillFlower) {
+                if(attackProps.isSkill && attackProps.isAlbedoSkillFlower) {
                     // 刹那の花の防御参照ダメージ
                     return super.increaseDamage(attackProps).add(this.def(attackProps).mul(Albedo.skillTalentTable[this.#dAlbedo.skillRank-1][1]).as(ctx));
                 } else if(attackProps.isBurst && this.#dAlbedo.constell >= 2) {
