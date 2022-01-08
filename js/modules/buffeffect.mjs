@@ -88,3 +88,19 @@ export class ConstantBufferEffectViewModel extends BufferEffectViewModel
         return calc;
     }
 }
+
+
+export class BufferEffectViewModelFactory extends BufferEffect
+{
+    constructor(id, label, type, fn)
+    {
+        super(id, label, type);
+        this.fn = fn;
+    }
+
+
+    newViewModel()
+    {
+        return this.fn(this);
+    }
+}
