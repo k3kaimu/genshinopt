@@ -140,7 +140,7 @@ title: 理想期待値比較
         <!-- ko foreach: { data: comparingExternalBuffList, as: 'externalBuff' }  -->
         <div class="tab-pane fade" data-bind="attr: {id: `external_buff_tab_${externalBuffIndex()}` }" role="tabpanel">
           <div class="mb-3" data-bind="with: externalBuff">
-            {% include ui/external_buff_setting.html isEnableCollapse=false %}
+            {% include ui/external_buff_setting.html isEnableCollapse=false target_from_root="$root.comparingExternalBuffList()[${externalBuffIndex()}]" %}
           </div>
           <div class="row">
             <div class="col-sm-6">
