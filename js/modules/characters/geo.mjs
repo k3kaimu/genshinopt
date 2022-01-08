@@ -2,6 +2,8 @@ import * as Base from '/js/modules/characters/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
 import * as Calc from '/js/modules/dmg-calc.mjs';
 import * as Utils from '/js/modules/utils.mjs';
+import * as BuffEffect from '/js/modules/buffeffect.mjs';
+
 
 // 旅人（岩）
 export class TravelerGeo extends Base.CharacterData
@@ -1188,3 +1190,108 @@ runUnittest(function(){
         new YunJin().newViewModel()
     ));
 });
+
+
+// 雲菫，BufferViewModel
+export class YunJinBufferViewModel extends BuffEffect.BufferEffectViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.useBurstEffect = ko.observable(true);
+        this.burstRank = ko.observable(9);
+        this.numElems = ko.observable(4);
+        this.totalDef = ko.observable(1800);
+        this.useC2Effect = ko.observable(true);
+    }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        if(this.useBurstEffect()) {
+            let ctx = Calc.VGData.context;
+            let data = this.toJS();
+            data.incDmg = YunJin.increaseDamage(this.burstRank(), this.numElems(),
+                                Calc.VGData.constant(this.totalDef()).as(ctx)).as(ctx);
+
+            let CalcType = Object.getPrototypeOf(calc).constructor;
+            let NewCalc = class extends CalcType {
+                #dYunjinBuff = data;
+
+                increaseDamage(attackProps) {
+                    return super.increaseDamage(attackProps)
+                        .add(this.#dYunjinBuff.incDmg);
+                }
+            };
+
+            calc = Object.assign(new NewCalc(), calc);
+        }
+
+        if(this.useC2Effect()) {
+            calc.baseNormalDmg.value += 0.15;
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let ret = super.viewHTMLList(target);
+
+        ret.push(
+            Widget.buildViewHTML(target, "元素爆発によるダメージ加算",
+                Widget.checkBoxViewHTML("useBurstEffect", "この効果を有効にする")
+                +
+                Widget.selectViewHTML("burstRank", 
+                        (new Array(YunJin.skillTalentTable.length)).fill(0)
+                            .map((e, i) => { return {value:i+1, label:`${i+1}`};}),
+                        "爆発天賦レベル", {"disable": "!useBurstEffect()"})
+                +
+                Widget.selectViewHTML("numElems", [
+                            {value: 1, label: "1種類"},
+                            {value: 2, label: "2種類"},
+                            {value: 3, label: "3種類"},
+                            {value: 4, label: "4種類"}],
+                        "チーム内元素数", {"disable": "!useBurstEffect()"})
+                +
+                Widget.textBoxViewHTML("totalDef", "雲菫の防御力",
+                        {"disable": "!useBurstEffect()"})
+                +
+                `<span>雲菫の防御力の目安は1000〜4000程度です．どれくらいになるかよくわからない場合には<a href="https://genshinopt.toyohashi.nagoya/?ver=2&data=XQAAgAAEAgAAAAAAAABFKkhmgyqxDEMhlgcym7FiUgGWjpmEpfQPBmB34B_VJmPv4A6H6l5m6Hq78CRAfOF61bySEI2l36-tBoPz9ehZ0%2BgRGVuy10Leo%2FRnw61kafOwzUECvS5QFC%2BIy0DH6HUnoz8E2XfuOhBpBIRtHQ6Z6QpcRwvBfx2voapV9Tvv5cZ9WajrkYwPMmpX1TWfFaEHI8%2B0VlrLW8l4TvlrK0XkOLPi7eHNYxdVOM7E3ZiDdpND95gZDCfABNO0tce2ZtKstAOJibf3bVhzmg70L9llYXxPumCQoASXYEaWd1yRbvml%2Bxt3HnE0gGH8A3F7zF17EekDtZeIMG6b35K1Gr3fwgKJ6PtmLTMeH6oYnUAKx7W8FnHU20Hoit9j4pAa8Np52AGcaF2BcIAhvantfUagzfHCcg%2FF6GXVkOMVc1SvsWAtXTq8HOBPykO0P0rZdnDDfK95y%2BKXkmxjm%2F%2BTeMDA" target="_blank" rel="noopener noreferrer">こちらのページの結果の詳細表示</a>を参考にしてください．</span>`
+            )
+        )
+
+        ret.push(
+            Widget.buildViewHTML(target, "諸般切末（2凸効果）",
+                Widget.checkBoxViewHTML("useC2Effect", "通常攻撃+15%"))
+        );
+
+        return ret;
+    }
+
+
+    toJS()
+    {
+        let obj = super.toJS();
+        obj.useBurstEffect = this.useBurstEffect();
+        obj.burstRank = this.burstRank();
+        obj.numElems = this.numElems();
+        obj.totalDef = this.totalDef();
+        obj.useC2Effect = this.useC2Effect();
+        return obj;
+    }
+
+
+    fromJS(obj)
+    {
+        super.fromJS(obj);
+        this.useBurstEffect(obj.useBurstEffect || true);
+        this.burstRank(obj.burstRank || 9);
+        this.numElems(obj.numElems || 4);
+        this.totalDef(obj.totalDef || 2000);
+        this.useC2Effect(obj.useC2Effect || true);
+    }
+}
