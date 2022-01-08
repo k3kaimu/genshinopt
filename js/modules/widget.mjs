@@ -57,6 +57,17 @@ export function spanInteger(expr)
 }
 
 
+export function textBoxViewHTML(observableStr, labelHTML, otherBindAttr = undefined)
+{
+    return `<div class="form-group row m-0">
+        <label class="col-5 mt-2">${labelHTML}</label>
+        <div class="col-7">
+            <input type="text" class="form-control" data-bind="value: ${observableStr}, ${buildBindAttr(otherBindAttr)}">
+        </div>
+    </div>`;
+}
+
+
 export function checkBoxViewHTML(observableStr, labelHTML, otherBindAttr = undefined)
 {
     return `<div class="form-group m-0">
