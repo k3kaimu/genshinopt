@@ -6,7 +6,7 @@ export class BufferEffect
     {
         this.id = id;
         this.label = label;
-        this.type = type;
+        this.type = type;       // "C": キャラ, "W": 武器, "A": 聖遺物, "F": 食料, "E": 元素共鳴
     }
 
 
@@ -56,11 +56,10 @@ export class BufferEffectViewModel
 
 export class ConstantBufferEffect extends BufferEffect
 {
-    constructor(id, label, type, target, value)
+    constructor(id, label, type, targetAndValues)
     {
         super(id, label, type);
-        this.buffStatus = target;
-        this.buffValue = value;
+        this.buffStatus = targetAndValues;
     }
 
 
@@ -82,7 +81,9 @@ export class ConstantBufferEffectViewModel extends BufferEffectViewModel
     {
         calc = super.applyDmgCalcImpl(calc);
 
-        calc[this.parent.buffStatus].value += this.parent.buffValue;
+        Object.keys(this.parent.buffStatus).forEach(k => {
+            calc[k].value += this.parent.buffStatus[k];
+        });
 
         return calc;
     }
