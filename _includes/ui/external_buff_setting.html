@@ -1,14 +1,19 @@
 <div>
   <div>
-    <!-- ko foreach: selectedBuffList -->
-    <div class="input-group">
-      <select data-bind="options: $parent.buffEffects,
-                  optionsText: function(o) { return o.label; },
-                  value: $data.selected,
-                  optionsCaption: '-選択-'" class="custom-select" ></select>
-      <div class="input-group-append">
-        <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.selectedBuffList.remove($data)">-削除</button>
+    <!-- ko foreach: {data: selectedBuffList, as: "buffItem"} -->
+    <div class="mb-3">
+      <div class="input-group">
+        <select data-bind="options: $parent.buffEffects,
+                    optionsText: function(o) { return o.label; },
+                    value: buffItem.selected,
+                    optionsCaption: '-選択-'" class="custom-select" ></select>
+        <div class="input-group-append">
+          <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.selectedBuffList.remove(buffItem)">-削除</button>
+        </div>
       </div>
+      <!-- ko foreach: buffItem.viewModel().viewHTMLList(`{{ include.target_from_root }}.selectedBuffList()[${buffItemIndex()}].viewModel()`) -->
+      <div data-bind="htmlWithBinding: $data"></div>
+      <!-- /ko -->
     </div>
     <!-- /ko -->
     <button type="button" class="btn btn-outline-primary" data-bind="click: () => $parent.addBuff()">+追加</button>

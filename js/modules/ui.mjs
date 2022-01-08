@@ -203,7 +203,7 @@ export function ExternalBuffSetting()
 {
     function BuffItem() {
         this.selected = ko.observable();
-        this.viewModel = ko.observable();
+        this.viewModel = ko.observable(new Data.BufferEffectViewModel(undefined));
 
         this.selected.subscribe(function(newItem){
             if(newItem == undefined) {
@@ -318,6 +318,9 @@ export function ExternalBuffSetting()
             newItem.viewModel().fromJS(e);
             this.selectedBuffList.push(newItem);
         });
+        if(this.selectedBuffList().length == 0) {
+            this.selectedBuffList.push(new BuffItem());
+        }
 
         this.addAtk(obj.addAtk);
         this.rateAtk(obj.rateAtk);
