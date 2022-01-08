@@ -1221,8 +1221,11 @@ export class YunJinBufferViewModel extends BuffEffect.BufferEffectViewModel
                 #dYunjinBuff = data;
 
                 increaseDamage(attackProps) {
-                    return super.increaseDamage(attackProps)
-                        .add(this.#dYunjinBuff.incDmg);
+                    if(attackProps.isNormal || false) {
+                        return super.increaseDamage(attackProps).add(this.#dYunjinBuff.incDmg);
+                    } else {
+                        return super.increaseDamage(attackProps);
+                    }
                 }
             };
 
@@ -1242,7 +1245,7 @@ export class YunJinBufferViewModel extends BuffEffect.BufferEffectViewModel
         let ret = super.viewHTMLList(target);
 
         ret.push(
-            Widget.buildViewHTML(target, "元素爆発によるダメージ加算",
+            Widget.buildViewHTML(target, "元素爆発による通常攻撃へのダメージ加算",
                 Widget.checkBoxViewHTML("useBurstEffect", `この効果を有効にする（この設定での加算値：${textInteger(YunJin.increaseDamage(this.burstRank(), this.numElems(),
                     Calc.VGData.constant(this.totalDef())).value)}）`)
                 +
