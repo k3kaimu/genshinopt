@@ -1243,7 +1243,8 @@ export class YunJinBufferViewModel extends BuffEffect.BufferEffectViewModel
 
         ret.push(
             Widget.buildViewHTML(target, "元素爆発によるダメージ加算",
-                Widget.checkBoxViewHTML("useBurstEffect", "この効果を有効にする")
+                Widget.checkBoxViewHTML("useBurstEffect", `この効果を有効にする（この設定での加算値：${YunJin.increaseDamage(this.burstRank(), this.numElems(),
+                    Calc.VGData.constant(this.totalDef())).value}）`)
                 +
                 Widget.selectViewHTML("burstRank", 
                         (new Array(YunJin.skillTalentTable.length)).fill(0)
