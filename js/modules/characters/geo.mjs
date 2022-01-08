@@ -1038,6 +1038,15 @@ export class YunJin extends Base.CharacterData
             attackProps: { isYunJinBurstAddDmg: true, isChainable: false }
         }
     ];
+
+
+    static increaseDamage(burstRank, numElems, totalDef)
+    {
+        let scale = YunJin.burstTalentTable[burstRank - 1][1];
+        scale += ([2.5, 5.0, 7.5, 11.5][Number(numElems) - 1]) / 100;
+
+        return totalDef.mul(scale);
+    }
 }
 
 
@@ -1068,10 +1077,7 @@ export class YunJinViewModel extends Base.CharacterViewModel
             calculate(dmgScale, attackProps)
             {
                 if(attackProps.isYunJinBurstAddDmg) {
-                    let scale = YunJin.burstTalentTable[this.#dYunjin.burstRank-1][1];
-                    scale += ([2.5, 5.0, 7.5, 11.5][Number(this.#dYunjin.numElems) - 1]) / 100;
-
-                    return new Calc.Attacks(this.def(attackProps).mul(scale).as(ctx));
+                    return new Calc.Attacks(YunJin.increaseDamage(this.#dYunjin.burstRank, this.#dYunjin.numElems, this.def(attackProps)).as(ctx));
                 } else
                     return super.calculate(dmgScale, attackProps);
             }
