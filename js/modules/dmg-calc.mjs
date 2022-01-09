@@ -1126,6 +1126,13 @@ export class DamageCalculator
     {
         return (this.enemyRateDef(attackProps).mul(enemyLvl + 100).add(charLvl + 100)).inv().mul(charLvl + 100);
     }
+
+
+    applyExtension(exFn) {
+        let Calc = Object.getPrototypeOf(this).constructor;
+        let NewCalc = exFn(Calc);
+        return Object.assign(new NewCalc(), this);
+    }
 }
 
 
