@@ -104,3 +104,40 @@ export class BufferEffectViewModelFactory extends BufferEffect
         return this.fn(this);
     }
 }
+
+
+export class CharacterBufferEffectViewModel extends BufferEffectViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.constell = ko.observable(6);           // 凸数, 無凸==0
+        this.normalRank = ko.observable(9);         // 通常天賦
+        this.skillRank = ko.observable(9);          // スキル天賦
+        this.burstRank = ko.observable(9);          // 爆発天賦
+    }
+
+
+    maxNormalTalentRank() { return 11; }
+    maxSkillTalentRank() { return 10; }
+    maxBurstTalentRank() { return 10; }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.constell   = this.constell();
+        obj.normalRank = this.normalRank();
+        obj.skillRank  = this.skillRank();
+        obj.burstRank  = this.burstRank();
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.constell(obj.constell);
+        this.normalRank(obj.normalRank);
+        this.skillRank(obj.skillRank);
+        this.burstRank(obj.burstRank);
+    }
+}
