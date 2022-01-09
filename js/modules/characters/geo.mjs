@@ -1061,6 +1061,7 @@ export class YunJinViewModel extends Base.CharacterViewModel
     {
         super(parent);
         this.numElems = ko.observable(4);           // チーム内の属性数
+        this.useBurstEffect = ko.observable(false); // 元素爆発による自身へのダメージ増加
         this.useC2Effect = ko.observable(true);     // 2凸効果，通常攻撃+15%
         this.useC4Effect = ko.observable(true);     // 4凸効果，防御力+20%
     }
@@ -1085,16 +1086,22 @@ export class YunJinViewModel extends Base.CharacterViewModel
             }
 
             increaseDamage(attackProps) {
+                let dst = super.increaseDamage(attackProps);
+
                 // 雲菫スキルダメージ
                 if(attackProps.isSkill && attackProps.isYunJinSkillShort) {
-                    return super.increaseDamage(attackProps).add(this.def(attackProps).mul(YunJin.skillTalentTable[this.#dYunjin.skillRank-1][0]).as(ctx));
+                    dst = dst.add(this.def(attackProps).mul(YunJin.skillTalentTable[this.#dYunjin.skillRank-1][0]).as(ctx));
                 } else if(attackProps.isSkill && attackProps.isYunJinSkillLong1) {
-                    return super.increaseDamage(attackProps).add(this.def(attackProps).mul(YunJin.skillTalentTable[this.#dYunjin.skillRank-1][1]).as(ctx));
+                    dst = dst.add(this.def(attackProps).mul(YunJin.skillTalentTable[this.#dYunjin.skillRank-1][1]).as(ctx));
                 } else if(attackProps.isSkill && attackProps.isYunJinSkillLong2) {
-                    return super.increaseDamage(attackProps).add(this.def(attackProps).mul(YunJin.skillTalentTable[this.#dYunjin.skillRank-1][2]).as(ctx));
-                } else {
-                    return super.increaseDamage(attackProps);
+                    dst = dst.add(this.def(attackProps).mul(YunJin.skillTalentTable[this.#dYunjin.skillRank-1][2]).as(ctx));
                 }
+
+                if(this.#dYunjin.useBurstEffect) {
+                    dst = dst.add(YunJin.increaseDamage(this.#dYunjin.burstRank, this.#dYunjin.numElems, this.def(attackProps)).as(ctx));
+                }
+
+                return dst;
             }
         };
 
@@ -1117,12 +1124,14 @@ export class YunJinViewModel extends Base.CharacterViewModel
         let ret = super.viewHTMLList(target);
 
         ret.push(
-            Widget.buildViewHTML(target, "チーム内元素数",
+            Widget.buildViewHTML(target, "元素爆発によるダメージ加算",
+                Widget.checkBoxViewHTML("useBurstEffect", "通常攻撃に追加ダメージ")
+                +
                 Widget.selectViewHTML("numElems", [
                 {value: 1, label: "1種類"},
                 {value: 2, label: "2種類"},
                 {value: 3, label: "3種類"},
-                {value: 4, label: "4種類"}]))
+                {value: 4, label: "4種類"}], "チーム内元素数"))
         );
 
         if(this.constell() >= 2) {
@@ -1145,6 +1154,7 @@ export class YunJinViewModel extends Base.CharacterViewModel
 
     toJS() {
         let obj = super.toJS();
+        obj.useBurstEffect = this.useBurstEffect();
         obj.numElems = this.numElems();
         obj.useC2Effect = this.useC2Effect();
         obj.useC4Effect = this.useC4Effect();
@@ -1154,6 +1164,7 @@ export class YunJinViewModel extends Base.CharacterViewModel
 
     fromJS(obj) {
         super.fromJS(obj);
+        this.useBurstEffect(obj.useBurstEffect || false);
         this.numElems(obj.numElems);
         this.useC2Effect(obj.useC2Effect);
         this.useC4Effect(obj.useC4Effect);
