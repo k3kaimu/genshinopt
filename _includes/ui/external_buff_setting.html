@@ -11,9 +11,11 @@
           <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.selectedBuffList.remove(buffItem)">-削除</button>
         </div>
       </div>
-      <!-- ko foreach: buffItem.viewModel().viewHTMLList(`{{ include.target_from_root }}.selectedBuffList()[${buffItemIndex()}].viewModel()`) -->
-      <div data-bind="htmlWithBinding: $data"></div>
-      <!-- /ko -->
+      <div class="row" data-bind="foreach: buffItem.viewModel().viewHTMLList(`{{ include.target_from_root }}.selectedBuffList()[${buffItemIndex()}].viewModel()`)">
+        <div class="col-lg-6">
+          <div data-bind="htmlWithBinding: $data"></div>
+        </div>
+      </div>
     </div>
     <!-- /ko -->
     <button type="button" class="btn btn-outline-primary" data-bind="click: () => $parent.addBuff()">+追加</button>
