@@ -2,6 +2,7 @@ import * as Base from '/js/modules/characters/base.mjs';
 import * as Widget from '/js/modules/widget.mjs';
 import * as Calc from '/js/modules/dmg-calc.mjs';
 import * as Utils from '/js/modules/utils.mjs';
+import * as BuffEffect from '/js/modules/buffeffect.mjs';
 
 
 
@@ -307,5 +308,385 @@ runUnittest(function(){
 
     console.assert(Utils.checkSerializationUnittest(
         new Ganyu().newViewModel()
+    ));
+});
+
+
+// 申鶴
+export class Shenhe extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "shenhe",
+            "申鶴",
+            5,
+            "Cryo",
+            "Polearm",
+            304,            /* bAtk */
+            830,            /* bDef */
+            12993,          /* bHP */
+            "rateAtk",      /* bBonusType */
+            0.288           /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        let Class = ShenheViewModel(CryoCharacterViewModel);
+        return new Class(this, false);
+    }
+
+
+    static normalTalentTable = [
+    //  0:1段,  1:2段,  2:3段,  3:4段          4:5段,  5:重撃, 6:落下 7:低空 8:高空
+        [0.433, 0.402, 0.533, [0.263, 0.263], 0.656, 1.107, 0.639, 1.28, 1.60],
+        [0.468, 0.435, 0.577, [0.285, 0.285], 0.710, 1.197, 0.691, 1.38, 1.73],
+        [0.503, 0.468, 0.620, [0.306, 0.306], 0.763, 1.287, 0.743, 1.49, 1.86],
+        [0.553, 0.515, 0.682, [0.337, 0.337], 0.839, 1.416, 0.818, 1.64, 2.04],
+        [0.589, 0.548, 0.725, [0.358, 0.358], 0.893, 1.506, 0.870, 1.74, 2.17],
+        [0.629, 0.585, 0.775, [0.383, 0.383], 0.954, 1.609, 0.929, 1.86, 2.32],
+        [0.684, 0.637, 0.843, [0.414, 0.416], 1.038, 1.750, 1.011, 2.02, 2.53],
+        [0.739, 0.688, 0.911, [0.450, 0.450], 1.122, 1.892, 1.093, 2.19, 2.73],
+        [0.795, 0.739, 0.980, [0.484, 0.484], 1.206, 2.033, 1.175, 2.35, 2.93],
+        [0.855, 0.796, 1.054, [0.520, 0.520], 1.297, 2.188, 1.264, 2.53, 3.16],
+        [0.916, 0.852, 1.128, [0.557, 0.557], 1.389, 2.342, 1.353, 2.71, 3.38],
+    ];
+
+
+    static skillTalentTable = [
+    //  0:単押しダメージ, 1:長押しダメージ, 2:追加ダメージ
+        [1.39, 1.888, 0.457],
+        [1.50, 2.030, 0.491],
+        [1.60, 2.171, 0.525],
+        [1.74, 2.360, 0.571],
+        [1.84, 2.502, 0.605],
+        [1.95, 2.643, 0.639],
+        [2.09, 2.832, 0.685],
+        [2.23, 3.021, 0.730],
+        [2.37, 3.210, 0.776],
+        [2.51, 3.398, 0.822],
+        [2.64, 3.587, 0.867],
+        [2.78, 3.776, 0.913],
+        [2.96, 4.012, 0.970],
+    ];
+
+
+    static burstTalentTable = [
+    //  0:ダメージ, 1:耐性ダウン, 2:継続ダメージ
+        [1.01, 0.06, 0.331],
+        [1.08, 0.07, 0.356],
+        [1.16, 0.08, 0.381],
+        [1.26, 0.09, 0.414],
+        [1.34, 0.10, 0.439],
+        [1.41, 0.11, 0.464],
+        [1.51, 0.12, 0.497],
+        [1.61, 0.13, 0.530],
+        [1.71, 0.14, 0.563],
+        [1.81, 0.15, 0.596],
+        [1.92, 0.15, 0.629],
+        [2.02, 0.15, 0.662],
+        [2.14, 0.15, 0.704],
+    ];
+
+
+    static increaseDamage(skillRank, totalAtk)
+    {
+        let scale = Shenhe.skillTalentTable[skillRank - 1][2];
+        return totalAtk.mul(scale);
+    }
+
+
+    static presetAttacks = [
+        {
+            id: "normal_1",
+            label: "通常5段累計",
+            dmgScale: vm => Shenhe.normalTalentTable[vm.normalRank()-1].slice(0, 5).flat(),
+            attackProps: { isNormal: true, isPhysical: true },
+        },
+        {
+            id: "charged",
+            label: "重撃",
+            dmgScale: vm => Shenhe.normalTalentTable[vm.normalRank()-1][5],
+            attackProps: { isCharged: true, isPhysical: true },
+        },
+        {
+            id: "skill_short",
+            label: "元素スキル（短押し）",
+            dmgScale: vm => Shenhe.skillTalentTable[vm.skillRank()-1][0],
+            attackProps: { isSkill: true, isCryo: true, isShenheSkill: true },
+        },
+        {
+            id: "skill_long",
+            label: "元素スキル（長押し）",
+            dmgScale: vm => Shenhe.skillTalentTable[vm.skillRank()-1][1],
+            attackProps: { isSkill: true, isCryo: true, isShenheSkill: true },
+        },
+        {
+            id: "burst_dmg_6",
+            label: "元素爆発（初撃＋継続ダメージ6回）",
+            dmgScale: vm => [Shenhe.burstTalentTable[vm.burstRank()-1][0], ...new Array(6).fill(Shenhe.burstTalentTable[vm.burstRank()-1][2])],
+            attackProps: { isBurst: true, isCryo: true },
+        },
+        {
+            id: "burst_dmg_9",
+            label: "元素爆発（初撃＋継続ダメージ9回）（2凸用）",
+            dmgScale: vm => [Shenhe.burstTalentTable[vm.burstRank()-1][0], ...new Array(9).fill(Shenhe.burstTalentTable[vm.burstRank()-1][2])],
+            attackProps: { isBurst: true, isCryo: true },
+        },
+        {
+            id: "burst_add",
+            label: "スキル加算ダメージ（天賦倍率x攻撃力）",
+            dmgScale: vm => 0,
+            attackProps: { isShenheIncreaseDamage: true, isChainable: false }
+        }
+    ];
+}
+
+// 申鶴, ViewModel
+export let ShenheViewModel = Base => class extends Base {
+    constructor(parent, isBuffer)
+    {
+        super(parent);
+        this.isBuffer = isBuffer;
+        this.useSkillIncDmgEffect = ko.observable(true);// 元素スキルによる追加ダメージを考慮
+        this.typeSkillDmgUp = ko.observable('Short');   //元素スキルによるダメージバフ増加効果, 'None' or 'Short' or 'Long' or 'Both'
+        this.useCryoDmgUp = ko.observable(true);        // 元素爆発フィールド上での氷ダメージ加算効果
+        this.useCryoResisDown = ko.observable(true);    // 元素爆発フィールド上の敵の氷/物理耐性ダウン
+        this.useC2Effect = ko.observable(true);         // 2凸効果, 元素フィールド上での氷元素会心ダメージ+15%
+
+        this.constell.subscribe((newVal) => {
+            if(newVal < 1 && this.typeSkillDmgUp() == "Both") {
+                this.typeSkillDmgUp("Short");
+            }
+        });
+
+        if(!isBuffer)
+            this.stacksC4Effect = ko.observable(20);    // 4凸効果のスタック数
+
+        if(isBuffer)
+            this.totalAtk = ko.observable(3000);        // 申鶴自身の攻撃力
+    }
+
+
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+        let data = this.toJS();
+        let isBuffer = this.isBuffer;
+        let ctx = Calc.VGData.context;
+
+        if(!isBuffer) {
+            calc = calc.applyExtension(Base => class extends Base {
+                calculate(dmgScale, attackProps) {
+                    if(attackProps.isShenheIncreaseDamage)
+                        return new Calc.Attacks(Shenhe.increaseDamage(data.burstRank, this.atk(attackProps)).as(ctx));
+                    else
+                        return super.calculate(dmgScale, attackProps);
+                }
+            });
+        }
+
+        if(data.useSkillIncDmgEffect) {
+            calc = calc.applyExtension(Base => class extends Base {
+                increaseDamage(attackProps) {
+                    let dmg = super.increaseDamage(attackProps);
+
+                    if(attackProps.isCryo) {
+                        if(isBuffer)
+                            dmg = dmg.add(Shenhe.increaseDamage(data.skillRank, Calc.VGData.constant(data.totalAtk)).as(ctx));
+                        else
+                            dmg = dmg.add(Shenhe.increaseDamage(data.skillRank, this.atk(attackProps)));
+                    }
+                    
+                    return dmg;
+                }
+            });
+        }
+
+        if(data.typeSkillDmgUp == "Short" || data.typeSkillDmgUp == "Both") {
+            calc.baseSkillDmg.value += 0.15;
+            calc.baseBurstDmg.value += 0.15;
+        }
+        
+        if(data.typeSkillDmgUp == "Long" || data.typeSkillDmgUp == "Both") {
+            calc.baseNormalDmg.value += 0.15;
+            calc.baseChargedDmg.value += 0.15;
+            calc.basePlungeDmg.value += 0.15;
+        }
+
+        if(data.useCryoDmgUp) {
+            calc.baseCryoDmg.value += 0.15;
+        }
+
+        if(data.useCryoResisDown) {
+            calc.baseCryoResis.value -= Shenhe.burstTalentTable[data.burstRank-1][1];
+            calc.basePhysicalResis.value -= Shenhe.burstTalentTable[data.burstRank-1][1];
+        }
+
+        if(data.useC2Effect && data.constell >= 2) {
+            calc = calc.applyExtension(Base => class extends Base {
+                crtDmg(attackProps) {
+                    if(attackProps.isCryo)
+                        return super.crtDmg(attackProps).add(Calc.VGData.constant(0.15).as(ctx));
+                    else
+                        return super.crtDmg(attackProps);
+                }
+            });
+        }
+
+        if(data.constell >= 4 && !this.isBuffer) {
+            calc = calc.applyExtension(Base => class extends Base {
+                skillDmgBuff(attackProps) {
+                    if(attackProps.isShenheSkill)
+                        return super.skillDmgBuff(attackProps).add(Calc.VGData.constant(0.05 * data.stacksC4Effect).as(ctx));
+                    else
+                        return super.skillDmgBuff(attackProps);
+                }
+            });
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        {
+            let options = [
+                {value: "Short",    label: "元素スキル・爆発ダメージ+15%（短押し）"},
+                {value: "Long",     label: "通常・重撃・落下ダメージ+15%（長押し）"},
+                {value: "None",     label: "両方とも無効"},
+            ];
+
+            if(this.constell() >= 1) {
+                options.push({value: "Both",     label: "両方を有効（1凸以上でスキル2回発動）"});
+            }
+
+            dst.push(Widget.buildViewHTML(target, "スキル「仰霊威召将役呪」効果",
+                Widget.checkBoxViewHTML("useSkillIncDmgEffect",
+                    this.isBuffer ? `氷元素攻撃へのダメージ加算（加算値：+${textInteger(Shenhe.increaseDamage(this.skillRank(), Calc.VGData.constant(this.totalAtk())).value)}）`
+                                  : "氷元素攻撃へのダメージ加算")
+                +
+                (
+                    !this.isBuffer ? "" :
+                    Widget.selectViewHTML("skillRank",
+                        new Array(this.maxSkillTalentRank()).fill(0).map((e, i) => { return {value:i+1, label:`${i+1}`} }),
+                        "天賦レベル", {disable: "!useSkillIncDmgEffect()"})
+                    +
+                    Widget.textBoxViewHTML("totalAtk", "申鶴の攻撃力", {disable: "!useSkillIncDmgEffect()"})
+                    +
+                    `<span>申鶴の攻撃力の目安は2000〜4000程度です．どれくらいになるかよくわからない場合には<a href="https://genshinopt.toyohashi.nagoya/?ver=2&data=XQAAgABbAgAAAAAAAABFKkhmgyqxDEMhlgcym7FiUnE4jpmEpfQPBmB3s5JEgzQWNNdppP87PAN9uij_-QYHqKqJDvTlHiNKjCXnjrwAdccok98XLAlCk3ro7sNs1IkW%2Bmy3lLpBrtrZoXieDZbMLsMD%2BnZhAN5OlcjoRIcOSKJ6Kqx1ai9VDv3AbzR4fVEPNDQWBjQwWJ6wxRbi0UQ1rlbfjneWd8wUBWYsNm5jOOFSmZjN4ogxI8bnpxSV2akCLWR8M69qG3wkOGFLugND%2FxPQwgS%2BB6un4kPiQWDROnyLB%2FjMjo6hJ4cG6Hzq5qbQZwyE%2BJtvJGXoXtzWqKiyPJoSWz%2B3unCJHRFdKq1KZ4EmgyRyTX7S%2B9uNqGL%2Bd2d7wnf2rA8aPUqEUoFSRbLT%2BEGDgauqT6nUf9JC2Osd61uXOQAfUYaXRxrhKnDhlwUrncZYXlwydmUli%2BN0Kb%2BlBswe86pkvqML8ld46opbIVwkYRWJ7Ds91IJtQypt%2BFtjpgMDkmOCkChp5LATM6NLlE%2BetB%2BgwAD%2BbzfA2xRy0f7jaN8%3D" target="_blank" rel="noopener noreferrer">こちらのページの結果の詳細表示</a>を参考にしてください．</span>`
+                )
+                +
+                "<hr>"
+                +
+                Widget.radioViewHTML("typeSkillDmgUp", options)
+                +
+                (
+                    (this.constell() < 4 || this.isBuffer) ? "" :
+                    "<hr>" + Widget.sliderViewHTML("stacksC4Effect", 0, 50, 5, `4凸効果「霜霄訣」${textInteger(this.stacksC4Effect())}層`)
+                )
+            ));
+        }
+
+        dst.push(Widget.buildViewHTML(target, "爆発「神女遣霊真訣」効果",
+            (
+                !this.isBuffer ? "" :
+                Widget.selectViewHTML("burstRank",
+                    new Array(this.maxBurstTalentRank()).fill(0).map((e, i) => { return {value:i+1, label:`${i+1}`} }),
+                    "天賦レベル")
+            )
+            +
+            Widget.checkBoxViewHTML("useCryoDmgUp", "氷元素ダメージ+15%")
+            +
+            Widget.checkBoxViewHTML("useCryoResisDown",
+                `敵の氷元素/物理耐性ダウン-${textPercentageFix(Shenhe.burstTalentTable[this.burstRank()-1][1], 0)}`)
+            +
+            (
+                this.constell() < 2 ? "":
+                Widget.checkBoxViewHTML("useC2Effect", "氷元素攻撃の会心ダメージ+15%（2凸効果）")
+            )
+        ));
+
+        return dst;
+    }
+
+
+    toJS()
+    {
+        let obj = super.toJS();
+        obj.useSkillIncDmgEffect = this.useSkillIncDmgEffect();
+        obj.typeSkillDmgUp = this.typeSkillDmgUp();
+        obj.useCryoDmgUp = this.useCryoDmgUp();
+        obj.useCryoResisDown = this.useCryoResisDown();
+        obj.useC2Effect = this.useC2Effect();
+
+        if(!this.isBuffer)
+            obj.stacksC4Effect = this.stacksC4Effect();
+
+        if(this.isBuffer)
+            obj.totalAtk = this.totalAtk();
+
+        return obj;
+    }
+
+
+    fromJS(obj)
+    {
+        super.fromJS(obj);
+        this.useSkillIncDmgEffect(obj.useSkillIncDmgEffect);
+        this.typeSkillDmgUp(obj.typeSkillDmgUp);
+        this.useCryoDmgUp(obj.useCryoDmgUp);
+        this.useCryoResisDown(obj.useCryoResisDown);
+        this.useC2Effect(obj.useC2Effect);
+
+        if(!this.isBuffer)
+            this.stacksC4Effect(obj.stacksC4Effect);
+
+        if(this.isBuffer)
+            this.totalAtk(obj.totalAtk);
+    }
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Shenhe(),
+        {
+            "vm": {
+                "parent_id": "shenhe",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "reactionProb": 0,
+                "useSkillIncDmgEffect": true,
+                "typeSkillDmgUp": "Short",
+                "useCryoDmgUp": true,
+                "useCryoResisDown": true,
+                "useC2Effect": true,
+                "stacksC4Effect": 20
+            },
+            "expected": {
+                "normal_1": 1668.4478737920003,
+                "charged": 723.539788272,
+                "skill_short": 2629.10335143456,
+                "skill_long": 3331.0889888169595,
+                "burst_dmg_6": 4969.1281453632,
+                "burst_dmg_9": 6866.560441933919,
+                "burst_add": 503.741952
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Shenhe().newViewModel()
     ));
 });

@@ -20,6 +20,7 @@ import * as Pyro from '/js/modules/characters/pyro.mjs';
 export const characters = [
     // new Anemo.TravelerAnemo(),
     new Cryo.Ganyu(),
+    new Cryo.Shenhe(),
     new Electro.RaidenShogun(),
     new Electro.Beidou(),
     // new Electro.TravelerElectro(),
