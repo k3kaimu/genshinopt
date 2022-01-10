@@ -40,6 +40,24 @@ export function checkUnittestForCharacter(character, setting)
         ok = ok && ( Math.round(val) == Math.round(setting.expected[e.id]) );
     });
 
+    // 3凸と5凸でスキル・爆発の天賦レベルが+3されるかチェック
+    {
+        setting.vm.constell = 0;
+        cvm.fromJS(setting.vm);
+        let beforeSkill = cvm.maxSkillTalentRank();
+        let beforeBurst = cvm.maxBurstTalentRank();
+
+        setting.vm.constell = 3;
+        cvm.fromJS(setting.vm);
+        let afterSkill = cvm.maxSkillTalentRank();
+        ok = ok && (afterSkill == beforeSkill + 3);
+
+        setting.vm.constell = 5;
+        cvm.fromJS(setting.vm);
+        let afterBurst = cvm.maxBurstTalentRank();
+        ok = ok && (afterBurst == beforeBurst + 3);
+    }
+
     return ok;
 }
 

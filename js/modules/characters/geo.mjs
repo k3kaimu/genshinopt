@@ -374,6 +374,10 @@ export class AlbedoViewModel extends Base.CharacterViewModel
     }
 
 
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+
+
     applyDmgCalcImpl(calc)
     {
         calc = super.applyDmgCalcImpl(calc);
@@ -1065,6 +1069,10 @@ export class YunJinViewModel extends Base.CharacterViewModel
         this.useC2Effect = ko.observable(true);     // 2凸効果，通常攻撃+15%
         this.useC4Effect = ko.observable(true);     // 4凸効果，防御力+20%
     }
+
+
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
 
 
     applyDmgCalcImpl(calc)
