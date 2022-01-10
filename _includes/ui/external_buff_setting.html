@@ -1,80 +1,94 @@
 <div>
   <div>
-    <!-- ko foreach: {data: selectedBuffList, as: "buffItem"} -->
     <div class="mb-3">
-      <div class="input-group">
-        <select data-bind="options: $parent.buffEffects,
-                    optionsText: function(o) { return o.label; },
-                    value: buffItem.selected,
-                    optionsCaption: '-選択-'" class="custom-select" ></select>
-        <div class="input-group-append">
-          <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.selectedBuffList.remove(buffItem)">-削除</button>
+      <div data-bind='foreach: {data: selectedBuffList, as: "buffItem"}'>
+        <div class="input-group">
+          <select data-bind="options: $parent.buffEffects,
+                      optionsText: function(o) { return o.label; },
+                      value: buffItem.selected,
+                      optionsCaption: '-選択-'" class="custom-select" ></select>
+          <div class="input-group-append">
+            <button type="button" class="btn btn-outline-danger" data-bind="click: () => $parent.selectedBuffList.remove(buffItem)">-削除</button>
+          </div>
+        </div>
+        <div class="row" data-bind="foreach: buffItem.viewModel().viewHTMLList(`{{ include.target_from_root }}.selectedBuffList()[${buffItemIndex()}].viewModel()`)">
+          <div class="col-lg-6">
+            <div data-bind="htmlWithBinding: $data"></div>
+          </div>
         </div>
       </div>
-      <div class="row" data-bind="foreach: buffItem.viewModel().viewHTMLList(`{{ include.target_from_root }}.selectedBuffList()[${buffItemIndex()}].viewModel()`)">
-        <div class="col-lg-6">
-          <div data-bind="htmlWithBinding: $data"></div>
-        </div>
+      <button type="button" class="btn btn-outline-primary" data-bind="click: () => $parent.addBuff()">+追加</button>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-4">
+        <button type="button" data-toggle="collapse" data-bind="attr: {'data-target': '#buffSettingCollapse'+{{ include.index }}}" class="btn btn-outline-primary btn-block">手動数値設定（上級者用）</button>
+      </div>
+      <div class="col-sm-4">
+        <button type="button" data-bind="click: {{ include.duplicate }}" class="btn btn-outline-primary btn-block">この設定を複製</button>
+      </div>
+      <div class="col-sm-4">
+        <button type="button" data-bind="click: {{ include.remove }}" class="btn btn-outline-danger btn-block">この設定を削除</button>
       </div>
     </div>
-    <!-- /ko -->
-    <button type="button" class="btn btn-outline-primary" data-bind="click: () => $parent.addBuff()">+追加</button>
-    <p class="text-danger">
-      注意：百分率（%）の欄は倍率値を入力してください（例：33% -> 0.33）
-    </p>
-    <div class="form-row">
-      <div class="col-sm-3 col-6">
-        <label data-bind="css: textInputCSS(addAtk())">攻撃力実数</label>
-        <input type="text" class="form-control" data-bind="value: addAtk, css: textInputCSS(addAtk())" placeholder="例：1000">
+    <div class="collapse mt-3" data-bind="attr: {id: 'buffSettingCollapse'+{{ include.index }}}">
+      <div class="form-row">
+        <div class="col-sm-3 col-6">
+          <label data-bind="css: textInputCSS(addAtk())">攻撃力実数</label>
+          <input type="text" class="form-control" data-bind="value: addAtk, css: textInputCSS(addAtk())" placeholder="例：1000">
+        </div>
+        <div class="col-sm-3 col-6">
+          <label data-bind="css: textInputCSS(rateAtk())">攻撃力%</label>
+          <input type="text" class="form-control" data-bind="value: rateAtk, css: textInputCSS(rateAtk())" placeholder="例：0.2">
+        </div>
+        <div class="col-sm-3 col-6">
+          <label data-bind="css: textInputCSS(addDef())">防御力実数</label>
+          <input type="text" class="form-control" data-bind="value: addDef, css: textInputCSS(addDef())" placeholder="例：1000">
+        </div>
+        <div class="col-sm-3 col-6">
+          <label data-bind="css: textInputCSS(rateDef())">防御力%</label>
+          <input type="text" class="form-control" data-bind="value: rateDef, css: textInputCSS(rateDef())" placeholder="例：0.2">
+        </div>
+        <div class="col-sm-3 col-6">
+          <label data-bind="css: textInputCSS(addHP())">HP実数</label>
+          <input type="text" class="form-control" data-bind="value: addHP, css: textInputCSS(addHP())" placeholder="例：1000">
+        </div>
+        <div class="col-sm-3 col-6">
+          <label data-bind="css: textInputCSS(rateHP())">HP%</label>
+          <input type="text" class="form-control" data-bind="value: rateHP, css: textInputCSS(rateHP())" placeholder="例：0.2">
+        </div>
+        <div class="col-sm-3 col-6">
+          <label data-bind="css: textInputCSS(crtRate())">会心率%</label>
+          <input type="text" class="form-control" data-bind="value: crtRate, css: textInputCSS(crtRate())" placeholder="例：0.2">
+        </div>
+        <div class="col-sm-3 col-6">
+          <label data-bind="css: textInputCSS(crtDmg())">会心ダメージ%</label>
+          <input type="text" class="form-control" data-bind="value: crtDmg, css: textInputCSS(crtDmg())" placeholder="例：0.2">
+        </div>
+        <div class="col-sm-3 col-6">
+          <label data-bind="css: textInputCSS(mastery())">元素熟知</label>
+          <input type="text" class="form-control" data-bind="value: mastery, css: textInputCSS(mastery())" placeholder="例：100">
+        </div>
+        <div class="col-sm-3 col-6">
+          <label data-bind="css: textInputCSS(dmgBuff())">ダメバフ%</label>
+          <input type="text" class="form-control" data-bind="value: dmgBuff, css: textInputCSS(dmgBuff())" placeholder="例：0.5">
+        </div>
+        <div class="col-sm-3 col-6">
+          <label data-bind="css: textInputCSS(recharge())">チャージ効率</label>
+          <input type="text" class="form-control" data-bind="value: recharge, css: textInputCSS(recharge())" placeholder="例：0.5">
+        </div>
+        <div class="col-sm-3 col-6" disabled>
+          <label data-bind="css: textInputCSS(resisDown())">全耐性ダウン</label>
+          <input type="text" class="form-control" data-bind="value: resisDown, css: textInputCSS(resisDown())" placeholder="例：0.3">
+        </div>
+        <div class="col-sm-3 col-6" disabled>
+          <label data-bind="css: textInputCSS(addIncDmg())">加算ダメ（申鶴/雲菫など）</label>
+          <input type="text" class="form-control" data-bind="value: addIncDmg, css: textInputCSS(addIncDmg())" placeholder="例：1000">
+        </div>
       </div>
-      <div class="col-sm-3 col-6">
-        <label data-bind="css: textInputCSS(rateAtk())">攻撃力%</label>
-        <input type="text" class="form-control" data-bind="value: rateAtk, css: textInputCSS(rateAtk())" placeholder="例：0.2">
-      </div>
-      <div class="col-sm-3 col-6">
-        <label data-bind="css: textInputCSS(addDef())">防御力実数</label>
-        <input type="text" class="form-control" data-bind="value: addDef, css: textInputCSS(addDef())" placeholder="例：1000">
-      </div>
-      <div class="col-sm-3 col-6">
-        <label data-bind="css: textInputCSS(rateDef())">防御力%</label>
-        <input type="text" class="form-control" data-bind="value: rateDef, css: textInputCSS(rateDef())" placeholder="例：0.2">
-      </div>
-      <div class="col-sm-3 col-6">
-        <label data-bind="css: textInputCSS(addHP())">HP実数</label>
-        <input type="text" class="form-control" data-bind="value: addHP, css: textInputCSS(addHP())" placeholder="例：1000">
-      </div>
-      <div class="col-sm-3 col-6">
-        <label data-bind="css: textInputCSS(rateHP())">HP%</label>
-        <input type="text" class="form-control" data-bind="value: rateHP, css: textInputCSS(rateHP())" placeholder="例：0.2">
-      </div>
-      <div class="col-sm-3 col-6">
-        <label data-bind="css: textInputCSS(crtRate())">会心率%</label>
-        <input type="text" class="form-control" data-bind="value: crtRate, css: textInputCSS(crtRate())" placeholder="例：0.2">
-      </div>
-      <div class="col-sm-3 col-6">
-        <label data-bind="css: textInputCSS(crtDmg())">会心ダメージ%</label>
-        <input type="text" class="form-control" data-bind="value: crtDmg, css: textInputCSS(crtDmg())" placeholder="例：0.2">
-      </div>
-      <div class="col-sm-3 col-6">
-        <label data-bind="css: textInputCSS(mastery())">元素熟知</label>
-        <input type="text" class="form-control" data-bind="value: mastery, css: textInputCSS(mastery())" placeholder="例：100">
-      </div>
-      <div class="col-sm-3 col-6">
-        <label data-bind="css: textInputCSS(dmgBuff())">ダメバフ%</label>
-        <input type="text" class="form-control" data-bind="value: dmgBuff, css: textInputCSS(dmgBuff())" placeholder="例：0.5">
-      </div>
-      <div class="col-sm-3 col-6">
-        <label data-bind="css: textInputCSS(recharge())">チャージ効率</label>
-        <input type="text" class="form-control" data-bind="value: recharge, css: textInputCSS(recharge())" placeholder="例：0.5">
-      </div>
-      <div class="col-sm-3 col-6" disabled>
-        <label data-bind="css: textInputCSS(resisDown())">全耐性ダウン</label>
-        <input type="text" class="form-control" data-bind="value: resisDown, css: textInputCSS(resisDown())" placeholder="例：0.3">
-      </div>
-      <div class="col-sm-3 col-6" disabled>
-        <label data-bind="css: textInputCSS(addIncDmg())">加算ダメ（申鶴/雲菫など）</label>
-        <input type="text" class="form-control" data-bind="value: addIncDmg, css: textInputCSS(addIncDmg())" placeholder="例：1000">
-      </div>
+      <p class="text-danger">
+        注意：百分率（%）の欄は倍率値を入力してください（例：33% -> 0.33）
+      </p>
     </div>
   </div>
 </div>

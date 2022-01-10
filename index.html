@@ -140,15 +140,11 @@ title: 理想期待値比較
         <!-- ko foreach: { data: comparingExternalBuffList, as: 'externalBuff' }  -->
         <div class="tab-pane fade" data-bind="attr: {id: `external_buff_tab_${externalBuffIndex()}` }" role="tabpanel">
           <div class="mb-3" data-bind="with: externalBuff">
-            {% include ui/external_buff_setting.html isEnableCollapse=false target_from_root="$root.comparingExternalBuffList()[${externalBuffIndex()}]" %}
-          </div>
-          <div class="row">
-            <div class="col-sm-6">
-              <button type="button" data-bind="click: () => $root.dupComparingExternalBuff(externalBuffIndex())" class="btn btn-outline-primary btn-block">この設定を複製</button>
-            </div>
-            <div class="col-sm-6">
-              <button type="button" data-bind="click: () => $root.removeComparingExternalBuff(externalBuffIndex())" class="btn btn-outline-danger btn-block">この設定を削除</button>
-            </div>
+            {% include ui/external_buff_setting.html
+              isEnableCollapse=false target_from_root="$root.comparingExternalBuffList()[${externalBuffIndex()}]"
+              isListItem=true index="externalBuffIndex()"
+              duplicate="() => $root.dupComparingExternalBuff(externalBuffIndex())"
+              remove="() => $root.removeComparingExternalBuff(externalBuffIndex())" %}
           </div>
         </div>
         <!-- /ko -->
