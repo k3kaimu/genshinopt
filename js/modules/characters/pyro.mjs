@@ -972,6 +972,10 @@ export class XianglingViewModel extends PyroCharacterViewModel
     }
 
 
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+
+
     applyDmgCalcImpl(calc)
     {
         calc = super.applyDmgCalcImpl(calc);
