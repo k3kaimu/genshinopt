@@ -1,7 +1,7 @@
-import * as Base from '/js/modules/characters/base.mjs';
-import * as Widget from '/js/modules/widget.mjs';
-import * as Calc from '/js/modules/dmg-calc.mjs';
-import * as Utils from '/js/modules/utils.mjs';
+import * as Base from './base.mjs';
+import * as Widget from '../widget.mjs';
+import * as Calc from '../dmg-calc.mjs';
+import * as Utils from '../utils.mjs';
 
 
 export class PyroCharacterViewModel extends Base.CharacterViewModel

@@ -1,11 +1,11 @@
-export * from '/js/modules/characters.mjs';
-export * from '/js/modules/weapons.mjs';
-export * from '/js/modules/artifacts.mjs';
-export * from '/js/modules/buffeffect.mjs';
+export * from './characters.mjs';
+export * from './weapons.mjs';
+export * from './artifacts.mjs';
+export * from './buffeffect.mjs';
 
-import * as Characters from '/js/modules/characters.mjs';
-import * as Artifacts from '/js/modules/artifacts.mjs';
-import * as BuffEffect from '/js/modules/buffeffect.mjs'
+import * as Characters from './characters.mjs';
+import * as Artifacts from './artifacts.mjs';
+import * as BuffEffect from './buffeffect.mjs'
 
 export const bufferEffects = [
     new BuffEffect.ConstantBufferEffect("elem_pyro", "炎元素共鳴：攻撃力+25%", "E", {"rateAtk": 0.25}),

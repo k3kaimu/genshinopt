@@ -1,4 +1,4 @@
-import * as Base from '/js/modules/characters/base.mjs';
+import * as Base from './base.mjs';
 
 // 旅人（風）
 export class TravelerAnemo extends Base.CharacterData

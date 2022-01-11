@@ -1,6 +1,6 @@
-import * as Base from '/js/modules/weapons/base.mjs';
-import * as Utils from '/js/modules/utils.mjs';
-import * as Calc from '/js/modules/dmg-calc.mjs';
+import * as Base from './base.mjs';
+import * as Utils from '../utils.mjs';
+import * as Calc from '../dmg-calc.mjs';
 
 // 磐岩結緑
 export class PrimordialJadeCutter extends Base.WeaponData

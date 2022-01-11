@@ -1,4 +1,4 @@
-import * as Calc from '/js/modules/dmg-calc.mjs';
+import * as Calc from '../dmg-calc.mjs';
 
 export class CharacterData
 {

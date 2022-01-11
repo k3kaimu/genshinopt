@@ -1,5 +1,5 @@
-import * as Data from '/js/modules/data.mjs';
-import * as Calc from '/js/modules/dmg-calc.mjs';
+import * as Data from './data.mjs';
+import * as Calc from './dmg-calc.mjs';
 
 
 export function CharacterSelector(isList = false)

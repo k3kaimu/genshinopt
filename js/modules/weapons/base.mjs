@@ -1,5 +1,5 @@
-import * as Calc from '/js/modules/dmg-calc.mjs';
-import * as Widget from '/js/modules/widget.mjs';
+import * as Calc from '../dmg-calc.mjs';
+import * as Widget from '../widget.mjs';
 
 
 export class WeaponData
