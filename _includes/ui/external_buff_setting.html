@@ -22,13 +22,13 @@
 
     <div class="row">
       <div class="col-sm-4">
-        <button type="button" data-toggle="collapse" data-bind="attr: {'data-target': '#buffSettingCollapse'+{{ include.index }}}" class="btn btn-outline-primary btn-block">手動数値設定（上級者用）</button>
+        <button type="button" data-toggle="collapse" data-bind="attr: {'data-target': '#buffSettingCollapse'+{{ include.index }}}" class="btn btn-outline-primary btn-block">手動設定</button>
       </div>
       <div class="col-sm-4">
-        <button type="button" data-bind="click: {{ include.duplicate }}" class="btn btn-outline-primary btn-block">この設定を複製</button>
+        <button type="button" data-bind="click: {{ include.duplicate }}" class="btn btn-outline-primary btn-block">設定を複製</button>
       </div>
       <div class="col-sm-4">
-        <button type="button" data-bind="click: {{ include.remove }}" class="btn btn-outline-danger btn-block">この設定を削除</button>
+        <button type="button" data-bind="click: {{ include.remove }}" class="btn btn-outline-danger btn-block">設定を削除</button>
       </div>
     </div>
     <div class="collapse mt-3" data-bind="attr: {id: 'buffSettingCollapse'+{{ include.index }}}">
@@ -86,9 +86,9 @@
           <input type="text" class="form-control" data-bind="value: addIncDmg, css: textInputCSS(addIncDmg())" placeholder="例：1000">
         </div>
       </div>
-      <p class="text-danger">
+      <span class="text-danger">
         注意：百分率（%）の欄は倍率値を入力してください（例：33% -> 0.33）
-      </p>
+      </span>
     </div>
   </div>
 </div>
