@@ -72,7 +72,7 @@ $(function(){
     function ViewModel() {
         this.readyNLopt = ko.observable();
     
-        this.characterSelector = new UI.CharacterSelector();
+        this.characterSelector = new UI.CharacterSelector(true);
         this.selectedChar = this.characterSelector.selected;
 
         this.comparingWeaponList = ko.observableArray();
@@ -170,54 +170,64 @@ $(function(){
 
         this.allPatterns = ko.pureComputed(function(){
             let dst = [];
-            this.comparingWeaponList().forEach((weapon, iwp) => {
-                if(weapon.selected() == undefined)
-                    return;
+            const totchar = this.characterSelector.settings().filter(e => e.isValid()).length;
+            const totweap = this.comparingWeaponList().filter(e => e.isValid()).length;
+            const totarti = this.comparingArtifactList().filter(e => e.isValid()).length;
+            const totexbf = this.comparingExternalBuffList().filter(e => e.isValid()).length;
 
-                this.comparingArtifactList().forEach((artifact, iatft) => {
-                    if(artifact.selected1() == undefined
-                    || artifact.selected2() == undefined) {
-                        return;
-                    }
+            this.characterSelector.settings().forEach((charSetting, ichar) => {
+                if(!charSetting.isValid()) return;
 
-                    this.clockMainStatus.forEach(clock => {
-                        if(! clock.checked()) return;
+                this.comparingWeaponList().forEach((weapon, iwp) => {
+                    if(!weapon.isValid()) return;
 
-                        this.cupMainStatus.forEach(cup => {
-                            if(! cup.checked()) return;
+                    this.comparingArtifactList().forEach((artifact, iatft) => {
+                        if(!artifact.isValid()) return;
 
-                            this.hatMainStatus.forEach(hat => {
-                                if(! hat.checked()) return;
+                        this.clockMainStatus.forEach(clock => {
+                            if(! clock.checked()) return;
 
-                                let exbuffs = this.comparingExternalBuffList().slice(0);
+                            this.cupMainStatus.forEach(cup => {
+                                if(! cup.checked()) return;
 
-                                // バフ設定の個数が0なら，初期値を追加する
-                                if(exbuffs.length == 0) {
-                                    exbuffs.push(new UI.ExternalBuffSetting());
-                                }
+                                this.hatMainStatus.forEach(hat => {
+                                    if(! hat.checked()) return;
 
-                                exbuffs.forEach((externalBuff, ibuff) => {
-                                    dst.push({
-                                        character: this.characterSelector.viewModel(),
-                                        attack: this.characterSelector.selectedAttack(),
-                                        weapon: weapon.viewModel(),
-                                        iweapon: iwp,
-                                        artifactSet1: artifact.viewModel1(),
-                                        artifactSet2: artifact.viewModel2(),
-                                        iartifact: iatft,
-                                        clock: clock,
-                                        cup: cup,
-                                        hat: hat,
-                                        exbuff: externalBuff,
-                                        iexbuff: ibuff,
-                                        powRecharge: { isEnabled: this.usePowRecharge(), exp: Number(this.exponentOfRecharge()) },
-                                        globalOpt: { isEnabled: this.useGlobalOpt(), maxEval: Number(this.numOfEvalGlobalOpt()) },
+                                    let exbuffs = this.comparingExternalBuffList().slice(0);
+
+                                    // バフ設定の個数が0なら，初期値を追加する
+                                    if(exbuffs.length == 0) {
+                                        exbuffs.push(new UI.ExternalBuffSetting());
+                                    }
+
+                                    exbuffs.forEach((externalBuff, ibuff) => {
+                                        dst.push({
+                                            character: charSetting.viewModel(),
+                                            attack: charSetting.selectedAttack(),
+                                            ichar: ichar,
+                                            totchar: totchar,
+                                            weapon: weapon.viewModel(),
+                                            iweapon: iwp,
+                                            totweap: totweap,
+                                            artifactSet1: artifact.viewModel1(),
+                                            artifactSet2: artifact.viewModel2(),
+                                            iartifact: iatft,
+                                            totarti: totarti,
+                                            clock: clock,
+                                            cup: cup,
+                                            hat: hat,
+                                            exbuff: externalBuff,
+                                            iexbuff: ibuff,
+                                            totexbf: totexbf,
+                                            powRecharge: { isEnabled: this.usePowRecharge(), exp: Number(this.exponentOfRecharge()) },
+                                            globalOpt: { isEnabled: this.useGlobalOpt(), maxEval: Number(this.numOfEvalGlobalOpt()) },
+                                        });
                                     });
                                 });
-                            });
-                        })
+                            })
+                        });
                     });
-                });
+                })
             });
 
             return dst;
@@ -351,11 +361,25 @@ $(function(){
 
             let ia = r.setting.iartifact;
 
+            let prefix;
             if(artname2 == undefined) {
-                return `#${index+1}：${wname}/${artname1}4（#W${r.setting.iweapon+1}/#A${r.setting.iartifact+1}/#B${r.setting.iexbuff+1}）`;
+                prefix = `#${index+1}：${wname}/${artname1}4`;
+                // （#W${r.setting.iweapon+1}/#A${r.setting.iartifact+1}/#B${r.setting.iexbuff+1}）`;
             } else {
-                return `#${index+1}：${wname}/${artname1}2${artname2}2（#W${r.setting.iweapon+1}/#A${r.setting.iartifact+1}/#B${r.setting.iexbuff+1}）`;
+                prefix = `#${index+1}：${wname}/${artname1}2${artname2}2`;
+                // （#W${r.setting.iweapon+1}/#A${r.setting.iartifact+1}/#B${r.setting.iexbuff+1}）`;
             }
+
+            let suffix = [];
+            if(r.setting.totchar > 1) suffix.push(`#C${r.setting.ichar}`);
+            if(r.setting.totweap > 1) suffix.push(`#W${r.setting.iweapon}`);
+            if(r.setting.totarti > 1) suffix.push(`#A${r.setting.iartifact}`);
+            if(r.setting.totexbf > 1) suffix.push(`#B${r.setting.iexbuff}`);
+
+            if(suffix.length == 0)
+                return prefix;
+            else
+                return `${prefix}(${suffix.join('/')})`;
         }.bind(this);
 
         this.textCardBodyOptimizedResult = function(index, r) {
@@ -597,6 +621,7 @@ $(function(){
     // 初期設定
     {
         viewModel.setShownResult("ALL");
+        viewModel.characterSelector.initialize();
         // viewModel.addComparingExternalBuff();
     }
 
