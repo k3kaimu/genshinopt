@@ -241,7 +241,7 @@ export class GanyuViewModel extends CryoCharacterViewModel
 
         if(this.constell() >= 1) {
             ret.push(
-                Widget.buildViewHTML(target, "飲露（1凸）", Widget.checkBoxViewHTML("useCryoDmgInc", "敵の氷元素耐性-15%"))
+                Widget.buildViewHTML(target, "飲露（1凸）", Widget.checkBoxViewHTML("useC1Effect", "敵の氷元素耐性-15%"))
             );
         }
 
