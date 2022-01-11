@@ -39,9 +39,10 @@
     </div> -->
   </div>
 </div>
-  
+
+{% if false %}
 <div class="mb-3">
-  <div class="row no-gutters form-prepend " data-bind="with: viewModel()">
+  <div class="row no-gutters " data-bind="with: viewModel()">
     <div class="col">
       <label>凸数</label>
       <select class="custom-select rounded-left-only border-right-0" aria-label="凸数" data-bind="value: constell">
@@ -72,20 +73,6 @@
   </div>
 </div>
 
-<div class="mb-3">
-  <div class="row">
-    <div class="col-12">
-      <select class="custom-select"
-        data-bind="options: attackOptions,
-                  optionsText: 'label',
-                  value: selectedAttack,
-                  optionsCaption: '-攻撃方法-',
-                  css: {'border-danger': selectedAttack() == undefined}">
-      </select>
-    </div>
-  </div>
-</div>
-
 <div class="mb-3 row">
   <!-- ko if: viewModel() != undefined -->
   <!-- ko foreach: viewModel().viewHTMLList('{{ include.target_from_root }}.viewModel()') -->
@@ -95,3 +82,93 @@
   <!-- /ko -->
   <!-- /ko -->
 </div>
+{% endif %}
+
+{% if include.isList %}
+<div class="mb-3">
+  <div class="card" id="character_setting_list">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs" role="tablist">
+        <!-- ko foreach: { data: settings, as: 'setting' }  -->
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" data-bind="attr: {href: `#character_setting_tab_${settingIndex()}` }" role="tab">
+            <span data-bind="text: `#C${settingIndex()+1}`, css: { 'text-danger': !setting.isValid() }"></span>
+          </a>
+        </li>
+        <!-- /ko -->
+        <li class="nav-item ml-auto">
+          <button type="button" class="btn btn btn-outline-primary ml-2" data-bind="click: addNewSetting">+追加</button>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <div class="tab-content">
+        <!-- ko foreach: { data: settings, as: 'setting' }  -->
+        <div class="tab-pane fade" data-bind="attr: {id: `character_setting_tab_${settingIndex()}` }" role="tabpanel">
+          <div class="mb-3">
+            <div class="row no-gutters " data-bind="with: setting.viewModel">
+              <div class="col">
+                <label>凸数</label>
+                <select class="custom-select rounded-left-only border-right-0" aria-label="凸数" data-bind="value: constell">
+                  <option value="0">無凸</option>
+                  <option value="1">1凸</option>
+                  <option value="2">2凸</option>
+                  <option value="3">3凸</option>
+                  <option value="4">4凸</option>
+                  <option value="5">5凸</option>
+                  <option value="6">6凸</option>
+                </select>
+              </div>
+              <div class="col">
+                <label>通常天賦</label>
+                <select class="custom-select rounded-0 border-right-0" aria-label="通常天賦" data-bind="value: normalRank, options: [...Array(maxNormalTalentRank()).keys()].map(i => i + 1)">
+                </select>
+              </div>
+              <div class="col">
+                <label>スキル天賦</label>
+                <select class="custom-select rounded-0" aria-label="スキル天賦" data-bind="value: skillRank, options: [...Array(maxSkillTalentRank()).keys()].map(i => i + 1)">
+                </select>
+              </div>
+              <div class="col">
+                <label>爆発天賦</label>
+                <select class="custom-select rounded-right-only border-left-0" aria-label="爆発天賦" data-bind="value: burstRank, options: [...Array(maxBurstTalentRank()).keys()].map(i => i + 1)">
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <!-- ko foreach: setting.viewModel().viewHTMLList(`{{ include.target_from_root }}.settings()[${settingIndex()}].viewModel()`) -->
+            <div class="col-lg-6">
+              <div data-bind="htmlWithBinding: $data"></div>
+            </div>
+            <!-- /ko -->
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-12">
+              <select class="custom-select"
+                data-bind="options: setting.attackOptions,
+                          optionsText: 'label',
+                          value: setting.selectedAttack,
+                          optionsCaption: '-攻撃方法-',
+                          css: {'border-danger': setting.selectedAttack() == undefined}">
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <button type="button" data-bind="click: () => $parent.duplicate(settingIndex())" class="btn btn-outline-primary btn-block">設定を複製</button>
+            </div>
+            <div class="col">
+              <button type="button" data-bind="click: () => $parent.remove(settingIndex())" class="btn btn-outline-danger btn-block">設定を削除</button>
+            </div>
+          </div>
+        </div>
+        <!-- /ko -->
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}

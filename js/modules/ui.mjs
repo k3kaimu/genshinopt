@@ -2,7 +2,7 @@ import * as Data from '/js/modules/data.mjs';
 import * as Calc from '/js/modules/dmg-calc.mjs';
 
 
-export function CharacterSelector()
+export function CharacterSelector(isList = false)
 {
     this.selected = ko.observable();
     this.characters = Data.characters;
@@ -27,42 +27,148 @@ export function CharacterSelector()
         return list;
     }, this);
 
-    this.viewModel = ko.observable(new Data.CharacterViewModel(undefined));
+
+    let selectedCharacter = this.selected;
+    function CharacterSetting()
+    {
+        let viewModel;
+        if(selectedCharacter() == undefined) {
+            viewModel = new Data.CharacterViewModel(undefined);
+        } else {
+            viewModel = selectedCharacter().newViewModel();
+        }
+
+        this.viewModel = ko.observable(viewModel);
+        this.selectedAttack = ko.observable();
+
+        this.attackOptions = ko.pureComputed(function(){
+            if(selectedCharacter() == undefined)
+                return [];
+            else
+                return this.viewModel().presetAttacks();
+        }, this);
+
+        this.isValid = () => {
+            return this.viewModel().parent != undefined && this.selectedAttack() != undefined;
+        };
+
+        this.toJS = () => {
+            let obj = {};
+            if(this.viewModel().parent) {
+                obj.vm = this.viewModel().toJS();
+            }
+
+            if(this.selectedAttack()) {
+                obj.attack = {
+                    id: this.selectedAttack().id
+                };
+            }
+
+            return obj;
+        };
+
+        this.fromJS = (obj) => {
+            if(obj.vm) {
+                this.viewModel().fromJS(obj.vm);
+            }
+
+            if(obj.attack) {
+                this.attackOptions().forEach(e => {
+                    if(e.id == obj.attack.id)
+                        this.selectedAttack(e);
+                });
+            }
+        };
+    }
+
+    this.settings = ko.observableArray();
 
     this.selected.subscribe(function(newCharacter){
-        if(newCharacter == undefined)
-            this.viewModel(new Data.CharacterViewModel(undefined));
-        else
-            this.viewModel(newCharacter.newViewModel());
+        if(newCharacter == undefined) {
+            // すべてのタブを削除する
+            this.settings([]);
+        } else {
+            // すべてのタブを削除してデフォルト設定のみを残す
+            this.settings([ new CharacterSetting() ]);
+            this.selectLastOfExternalBuffList();
+        }
     }.bind(this));
 
-    this.attackOptions = ko.pureComputed(function(){
-        if(this.selected() == undefined)
-            return [];
-        else
-            return this.viewModel().presetAttacks();
-    }, this);
+    this.selectLastOfExternalBuffList = function() {
+        $(`#character_setting_list .nav-link`).removeClass("active");
+        $(`#character_setting_list .tab-pane`).removeClass("active");
 
-    this.selectedAttack = ko.observable();
+        let lastIndex = this.settings().length;
+        $(`#character_setting_list ul li:nth-child(${lastIndex}) a`).tab('show');
+    }.bind(this);
+
+    this.addNewSetting = () => {
+        this.settings.push(new CharacterSetting());
+        this.selectLastOfExternalBuffList();
+    };
+
+    this.duplicate = (index) => {
+        let srcObj = this.settings()[index].toJS();
+        this.addNewSetting();
+        let list = this.settings();
+        let last = list[list.length - 1];
+        last.fromJS(srcObj);
+    };
+
+    this.remove = (index) => {
+        this.settings.remove(this.settings()[index]);
+        this.selectLastOfExternalBuffList();
+    };
+
+    this.initialize = function() {
+        // this.addNewSetting();
+    }.bind(this);
 
     this.toJS = function() {
         let obj = {};
-        obj.vm = this.viewModel().toJS();
-        obj.attack = {id: this.selectedAttack().id};
+
+        obj.character_id = this.selected().id;
+        obj.settings = this.settings().map(setting => {
+            if(setting.isValid())
+                return setting.toJS();
+            else
+                return undefined;
+        }).filter(e => e);
 
         return obj;
     }.bind(this);
 
     this.fromJS = function(obj) {
-        this.selected(Data.lookupCharacter(obj.vm.parent_id));
-        let charVM = this.viewModel();
-        charVM.fromJS(obj.vm);
-        this.viewModel(charVM);
-
-        this.attackOptions().forEach(e => {
-            if(e.id == obj.attack.id)
-                this.selectedAttack(e);
+        this.selected(Data.lookupCharacter(obj.character_id));
+        this.settings([]);      // 最初に全部の設定を消す
+        obj.settings.forEach(setting => {
+            this.addNewSetting();
+            let list = this.settings();
+            let last = list[list.length - 1];
+            last.fromJS(setting);
         });
+
+        // this.selected(Data.lookupCharacter(obj.vm.parent_id));
+        // if(isList) {
+        //     let list = [];
+        //     obj.vms.forEach(e => {
+        //         let c = this.selected();
+        //         let newVM = c.newViewModel();
+        //         newVM.fromJS(e);
+        //         list.push(newVM);
+        //     });
+
+        //     this.viewModelList(list);
+        // } else {
+        //     let charVM = this.viewModel();
+        //     charVM.fromJS(obj.vm);
+        //     this.viewModel(charVM);
+        // }
+
+        // this.attackOptions().forEach(e => {
+        //     if(e.id == obj.attack.id)
+        //         this.selectedAttack(e);
+        // });
     }.bind(this);
 }
 
@@ -98,6 +204,10 @@ export function WeaponSelector(selectedChar)
             this.viewModel(newWeaponData.newViewModel());
         }
     }.bind(this));
+
+    this.isValid = function() {
+        return !(this.selected() == undefined);
+    }.bind(this);
 
     this.toJS  = function() {
         let obj = {};
@@ -164,6 +274,11 @@ export function ArtifactSelector()
         else
             this.viewModel2(newArt.newViewModel(2));
     }.bind(this));
+
+
+    this.isValid = function() {
+        return !(this.selected1() == undefined || this.selected2() == undefined);
+    }.bind(this);
 
 
     this.toJS = function(){
@@ -284,6 +399,8 @@ export function ExternalBuffSetting()
         else
             return "";
     }.bind(this);
+
+    this.isValid = () => true;
 
     this.toJS = function(){
         let obj = {};
