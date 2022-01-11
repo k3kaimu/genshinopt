@@ -56,3 +56,17 @@ indexDataMigrator.appendPatch(function(obj){
     obj.buff = [obj.buff];
     return obj;
 });
+
+
+// index: v2 -> v3
+indexDataMigrator.appendPatch(function(obj){
+    obj.character = {
+        character_id: obj.character.vm.parent_id,
+        settings: [{
+            vm: obj.character.vm,
+            attack: obj.character.attack
+        }]
+    };
+
+    return obj;
+});
