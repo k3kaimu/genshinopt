@@ -134,6 +134,10 @@ runUnittest(function(){
 });
 
 
+/**
+ * @param {(() => void)[]} tasks
+ * @param {() => void} onFinish
+ */
 function processTasksOnIdle(tasks, onFinish)
 {
     if(tasks.length == 0) {
@@ -168,6 +172,10 @@ function shallowDup(obj)
 
 
 
+/**
+ * @param {Object} obj
+ * @param {string|string[]} props
+ */
 function deleteProperties(obj, props = [])
 {
     if(!Array.isArray(props))
@@ -191,6 +199,10 @@ runUnittest(function(){
 
 
 
+/**
+ * @param {Object} obj
+ * @param {string[]|string} props
+ */
 function hasAnyProperties(obj, props = [])
 {
     if(!Array.isArray(props))
@@ -219,6 +231,10 @@ runUnittest(function(){
 });
 
 
+/**
+ * @param {Object} obj
+ * @param {Object} props
+ */
 function hasAllPropertiesWithSameValue(obj, props = {})
 {
     var keys = Object.keys(props);
@@ -247,6 +263,10 @@ runUnittest(function(){
 });
 
 
+/**
+ * @param {Object} obj
+ * @param {Object} props
+ */
 function hasAnyPropertiesWithSameValue(obj, props = {})
 {
     var keys = Object.keys(props);
@@ -299,6 +319,9 @@ function decodeFromURI(uri)
 
 
 // https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
+/**
+ * @param {string} text
+ */
 function fallbackCopyTextToClipboard(text) {
     var textArea = document.createElement("textarea");
     textArea.value = text;
@@ -325,6 +348,9 @@ function fallbackCopyTextToClipboard(text) {
 
 
 //   https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
+/**
+ * @param {string} text
+ */
 function copyTextToClipboard(text) {
     if (!navigator.clipboard) {
         fallbackCopyTextToClipboard(text);
