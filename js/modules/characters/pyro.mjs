@@ -490,12 +490,6 @@ export class HuTaoViewModel extends PyroCharacterViewModel
     }
 
 
-    skillScaleText()
-    {
-        return textPercentage(HuTao.skillScaleTable[this.skillRank()-1], 3); 
-    }
-
-
     viewHTMLList(target)
     {
         let ret = super.viewHTMLList(target);

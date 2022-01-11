@@ -266,7 +266,7 @@ export class TheWidsithViewModel extends Base.WeaponViewModel
                 +
                 Widget.checkBoxViewHTML("useDmgUp", `ダメージ+${Widget.spanPercentageFix("getBuffInc().dmg", 0)}（確率：${Widget.spanPercentageFix("useDmgUp() ? 1/countChecked() : 0", 0)}）`)
                 +
-                Widget.checkBoxViewHTML("useMryUp", `元素熟知+${Widget.spanInteger("getBuffInc().mry", 0)}（確率：${Widget.spanPercentageFix("useMryUp() ? 1/countChecked() : 0", 0)}）`)
+                Widget.checkBoxViewHTML("useMryUp", `元素熟知+${Widget.spanInteger("getBuffInc().mry")}（確率：${Widget.spanPercentageFix("useMryUp() ? 1/countChecked() : 0", 0)}）`)
             )
         );
 

@@ -35,7 +35,7 @@ export class BufferEffectViewModel
     }
 
 
-    viewHTMLList()
+    viewHTMLList(target)
     {
         return [];
     }
