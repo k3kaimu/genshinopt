@@ -332,6 +332,7 @@ export class Shenhe extends Base.CharacterData
     }
 
 
+    // @ts-ignore
     newViewModel()
     {
         let Class = ShenheViewModel(CryoCharacterViewModel);
@@ -445,7 +446,10 @@ export class Shenhe extends Base.CharacterData
 }
 
 // 申鶴, ViewModel
-export let ShenheViewModel = Base => class extends Base {
+/**
+ * @mixin
+ */
+export let ShenheViewModel = (Base) => class extends Base {
     constructor(parent, isBuffer)
     {
         super(parent);

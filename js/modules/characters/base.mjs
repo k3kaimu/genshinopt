@@ -2,6 +2,18 @@ import * as Calc from '../dmg-calc.mjs';
 
 export class CharacterData
 {
+    /**
+     * @param {string} id
+     * @param {string} name
+     * @param {number} rarity
+     * @param {string} elem
+     * @param {string} weaponType
+     * @param {number} bAtk
+     * @param {number} bDef
+     * @param {number} bHP
+     * @param {string} bBonusType
+     * @param {number} bBonusValue
+     */
     constructor(id, name, rarity, elem, weaponType, bAtk, bDef, bHP, bBonusType, bBonusValue) {
         this.id = id;
         this.name = name;
@@ -54,6 +66,10 @@ export class CharacterData
     }
 
 
+
+    /**
+     * @type {{id: string; label: string; dmgScale: (vm: CharacterViewModel) => (number | number[]) | (number | number[])[]; attackProps: Object}[]}
+     */
     static presetAttacks = [
         {
             id: 'normal_100',
@@ -67,6 +83,22 @@ export class CharacterData
 
 export class AttackEvaluator
 {
+    /**
+     * @function
+     * @param {number} scale
+     * @type {(arg0: any) => any}
+     */
+    dmgScale;
+    
+    /**
+     * @type {Object}
+     */
+    attackProps;
+
+    /**
+     * @param {CharacterViewModel} vm
+     * @param {{ id: string; label: string; dmgScale: ((vm: CharacterViewModel) => number); attackProps: object; }} presetAttackObject
+     */
     constructor(vm, presetAttackObject)
     {
         this.cvm = vm;      // ViewModel of character 
@@ -74,6 +106,9 @@ export class AttackEvaluator
     }
 
 
+    /**
+     * @param {Calc.DamageCalculator} calc
+     */
     evaluate(calc, additionalProps = {})
     {
         let scales = [this.dmgScale(this.cvm)].flat();
@@ -90,6 +125,9 @@ export class AttackEvaluator
 
 export class CharacterViewModel
 {
+    /**
+     * @param {CharacterData} ch
+     */
     constructor(ch)
     {
         this.parent = ch;
@@ -105,6 +143,9 @@ export class CharacterViewModel
     maxBurstTalentRank() { return 10; }
 
 
+    /**
+     * @param {Calc.DamageCalculator} calc
+     */
     applyDmgCalc(calc)
     {
         Calc.VGData.pushContext('Character');
@@ -114,6 +155,10 @@ export class CharacterViewModel
     }
 
 
+    /**
+     * @param {Calc.DamageCalculator} calc
+     * @returns {Calc.DamageCalculator}
+     */
     applyDmgCalcImpl(calc)
     {
         calc.character = this.parent;
@@ -145,11 +190,17 @@ export class CharacterViewModel
 
 
     // typeof(return): string[]
+    /**
+     * @param {string} target
+     */
     viewHTMLList(target){
         return [];
     }
 
 
+    /**
+     * @returns {AttackEvaluator[]}
+     */
     presetAttacks() {
         let attacks = Object.getPrototypeOf(this.parent).constructor.presetAttacks;
         let ret = [];
@@ -164,6 +215,9 @@ export class CharacterViewModel
     }
 
 
+    /**
+     * @returns {Object}
+     */
     toJS() {
         let obj = {};
         obj.parent_id  = this.parent.id;
@@ -175,6 +229,9 @@ export class CharacterViewModel
     }
 
 
+    /**
+     * @param {Object} obj
+     */
     fromJS(obj) {
         this.constell(obj.constell);
         this.normalRank(obj.normalRank);
@@ -187,6 +244,10 @@ export class CharacterViewModel
 // テスト用キャラクター
 export class TestCharacter extends CharacterData
 {
+    /**
+     * @param {string} elem
+     * @param {string} type
+     */
     constructor(elem, type)
     {
         super(
@@ -214,6 +275,9 @@ export class TestCharacter extends CharacterData
 // テスト用キャラクター
 export class TestCharacterViewModel extends CharacterViewModel
 {
+    /**
+     * @param {CharacterData} parent
+     */
     constructor(parent)
     {
         super(parent);
@@ -249,18 +313,27 @@ export class TestCharacterViewModel extends CharacterViewModel
         {
             id: 'normal_elem_100',
             label: "通常元素攻撃（100%）",
+            /**
+             * @param {any} vm
+             */
             dmgScale(vm){ return 1; },
             attackProps: { isNormal: true, ...this.makeIsElementTrue() }
         },
         {
             id: 'skill_100',
             label: "元素スキル（100%）",
+            /**
+             * @param {any} vm
+             */
             dmgScale(vm){ return 1; },
             attackProps: { isSkill: true, ...this.makeIsElementTrue() }
         },
         {
             id: 'burst_100',
             label: "元素爆発（100%）",
+            /**
+             * @param {any} vm
+             */
             dmgScale(vm){ return 1; },
             attackProps: { isBurst: true, ...this.makeIsElementTrue() }
         });
