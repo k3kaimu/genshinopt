@@ -371,10 +371,10 @@ $(function(){
             }
 
             let suffix = [];
-            if(r.setting.totchar > 1) suffix.push(`#C${r.setting.ichar}`);
-            if(r.setting.totweap > 1) suffix.push(`#W${r.setting.iweapon}`);
-            if(r.setting.totarti > 1) suffix.push(`#A${r.setting.iartifact}`);
-            if(r.setting.totexbf > 1) suffix.push(`#B${r.setting.iexbuff}`);
+            if(r.setting.totchar > 1) suffix.push(`#C${r.setting.ichar+1}`);
+            if(r.setting.totweap > 1) suffix.push(`#W${r.setting.iweapon+1}`);
+            if(r.setting.totarti > 1) suffix.push(`#A${r.setting.iartifact+1}`);
+            if(r.setting.totexbf > 1) suffix.push(`#B${r.setting.iexbuff+1}`);
 
             if(suffix.length == 0)
                 return prefix;
