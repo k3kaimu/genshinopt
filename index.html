@@ -127,7 +127,7 @@ title: 理想期待値比較
       <ul class="nav nav-tabs card-header-tabs" role="tablist">
         <!-- ko foreach: { data: comparingExternalBuffList, as: 'externalBuff' }  -->
         <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" data-bind="attr: {href: `#external_buff_tab_${externalBuffIndex()}` }" role="tab">
+          <a class="nav-link" data-toggle="tab" data-bind="attr: {href: `#externalBuffTab${externalBuffIndex()}` }" role="tab">
             <span data-bind="text: `#B${externalBuffIndex()+1}`"></span>
           </a>
         </li>
@@ -140,11 +140,13 @@ title: 理想期待値比較
     <div class="card-body">
       <div class="tab-content">
         <!-- ko foreach: { data: comparingExternalBuffList, as: 'externalBuff' }  -->
-        <div class="tab-pane fade" data-bind="attr: {id: `external_buff_tab_${externalBuffIndex()}` }" role="tabpanel">
+        <div class="tab-pane fade" data-bind="attr: {id: `externalBuffTab${externalBuffIndex()}` }" role="tabpanel">
           <div data-bind="with: externalBuff">
             {% include ui/external_buff_setting.html
-              isEnableCollapse=false target_from_root="$root.comparingExternalBuffList()[${externalBuffIndex()}]"
-              isListItem=true index="externalBuffIndex()"
+              target_from_root="$root.comparingExternalBuffList()[${externalBuffIndex()}]"
+              id="externalBuff${externalBuffIndex()}"
+              isListItem=true
+              index="externalBuffIndex()"
               duplicate="() => $root.dupComparingExternalBuff(externalBuffIndex())"
               remove="() => $root.removeComparingExternalBuff(externalBuffIndex())" %}
           </div>
