@@ -167,8 +167,8 @@ export function checkSerializationUnittest(vm)
         }
     });
 
-    vm.fromJS(obj);
-    let newobj = vm.toJS(obj);
+    vm.fromJS(escapeHTML(obj));
+    let newobj = vm.toJS();
 
     let ok = true;
     keys.forEach(k => {

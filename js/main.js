@@ -134,6 +134,56 @@ runUnittest(function(){
 });
 
 
+function escapeHTMLString(str){
+    str = str.replace(/&/g, '&amp;');
+    str = str.replace(/>/g, '&gt;');
+    str = str.replace(/</g, '&lt;');
+    str = str.replace(/"/g, '&quot;');
+    str = str.replace(/'/g, '&#x27;');
+    str = str.replace(/`/g, '&#x60;');
+    return str;
+}
+
+
+function escapeHTML(obj)
+{
+    if(typeof obj == "number")
+        return obj;
+    else if(typeof obj == "string")
+        return escapeHTMLString(obj);
+    else if(typeof obj == "boolean")
+        return obj;
+    else if(Array.isArray(obj))
+    {
+        if(obj == null)
+            return null;
+
+        let newArr = [];
+        obj.forEach(e => {
+            newArr.push(escapeHTML(e));
+        });
+
+        return newArr;
+    }
+    else if(typeof obj == "object")
+    {
+        if(obj == null)
+            return null;
+
+        let keys = Object.keys(obj);
+        let newObj = {};
+        keys.forEach(k => {
+            newObj[escapeHTMLString(k)] = escapeHTML(obj[k]);
+        });
+
+        return newObj;
+    }
+    else {
+        return undefined;
+    }
+}
+
+
 /**
  * @param {(() => void)[]} tasks
  * @param {() => void} onFinish
@@ -314,7 +364,8 @@ function encodeToURI(obj)
 
 function decodeFromURI(uri)
 {
-    return MessagePack.decode(LZMA.decompress(base64ToUint8Array(decodeURIComponent(uri).replace('-', '+').replace('_', '/'))));
+    let obj = MessagePack.decode(LZMA.decompress(base64ToUint8Array(decodeURIComponent(uri).replace('-', '+').replace('_', '/'))));
+    return escapeHTML(obj);
 }
 
 
