@@ -2,7 +2,11 @@
 
 export function buildViewHTML(target, title, innerHTML)
 {
-    return buildViewHTMLImpl(target, title, innerHTML);
+    // return buildViewHTMLImpl(target, title, innerHTML);
+    return DOMPurify.sanitize(
+        buildViewHTMLImpl(target, title, innerHTML),
+        {USE_PROFILES: {html: true}}
+    );
 }
 
 
