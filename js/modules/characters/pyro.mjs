@@ -39,6 +39,8 @@ export class PyroCharacterViewModel extends Base.CharacterViewModel
 
         let prob = Number(this.reactionProb());
         let type = this.reactionType();
+        if(prob == 0)
+            return calc;
 
         let CalcType = Object.getPrototypeOf(calc).constructor;
         let NewCalc = class extends CalcType {

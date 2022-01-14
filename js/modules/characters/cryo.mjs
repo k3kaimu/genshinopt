@@ -34,6 +34,8 @@ export class CryoCharacterViewModel extends Base.CharacterViewModel
         calc = super.applyDmgCalcImpl(calc);
 
         let prob = Number(this.reactionProb());
+        if(prob == 0)
+            return calc;
 
         let CalcType = Object.getPrototypeOf(calc).constructor;
         let NewCalc = class extends CalcType {
