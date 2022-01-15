@@ -81,7 +81,7 @@ export class CharacterData
 }
 
 
-export class AttackEvaluator
+export class PresetAttackEvaluator
 {
     /**
      * @function
@@ -208,7 +208,7 @@ export class CharacterViewModel
             if("newEvaluator" in a)
                 ret.push(a.newEvaluator(this, a));
             else
-                ret.push(new AttackEvaluator(this, a));
+                ret.push(new PresetAttackEvaluator(this, a));
         });
 
         return ret;
@@ -343,7 +343,7 @@ export class TestCharacterViewModel extends CharacterViewModel
             if("newEvaluator" in a)
                 ret.push(a.newEvaluator(this, a));
             else
-                ret.push(new AttackEvaluator(this, a));
+                ret.push(new PresetAttackEvaluator(this, a));
         });
 
         return ret;

@@ -261,7 +261,7 @@ export class KleeViewModel extends PyroCharacterViewModel
         
         if(this.constell() >= 1) {
             // ゴロゴロコンボ
-            attacks.push(new Base.AttackEvaluator(
+            attacks.push(new Base.PresetAttackEvaluator(
                 this,
                 {
                     id: "chained_reactions",
@@ -274,7 +274,7 @@ export class KleeViewModel extends PyroCharacterViewModel
 
         if(this.constell() >= 4) {
             // 一触即発
-            attacks.push(new Base.AttackEvaluator(
+            attacks.push(new Base.PresetAttackEvaluator(
                 this,
                 {
                     id: "sparkly_explosion",
