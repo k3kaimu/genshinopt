@@ -35,9 +35,16 @@ export function checkUnittestForCharacter(character, setting)
     calc = (new Data.TestArtifact()).newViewModel(4).applyDmgCalc(calc);
 
     let ok = true;
+    let checkUniqe = {};
     cvm.presetAttacks().forEach(e => {
         let val = e.evaluate(calc).value;
         ok = ok && ( Math.round(val) == Math.round(setting.expected[e.id]) );
+
+        // presetAttacks()のidがユニークか確認する
+        if(e.id in checkUniqe)
+            ok = false;
+        
+        checkUniqe[e.id] = true;
     });
 
     // 3凸と5凸でスキル・爆発の天賦レベルが+3されるかチェック
