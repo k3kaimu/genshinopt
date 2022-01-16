@@ -217,10 +217,7 @@ export function WeaponSelector(selectedChar)
 
     this.fromJS = function(obj) {
         this.selected(Data.lookupWeapon(obj.weapon.parent_id));
-        
-        let w = this.viewModel();
-        w.fromJS(obj.weapon);
-        this.viewModel(w);
+        this.viewModel().fromJS(obj.weapon);
     }.bind(this);
 }
 
@@ -792,6 +789,7 @@ export class BundleSetting
         let obj = {};
         if(this.enableCharacterPicker())    obj.chaPck = this.characterPicker.toJS();
         if(this.enableCharacter())          obj.cvmStg = this.characterVMSetting.toJS();
+        if(this.enableAttack())             obj.attack = this.attackSetting.toJS();
         if(this.enableWeapon())             obj.wvmStg = this.weaponSelector.toJS();
         if(this.enableArtifact())           obj.avmStg = this.artifactSelector.toJS();
         if(this.enableExBuff())             obj.exbStg = this.exbuffSetting.toJS();
@@ -815,23 +813,30 @@ export class BundleSetting
             this.enableCharacter(false);
         }
 
+        if(obj.attack) {
+            this.enableAttack(true);
+            this.attackSetting.fromJS(obj.attack);
+        } else {
+            this.enableAttack(false);
+        }
+
         if(obj.wvmStg) {
             this.enableWeapon(true);
-            this.weaponSelector.fromJS(obj.cvmStg);
+            this.weaponSelector.fromJS(obj.wvmStg);
         } else {
             this.enableWeapon(false);
         }
 
         if(obj.avmStg) {
             this.enableArtifact(true);
-            this.artifactSelector.fromJS(obj.cvmStg);
+            this.artifactSelector.fromJS(obj.avmStg);
         } else {
             this.enableArtifact(false);
         }
 
         if(obj.exbStg) {
             this.enableExBuff(true);
-            this.exbuffSetting.fromJS(obj.cvmStg);
+            this.exbuffSetting.fromJS(obj.exbStg);
         } else {
             this.enableExBuff(false);
         }
