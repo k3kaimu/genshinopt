@@ -1,0 +1,38 @@
+<div class="card" id="{{ include.id }}">
+  <div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs" role="tablist">
+      <!-- ko foreach: list  -->
+      <li class="nav-item">
+        <a class="nav-link" data-toggle="tab" data-bind="attr: {href: `#{{ include.id }}_tab_${$index()}` }" role="tab">
+          <span data-bind="text: `#{{ include.tab_prefix }}${$index()+1}`, css: { 'text-danger': !$data.isValid() }"></span>
+        </a>
+      </li>
+      <!-- /ko -->
+      <li class="nav-item">
+        <a class="nav-link" data-bind="click: () => addListItem()" role="tab">
+          <!-- <span>+追加</span> -->
+          <span data-feather="plus"></span>
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="card-body">
+    <div class="tab-content">
+      <!-- ko foreach: list  -->
+      <div class="tab-pane fade" data-bind="attr: {id: `{{ include.id }}_tab_${$index()}` }" role="tabpanel">
+        <div data-bind="with: $data">
+          {{ include.tab_content }}
+        </div>
+        <div class="row no-gutters">
+          <div class="col">
+            <button type="button" data-bind="click: () => {{ include.target_from_root }}.dupListItem($index())" class="btn btn-outline-primary btn-block">設定を複製</button>
+          </div>
+          <div class="col">
+            <button type="button" data-bind="click: () => {{ include.target_from_root }}.removeListItem($index())" class="btn btn-outline-danger btn-block">設定を削除</button>
+          </div>
+        </div>
+      </div>
+      <!-- /ko -->
+    </div>
+  </div>
+</div>

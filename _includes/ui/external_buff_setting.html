@@ -22,14 +22,6 @@
   <div class="col">
     <button type="button" data-toggle="collapse" data-bind="attr: {'data-target': `#{{ include.id }}Collapse`}" class="btn btn-outline-primary btn-block">手動設定</button>
   </div>
-  {% if include.isListItem %}
-  <div class="col">
-    <button type="button" data-bind="click: {{ include.duplicate }}" class="btn btn-outline-primary btn-block">設定を複製</button>
-  </div>
-  <div class="col">
-    <button type="button" data-bind="click: {{ include.remove }}" class="btn btn-outline-danger btn-block">設定を削除</button>
-  </div>
-  {% endif %}
 </div>
 <div class="collapse mt-3" data-bind="attr: {id: `{{ include.id }}Collapse` }">
   <div class="form-row">

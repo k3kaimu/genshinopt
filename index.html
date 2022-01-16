@@ -4,53 +4,31 @@ modules_js: ['/js/page/index.js']
 title: 理想期待値比較
 ---
 
-
 <h4 class="h4">キャラ設定</h4>
 
 <div class="mb-3" data-bind="with: characterPicker">
 {% include ui/character_picker.html target_from_root="$root.characterPicker" %}
 </div>
 
-<div class="mb-5">
-  <div class="card" id="character_list" data-bind="with: characterList">
-    <div class="card-header">
-      <ul class="nav nav-tabs card-header-tabs" role="tablist">
-        <!-- ko foreach: { data: list, as: 'character' }  -->
-        <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" data-bind="attr: {href: `#characterTab${characterIndex()}` }" role="tab">
-            <span data-bind="text: `#B${characterIndex()+1}`, css: { 'text-danger': !character.isValid() }"></span>
-          </a>
-        </li>
-        <!-- /ko -->
-        <li class="nav-item ml-auto">
-          <button type="button" class="btn btn btn-outline-primary ml-2" data-bind="click: () => addListItem()">+追加</button>
-        </li>
-      </ul>
-    </div>
-    <div class="card-body">
-      <div class="tab-content">
-        <!-- ko foreach: { data: list, as: 'character' }  -->
-        <div class="tab-pane fade" data-bind="attr: {id: `characterTab${characterIndex()}` }" role="tabpanel">
-          <div data-bind="with: character">
-            {% include ui/character_vm_setting.html
-              target_from_root="$root.characterList.list()[${characterIndex()}]"
-              id="character${characterIndex()}"
-              isListItem=true
-              index="characterIndex()" %}
-          </div>
-          <div class="row no-gutters">
-            <div class="col">
-              <button type="button" data-bind="click: () => $root.characterList.dupListItem(characterIndex())" class="btn btn-outline-primary btn-block">設定を複製</button>
-            </div>
-            <div class="col">
-              <button type="button" data-bind="click: () => $root.characterList.removeListItem(characterIndex())" class="btn btn-outline-danger btn-block">設定を削除</button>
-            </div>
-          </div>
-        </div>
-        <!-- /ko -->
-      </div>
-    </div>
-  </div>
+
+<h4>天賦設定</h4>
+
+
+{% capture character_setting_tab_content %}
+{% include ui/character_vm_setting.html
+  target_from_root="$root.characterList.list()[${$index()}]"
+  id="character_list_tab_content${$index()}"
+  isListItem=true
+  index="$index()" %}
+{% endcapture %}
+
+<div class="mb-5" data-bind="with: characterList">
+{% include ui/tab_list.html
+  tab_prefix="C"
+  target_from_root="$root.characterList"
+  id="character_list"
+  tab_content=character_setting_tab_content
+  %}
 </div>
 
 <h4 class="h4">攻撃方法</h4>
@@ -177,40 +155,22 @@ title: 理想期待値比較
 
 
 <h4 class="h4">比較するバフ設定</h4>
-<div class="mb-5">
-  <div class="card" id="external_buff_list" data-bind="with: externalBuffList">
-    <div class="card-header">
-      <ul class="nav nav-tabs card-header-tabs" role="tablist">
-        <!-- ko foreach: { data: list, as: 'externalBuff' }  -->
-        <li class="nav-item">
-          <a class="nav-link" data-toggle="tab" data-bind="attr: {href: `#externalBuffTab${externalBuffIndex()}` }" role="tab">
-            <span data-bind="text: `#B${externalBuffIndex()+1}`"></span>
-          </a>
-        </li>
-        <!-- /ko -->
-        <li class="nav-item ml-auto">
-          <button type="button" class="btn btn btn-outline-primary ml-2" data-bind="click: () => addListItem()">+追加</button>
-        </li>
-      </ul>
-    </div>
-    <div class="card-body">
-      <div class="tab-content">
-        <!-- ko foreach: { data: list, as: 'externalBuff' }  -->
-        <div class="tab-pane fade" data-bind="attr: {id: `externalBuffTab${externalBuffIndex()}` }" role="tabpanel">
-          <div data-bind="with: externalBuff">
-            {% include ui/external_buff_setting.html
-              target_from_root="$root.externalBuffList.list()[${externalBuffIndex()}]"
-              id="externalBuff${externalBuffIndex()}"
-              isListItem=true
-              index="externalBuffIndex()"
-              duplicate="() => $root.externalBuffList.dupListItem(externalBuffIndex())"
-              remove="() => $root.externalBuffList.removeListItem(externalBuffIndex())" %}
-          </div>
-        </div>
-        <!-- /ko -->
-      </div>
-    </div>
-  </div>
+
+{% capture externalbuff_setting_tab_content %}
+{% include ui/external_buff_setting.html
+  target_from_root="$root.externalBuffList.list()[${$index()}]"
+  id="external_buff_list_tab${$index()}"
+  isListItem=false
+  index="$index()" %}
+{% endcapture %}
+
+<div class="mb-5" data-bind="with: externalBuffList">
+{% include ui/tab_list.html
+  tab_prefix="B"
+  target_from_root="$root.externalBuffList"
+  id="external_buff_list"
+  tab_content=externalbuff_setting_tab_content
+  %}
 </div>
 
 <h4 class="h4">探索するパターン数：<span data-bind="text: allPatterns().length"></span>通り</h4>
