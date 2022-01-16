@@ -454,3 +454,441 @@ export function ExternalBuffSetting()
         this.addIncDmg(obj.addIncDmg);
     }.bind(this);
 }
+
+
+export class CharacterPicker
+{
+    constructor()
+    {
+        this.selected = ko.observable();
+        this.characters = Data.characters;
+        this.elem = ko.observable();
+        this.rarity = ko.observable();
+        this.options = ko.pureComputed(function(){
+            var list = [];
+            var elem = this.elem();
+            var rarity = this.rarity();
+            
+
+            this.characters.forEach(e => {
+                if(!(elem == "ALL" || e.elem == elem))
+                    return;
+                
+                if(!(rarity == "ALL" || e.rarity == rarity))
+                    return;
+
+                list.push(e);
+            });
+
+            return list;
+        }, this);
+    }
+
+
+    isValid() {
+        return this.selected() != undefined;
+    }
+
+
+    toJS() {
+        return {id: this.selected().id};
+    }
+
+
+    fromJS(obj) {
+        if(obj.id) {
+            this.selected(Data.lookupCharacter(obj.id));
+        }
+    }
+}
+
+
+export class CharacterVMSetting
+{
+    constructor(selectedCharacterKO)
+    {
+        this.selected = selectedCharacterKO;
+        this.viewModel = ko.pureComputed(function(){
+            let char = this.selected();
+            if(char == undefined)
+                return new Data.CharacterViewModel(undefined);
+            else
+                return char.newViewModel();
+        }, this);
+    }
+
+
+    isValid() {
+        return this.viewModel().parent != undefined;
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        return this.viewModel().applyDmgCalc(calc);
+    }
+
+
+    toJS() {
+        return this.viewModel().toJS();
+    }
+
+
+    fromJS(obj) {
+        this.viewModel().fromJS(obj);
+    }
+}
+
+
+export class AttackSetting
+{
+    constructor(characterVMKOs = [])
+    {
+        if(ko.isObservable(characterVMKOs))
+            this.characterVMs = characterVMKOs;
+        else
+            this.characterVMs = ko.observableArray(characterVMKOs);
+
+        this.selectedAttackId = ko.observable();
+        this.selectedAttackId.subscribe(newVal => {
+            if(newVal == undefined) {
+                this.compoundedList([]);
+                this.addCompoundedItem();
+            }
+        });
+
+        this.compoundedList = ko.observableArray([]);
+        this.addCompoundedItem();   // 初期値
+    }
+
+
+    // 全characterVMsのpresetAttacksで積集合を取る
+    // idとlabelのリストを返す
+    getAllOptions(addCompounded = true) {
+        let cvms = this.characterVMs();
+        if(cvms.filter(e => e.parent != undefined).length == 0)
+            return [];
+
+        let idCount = {};
+        let labels = {};
+        cvms.forEach(cvm => {
+            if(cvm.parent == undefined) return;
+
+            cvm.presetAttacks().forEach(e => {
+                if(e.id in idCount)
+                    idCount[e.id] += 1;
+                else
+                    idCount[e.id] = 1;
+
+                labels[e.id] = e.label;
+            });
+        });
+
+        let ret = [];
+        let keys = Object.keys(idCount);
+        keys.forEach(k => {
+            if(idCount[k] == cvms.length)
+                ret.push({id: k, label: labels[k]});
+        });
+
+        if(addCompounded && ret.length >= 1) {
+            ret.push({id: '__compounded_by_UI__', label: '複合組合せ設定（攻撃方法と倍率の指定）'});
+        }
+
+        return ret;
+    }
+
+
+    isValid()
+    {
+        let ok = true;
+        ok = ok && this.selectedAttackId() != undefined;
+
+        if(this.selectedAttackId() == '__compounded_by_UI__') {
+            let cnt = 0;
+            this.compoundedList().forEach(e => {
+                let valid = true;
+                valid = valid && e.selectedAttackId() != undefined;
+                valid = valid && isValidNumber(e.scale());
+                if(valid)
+                    cnt += 1;
+            });
+
+            ok = ok && cnt > 0;
+        }
+
+        return ok;
+    }
+
+
+    addCompoundedItem() {
+        this.compoundedList.push({
+            selectedAttackId: ko.observable(),
+            scale: ko.observable(1),
+        });
+    }
+
+
+    removeCompoundedItem(index) {
+        this.compoundedList.remove(this.compoundedList()[index]);
+    }
+
+
+    makeAttackEvaluator(cvm) {
+        let attackId = this.selectedAttackId();
+        if(attackId == '__compounded_by_UI__') {
+            let attackList = this.compoundedList().map(e => {
+                if(e.selectedAttackId() == undefined)
+                    return undefined;
+                else
+                    return {id: e.selectedAttackId(), scale: Number(e.scale()) };
+            }).filter(e => e);
+
+            return new CompoundedAttackEvaluator(cvm, attackList);
+        } else {
+            // attackIdに一致するものを探す
+            let ret = undefined;
+            cvm.presetAttacks().forEach(e => {
+                if(e.id == attackId)
+                    ret = e;
+            });
+
+            return ret;
+        }
+    }
+
+
+    textInputCSS(value) {
+        if(!(isValidNumber(value) && value != 0))
+            return "border-danger";
+        else
+            return undefined;
+    }
+
+
+    
+    toJS() {
+        let obj = {};
+        obj.id = this.selectedAttackId();
+        if(obj.id == '__compounded_by_UI__') {
+            obj.clist = this.compoundedList().map(e => {
+                return {id: e.selectedAttackId(), scale: e.scale()};
+            });
+        }
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        this.selectedAttackId(obj.id);
+
+        if(obj.id == '__compounded_by_UI__') {
+            this.compoundedList([]);
+            obj.clist.forEach(e =>  {
+                this.compoundedList.push({
+                    selectedAttackId: ko.observable(e.id),
+                    scale: ko.observable(e.scale),
+                });
+            });
+        }
+    }
+}
+
+
+export class CompoundedAttackEvaluator extends Data.AttackEvaluator
+{
+    constructor(cvm, id_and_scales)
+    {
+        super("__compounded_by_UI__", "複合組合せ設定（攻撃方法と倍率の指定）");
+
+        let presets = cvm.presetAttacks();
+        this.attackEvals = [];
+        this.scales = [];
+        id_and_scales.forEach(e => {
+            presets.forEach(aeval => {
+                if(aeval.id == e.id) {
+                    this.attackEvals.push(aeval);
+                    this.scales.push(Number(e.scale));
+                }
+            });
+        });
+    }
+
+
+    evaluate(calc, additionalProps = {}) {
+        let dmg = Calc.VGData.zero();
+        this.attackEvals.forEach((aeval, i) => {
+            dmg = dmg.add(aeval.evaluate(calc, {...additionalProps}).mul(this.scales[i]));
+        });
+
+        return dmg;
+    }
+}
+
+
+export class MultiSetting
+{
+    constructor(enableCharacterSelector, selectedCharacterKO = undefined, enableCharacter, enableAttack, enableWeapon, enableArtifact, enableExBuff)
+    {
+        this.enableCharacterSelector = ko.isObservable(enableCharacterSelector) ? enableCharacterSelector : ko.observable(enableCharacterSelector);
+        this.enableCharacter = ko.isObservable(enableCharacter) ? enableCharacter : ko.observable(enableCharacter);
+        this.enableAttack = ko.isObservable(enableAttack) ? enableAttack : ko.observable(enableAttack);
+        this.enableWeapon = ko.isObservable(enableWeapon) ? enableWeapon : ko.observable(enableWeapon);
+        this.enableArtifact = ko.isObservable(enableArtifact) ? enableArtifact : ko.observable(enableArtifact);
+        this.enableExBuff = ko.isObservable(enableExBuff) ? enableExBuff : ko.observable(enableExBuff);
+
+        if(enableCharacterSelector)
+            this.characterSelector = new CharacterPicker();
+
+        this.characterVMSetting = new CharacterVMSetting(selectedCharacterKO ?? this.characterSelector.selected);
+        this.attackSetting = new AttackSetting();
+        this.characterVMSetting.viewModel.subscribe(newVM => {
+            this.attackSetting.characterVMs([newVM]);
+        });
+
+        this.weaponSelector = new WeaponSelector(selectedCharacterKO ?? this.characterSelector.selected);
+        this.artifactSelector = new ArtifactSelector();
+        this.exbuffSetting = new ExternalBuffSetting();
+    }
+
+
+    isValid()
+    {
+        let ret = true;
+        ret = ret && (!this.enableCharacterSelector() || this.characterSelector.isValid());
+        ret = ret && (!this.enableCharacter() || this.characterVMSetting.isValid());
+        ret = ret && (!this.enableAttack()   || this.attackSetting.isValid());
+        ret = ret && (!this.enableWeapon()   || this.weaponSelector.isValid());
+        ret = ret && (!this.enableArtifact() || this.artifactSelector.isValid());
+        ret = ret && (!this.enableExBuff()   || this.exbuffSetting.isValid());
+        return ret;
+    }
+
+
+    applyDmgCalc(calc)
+    {
+        if(this.enableCharacter()) {
+            calc = this.characterVMSetting.applyDmgCalc(calc);
+        }
+
+        if(this.enableWeapon()) {
+            calc = this.weaponSelector.applyDmgCalc(calc);
+        }
+
+        if(this.enableArtifact()) {
+            calc = this.artifactSelector.applyDmgCalc(calc);
+        }
+
+        if(this.enableExBuff()) {
+            calc = this.exbuffSetting.applyDmgCalc(calc);
+        }
+
+        return calc;
+    }
+
+
+    toJS()
+    {
+        let obj = {};
+        if(this.enableCharacterSelector())  obj.chaSlc = this.characterSelector.toJS();
+        if(this.enableCharacter())           obj.cvmStg = this.characterVMSetting.toJS();
+        if(this.enableWeapon())             obj.wvmStg = this.weaponSelector.toJS();
+        if(this.enableArtifact())           obj.avmStg = this.artifactSelector.toJS();
+        if(this.enableExBuff())             obj.exbStg = this.exbuffSetting.toJS();
+        return obj;
+    }
+
+
+    fromJS(obj)
+    {
+        if(obj.chaSlc) {
+            this.enableCharacterSelector(true);
+            this.characterSelector.fromJS(obj.chaSlc);
+        } else {
+            this.enableCharacterSelector(false);
+        }
+
+        if(obj.cvmStg) {
+            this.enableCharacter(true);
+            this.characterVMSetting.fromJS(obj.cvmStg);
+        } else {
+            this.enableCharacter(false);
+        }
+
+        if(obj.wvmStg) {
+            this.enableWeapon(true);
+            this.weaponSelector.fromJS(obj.cvmStg);
+        } else {
+            this.enableWeapon(false);
+        }
+
+        if(obj.avmStg) {
+            this.enableArtifact(true);
+            this.artifactSelector.fromJS(obj.cvmStg);
+        } else {
+            this.enableArtifact(false);
+        }
+
+        if(obj.exbStg) {
+            this.enableExBuff(true);
+            this.exbuffSetting.fromJS(obj.cvmStg);
+        } else {
+            this.enableExBuff(false);
+        }
+    }
+}
+
+
+export class TabListViewModel
+{
+    constructor(htmlId)
+    {
+        this.htmlId = htmlId;
+        this.list = ko.observableArray();
+    }
+
+
+    selectListItem(idx) {
+        $(`#${this.htmlId} .nav-link`).removeClass("active");
+        $(`#${this.htmlId} .tab-pane`).removeClass("active");
+        $(`#${this.htmlId} ul li:nth-child(${idx+1}) a`).tab('show');
+    }
+
+
+    addListItem() {}
+
+    dupListItem(idx) {
+        let obj = this.list()[idx].toJS();
+        this.addListItem();
+        
+        let arr = this.list();
+        arr[arr.length - 1].fromJS(obj);
+        this.selectListItem(arr.length - 1);
+    }
+
+    removeListItem(idx) {
+        this.list.remove(this.list()[idx]);
+        this.selectListItem(this.list().length - 1);
+    }
+
+
+    toJS() {
+        let arr = [];
+        this.list().forEach(e => {
+            if(e.isValid())
+                arr.push(e.toJS());
+        });
+
+        return arr;
+    }
+
+
+    fromJS(arr) {
+        this.list([]);
+        arr.forEach((e, i) => {
+            this.addListItem();
+            this.list()[i].fromJS(e);
+        });
+    }
+}

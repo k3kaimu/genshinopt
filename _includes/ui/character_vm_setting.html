@@ -1,0 +1,40 @@
+
+<div class="mb-3">
+  <div class="row no-gutters " data-bind="with: viewModel">
+    <div class="col">
+      <label>凸数</label>
+      <select class="custom-select rounded-left-only border-right-0" aria-label="凸数" data-bind="value: constell">
+        <option value="0">無凸</option>
+        <option value="1">1凸</option>
+        <option value="2">2凸</option>
+        <option value="3">3凸</option>
+        <option value="4">4凸</option>
+        <option value="5">5凸</option>
+        <option value="6">6凸</option>
+      </select>
+    </div>
+    <div class="col">
+      <label>通常天賦</label>
+      <select class="custom-select rounded-0 border-right-0" aria-label="通常天賦" data-bind="value: normalRank, options: [...Array(maxNormalTalentRank()).keys()].map(i => i + 1)">
+      </select>
+    </div>
+    <div class="col">
+      <label>スキル天賦</label>
+      <select class="custom-select rounded-0" aria-label="スキル天賦" data-bind="value: skillRank, options: [...Array(maxSkillTalentRank()).keys()].map(i => i + 1)">
+      </select>
+    </div>
+    <div class="col">
+      <label>爆発天賦</label>
+      <select class="custom-select rounded-right-only border-left-0" aria-label="爆発天賦" data-bind="value: burstRank, options: [...Array(maxBurstTalentRank()).keys()].map(i => i + 1)">
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-3">
+  <!-- ko foreach: viewModel().viewHTMLList(`{{ include.target_from_root }}.viewModel()`) -->
+  <div class="col-lg-6">
+    <div data-bind="htmlWithBinding: $data"></div>
+  </div>
+  <!-- /ko -->
+</div>

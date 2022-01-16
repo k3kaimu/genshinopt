@@ -1,0 +1,45 @@
+<div class="form-row mb-3">
+<div class="col-12">
+    <select class="custom-select"
+    data-bind="options: getAllOptions(true),
+                optionsText: 'label',
+                optionsValue: 'id',
+                value: selectedAttackId,
+                optionsCaption: '-攻撃方法-',
+                css: {'border-danger': selectedAttackId() == undefined}">
+    </select>
+</div>
+</div>
+<div data-bind="visible: selectedAttackId() == '__compounded_by_UI__'">
+<div data-bind="foreach: compoundedList">
+    <div class="row no-gutters">
+        <div class="col-6">
+            <!-- ko if: $index() == 0 -->
+            <label>攻撃方法</label>
+            <!-- /ko -->
+            <select class="custom-select rounded-left-only"
+            data-bind="options: $parent.getAllOptions(false),
+                        optionsText: 'label',
+                        optionsValue: 'id',
+                        value: selectedAttackId,
+                        optionsCaption: '-攻撃方法-',
+                        css: {'border-danger': selectedAttackId() == undefined}">
+            </select>
+        </div>
+        <div class="col-3">
+            <!-- ko if: $index() == 0 -->
+            <label>倍率</label>
+            <!-- /ko -->
+            <input type="number" class="form-control rounded-0" data-bind="value: scale, css: $parent.textInputCSS(scale())" placeholder="例：1.5">
+        </div>
+        <div class="col-3">
+            <!-- ko if: $index() == 0 -->
+            <label>&nbsp;</label>
+            <!-- /ko -->
+            <button type="button" data-bind="click: () => $parent.removeCompoundedItem($index())"
+                class="btn btn-outline-danger btn-block rounded-right-only">-削除</button>
+        </div>
+    </div>
+</div>
+<button type="button" data-bind="click: () => addCompoundedItem()" class="btn btn-outline-primary">+追加</button>
+</div>

@@ -6,11 +6,67 @@ title: 理想期待値比較
 
 
 <h4 class="h4">キャラ設定</h4>
+
+<div class="mb-3" data-bind="with: characterPicker">
+{% include ui/character_picker.html target_from_root="$root.characterPicker" %}
+</div>
+
+<div class="mb-5">
+  <div class="card" id="character_list" data-bind="with: characterList">
+    <div class="card-header">
+      <ul class="nav nav-tabs card-header-tabs" role="tablist">
+        <!-- ko foreach: { data: list, as: 'character' }  -->
+        <li class="nav-item">
+          <a class="nav-link" data-toggle="tab" data-bind="attr: {href: `#characterTab${characterIndex()}` }" role="tab">
+            <span data-bind="text: `#B${characterIndex()+1}`, css: { 'text-danger': !character.isValid() }"></span>
+          </a>
+        </li>
+        <!-- /ko -->
+        <li class="nav-item ml-auto">
+          <button type="button" class="btn btn btn-outline-primary ml-2" data-bind="click: () => addListItem()">+追加</button>
+        </li>
+      </ul>
+    </div>
+    <div class="card-body">
+      <div class="tab-content">
+        <!-- ko foreach: { data: list, as: 'character' }  -->
+        <div class="tab-pane fade" data-bind="attr: {id: `characterTab${characterIndex()}` }" role="tabpanel">
+          <div data-bind="with: character">
+            {% include ui/character_vm_setting.html
+              target_from_root="$root.characterList.list()[${characterIndex()}]"
+              id="character${characterIndex()}"
+              isListItem=true
+              index="characterIndex()" %}
+          </div>
+          <div class="row no-gutters">
+            <div class="col">
+              <button type="button" data-bind="click: () => $root.characterList.dupListItem(characterIndex())" class="btn btn-outline-primary btn-block">設定を複製</button>
+            </div>
+            <div class="col">
+              <button type="button" data-bind="click: () => $root.characterList.removeListItem(characterIndex())" class="btn btn-outline-danger btn-block">設定を削除</button>
+            </div>
+          </div>
+        </div>
+        <!-- /ko -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<h4 class="h4">攻撃方法</h4>
+<div class="mb-5" data-bind="with: attackSetting">
+{% include ui/attack_setting.html
+    id="attackSetting"
+    target_from_root="$root.attackSetting" %}
+</div>
+
+{% if false %}
 <div class="mb-5" data-bind="with: characterSelector">
 {% include ui/character_selector.html
   target_from_root="$root.characterSelector"
   isList=true %}
 </div>
+{% endif %}
 
 
 <h4 class="h4">比較する武器設定</h4>
@@ -122,10 +178,10 @@ title: 理想期待値比較
 
 <h4 class="h4">比較するバフ設定</h4>
 <div class="mb-5">
-  <div class="card" id="external_buff_list">
+  <div class="card" id="external_buff_list" data-bind="with: externalBuffList">
     <div class="card-header">
       <ul class="nav nav-tabs card-header-tabs" role="tablist">
-        <!-- ko foreach: { data: comparingExternalBuffList, as: 'externalBuff' }  -->
+        <!-- ko foreach: { data: list, as: 'externalBuff' }  -->
         <li class="nav-item">
           <a class="nav-link" data-toggle="tab" data-bind="attr: {href: `#externalBuffTab${externalBuffIndex()}` }" role="tab">
             <span data-bind="text: `#B${externalBuffIndex()+1}`"></span>
@@ -133,22 +189,22 @@ title: 理想期待値比較
         </li>
         <!-- /ko -->
         <li class="nav-item ml-auto">
-          <button type="button" class="btn btn btn-outline-primary ml-2" data-bind="click: addComparingExternalBuff">+追加</button>
+          <button type="button" class="btn btn btn-outline-primary ml-2" data-bind="click: () => addListItem()">+追加</button>
         </li>
       </ul>
     </div>
     <div class="card-body">
       <div class="tab-content">
-        <!-- ko foreach: { data: comparingExternalBuffList, as: 'externalBuff' }  -->
+        <!-- ko foreach: { data: list, as: 'externalBuff' }  -->
         <div class="tab-pane fade" data-bind="attr: {id: `externalBuffTab${externalBuffIndex()}` }" role="tabpanel">
           <div data-bind="with: externalBuff">
             {% include ui/external_buff_setting.html
-              target_from_root="$root.comparingExternalBuffList()[${externalBuffIndex()}]"
+              target_from_root="$root.externalBuffList.list()[${externalBuffIndex()}]"
               id="externalBuff${externalBuffIndex()}"
               isListItem=true
               index="externalBuffIndex()"
-              duplicate="() => $root.dupComparingExternalBuff(externalBuffIndex())"
-              remove="() => $root.removeComparingExternalBuff(externalBuffIndex())" %}
+              duplicate="() => $root.externalBuffList.dupListItem(externalBuffIndex())"
+              remove="() => $root.externalBuffList.removeListItem(externalBuffIndex())" %}
           </div>
         </div>
         <!-- /ko -->
@@ -650,3 +706,13 @@ title: 理想期待値比較
     </div>
   </div>
 </div>
+
+{% if false %}
+<div class="mb-3" data-bind="with: characterPicker">
+{% include ui/character_picker.html id="characterPicker" target_from_root="$root.characterPicker" %}
+</div>
+
+<div data-bind="with: multiSetting">
+{% include ui/multi_setting.html id="multiSetting" target_from_root="$root.multiSetting" %}
+</div>
+{% endif %}

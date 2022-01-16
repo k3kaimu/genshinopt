@@ -70,3 +70,22 @@ indexDataMigrator.appendPatch(function(obj){
 
     return obj;
 });
+
+// index: v3 -> v4
+indexDataMigrator.appendPatch(function(obj){
+    let newchar = {
+        picked: {
+            id: obj.character.character_id
+        },
+        list: obj.character.settings.map(e => e.vm),
+    };
+
+    let newatt = {
+        id: obj.character.settings[0].attack.id
+    };
+
+    obj.character = newchar;
+    obj.attack = newatt;
+
+    return obj;
+});

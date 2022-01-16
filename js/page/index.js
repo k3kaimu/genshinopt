@@ -5,6 +5,46 @@ import * as Migrator from '/js/modules/migrator.mjs'
 import * as UI from '/js/modules/ui.mjs'
 
 
+class CharacterSettingList extends UI.TabListViewModel
+{
+    constructor(htmlId, selectedChar)
+    {
+        super(htmlId);
+        this.selectedChar = selectedChar;
+
+        this.selectedChar.subscribe(newchar => {
+            if(newchar == undefined) {
+                this.list([]);
+            } else {
+                this.list([]);
+                this.addListItem();
+            }
+        });
+    }
+
+
+    addListItem() {
+        this.list.push(new UI.CharacterVMSetting(this.selectedChar));
+        this.selectListItem(this.list().length - 1);
+    }
+}
+
+
+class ExternalBuffSettingList extends UI.TabListViewModel
+{
+    constructor(htmlId)
+    {
+        super(htmlId);
+    }
+
+
+    addListItem() {
+        this.list.push(new UI.ExternalBuffSetting());
+        this.selectListItem(this.list().length - 1);
+    }
+}
+
+
 $(function(){
     function MultiWeaponAdderModal(parent)
     {
@@ -71,14 +111,27 @@ $(function(){
 
     function ViewModel() {
         this.readyNLopt = ko.observable();
+
+        this.characterPicker = new UI.CharacterPicker();
+        this.selectedChar = this.characterPicker.selected;
+        this.characterList = new CharacterSettingList("character_list", this.selectedChar);
+
+        this.attackSetting = new UI.AttackSetting(ko.pureComputed(function(){
+            return this.characterList.list().map(e => e.viewModel());
+        }, this));
+
+
+        // this.multiSetting = new UI.MultiSetting(false, this.characterPicker.selected, true, true, true, true, true);
+        // this.multiSetting.characterVMSetting.viewModel.subscribe(newVM => {
+        //     this.attackSetting.characterVMs([newVM]);
+        // });
+        // this.comparingMultiSetting = ko.observableArray();
     
-        this.characterSelector = new UI.CharacterSelector(true);
-        this.selectedChar = this.characterSelector.selected;
+        // this.characterSelector = new UI.CharacterSelector(true);
 
         this.comparingWeaponList = ko.observableArray();
 
-        this.addComparingWeapon = function()
-        {
+        this.addComparingWeapon = function(){
             this.comparingWeaponList.push(new UI.WeaponSelector(this.selectedChar));
         }.bind(this);
 
@@ -123,34 +176,7 @@ $(function(){
             { value: "Heal",    label: "与える治癒効果",    checked: ko.observable(false) },
         ];
 
-        this.comparingExternalBuffList = ko.observableArray();
-
-        this.selectLastOfExternalBuffList = function() {
-            $(`#external_buff_list .nav-link`).removeClass("active");
-            $(`#external_buff_list .tab-pane`).removeClass("active");
-
-            let lastIndex = this.comparingExternalBuffList().length;
-            $(`#external_buff_list ul li:nth-child(${lastIndex}) a`).tab('show');
-        }.bind(this);
-
-        this.addComparingExternalBuff = function(){
-            this.comparingExternalBuffList.push(new UI.ExternalBuffSetting());
-            this.selectLastOfExternalBuffList();
-        }.bind(this);
-
-        this.dupComparingExternalBuff = function(index){
-            let list = this.comparingExternalBuffList();
-            let srcObj = list[index].toJS();
-            this.addComparingExternalBuff();
-
-            list[list.length - 1].fromJS(srcObj);
-        }.bind(this);
-
-        this.removeComparingExternalBuff = function(index) {
-            let target = this.comparingExternalBuffList()[index];
-            this.comparingExternalBuffList.remove(target);
-            this.selectLastOfExternalBuffList();
-        }.bind(this);
+        this.externalBuffList = new ExternalBuffSettingList("external_buff_list");
 
         this.optTotalCost = ko.observable();
 
@@ -170,12 +196,15 @@ $(function(){
 
         this.allPatterns = ko.pureComputed(function(){
             let dst = [];
-            const totchar = this.characterSelector.settings().filter(e => e.isValid()).length;
+            const totchar = this.characterList.list().filter(e => e.isValid()).length;
             const totweap = this.comparingWeaponList().filter(e => e.isValid()).length;
             const totarti = this.comparingArtifactList().filter(e => e.isValid()).length;
-            const totexbf = this.comparingExternalBuffList().filter(e => e.isValid()).length;
+            const totexbf = this.externalBuffList.list().filter(e => e.isValid()).length;
 
-            this.characterSelector.settings().forEach((charSetting, ichar) => {
+            if(! this.attackSetting.isValid())
+                return dst;
+
+            this.characterList.list().forEach((charSetting, ichar) => {
                 if(!charSetting.isValid()) return;
 
                 this.comparingWeaponList().forEach((weapon, iwp) => {
@@ -193,7 +222,7 @@ $(function(){
                                 this.hatMainStatus.forEach(hat => {
                                     if(! hat.checked()) return;
 
-                                    let exbuffs = this.comparingExternalBuffList().slice(0);
+                                    let exbuffs = this.externalBuffList.list().slice(0);
 
                                     // バフ設定の個数が0なら，初期値を追加する
                                     if(exbuffs.length == 0) {
@@ -203,7 +232,7 @@ $(function(){
                                     exbuffs.forEach((externalBuff, ibuff) => {
                                         dst.push({
                                             character: charSetting.viewModel(),
-                                            attack: charSetting.selectedAttack(),
+                                            attack: this.attackSetting.makeAttackEvaluator(charSetting.viewModel()),
                                             ichar: ichar,
                                             totchar: totchar,
                                             weapon: weapon.viewModel(),
@@ -293,7 +322,7 @@ $(function(){
                         let dmg = attackType.evaluate(calc);
 
                         if(setting.powRecharge.isEnabled) {
-                            return dmg.mul(calc.recharge(attackType.attackProps).pow_number(setting.powRecharge.exp));
+                            return dmg.mul(calc.recharge(attackType.attackProps ?? {}).pow_number(setting.powRecharge.exp));
                         } else {
                             return dmg;
                         }
@@ -523,7 +552,12 @@ $(function(){
         this.toJS = function(){
             let obj = {};
 
-            obj.character = this.characterSelector.toJS();
+            obj.character = {
+                picked: this.characterPicker.toJS(),
+                list: this.characterList.toJS()
+            };
+
+            obj.attack = this.attackSetting.toJS();
 
             obj.weapons = [];
             this.comparingWeaponList().forEach(w => {
@@ -540,7 +574,7 @@ $(function(){
             });
 
             obj.totcost = this.optTotalCost();
-            obj.buff = this.comparingExternalBuffList().map(a => a.toJS());
+            obj.buff = this.externalBuffList.list().map(a => a.toJS());
 
             obj.clock = {};
             this.clockMainStatus.forEach(c => {
@@ -569,7 +603,9 @@ $(function(){
 
 
         this.fromJS = function(obj){
-            this.characterSelector.fromJS(obj.character);
+            this.characterPicker.fromJS(obj.character.picked);
+            this.characterList.fromJS(obj.character.list);
+            this.attackSetting.fromJS(obj.attack);
 
             this.comparingWeaponList([]);
             obj.weapons.forEach(w => {
@@ -586,12 +622,7 @@ $(function(){
             });
 
             this.optTotalCost(obj.totcost);
-            obj.buff.forEach(e => {
-                this.addComparingExternalBuff();
-
-                let list = this.comparingExternalBuffList();
-                list[list.length - 1].fromJS(e);
-            });
+            this.externalBuffList.fromJS(obj.buff);
 
             this.clockMainStatus.forEach(c => {
                 c.checked(obj.clock[c.value]);
@@ -621,7 +652,7 @@ $(function(){
     // 初期設定
     {
         viewModel.setShownResult("ALL");
-        viewModel.characterSelector.initialize();
+        // viewModel.characterSelector.initialize();
         // viewModel.addComparingExternalBuff();
     }
 

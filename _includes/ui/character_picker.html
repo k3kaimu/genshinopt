@@ -1,0 +1,27 @@
+<div class="input-group">
+  <div class="input-group-prepend">
+    <select class="custom-select" data-bind="value: elem">
+      <option selected value="ALL">元素</option>
+      <option value="Anemo">風</option>
+      <option value="Geo">岩</option>
+      <option value="Pyro">火</option>
+      <option value="Hydro">水</option>
+      <option value="Cryo">氷</option>
+      <option value="Electro">雷</option>
+    </select>
+  </div>
+  <div class="input-group-prepend input-group-append">
+    <select class="custom-select" data-bind="value: rarity">
+      <option selected value="ALL">星</option>
+      <option value="5">星5</option>
+      <option value="4">星4</option>
+    </select>
+  </div>
+  <select data-bind="options: options,
+                      optionsText: 'name',
+                      value: selected,
+                      optionsCaption: '-キャラ選択-',
+                      css: {'border-danger': selected() == undefined}",
+                      class="custom-select" aria-label="キャラクター選択">
+  </select>
+</div>

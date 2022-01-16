@@ -81,7 +81,22 @@ export class CharacterData
 }
 
 
-export class PresetAttackEvaluator
+export class AttackEvaluator
+{
+    constructor(id, label)
+    {
+        this.id = id;
+        this.label = label;
+    }
+
+    evaluate(calc, additionalProps = {})
+    {
+        return Calc.VGData.zero();
+    }
+}
+
+
+export class PresetAttackEvaluator extends AttackEvaluator
 {
     /**
      * @function
@@ -101,8 +116,10 @@ export class PresetAttackEvaluator
      */
     constructor(vm, presetAttackObject)
     {
+        super(presetAttackObject.id, presetAttackObject.label);
         this.cvm = vm;      // ViewModel of character 
-        Object.assign(this, presetAttackObject);
+        this.dmgScale = presetAttackObject.dmgScale;
+        this.attackProps = presetAttackObject.attackProps;
     }
 
 
