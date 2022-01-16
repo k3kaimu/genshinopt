@@ -1,13 +1,13 @@
-<!-- ko if: enableCharacterSelector -->
-<h6 data-bind="css: {'text-danger': !characterSelector.isValid()}">キャラ選択</h6>
-<div class="mb-5" data-bind="with: characterSelector">
+<!-- ko if: enableCharacterPicker -->
+<h6 data-bind="css: {'text-danger': !characterPicker.isValid()}">キャラ選択</h6>
+<div class="mb-4" data-bind="with: characterPicker">
 {% include ui/character_picker.html %}
 </div>
 <!-- /ko -->
 
 <!-- ko if: enableCharacter -->
 <h6 data-bind="css: {'text-danger': !characterVMSetting.isValid()}">天賦設定</h6>
-<div class="mb-5" data-bind="with: characterVMSetting">
+<div class="mb-4" data-bind="with: characterVMSetting">
 {% assign target = include.target_from_root | append: ".characterVMSetting" %}
 {% include ui/character_vm_setting.html target_from_root=target %}
 </div>
@@ -15,7 +15,7 @@
 
 <!-- ko if: enableAttack -->
 <h6 data-bind="css: {'text-danger': !attackSetting.isValid()}">攻撃方法設定</h6>
-<div class="mb-5" data-bind="with: attackSetting">
+<div class="mb-4" data-bind="with: attackSetting">
 {% assign target = include.target_from_root | append: ".attackSetting" %}
 {% include ui/attack_setting.html target_from_root=target %}
 </div>
@@ -23,7 +23,7 @@
 
 <!-- ko if: enableWeapon -->
 <h6 data-bind="css: {'text-danger': !weaponSelector.isValid()}">武器選択</h6>
-<div class="mb-5" data-bind="with: weaponSelector">
+<div class="mb-4" data-bind="with: weaponSelector">
 {% assign target = include.target_from_root | append: ".weaponSelector" %}
 {% include ui/weapon_selector.html target_from_root=target isList=false %}
 </div>
@@ -31,7 +31,7 @@
 
 <!-- ko if: enableArtifact -->
 <h6 data-bind="css: {'text-danger': !artifactSelector.isValid()}">聖遺物セット選択</h6>
-<div class="mb-5" data-bind="with: artifactSelector">
+<div class="mb-4" data-bind="with: artifactSelector">
 {% assign target = include.target_from_root | append: ".artifactSelector" %}
 {% include ui/artifact_selector.html target_from_root=target isList=false %}
 </div>
@@ -39,7 +39,7 @@
 
 <!-- ko if: enableExBuff -->
 <h6 data-bind="css: {'text-danger': !exbuffSetting.isValid()}">バフ等の設定</h6>
-<div class="mb-5" data-bind="with: exbuffSetting">
+<div data-bind="with: exbuffSetting">
 {% assign target = include.target_from_root | append: ".exbuffSetting" %}
 {% assign childid = include.id | append: "Buff" %}
 {% include ui/external_buff_setting.html

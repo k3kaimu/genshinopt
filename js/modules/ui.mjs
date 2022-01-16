@@ -727,27 +727,26 @@ export class CompoundedAttackEvaluator extends Data.AttackEvaluator
 }
 
 
-export class MultiSetting
+export class BundleSetting
 {
-    constructor(enableCharacterSelector, selectedCharacterKO = undefined, enableCharacter, enableAttack, enableWeapon, enableArtifact, enableExBuff)
+    constructor(enableCharacterPicker, selectedCharacterKO = undefined, enableCharacter, enableAttack, enableWeapon, enableArtifact, enableExBuff)
     {
-        this.enableCharacterSelector = ko.isObservable(enableCharacterSelector) ? enableCharacterSelector : ko.observable(enableCharacterSelector);
+        this.enableCharacterPicker = ko.isObservable(enableCharacterPicker) ? enableCharacterPicker : ko.observable(enableCharacterPicker);
         this.enableCharacter = ko.isObservable(enableCharacter) ? enableCharacter : ko.observable(enableCharacter);
         this.enableAttack = ko.isObservable(enableAttack) ? enableAttack : ko.observable(enableAttack);
         this.enableWeapon = ko.isObservable(enableWeapon) ? enableWeapon : ko.observable(enableWeapon);
         this.enableArtifact = ko.isObservable(enableArtifact) ? enableArtifact : ko.observable(enableArtifact);
         this.enableExBuff = ko.isObservable(enableExBuff) ? enableExBuff : ko.observable(enableExBuff);
 
-        if(enableCharacterSelector)
-            this.characterSelector = new CharacterPicker();
+        if(enableCharacterPicker)
+            this.characterPicker = new CharacterPicker();
 
-        this.characterVMSetting = new CharacterVMSetting(selectedCharacterKO ?? this.characterSelector.selected);
-        this.attackSetting = new AttackSetting();
-        this.characterVMSetting.viewModel.subscribe(newVM => {
-            this.attackSetting.characterVMs([newVM]);
-        });
+        this.characterVMSetting = new CharacterVMSetting(selectedCharacterKO ?? this.characterPicker.selected);
+        this.attackSetting = new AttackSetting(ko.pureComputed(function(){
+            return [this.characterVMSetting.viewModel()];
+        }, this));
 
-        this.weaponSelector = new WeaponSelector(selectedCharacterKO ?? this.characterSelector.selected);
+        this.weaponSelector = new WeaponSelector(selectedCharacterKO ?? this.characterPicker.selected);
         this.artifactSelector = new ArtifactSelector();
         this.exbuffSetting = new ExternalBuffSetting();
     }
@@ -756,7 +755,7 @@ export class MultiSetting
     isValid()
     {
         let ret = true;
-        ret = ret && (!this.enableCharacterSelector() || this.characterSelector.isValid());
+        ret = ret && (!this.enableCharacterPicker() || this.characterPicker.isValid());
         ret = ret && (!this.enableCharacter() || this.characterVMSetting.isValid());
         ret = ret && (!this.enableAttack()   || this.attackSetting.isValid());
         ret = ret && (!this.enableWeapon()   || this.weaponSelector.isValid());
@@ -791,8 +790,8 @@ export class MultiSetting
     toJS()
     {
         let obj = {};
-        if(this.enableCharacterSelector())  obj.chaSlc = this.characterSelector.toJS();
-        if(this.enableCharacter())           obj.cvmStg = this.characterVMSetting.toJS();
+        if(this.enableCharacterPicker())    obj.chaPck = this.characterPicker.toJS();
+        if(this.enableCharacter())          obj.cvmStg = this.characterVMSetting.toJS();
         if(this.enableWeapon())             obj.wvmStg = this.weaponSelector.toJS();
         if(this.enableArtifact())           obj.avmStg = this.artifactSelector.toJS();
         if(this.enableExBuff())             obj.exbStg = this.exbuffSetting.toJS();
@@ -802,11 +801,11 @@ export class MultiSetting
 
     fromJS(obj)
     {
-        if(obj.chaSlc) {
-            this.enableCharacterSelector(true);
-            this.characterSelector.fromJS(obj.chaSlc);
+        if(obj.chaPck) {
+            this.enableCharacterPicker(true);
+            this.characterPicker.fromJS(obj.chaPck);
         } else {
-            this.enableCharacterSelector(false);
+            this.enableCharacterPicker(false);
         }
 
         if(obj.cvmStg) {

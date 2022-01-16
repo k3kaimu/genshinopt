@@ -10,16 +10,72 @@ title: 理想期待値比較
 {% include ui/character_picker.html target_from_root="$root.characterPicker" %}
 </div>
 
+{% capture bundle_setting_tab_content %}
+{% include ui/bundle_setting.html
+  target_from_root="$root.bundleList.list()[${tabItemIndex()}]"
+  id="bundle_list_tab_content${tabItemIndex()}"
+  index="tabItemIndex()" %}
+{% endcapture %}
 
+{% capture bundle_setting_additional_navs %}
+<li class="nav-item ml-auto">
+  <a class="nav-link" data-toggle="tab" href="#bundle_list_tab_setting" role="tab">
+    設定
+  </a>
+</li>
+{% endcapture %}
+
+{% capture bundle_setting_additional_tabs %}
+<div class="tab-pane fade" id="bundle_list_tab_setting" role="tabpanel">
+  <h4>組み合わせる設定</h4>
+  <div class="form-check">
+    <label class="form-check-label">
+      <input class="form-check-input" type="checkbox" data-bind="checked: enableCharacter">キャラクター天賦設定
+    </label>
+  </div>
+  <div class="form-check">
+    <label class="form-check-label">
+      <input class="form-check-input" type="checkbox" data-bind="checked: enableAttack">キャラクター攻撃方法設定
+    </label>
+  </div>
+  <div class="form-check">
+    <label class="form-check-label">
+      <input class="form-check-input" type="checkbox" data-bind="checked: enableWeapon">武器設定
+    </label>
+  </div>
+  <div class="form-check">
+    <label class="form-check-label">
+      <input class="form-check-input" type="checkbox" data-bind="checked: enableArtifact">聖遺物設定
+    </label>
+  </div>
+  <div class="form-check">
+    <label class="form-check-label">
+      <input class="form-check-input" type="checkbox" data-bind="checked: enableExBuff">バフ設定
+    </label>
+  </div>
+</div>
+{% endcapture %}
+
+<div class="mb-5" data-bind="with: bundleList">
+{% include ui/tab_list.html
+  tab_prefix="M"
+  target_from_root="$root.bundleList"
+  id="bundle_list"
+  tab_content=bundle_setting_tab_content
+  additional_navs=bundle_setting_additional_navs
+  additional_tabs=bundle_setting_additional_tabs
+  %}
+</div>
+
+<div data-bind="visible: ! bundleList.enableCharacter()">
 <h4>天賦設定</h4>
-
 
 {% capture character_setting_tab_content %}
 {% include ui/character_vm_setting.html
-  target_from_root="$root.characterList.list()[${$index()}]"
-  id="character_list_tab_content${$index()}"
+  target_from_root="$root.characterList.list()[${tabItemIndex()}]"
+  id="character_list_tab_content${tabItemIndex()}"
   isListItem=true
-  index="$index()" %}
+  index="tabItemIndex()" %}
 {% endcapture %}
 
 <div class="mb-5" data-bind="with: characterList">
@@ -30,7 +86,9 @@ title: 理想期待値比較
   tab_content=character_setting_tab_content
   %}
 </div>
+</div>
 
+<div data-bind="visible: ! bundleList.enableAttack()">
 <h4 class="h4">攻撃方法</h4>
 <div class="mb-5" data-bind="with: attackSetting">
 {% include ui/attack_setting.html
@@ -45,9 +103,11 @@ title: 理想期待値比較
   isList=true %}
 </div>
 {% endif %}
+</div>
 
 
-<h4 class="h4">比較する武器設定</h4>
+<div data-bind="visible: ! bundleList.enableWeapon()">
+<h4 class="h4">比較する武器</h4>
 <div class="mb-5">
   <div data-bind="foreach: comparingWeaponList">
     <div class="mb-3" data-bind="with: $data">
@@ -95,8 +155,10 @@ title: 理想期待値比較
     </div>
   </div>
 </div>
+</div>
 
-<h4 class="h4">探索する聖遺物セット</h4>
+<div data-bind="visible: ! bundleList.enableArtifact()">
+<h4 class="h4">比較する聖遺物セット</h4>
 <div class="mb-3">
   <div data-bind="foreach: comparingArtifactList">
     <div class="mb-3" data-bind="with: $data">
@@ -105,6 +167,7 @@ title: 理想期待値比較
   </div>
 
   <button type="button" class="btn btn-outline-primary" data-bind="click: addComparingArtifact()">+追加</button>
+</div>
 </div>
 
 
@@ -154,14 +217,15 @@ title: 理想期待値比較
 </div>
 
 
+<div data-bind="visible: ! bundleList.enableExBuff()">
 <h4 class="h4">比較するバフ設定</h4>
 
 {% capture externalbuff_setting_tab_content %}
 {% include ui/external_buff_setting.html
-  target_from_root="$root.externalBuffList.list()[${$index()}]"
-  id="external_buff_list_tab${$index()}"
+  target_from_root="$root.externalBuffList.list()[${tabItemIndex()}]"
+  id="external_buff_list_tab${tabItemIndex()}"
   isListItem=false
-  index="$index()" %}
+  index="tabItemIndex()" %}
 {% endcapture %}
 
 <div class="mb-5" data-bind="with: externalBuffList">
@@ -171,6 +235,7 @@ title: 理想期待値比較
   id="external_buff_list"
   tab_content=externalbuff_setting_tab_content
   %}
+</div>
 </div>
 
 <h4 class="h4">探索するパターン数：<span data-bind="text: allPatterns().length"></span>通り</h4>

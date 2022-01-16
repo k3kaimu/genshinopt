@@ -45,6 +45,62 @@ class ExternalBuffSettingList extends UI.TabListViewModel
 }
 
 
+class BundleSettingList extends UI.TabListViewModel
+{
+    constructor(htmlId, selectedChar)
+    {
+        super(htmlId);
+        this.selectedChar = selectedChar;
+        this.enableCharacter = ko.observable(true);
+        this.enableAttack = ko.observable(false);
+        this.enableWeapon = ko.observable(false);
+        this.enableArtifact = ko.observable(false);
+        this.enableExBuff = ko.observable(false);
+    }
+
+
+    enableAny() {
+        return this.enableCharacter() || this.enableAttack()
+            || this.enableWeapon() || this.enableArtifact()
+            || this.enableExBuff();
+    }
+
+
+    addListItem() {
+        this.list.push(new UI.BundleSetting(false, this.selectedChar,
+            this.enableCharacter,
+            this.enableAttack,
+            this.enableWeapon,
+            this.enableArtifact,
+            this.enableExBuff));
+        
+            this.selectListItem(this.list().length - 1);
+    }
+
+
+    toJS() {
+        let obj = {list: super.toJS()};
+        obj.bChar = this.enableCharacter();
+        obj.bAttk = this.enableAttack();
+        obj.bWeap = this.enableWeapon();
+        obj.bArti = this.enableArtifact();
+        obj.bExbf = this.enableExBuff();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        this.enableCharacter(obj.bChar);
+        this.enableAttack(obj.bAttk);
+        this.enableWeapon(obj.bWeap);
+        this.enableArtifact(obj.bArti);
+        this.enableExBuff(obj.bExbf);
+        super.fromJS(obj.list);
+    }
+}
+
+
 $(function(){
     function MultiWeaponAdderModal(parent)
     {
@@ -114,18 +170,24 @@ $(function(){
 
         this.characterPicker = new UI.CharacterPicker();
         this.selectedChar = this.characterPicker.selected;
+
+        this.bundleList = new BundleSettingList('bundle_list', this.selectedChar); 
+
         this.characterList = new CharacterSettingList("character_list", this.selectedChar);
 
         this.attackSetting = new UI.AttackSetting(ko.pureComputed(function(){
-            return this.characterList.list().map(e => e.viewModel());
+            let mlist = this.bundleList.list().map(e => e.characterVMSetting.viewModel());
+            let clist = this.characterList.list().map(e => e.viewModel());
+
+            if(this.bundleList.enableCharacter()) {
+                return mlist;
+            } else {
+                return clist;
+            }
         }, this));
 
 
-        // this.multiSetting = new UI.MultiSetting(false, this.characterPicker.selected, true, true, true, true, true);
-        // this.multiSetting.characterVMSetting.viewModel.subscribe(newVM => {
-        //     this.attackSetting.characterVMs([newVM]);
-        // });
-        // this.comparingMultiSetting = ko.observableArray();
+
     
         // this.characterSelector = new UI.CharacterSelector(true);
 
@@ -196,67 +258,100 @@ $(function(){
 
         this.allPatterns = ko.pureComputed(function(){
             let dst = [];
-            const totchar = this.characterList.list().filter(e => e.isValid()).length;
-            const totweap = this.comparingWeaponList().filter(e => e.isValid()).length;
-            const totarti = this.comparingArtifactList().filter(e => e.isValid()).length;
-            const totexbf = this.externalBuffList.list().filter(e => e.isValid()).length;
+            const totbund = this.bundleList.list().length;
+            const totchar = this.characterList.list().length;
+            const totweap = this.comparingWeaponList().length;
+            const totarti = this.comparingArtifactList().length;
+            const totexbf = this.externalBuffList.list().length;
 
-            if(! this.attackSetting.isValid())
+            if(! this.bundleList.enableAttack() && ! this.attackSetting.isValid())
                 return dst;
 
-            this.characterList.list().forEach((charSetting, ichar) => {
-                if(!charSetting.isValid()) return;
+            (this.bundleList.enableAny()
+                ? this.bundleList.list()
+                : [{isValid: () => true}]
+            ).forEach((bundleSetting, ibundle) => {
+                if(!bundleSetting.isValid()) return;
 
-                this.comparingWeaponList().forEach((weapon, iwp) => {
-                    if(!weapon.isValid()) return;
+                (this.bundleList.enableCharacter()
+                    ? [bundleSetting.characterVMSetting]
+                    : this.characterList.list()
+                ).forEach((charSetting, ichar) => {
+                    if(!charSetting.isValid()) return;
 
-                    this.comparingArtifactList().forEach((artifact, iatft) => {
-                        if(!artifact.isValid()) return;
+                    (this.bundleList.enableWeapon()
+                        ? [bundleSetting.weaponSelector]
+                        : this.comparingWeaponList()
+                    ).forEach((weapon, iwp) => {
+                        if(!weapon.isValid()) return;
 
-                        this.clockMainStatus.forEach(clock => {
-                            if(! clock.checked()) return;
+                        (this.bundleList.enableArtifact()
+                            ? [bundleSetting.artifactSelector]
+                            : this.comparingArtifactList()
+                        ).forEach((artifact, iatft) => {
+                            if(!artifact.isValid()) return;
 
-                            this.cupMainStatus.forEach(cup => {
-                                if(! cup.checked()) return;
+                            this.clockMainStatus.forEach(clock => {
+                                if(! clock.checked()) return;
 
-                                this.hatMainStatus.forEach(hat => {
-                                    if(! hat.checked()) return;
+                                this.cupMainStatus.forEach(cup => {
+                                    if(! cup.checked()) return;
 
-                                    let exbuffs = this.externalBuffList.list().slice(0);
+                                    this.hatMainStatus.forEach(hat => {
+                                        if(! hat.checked()) return;
 
-                                    // バフ設定の個数が0なら，初期値を追加する
-                                    if(exbuffs.length == 0) {
-                                        exbuffs.push(new UI.ExternalBuffSetting());
-                                    }
+                                        let exbuffs = this.externalBuffList.list().slice(0);
 
-                                    exbuffs.forEach((externalBuff, ibuff) => {
-                                        dst.push({
-                                            character: charSetting.viewModel(),
-                                            attack: this.attackSetting.makeAttackEvaluator(charSetting.viewModel()),
-                                            ichar: ichar,
-                                            totchar: totchar,
-                                            weapon: weapon.viewModel(),
-                                            iweapon: iwp,
-                                            totweap: totweap,
-                                            artifactSet1: artifact.viewModel1(),
-                                            artifactSet2: artifact.viewModel2(),
-                                            iartifact: iatft,
-                                            totarti: totarti,
-                                            clock: clock,
-                                            cup: cup,
-                                            hat: hat,
-                                            exbuff: externalBuff,
-                                            iexbuff: ibuff,
-                                            totexbf: totexbf,
-                                            powRecharge: { isEnabled: this.usePowRecharge(), exp: Number(this.exponentOfRecharge()) },
-                                            globalOpt: { isEnabled: this.useGlobalOpt(), maxEval: Number(this.numOfEvalGlobalOpt()) },
+                                        // バフ設定の個数が0なら，初期値を追加する
+                                        if(exbuffs.length == 0) {
+                                            exbuffs.push(new UI.ExternalBuffSetting());
+                                        }
+
+                                        (this.bundleList.enableExBuff()
+                                            ? [bundleSetting.exbuffSetting]
+                                            : exbuffs
+                                        ).forEach((externalBuff, ibuff) => {
+                                            let attackEval = undefined;
+                                            if(this.bundleList.enableAttack())
+                                                attackEval = bundleSetting.attackSetting.makeAttackEvaluator(charSetting.viewModel());
+                                            else
+                                                attackEval = this.attackSetting.makeAttackEvaluator(charSetting.viewModel());
+
+                                            dst.push({
+                                                character: charSetting.viewModel(),
+                                                attack: attackEval,
+                                                ichar: ichar,
+                                                totchar: totchar,
+                                                weapon: weapon.viewModel(),
+                                                iweapon: iwp,
+                                                totweap: totweap,
+                                                artifactSet1: artifact.viewModel1(),
+                                                artifactSet2: artifact.viewModel2(),
+                                                iartifact: iatft,
+                                                totarti: totarti,
+                                                clock: clock,
+                                                cup: cup,
+                                                hat: hat,
+                                                exbuff: externalBuff,
+                                                iexbuff: ibuff,
+                                                totexbf: totexbf,
+                                                powRecharge: { isEnabled: this.usePowRecharge(), exp: Number(this.exponentOfRecharge()) },
+                                                globalOpt: { isEnabled: this.useGlobalOpt(), maxEval: Number(this.numOfEvalGlobalOpt()) },
+                                                ibund: ibundle,
+                                                totbund: totbund,
+                                                bBundleChar: this.bundleList.enableCharacter(),
+                                                bBundleAttk: this.bundleList.enableAttack(),
+                                                bBundleWeap: this.bundleList.enableWeapon(),
+                                                bBundleArti: this.bundleList.enableArtifact(),
+                                                bBundleExbf: this.bundleList.enableExBuff(),
+                                            });
                                         });
                                     });
-                                });
-                            })
+                                })
+                            });
                         });
-                    });
-                })
+                    })
+                });
             });
 
             return dst;
@@ -400,10 +495,17 @@ $(function(){
             }
 
             let suffix = [];
-            if(r.setting.totchar > 1) suffix.push(`#C${r.setting.ichar+1}`);
-            if(r.setting.totweap > 1) suffix.push(`#W${r.setting.iweapon+1}`);
-            if(r.setting.totarti > 1) suffix.push(`#A${r.setting.iartifact+1}`);
-            if(r.setting.totexbf > 1) suffix.push(`#B${r.setting.iexbuff+1}`);
+            if(r.setting.totbund > 1
+                && (r.setting.bBundleChar || r.setting.bBundleWeap
+                 || r.setting.bBundleArti || r.setting.bBundleExbf
+                 || r.setting.bBundleAttk
+                )) {
+                suffix.push(`#M${r.setting.ibund+1}`);
+            }
+            if(r.setting.totchar > 1 && !r.setting.bBundleChar) suffix.push(`#C${r.setting.ichar+1}`);
+            if(r.setting.totweap > 1 && !r.setting.bBundleWeap) suffix.push(`#W${r.setting.iweapon+1}`);
+            if(r.setting.totarti > 1 && !r.setting.bBundleArti) suffix.push(`#A${r.setting.iartifact+1}`);
+            if(r.setting.totexbf > 1 && !r.setting.bBundleExbf) suffix.push(`#B${r.setting.iexbuff+1}`);
 
             if(suffix.length == 0)
                 return prefix;
@@ -552,29 +654,39 @@ $(function(){
         this.toJS = function(){
             let obj = {};
 
+            obj.bundle = this.bundleList.toJS();
+
             obj.character = {
                 picked: this.characterPicker.toJS(),
-                list: this.characterList.toJS()
+                list: this.bundleList.enableCharacter() ? null : this.characterList.toJS()
             };
 
-            obj.attack = this.attackSetting.toJS();
+            if(! this.bundleList.enableAttack())
+                obj.attack = this.attackSetting.toJS();
 
-            obj.weapons = [];
-            this.comparingWeaponList().forEach(w => {
-                if(w.selected() != undefined)
-                    obj.weapons.push(w.toJS());
-            });
+            if(! this.bundleList.enableWeapon()) {
+                obj.weapons = [];
+                this.comparingWeaponList().forEach(w => {
+                    if(w.selected() != undefined)
+                        obj.weapons.push(w.toJS());
+                });
+            }
 
-            obj.artifacts = [];
-            this.comparingArtifactList().forEach(a => {
-                if(a.selected1() == undefined || a.selected2() == undefined)
-                    return;
+            if(! this.bundleList.enableArtifact()) {
+                obj.artifacts = [];
+                this.comparingArtifactList().forEach(a => {
+                    if(a.selected1() == undefined || a.selected2() == undefined)
+                        return;
 
-                obj.artifacts.push(a.toJS());
-            });
+                    obj.artifacts.push(a.toJS());
+                });
+            }
 
             obj.totcost = this.optTotalCost();
-            obj.buff = this.externalBuffList.list().map(a => a.toJS());
+
+            if(! this.bundleList.enableExBuff()) {
+                obj.buff = this.externalBuffList.list().map(a => a.toJS());
+            }
 
             obj.clock = {};
             this.clockMainStatus.forEach(c => {
@@ -604,25 +716,39 @@ $(function(){
 
         this.fromJS = function(obj){
             this.characterPicker.fromJS(obj.character.picked);
-            this.characterList.fromJS(obj.character.list);
-            this.attackSetting.fromJS(obj.attack);
+            this.bundleList.fromJS(obj.bundle);
 
-            this.comparingWeaponList([]);
-            obj.weapons.forEach(w => {
-                let wdata = new UI.WeaponSelector(this.selectedChar);
-                wdata.fromJS(w);
-                this.comparingWeaponList.push(wdata);
-            });
+            if(! this.bundleList.enableCharacter()) {
+                this.characterList.fromJS(obj.character.list);
+            }
 
-            this.comparingArtifactList([]);
-            obj.artifacts.forEach(a => {
-                let adata = new UI.ArtifactSelector();
-                adata.fromJS(a);
-                this.comparingArtifactList.push(adata);
-            });
+            if(! this.bundleList.enableAttack()) {
+                this.attackSetting.fromJS(obj.attack);
+            }
+
+            if(! this.bundleList.enableWeapon()) {
+                this.comparingWeaponList([]);
+                obj.weapons.forEach(w => {
+                    let wdata = new UI.WeaponSelector(this.selectedChar);
+                    wdata.fromJS(w);
+                    this.comparingWeaponList.push(wdata);
+                });
+            }
+
+            if(! this.bundleList.enableArtifact()) {
+                this.comparingArtifactList([]);
+                obj.artifacts.forEach(a => {
+                    let adata = new UI.ArtifactSelector();
+                    adata.fromJS(a);
+                    this.comparingArtifactList.push(adata);
+                });
+            }
 
             this.optTotalCost(obj.totcost);
-            this.externalBuffList.fromJS(obj.buff);
+
+            if(! this.bundleList.enableExBuff()) {
+                this.externalBuffList.fromJS(obj.buff);
+            }
 
             this.clockMainStatus.forEach(c => {
                 c.checked(obj.clock[c.value]);
@@ -652,8 +778,7 @@ $(function(){
     // 初期設定
     {
         viewModel.setShownResult("ALL");
-        // viewModel.characterSelector.initialize();
-        // viewModel.addComparingExternalBuff();
+        viewModel.bundleList.addListItem();
     }
 
     function loadDataFromURI(version, uri)

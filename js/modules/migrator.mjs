@@ -89,3 +89,17 @@ indexDataMigrator.appendPatch(function(obj){
 
     return obj;
 });
+
+// index: v4 -> v5
+indexDataMigrator.appendPatch(function(obj){
+    obj.bundle = {
+        "list": [],
+        "bChar": false,
+        "bAttk": false,
+        "bWeap": false,
+        "bArti": false,
+        "bExbf": false
+    };
+
+    return obj;
+});

@@ -1,7 +1,7 @@
 <div class="card" id="{{ include.id }}">
   <div class="card-header">
     <ul class="nav nav-tabs card-header-tabs" role="tablist">
-      <!-- ko foreach: list  -->
+      <!-- ko foreach: {data: list, as: 'tabItem'}  -->
       <li class="nav-item">
         <a class="nav-link" data-toggle="tab" data-bind="attr: {href: `#{{ include.id }}_tab_${$index()}` }" role="tab">
           <span data-bind="text: `#{{ include.tab_prefix }}${$index()+1}`, css: { 'text-danger': !$data.isValid() }"></span>
@@ -14,11 +14,12 @@
           <span data-feather="plus"></span>
         </a>
       </li>
+      {{ include.additional_navs }}
     </ul>
   </div>
   <div class="card-body">
     <div class="tab-content">
-      <!-- ko foreach: list  -->
+      <!-- ko foreach: {data: list, as: 'tabItem'}  -->
       <div class="tab-pane fade" data-bind="attr: {id: `{{ include.id }}_tab_${$index()}` }" role="tabpanel">
         <div data-bind="with: $data">
           {{ include.tab_content }}
@@ -33,6 +34,7 @@
         </div>
       </div>
       <!-- /ko -->
+      {{ include.additional_tabs }}
     </div>
   </div>
 </div>
