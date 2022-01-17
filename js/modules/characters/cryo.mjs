@@ -197,8 +197,8 @@ export class GanyuViewModel extends CryoCharacterViewModel
     }
 
 
-    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
-    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+    maxSkillTalentRank() { return this.constell() >= 5 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 3 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
 
 
     applyDmgCalcImpl(calc)
@@ -238,18 +238,11 @@ export class GanyuViewModel extends CryoCharacterViewModel
         let ret = super.viewHTMLList(target);
 
         ret.push(
-            Widget.buildViewHTML(target, "天地安泰", Widget.checkBoxViewHTML("useCryoDmgInc", "氷元素ダメージ+20%"))
-        );
-
-        if(this.constell() >= 1) {
-            ret.push(
-                Widget.buildViewHTML(target, "飲露（1凸）", Widget.checkBoxViewHTML("useC1Effect", "敵の氷元素耐性-15%"))
-            );
-        }
-
-        if(this.constell() >= 4) {
-            ret.push(
-                Widget.buildViewHTML(target, "西狩（4凸）",
+            Widget.buildViewHTML(target, "元素爆発「降衆天華」関連効果",
+                Widget.checkBoxViewHTML("useCryoDmgInc", "天賦「天地安泰」：氷元素ダメージ+20%")
+                +
+                (
+                    (this.constell() < 4) ? "" :
                     Widget.selectViewHTML("stacksC4Effect", [
                         {label: "ダメージ+0%", value: 0},
                         {label: "ダメージ+5%", value: 1},
@@ -257,8 +250,13 @@ export class GanyuViewModel extends CryoCharacterViewModel
                         {label: "ダメージ+15%", value: 3},
                         {label: "ダメージ+20%", value: 4},
                         {label: "ダメージ+25%", value: 5},
-                    ])
+                    ], "西狩（4凸）")
                 )
+        ));
+
+        if(this.constell() >= 1) {
+            ret.push(
+                Widget.buildViewHTML(target, "2段チャージ関連効果", Widget.checkBoxViewHTML("useC1Effect", "敵の氷元素耐性-15%（1凸）"))
             );
         }
 
