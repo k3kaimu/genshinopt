@@ -251,6 +251,7 @@ export class Diluc extends Base.CharacterData
 }
 
 
+// ディルック
 export class DilucViewModel extends Base.CharacterViewModel
 {
     // TODO: 6凸効果がすべての通常攻撃に乗る
@@ -368,6 +369,38 @@ export class DilucViewModel extends Base.CharacterViewModel
         this.useC6Effect(obj.useC6Effect);
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Diluc(),
+        {
+            "vm": {
+                "parent_id": "diluc",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "useDmgUpEffect": true,
+                "useC1Effect": true,
+                "stacksOfC2Effect": 3,
+                "useC4Effect": true,
+                "useC6Effect": true
+            },
+            "expected": {
+                "normal_total": 4006.875895425,
+                "normal_total_pyro": 4559.548432725001,
+                "skill_total": 3260.8779181874997,
+                "skill_normal_combination": 9000.1696516875,
+                "skill_pyro_normal_combination": 9791.7960976875,
+                "burst_total": 4947.665287500001
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Diluc().newViewModel()
+    ));
+});
 
 
 // クレー
