@@ -810,4 +810,6 @@ $(function(){
 
         };
     })();
+
+    import('/js/modules/utils.mjs').then(m => window.Utils = m);
 });
