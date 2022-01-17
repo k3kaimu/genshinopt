@@ -592,6 +592,110 @@ runUnittest(function(){
 });
 
 
+// 息災
+export class CalamityQueller extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "calamity_queller",
+            "息災",
+            5,
+            "Polearm",
+            741,
+            "rateAtk",
+            0.165
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new CalamityQuellerViewModel(this);
+    }
+
+
+    static effectTable = {
+        dmg: [0.12, 0.15, 0.18, 0.21, 0.24],
+        atk: [0.032, 0.040, 0.048, 0.056, 0.064]
+    };
+}
+
+
+// 息災
+export class CalamityQuellerViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.numOfStacks = ko.observable(6);
+        this.isBack = ko.observable(false);
+    }
+
+
+    incRateAtk(numStacks)
+    {
+        let v = CalamityQueller.effectTable.atk[this.rank()] * Number(numStacks);
+
+        if(this.isBack())
+            return v * 2;
+        else
+            return v;
+    }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        calc.rateAtk.value += this.incRateAtk(this.numOfStacks());
+
+        calc.baseAnemoDmg.value += CalamityQueller.effectTable.dmg[this.rank()];
+        calc.baseGeoDmg.value += CalamityQueller.effectTable.dmg[this.rank()];
+        calc.baseElectroDmg.value += CalamityQueller.effectTable.dmg[this.rank()];
+        calc.basePyroDmg.value += CalamityQueller.effectTable.dmg[this.rank()];
+        calc.baseHydroDmg.value += CalamityQueller.effectTable.dmg[this.rank()];
+        calc.baseCryoDmg.value += CalamityQueller.effectTable.dmg[this.rank()];
+        calc.baseDendroDmg.value += CalamityQueller.effectTable.dmg[this.rank()];
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "滅却の戒法",
+                Widget.selectViewHTML("numOfStacks",
+                    new Array(7).fill(0).map((e, i) => {return {value: i, label: `攻撃力+${textPercentageFix(this.incRateAtk(i), 1)}（${textInteger(i)}秒後）`};}))
+                +
+                Widget.checkBoxViewHTML("isBack", "攻撃力アップ効果2倍（待機中）")
+            )
+        );
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.numOfStacks = this.numOfStacks();
+        obj.isBack = this.isBack();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.numOfStacks(obj.numOfStacks);
+        this.isBack(obj.isBack);
+    }
+}
+
+
 
 // 西風長槍
 export class FavoniusLance extends Base.WeaponData
