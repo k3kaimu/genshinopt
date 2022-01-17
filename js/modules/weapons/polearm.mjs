@@ -696,6 +696,33 @@ export class CalamityQuellerViewModel extends Base.WeaponViewModel
 }
 
 
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new CalamityQueller(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "calamity_queller",
+                "rank": 0,
+                "numOfStacks": 6,
+                "isBack": false
+            },
+            "expected": {
+                "normal_100": 528.9633495,
+                "normal_elem_100": 592.4389514400001,
+                "skill_100": 592.4389514400001,
+                "burst_100": 592.4389514400001
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new CalamityQueller().newViewModel()
+    ));
+});
+
+
+
 
 // 西風長槍
 export class FavoniusLance extends Base.WeaponData
