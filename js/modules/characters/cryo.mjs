@@ -491,7 +491,7 @@ export let ShenheViewModel = (Base) => class extends Base {
             calc = calc.applyExtension(Base => class extends Base {
                 calculate(dmgScale, attackProps) {
                     if(attackProps.isShenheIncreaseDamage)
-                        return new Calc.Attacks(Shenhe.increaseDamage(data.burstRank, this.atk(attackProps)).as(ctx));
+                        return new Calc.Attacks(Shenhe.increaseDamage(data.skillRank, this.atk(attackProps)).as(ctx));
                     else
                         return super.calculate(dmgScale, attackProps);
                 }
