@@ -54,14 +54,11 @@ export function checkUnittestForCharacter(character, setting)
         let beforeSkill = cvm.maxSkillTalentRank();
         let beforeBurst = cvm.maxBurstTalentRank();
 
-        setting.vm.constell = 3;
-        cvm.fromJS(setting.vm);
-        let afterSkill = cvm.maxSkillTalentRank();
-        ok = ok && (afterSkill == beforeSkill + 3);
-
         setting.vm.constell = 5;
         cvm.fromJS(setting.vm);
+        let afterSkill = cvm.maxSkillTalentRank();
         let afterBurst = cvm.maxBurstTalentRank();
+        ok = ok && (afterSkill == beforeSkill + 3);
         ok = ok && (afterBurst == beforeBurst + 3);
     }
 
