@@ -76,6 +76,20 @@ export class CharacterData
             label: "通常攻撃（100%）",
             dmgScale(vm){ return 1; },  // たとえば「通常攻撃1段目～5段目」のように，攻撃が複数の場合には配列を返す
             attackProps: { isNormal: true, isPhysical: true }
+        },
+        {
+            id: "normal_skill",
+            label: "通常攻撃＋スキル",
+            list: [
+                {
+                    dmgScale(vm) { return 1; },
+                    attackProps: { isNormal: true, isPhysical: true }
+                },
+                {
+                    dmgScale(vm) { return 1; },
+                    attackProps: { isSkill: true, isPhysical: true }
+                },
+            ]
         }
     ];
 }
@@ -128,13 +142,47 @@ export class PresetAttackEvaluator extends AttackEvaluator
      */
     evaluate(calc, additionalProps = {})
     {
-        let scales = [this.dmgScale(this.cvm)].flat();
+        let scales = [this.dmgScale(this.cvm)].flat(10);
         let dmg = Calc.VGData.zero();
         let newProps = {...additionalProps, ...this.attackProps};
         scales.forEach(s => {
             dmg = dmg.add(calc.calculate(s, newProps).total());
         });
        
+        return dmg;
+    }
+}
+
+
+export class CompoundedPresetAttackEvaluator extends AttackEvaluator
+{
+    constructor(vm, presetAttackObject)
+    {
+        super(presetAttackObject.id, presetAttackObject.label);
+        this.cvm = vm;
+        this.list = presetAttackObject.list;
+
+        this.attackProps = {};
+        presetAttackObject.list.map(e => {
+            this.attackProps = {...this.attackProps, ...e.attackProps};
+        });
+    }
+
+
+    /**
+     * @param {Calc.DamageCalculator} calc 
+     */
+    evaluate(calc, additionalProps = {})
+    {
+        let dmg = Calc.VGData.zero();
+        this.list.map(e => {
+            let scales = [e.dmgScale(this.cvm)].flat(10);
+            scales.forEach(s => {
+                let newProps = {...additionalProps, ...e.attackProps};
+                dmg = dmg.add(calc.calculate(s, newProps).total());
+            });
+        });
+
         return dmg;
     }
 }
@@ -224,6 +272,8 @@ export class CharacterViewModel
         attacks.forEach(a => {
             if("newEvaluator" in a)
                 ret.push(a.newEvaluator(this, a));
+            else if("list" in a)
+                ret.push(new CompoundedPresetAttackEvaluator(this, a));
             else
                 ret.push(new PresetAttackEvaluator(this, a));
         });
@@ -325,7 +375,7 @@ export class TestCharacterViewModel extends CharacterViewModel
 
 
     presetAttacks() {
-        let attacks = Object.getPrototypeOf(this.parent).constructor.presetAttacks.slice(0);
+        let attacks = Object.getPrototypeOf(this.parent).constructor.presetAttacks.slice(0, 1);
         attacks.push(
         {
             id: 'normal_elem_100',
