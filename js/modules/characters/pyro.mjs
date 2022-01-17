@@ -90,6 +90,286 @@ export class PyroCharacterViewModel extends Base.CharacterViewModel
 }
 
 
+// ディルック
+export class Diluc extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "diluc",
+            "ディルック",
+            5,
+            "Pyro",
+            "Claymore",
+            335,            /* bAtk */
+            784,            /* bDef */
+            12981,          /* bHP */
+            "baseCrtRate",      /* bBonusType */
+            0.192           /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new DilucViewModel(this);
+    }
+
+
+    static normalTalentTable = [
+    //  0:1段,     1:2段,   2:3段,     3:4段,   4:重撃連続, 5:重撃終了,  6:落下,  7:低空, 8:高空 
+        [89.7/100, 87.6/100, 98.8/100, 134/100, 68.8/100, 125/100, 89.5/100, 179/100, 224/100],
+        [97/100, 94.8/100, 107/100, 145/100, 74.4/100, 135/100, 96.8/100, 194/100, 242/100],
+        [104/100, 102/100, 115/100, 156/100, 80/100, 145/100, 104/100, 208/100, 260/100],
+        [115/100, 112/100, 126/100, 171/100, 88/100, 160/100, 114/100, 229/100, 286/100],
+        [122/100, 119/100, 134/100, 182/100, 93.6/100, 170/100, 122/100, 243/100, 304/100],
+        [130/100, 127/100, 144/100, 195/100, 100/100, 181/100, 130/100, 260/100, 325/100],
+        [142/100, 139/100, 156/100, 212/100, 109/100, 197/100, 142/100, 283/100, 354/100],
+        [153/100, 150/100, 169/100, 229/100, 118/100, 213/100, 153/100, 306/100, 382/100],
+        [165/100, 161/100, 182/100, 246/100, 126/100, 229/100, 164.4/100, 329/100, 411/100],
+        [177/100, 173/100, 195/100, 265/100, 136/100, 247/100, 176.9/100, 354/100, 442/100],
+        [192/100, 187/100, 211/100, 286/100, 147/100, 266/100, 189.4/100, 379/100, 473/100],
+    ];
+
+
+    static skillTalentTable = [
+    //  0:1段,  1:2段,  2:3段
+        [0.944, 0.976, 1.29],
+        [1.01, 1.05, 1.38],
+        [1.09, 1.12, 1.48],
+        [1.18, 1.22, 1.61],
+        [1.25, 1.29, 1.71],
+        [1.32, 1.37, 1.80],
+        [1.42, 1.46, 1.93],
+        [1.51, 1.56, 2.06],
+        [1.60, 1.66, 2.19],
+        [1.70, 1.76, 2.32],
+        [1.79, 1.85, 2.45],
+        [1.89, 1.95, 2.58],
+        [2.01, 2.07, 2.74],
+    ];
+
+
+    static burstTalentTable = [
+    //  0:斬撃, 1:継続, 2:最後の爆発
+        [2.04, 0.600, 2.04],
+        [2.19, 0.645, 2.19],
+        [2.35, 0.690, 2.35],
+        [2.55, 0.750, 2.55],
+        [2.70, 0.795, 2.70],
+        [2.86, 0.84, 2.86],
+        [3.06, 0.90, 3.06],
+        [3.26, 0.96, 3.26],
+        [3.47, 1.02, 3.47],
+        [3.67, 1.08, 3.67],
+        [3.88, 1.14, 3.88],
+        [4.08, 1.20, 4.08],
+        [4.34, 1.28, 4.34],
+        [4.59, 1.35, 4.59],
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_total",
+            label: "通常4段累計",
+            dmgScale(vm){ return Diluc.normalTalentTable[vm.normalRank()-1].slice(0, 4); },
+            attackProps: { isNormal: true, isPhysical: true }
+        },
+        {
+            id: "normal_total_pyro",
+            label: "通常4段累計（元素爆発後）",
+            dmgScale(vm){ return Diluc.normalTalentTable[vm.normalRank()-1].slice(0, 4); },
+            attackProps: { isNormal: true, isPyro: true }
+        },
+        {
+            id: "skill_total",
+            label: "元素スキル3段累計",
+            list: [
+                {
+                    dmgScale(vm){ return Diluc.skillTalentTable[vm.skillRank()-1][0]; },
+                    attackProps: { isSkill: true, isPyro: true }
+                },
+                {
+                    dmgScale(vm){ return Diluc.skillTalentTable[vm.skillRank()-1].slice(1, 3); },
+                    attackProps: { isSkill: true, isPyro: true, isDilucSkill2nd3rd: true }
+                }
+            ]
+        },
+        {
+            id: "skill_normal_combination",
+            label: "(スキル+通常x2)x3",
+            list: [
+                {
+                    dmgScale(vm){ return Diluc.skillTalentTable[vm.skillRank()-1][0]; },
+                    attackProps: { isSkill: true, isPyro: true }
+                },
+                {
+                    dmgScale(vm){ return Diluc.skillTalentTable[vm.skillRank()-1].slice(1, 3); },
+                    attackProps: { isSkill: true, isPyro: true, isDilucSkill2nd3rd: true }
+                },
+                {
+                    dmgScale(vm){
+                        return [
+                            Diluc.normalTalentTable[vm.normalRank()-1].slice(0, 4).flat(10),
+                            Diluc.normalTalentTable[vm.normalRank()-1].slice(0, 2).flat(10)]; },
+                    attackProps: { isNormal: true, isPhysical: true }
+                }
+            ]
+        },
+        {
+            id: "skill_pyro_normal_combination",
+            label: "(スキル+炎通常x2)x3",
+            list: [
+                {
+                    dmgScale(vm){ return Diluc.skillTalentTable[vm.skillRank()-1][0]; },
+                    attackProps: { isSkill: true, isPyro: true }
+                },
+                {
+                    dmgScale(vm){ return Diluc.skillTalentTable[vm.skillRank()-1].slice(1, 3); },
+                    attackProps: { isSkill: true, isPyro: true, isDilucSkill2nd3rd: true }
+                },
+                {
+                    dmgScale(vm){
+                        return [
+                            Diluc.normalTalentTable[vm.normalRank()-1].slice(0, 4).flat(10),
+                            Diluc.normalTalentTable[vm.normalRank()-1].slice(0, 2).flat(10)]; },
+                    attackProps: { isNormal: true, isPyro: true }
+                }
+            ]
+        },
+        {
+            id: "burst_total",
+            label: "斬撃+飛翔中3Hit+爆発",
+            dmgScale(vm){
+                let list = Diluc.burstTalentTable[vm.burstRank()-1];
+                return [list[0], new Array(3).fill(list[1]), list[2]];
+            },
+            attackProps: { isBurst: true, isPyro: true }
+        },
+    ];
+}
+
+
+export class DilucViewModel extends Base.CharacterViewModel
+{
+    // TODO: 6凸効果がすべての通常攻撃に乗る
+
+    constructor(parent)
+    {
+        super(parent);
+        this.useDmgUpEffect = ko.observable(true);  // 元素爆発後のダメージアップ効果
+        this.useC1Effect = ko.observable(true);     // ダメージ+15%
+        this.stacksOfC2Effect = ko.observable(3);   // 攻撃力+10%/スタック
+        this.useC4Effect = ko.observable(true);     // 元素スキルダメージ+40%
+        this.useC6Effect = ko.observable(true);     // 通常攻撃ダメージ+30%
+    }
+
+
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        if(this.useDmgUpEffect())
+            calc.basePyroDmg.value += 0.2;
+
+        if(this.useC1Effect() && this.constell() >= 1)
+            calc.baseAllDmg.value += 0.15;
+        
+        if(this.constell() >= 2)
+            calc.rateAtk.value += Number(this.stacksOfC2Effect()) * 0.1;
+        
+        if(this.useC4Effect() && this.constell() >= 4) {
+            let ctx = Calc.VGData.context;
+            calc = calc.applyExtension(Klass => class extends Klass {
+                skillDmgBuff(attackProps) {
+                    if(attackProps.isDilucSkill2nd3rd)
+                        return super.skillDmgBuff(attackProps).add(Calc.VGData.constant(0.4).as(ctx));
+                    else
+                        return super.skillDmgBuff(attackProps);
+                }
+            });
+        }
+            // calc.baseSkillDmg.value += 0.4;
+        
+        if(this.useC6Effect() && this.constell() >= 6)
+            calc.baseNormalDmg.value += 0.3;
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        let list = super.viewHTMLList(target);
+
+
+        if(this.constell() >= 4) {
+            list.push(
+                Widget.buildViewHTML(target, "元素スキル「逆焔の刃」関連効果",
+                    Widget.checkBoxViewHTML("useC4Effect", "元素スキルの2/3段目のダメージ+40%（4凸）")
+                    +
+                    (this.constell() < 6 ? "" :
+                        "<hr>"
+                        +
+                        Widget.checkBoxViewHTML("useC6Effect", "通常攻撃ダメージ+30%（6凸）")
+                    )
+            ));
+        }
+
+
+        list.push(
+            Widget.buildViewHTML(target, "元素爆発「黎明」関連効果",
+                Widget.checkBoxViewHTML("useDmgUpEffect", "炎元素ダメージ+20%（爆発後）")
+        ));
+
+
+        if(this.constell() >= 1) {
+            list.push(
+                Widget.buildViewHTML(target, "その他効果",
+                    Widget.checkBoxViewHTML("useC1Effect", "ダメージ+15%（1凸，HP50%以上の敵）")
+                    +
+                    (this.constell() < 2 ? "" :
+                        "<hr>"
+                        +
+                        Widget.selectViewHTML("stacksOfC2Effect",
+                            new Array(4).fill(0).map((e, i) => { return {value: i, label: `攻撃力+${textPercentageFix(0.1 * i, 0)}`}; }),
+                            "2凸効果")
+                    )
+            ));
+        }
+
+    
+        return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.useDmgUpEffect = this.useDmgUpEffect();
+        obj.useC1Effect = this.useC1Effect();
+        obj.stacksOfC2Effect = this.stacksOfC2Effect();
+        obj.useC4Effect = this.useC4Effect();
+        obj.useC6Effect = this.useC6Effect();
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.useDmgUpEffect(obj.useDmgUpEffect);
+        this.useC1Effect(obj.useC1Effect);
+        this.stacksOfC2Effect(obj.stacksOfC2Effect);
+        this.useC4Effect(obj.useC4Effect);
+        this.useC6Effect(obj.useC6Effect);
+    }
+}
+
+
 // クレー
 export class Klee extends Base.CharacterData
 {
@@ -923,7 +1203,7 @@ export class Xiangling extends Base.CharacterData
         {
             id: "normal_total",
             label: "通常1～5段累計",
-            dmgScale(vm){ return Xiangling.normalTalentTable[vm.normalRank()-1].slice(0, 5).flat(); },
+            dmgScale(vm){ return Xiangling.normalTalentTable[vm.normalRank()-1].slice(0, 5).flat(10); },
             attackProps: { isPhysical: true, isNormal: true, }
         },
         {
