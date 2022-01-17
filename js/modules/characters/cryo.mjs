@@ -403,7 +403,7 @@ export class Shenhe extends Base.CharacterData
         {
             id: "normal_1",
             label: "通常5段累計",
-            dmgScale: vm => Shenhe.normalTalentTable[vm.normalRank()-1].slice(0, 5).flat(),
+            dmgScale: vm => Shenhe.normalTalentTable[vm.normalRank()-1].slice(0, 5).flat(10),
             attackProps: { isNormal: true, isPhysical: true },
         },
         {

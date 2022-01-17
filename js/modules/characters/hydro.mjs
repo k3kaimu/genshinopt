@@ -175,7 +175,7 @@ export class Tartaglia extends Base.CharacterData
         {
             id: "sword_total",
             label: "双剣6段累計",
-            dmgScale: vm => Tartaglia.skillDmgTable[vm.skillRank()-1].slice(1, 7).flat(),
+            dmgScale: vm => Tartaglia.skillDmgTable[vm.skillRank()-1].slice(1, 7).flat(10),
             attackProps: { isNormal: true, isHydro: true }
         },
         {

@@ -126,19 +126,19 @@ export class RaidenShogun extends Base.CharacterData
         {
             id: "burst_dmg",
             label: "夢想の一太刀",
-            dmgScale(vm){ return [RaidenShogun.burstTalentTable[vm.burstRank()-1][0]].flat().map(x => x + RaidenShogun.burstTalentTable[vm.burstRank()-1][1] * vm.chakraStacks()); },
+            dmgScale(vm){ return [RaidenShogun.burstTalentTable[vm.burstRank()-1][0]].flat(10).map(x => x + RaidenShogun.burstTalentTable[vm.burstRank()-1][1] * vm.chakraStacks()); },
             attackProps: { isBurst: true, isElectro:true }
         },
         {
             id: "burst_normal_1",
             label: "夢想の一心1段目",
-            dmgScale(vm){ return [RaidenShogun.burstTalentTable[vm.burstRank()-1][4]].flat().map(x => x + RaidenShogun.burstTalentTable[vm.burstRank()-1][2] * vm.chakraStacks()); },
+            dmgScale(vm){ return [RaidenShogun.burstTalentTable[vm.burstRank()-1][4]].flat(10).map(x => x + RaidenShogun.burstTalentTable[vm.burstRank()-1][2] * vm.chakraStacks()); },
             attackProps: { isBurst: true, isElectro:true }
         },
         {
             id: "burst_charged",
             label: "夢想の一心重撃",
-            dmgScale(vm){ return [RaidenShogun.burstTalentTable[vm.burstRank()-1][9]].flat().map(x => x + RaidenShogun.burstTalentTable[vm.burstRank()-1][2] * vm.chakraStacks()); },
+            dmgScale(vm){ return [RaidenShogun.burstTalentTable[vm.burstRank()-1][9]].flat(10).map(x => x + RaidenShogun.burstTalentTable[vm.burstRank()-1][2] * vm.chakraStacks()); },
             attackProps: { isBurst: true, isElectro:true }
         },
     ];

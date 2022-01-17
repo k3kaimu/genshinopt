@@ -801,7 +801,7 @@ export class Ningguang extends Base.CharacterData
         {
             id: "charged_with_gems",
             label: "重撃+星璇",
-            dmgScale: vm => [Ningguang.normalTalentTable[vm.normalRank()-1][1], new Array(Number(vm.gemStacks())).fill(Ningguang.normalTalentTable[vm.normalRank()-1][2]) ].flat() ,
+            dmgScale: vm => [Ningguang.normalTalentTable[vm.normalRank()-1][1], new Array(Number(vm.gemStacks())).fill(Ningguang.normalTalentTable[vm.normalRank()-1][2]) ].flat(10) ,
             attackProps: { isCharged: true, isGeo: true },
         },
         {
@@ -1004,7 +1004,7 @@ export class YunJin extends Base.CharacterData
         {
             id: "normal_1",
             label: "通常5段累計",
-            dmgScale: vm => YunJin.normalTalentTable[vm.normalRank()-1].slice(0, 5).flat(),
+            dmgScale: vm => YunJin.normalTalentTable[vm.normalRank()-1].slice(0, 5).flat(10),
             attackProps: { isNormal: true, isPhysical: true },
         },
         {
