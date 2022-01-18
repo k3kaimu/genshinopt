@@ -1,4 +1,5 @@
 import * as Calc from '../dmg-calc.mjs';
+import * as Widget from '../widget.mjs';
 
 export class CharacterData
 {
@@ -188,7 +189,37 @@ export class CompoundedPresetAttackEvaluator extends AttackEvaluator
 }
 
 
-export class CharacterViewModel
+export class FunctionAttackEvaluator extends AttackEvaluator
+{
+    constructor(vm, presetAttackObject)
+    {
+        super(presetAttackObject.id, presetAttackObject.label);
+
+        this.cvm = vm;
+        if(presetAttackObject.attackProps)
+            this.attackProps = presetAttackObject.attackProps;
+        else
+            this.attackProps = {};
+
+        this.func = presetAttackObject.func;
+    }
+
+
+    /**
+     * @param {Calc.DamageCalculator} calc 
+     */
+    evaluate(calc, additionalProps = {})
+    {
+        let v = this.func(calc, this.cvm);
+        if(typeof v == "number")
+            v = Calc.VGData.constant(v);
+
+        return v;
+    }
+}
+
+
+class CharacterViewModelImpl
 {
     /**
      * @param {CharacterData} ch
@@ -274,6 +305,8 @@ export class CharacterViewModel
                 ret.push(a.newEvaluator(this, a));
             else if("list" in a)
                 ret.push(new CompoundedPresetAttackEvaluator(this, a));
+            else if("func" in a)
+                ret.push(new FunctionAttackEvaluator(this, a));
             else
                 ret.push(new PresetAttackEvaluator(this, a));
         });
@@ -306,6 +339,148 @@ export class CharacterViewModel
         this.burstRank(obj.burstRank);
     }
 }
+
+
+export let AddTalentRegister = (Base) => class extends Base {
+    talents = [];
+
+    /**
+     * @param {{type: string, requiredC: number, uiList: {type: string, name: string, init: any, label: (vm:CharacterViewModel) => string}[], effect: {cond: (vm:CharacterViewModel)=>boolean, list: Object[]}}} obj 
+     */
+    registerTalent(obj) {
+        this.talents.push(obj);
+        obj.uiList.forEach(e => {
+            if(e == undefined) return;
+
+            if(e.name && !(e.name in this))
+                this[e.name] = ko.observable(e.init);
+        });
+    }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        this.talents.forEach(talent => {
+            if(talent.requiredC > this.constell() || talent.effect == undefined)
+                return;
+
+            if(talent.effect.cond(this)) {
+                talent.effect.list.forEach(e => {
+                    if(e.dynamic) {
+                        // TODO: もっと上手い解決方法はないか？
+                        let ctx = Calc.VGData.context;
+                        eval(`calc = calc.applyExtension(Klass => class extends Klass {
+                            ${e.target}(attackProps) {
+                                if(e.condAttackProps(attackProps)) {
+                                    let v = e.value(this);
+                                    if(typeof v == 'number')
+                                        v = Calc.VGData.constant(v).as(ctx);
+
+                                    return super.${e.target}(attackProps).add(v);
+                                } else
+                                    return super.${e.target}(attackProps);
+                            }});`);
+                    } else {
+                        calc[e.target].value += e.value(this);
+                    }
+                });
+            }
+        });
+
+        return calc;
+    }
+
+
+    /**
+     * @param {string} target
+     */
+    viewHTMLList(target) {
+        let uiList = {
+            "Other": [],
+            "Skill": [],
+            "Burst": [],
+        };
+
+        this.talents.forEach(talent => {
+            if(talent.requiredC > this.constell())
+                return;
+
+            let str = "";
+            talent.uiList.forEach(e => {
+                if(e == undefined) return;
+
+                switch(e.type) {
+                    case "checkbox":
+                        str += Widget.checkBoxViewHTML(e.name, e.label(this),
+                                e.other ? e.other(this) : undefined);
+                        break;
+                    case "select":
+                        str += Widget.selectViewHTML(e.name, e.options,
+                                e.label ? e.label(this) : undefined,
+                                e.other ? e.other(this) : undefined);
+                        break;
+                    case "html":
+                        str += e.html(this);
+                        break;
+                    default:
+                        console.assert(`Unsupported UI type: ${e.type}`);
+                }
+            });
+
+            uiList[talent.type].push(str);
+        });
+
+        let ret = super.viewHTMLList(target).slice(0);
+
+        if(uiList["Skill"].length)
+            ret.push(Widget.buildViewHTML(target, "元素スキル関連効果", uiList["Skill"].join("<hr>")));
+
+        if(uiList["Burst"].length)
+            ret.push(Widget.buildViewHTML(target, "元素爆発関連効果", uiList["Burst"].join("<hr>")));
+
+        if(uiList["Other"].length)
+            ret.push(Widget.buildViewHTML(target, "その他効果", uiList["Other"].join("<hr>")));
+
+        return ret;
+    }
+
+
+    toJS()
+    {
+        let obj = super.toJS();
+
+        this.talents.forEach(talent => {
+            talent.uiList.forEach(e => {
+                if(e == undefined) return;
+
+                if(e.name)
+                    obj[e.name] = this[e.name]();
+            });
+        });
+
+        return obj;
+    }
+
+
+    fromJS(obj)
+    {
+        super.fromJS(obj);
+
+        this.talents.forEach(talent => {
+            talent.uiList.forEach(e => {
+                if(e == undefined) return;
+
+                if(e.name)
+                    this[e.name](obj[e.name]);
+            });
+        });
+    }
+};
+
+
+export let CharacterViewModel = AddTalentRegister(CharacterViewModelImpl);
 
 
 // テスト用キャラクター
