@@ -35,6 +35,7 @@ export const characters = [
     new Pyro.Klee(),
     new Pyro.HuTao(),
     new Pyro.Yoimiya(),
+    new Pyro.Bennett(),
     new Pyro.Xiangling(),
     new Pyro.Yanfei(),
 ];

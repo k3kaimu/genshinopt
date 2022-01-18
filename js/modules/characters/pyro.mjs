@@ -2,6 +2,7 @@ import * as Base from './base.mjs';
 import * as Widget from '../widget.mjs';
 import * as Calc from '../dmg-calc.mjs';
 import * as Utils from '../utils.mjs';
+import * as Weapons from '../weapons.mjs';
 
 
 export class PyroCharacterViewModel extends Base.CharacterViewModel
@@ -273,8 +274,8 @@ export class DilucViewModel extends PyroCharacterViewModel
             effect: {
                 cond: (vm) => vm.useDmgUpEffect(),
                 list: [{target: "basePyroDmg", value: (vm) => 0.20}]
-                }
-            });
+            }
+        });
 
         // 1凸，ダメージ+15%
         this.registerTalent({
@@ -289,9 +290,9 @@ export class DilucViewModel extends PyroCharacterViewModel
             effect: {
                 cond: (vm) => vm.useC1Effect(),
                 list: [{target: "baseAllDmg", value: (vm) => 0.15}]
-        }
+            }
         });
-        
+
         // 2凸, 攻撃力+10%/スタック
         this.registerTalent({
             type: "Other",
@@ -306,7 +307,7 @@ export class DilucViewModel extends PyroCharacterViewModel
             effect: {
                 cond: (vm) => true,
                 list: [{target: "rateAtk", value: (vm) => 0.1 * Number(vm.stacksOfC2Effect())}]
-    }
+            }
         });
 
         // 4凸, 元素スキルダメージ+40%
@@ -328,7 +329,7 @@ export class DilucViewModel extends PyroCharacterViewModel
                     condAttackProps: (attackProps) => attackProps.isDilucSkill2nd3rd,
                     value: (vm) => 0.4
                 }]
-        }
+            }
         });
 
         // 6凸, 通常攻撃ダメージ+30%
@@ -344,14 +345,14 @@ export class DilucViewModel extends PyroCharacterViewModel
             effect: {
                 cond: (vm) => vm.useC6Effect(),
                 list: [{target: "baseNormalDmg", value: (vm) => 0.30}]
-        }
+            }
         });
     }
 
 
     maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
     maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
-    }
+}
 
 
 runUnittest(function(){
@@ -1137,6 +1138,272 @@ runUnittest(function(){
         new Yoimiya().newViewModel()
     ));
 });
+
+
+// ベネット
+export class Bennett extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "bennett",
+            "ベネット",
+            4,
+            "Pyro",
+            "Sword",
+            191,            /* bAtk */
+            771,            /* bDef */
+            12397,          /* bHP */
+            "baseRecharge",  /* bBonusType */
+            0.267           /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        let Klass = BennettViewModel(PyroCharacterViewModel);
+        return new Klass(this, false);
+    }
+
+
+    static normalTalentTable = [
+    //  0:1段,  1:2段, 2:3段, 3:4段,  4:5段, 5:重撃,         6:落下, 7:低空, 8:高空 
+        [0.445, 0.427, 0.546, 0.597, 0.719, [0.559, 0.607], 0.639, 1.28, 1.60],
+        [0.482, 0.462, 0.591, 0.645, 0.777, [0.605, 0.657], 0.691, 1.38, 1.73],
+        [0.518, 0.497, 0.635, 0.694, 0.836, [0.650, 0.706], 0.743, 1.49, 1.86],
+        [0.570, 0.547, 0.699, 0.763, 0.920, [0.715, 0.777], 0.818, 1.64, 2.04],
+        [0.606, 0.581, 0.743, 0.812, 0.978, [0.761, 0.826], 0.870, 1.74, 2.17],
+        [0.648, 0.621, 0.794, 0.868, 1.05, [0.813, 0.883], 0.929, 1.86, 2.32],
+        [0.704, 0.676, 0.864, 0.944, 1.14, [0.884, 0.960], 1.011, 2.02, 2.53],
+        [0.761, 0.731, 0.933, 1.02, 1.23, [0.956, 1.04], 1.093, 2.19, 2.73],
+        [0.818, 0.785, 1.00, 1.10, 1.32, [1.03, 1.12], 1.175, 2.35, 2.93],
+        [0.881, 0.845, 1.08, 1.18, 1.42, [1.11, 1.20], 1.264, 2.53, 3.16],
+        [0.943, 0.905, 1.16, 1.26, 1.52, [1.18, 1.28], 1.353, 2.71, 3.38],
+    ];
+
+
+    static skillTalentTable = [
+    // 0:単押し, 1:長押し,      2:長押し(2段),  3:爆発ダメージ
+        [1.38, [0.840, 0.920], [0.880, 0.960], 1.32],
+        [1.48, [0.903, 0.989], [0.946, 1.03], 1.42],
+        [1.58, [0.966, 1.06], [1.01, 1.10], 1.52],
+        [1.72, [1.05, 1.15], [1.10, 1.20], 1.65],
+        [1.82, [1.11, 1.22], [1.17, 1.27], 1.75],
+        [1.93, [1.18, 1.29], [1.23, 1.34], 1.85],
+        [2.06, [1.26, 1.38], [1.32, 1.44], 1.98],
+        [2.20, [1.34, 1.47], [1.41, 1.54], 2.11],
+        [2.34, [1.43, 1.56], [1.50, 1.63], 2.24],
+        [2.48, [1.51, 1.66], [1.58, 1.73], 2.38],
+        [2.61, [1.60, 1.75], [1.67, 1.82], 2.51],
+        [2.75, [1.68, 1.84], [1.76, 1.92], 2.64],
+        [2.92, [1.79, 1.96], [1.87, 2.04], 2.81],
+    ];
+
+
+    static burstTalentTable = [
+    //  0:ダメージ, 1:回復HP率, 2:回復加算, 3:攻撃力上昇量
+        [2.33, 6.00/100, 577, 0.56],
+        [2.50, 6.45/100, 635, 0.60],
+        [2.68, 6.90/100, 698, 0.64],
+        [2.91, 7.50/100, 765, 0.70],
+        [3.08, 7.95/100, 837, 0.74],
+        [3.26, 8.40/100, 914, 0.78],
+        [3.49, 9.00/100, 996, 0.84],
+        [3.72, 9.60/100, 1083, 0.90],
+        [3.96, 10.20/100, 1174, 0.95],
+        [4.19, 10.80/100, 1270, 1.01],
+        [4.42, 11.40/100, 1371, 1.06],
+        [4.46, 12.00/100, 1477, 1.12],
+        [4.95, 12.75/100, 1588, 1.19],
+        [5.24, 13.50/100, 1703, 1.26],
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_total",
+            label: "通常5段累計",
+            dmgScale(vm){ return Bennett.normalTalentTable[vm.normalRank()-1].slice(0, 5); },
+            attackProps: { isPhysical: true, isNormal: true, }
+        },
+        {
+            id: "skill_short",
+            label: "スキル単押し",
+            dmgScale(vm){ return Bennett.skillTalentTable[vm.skillRank()-1][0]; },
+            attackProps: { isPyro: true, isSkill: true, }
+        },
+        {
+            id: "skill_long1",
+            label: "スキル長押し",
+            dmgScale(vm){ return Bennett.skillTalentTable[vm.skillRank()-1][1]; },
+            attackProps: { isPyro: true, isSkill: true, }
+        },
+        {
+            id: "skill_long2",
+            label: "スキル長押し2",
+            dmgScale(vm){ return Bennett.skillTalentTable[vm.skillRank()-1].slice(2, 4); },
+            attackProps: { isPyro: true, isSkill: true, }
+        },
+        {
+            id: "burst",
+            label: "元素爆発ダメージ",
+            dmgScale(vm){ return Bennett.burstTalentTable[vm.burstRank()-1][0]; },
+            attackProps: { isPyro: true, isBurst: true, isNowBennetBurst: true }
+        },
+        {
+            id: "burst_atk_add",
+            label: "元素爆発による攻撃力加算値",
+            func(calc, vm){ return calc.baseAtk.mul(Bennett.burstTalentTable[vm.burstRank()-1][3]); },
+            attackProps: { }
+        },
+        {
+            id: "burst_heal",
+            label: "元素爆発による回復量",
+            func(calc, vm){ return calc.hp({}).mul(Bennett.burstTalentTable[vm.burstRank()-1][1]).add(Bennett.burstTalentTable[vm.burstRank()-1][2]); },
+            attackProps: { }
+        },
+    ];
+}
+
+
+// ベネット
+export let BennettViewModel = (Base) => class extends Base
+{
+    // TODO: 4凸効果は未実装
+
+    constructor(parent, isBuffer = false)
+    {
+        super(parent);
+        this.isBuffer = isBuffer;
+
+        // ベネットの爆発による攻撃力上昇効果
+        // 効果自体はapplyDmgCalcImplで実装
+        this.registerTalent({
+            type: "Burst",
+            requiredC: 0,
+            uiList: [
+                {
+                    type: "checkbox",
+                    name: "useBurstAttackUp",
+                    init: true,
+                    label: (vm) => "攻撃力上昇効果"
+                },
+                !isBuffer ? undefined : {
+                    type: "select",
+                    name: "weaponId",
+                    options: Weapons.weapons.filter(e => e.weaponType == 'Sword').map(e => { return {label: e.name, value: e.id}; }),
+                    init: "primordial_jade_cutter",
+                    label: (vm) => "武器",
+                },
+                !isBuffer ? undefined : {
+                    type: "select",
+                    name: "burstRank",
+                    options: new Array(13).fill(0).map((e, i) => { return { label: `${i+1}`, value: i+1 }; }),
+                    init: 9,
+                    label: (vm) => "爆発天賦レベル",
+                },
+                {
+                    type: "checkbox",
+                    name: "useBurstToPyro",
+                    init: false,
+                    label: (vm) => "炎元素付与効果（6凸）",
+                    other(vm){ return {visible: "constell() >= 6", enable: "useBurstAttackUp()"}; }
+                }
+            ],
+            effect: undefined
+        });
+
+        if(!isBuffer) {
+            // 2凸効果，元素チャージ効率+30%
+            this.registerTalent({
+                type: "Other",
+                requiredC: 2,
+                uiList: [{
+                    type: "checkbox",
+                    name: "useC2Effect",
+                    init: true,
+                    label: (vm) => "元素チャージ効率+30%（2凸，HP70%以下）",
+                }],
+                effect: {
+                    cond: (vm) => vm.useC2Effect(),
+                    list: [{target: "baseRecharge", value: (vm) => 0.30}]
+                }
+            });
+        }
+
+
+        this.useBurstAttackUp.subscribe((newVal) => {
+            if(!newVal) {
+                // 攻撃力増加効果が無効になったので，元素付与効果も無効にする
+                this.useBurstToPyro(false);
+            }
+        });
+    }
+
+
+    
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        let data = this.toJS();
+        data.isBuffer = this.isBuffer;
+
+        if(this.isBuffer) {
+            data.baseAtk = this.parent.baseAtk + Weapons.lookupWeapon(this.weaponId()).baseAtk;
+        }
+
+        if(data.useAttackUpBurst) {
+            calc = calc.applyExtension(Klass => class extends Klass {
+                atk(attackProps) {
+                    let scale = Bennett.burstTalentTable[data.burstRank-1][3];
+                    if(data.constell >= 1)
+                        scale += 0.2;
+
+                    if(data.isBuffer)
+                        return super.atk(attackProps).add(data.baseAtk * scale);
+                    else
+                        return super.atk(attackProps).add(this.baseAtk.mul(scale));
+                }
+            });
+
+            // 6凸の炎ダメージバフ
+            if(data.constell >= 6) {
+                calc.basePyroDmg.value += 0.15;
+            }
+
+            if(data.constell >= 6 && data.useBurstToPyro) {
+                // 元素付与
+                calc = calc.applyDmgCalcImpl(Klass => class extends Klass {
+                    calculate(dmgScale, attackProps) {
+                        if(!attackProps.isPyro &&
+                            (this.character.weaponType == 'Sword' || this.character.weaponType == 'Claymore' || this.character.weaponType == 'Polearm'))
+                        {
+                            // 全元素や元素反応を消して，炎元素を付与
+                            let newProps = Calc.deleteAllElementFromAttackProps({...attackProps});
+                            newProps.isPyro = true;
+
+                            // もう一度最初からcalculateの継承チェーンをやり直す
+                            return this.calculate(dmgScale, newProps);
+                        }
+                        else
+                        {
+                            // 元々炎元素だったり，対象外であればそのまま返す
+                            return super.calculate(dmgScale, newProps);
+                        }
+                    }
+                });
+            }
+        }
+
+        return calc;
+    }
+}
 
 
 // 香菱
