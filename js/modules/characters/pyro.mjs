@@ -252,123 +252,107 @@ export class Diluc extends Base.CharacterData
 
 
 // ディルック
-export class DilucViewModel extends Base.CharacterViewModel
+export class DilucViewModel extends PyroCharacterViewModel
 {
     // TODO: 6凸効果がすべての通常攻撃に乗る
 
     constructor(parent)
     {
         super(parent);
-        this.useDmgUpEffect = ko.observable(true);  // 元素爆発後のダメージアップ効果
-        this.useC1Effect = ko.observable(true);     // ダメージ+15%
-        this.stacksOfC2Effect = ko.observable(3);   // 攻撃力+10%/スタック
-        this.useC4Effect = ko.observable(true);     // 元素スキルダメージ+40%
-        this.useC6Effect = ko.observable(true);     // 通常攻撃ダメージ+30%
+
+        // 元素爆発後のダメージアップ効果
+        this.registerTalent({
+            type: "Burst",
+            requiredC: 0,
+            uiList: [{
+                type: "checkbox",
+                name: "useDmgUpEffect",
+                init: true,
+                label: (vm) => "炎元素ダメージ+20%（爆発後）",
+            }],
+            effect: {
+                cond: (vm) => vm.useDmgUpEffect(),
+                list: [{target: "basePyroDmg", value: (vm) => 0.20}]
+                }
+            });
+
+        // 1凸，ダメージ+15%
+        this.registerTalent({
+            type: "Other",
+            requiredC: 1,
+            uiList: [{
+                type: "checkbox",
+                name: "useC1Effect",
+                init: true,
+                label: (vm) => "全ダメージ+15%（1凸，HP50%以上の敵に対して）",
+            }],
+            effect: {
+                cond: (vm) => vm.useC1Effect(),
+                list: [{target: "baseAllDmg", value: (vm) => 0.15}]
+        }
+        });
+        
+        // 2凸, 攻撃力+10%/スタック
+        this.registerTalent({
+            type: "Other",
+            requiredC: 2,
+            uiList: [{
+                type: "select",
+                options: new Array(4).fill(0).map((e, i) => { return {value: i, label: `+${textPercentageFix(0.1 * i, 0)}`}; }),
+                name: "stacksOfC2Effect",
+                init: 3,
+                label: (vm) => "攻撃力増加（2凸効果，被弾時）",
+            }],
+            effect: {
+                cond: (vm) => true,
+                list: [{target: "rateAtk", value: (vm) => 0.1 * Number(vm.stacksOfC2Effect())}]
+    }
+        });
+
+        // 4凸, 元素スキルダメージ+40%
+        this.registerTalent({
+            type: "Skill",
+            requiredC: 4,
+            uiList: [{
+                type: "checkbox",
+                name: "useC4Effect",
+                init: true,
+                label: (vm) => "元素スキルの2/3段目のダメージ+40%（4凸）",
+            }],
+            // effect: undefined
+            effect: {
+                cond: (vm) => vm.useC4Effect(),
+                list: [{
+                    target: "skillDmgBuff",
+                    dynamic: true,
+                    condAttackProps: (attackProps) => attackProps.isDilucSkill2nd3rd,
+                    value: (vm) => 0.4
+                }]
+        }
+        });
+
+        // 6凸, 通常攻撃ダメージ+30%
+        this.registerTalent({
+            type: "Skill",
+            requiredC: 6,
+            uiList: [{
+                type: "checkbox",
+                name: "useC6Effect",
+                init: true,
+                label: (vm) => "通常攻撃ダメージ+30%（6凸）",
+            }],
+            effect: {
+                cond: (vm) => vm.useC6Effect(),
+                list: [{target: "baseNormalDmg", value: (vm) => 0.30}]
+        }
+        });
     }
 
 
     maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
     maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
-
-
-    applyDmgCalcImpl(calc)
-    {
-        calc = super.applyDmgCalcImpl(calc);
-
-        if(this.useDmgUpEffect())
-            calc.basePyroDmg.value += 0.2;
-
-        if(this.useC1Effect() && this.constell() >= 1)
-            calc.baseAllDmg.value += 0.15;
-        
-        if(this.constell() >= 2)
-            calc.rateAtk.value += Number(this.stacksOfC2Effect()) * 0.1;
-        
-        if(this.useC4Effect() && this.constell() >= 4) {
-            let ctx = Calc.VGData.context;
-            calc = calc.applyExtension(Klass => class extends Klass {
-                skillDmgBuff(attackProps) {
-                    if(attackProps.isDilucSkill2nd3rd)
-                        return super.skillDmgBuff(attackProps).add(Calc.VGData.constant(0.4).as(ctx));
-                    else
-                        return super.skillDmgBuff(attackProps);
-                }
-            });
-        }
-            // calc.baseSkillDmg.value += 0.4;
-        
-        if(this.useC6Effect() && this.constell() >= 6)
-            calc.baseNormalDmg.value += 0.3;
-
-        return calc;
     }
 
-
-    viewHTMLList(target)
-    {
-        let list = super.viewHTMLList(target);
-
-
-        if(this.constell() >= 4) {
-            list.push(
-                Widget.buildViewHTML(target, "元素スキル「逆焔の刃」関連効果",
-                    Widget.checkBoxViewHTML("useC4Effect", "元素スキルの2/3段目のダメージ+40%（4凸）")
-                    +
-                    (this.constell() < 6 ? "" :
-                        "<hr>"
-                        +
-                        Widget.checkBoxViewHTML("useC6Effect", "通常攻撃ダメージ+30%（6凸）")
-                    )
-            ));
-        }
-
-
-        list.push(
-            Widget.buildViewHTML(target, "元素爆発「黎明」関連効果",
-                Widget.checkBoxViewHTML("useDmgUpEffect", "炎元素ダメージ+20%（爆発後）")
-        ));
-
-
-        if(this.constell() >= 1) {
-            list.push(
-                Widget.buildViewHTML(target, "その他効果",
-                    Widget.checkBoxViewHTML("useC1Effect", "ダメージ+15%（1凸，HP50%以上の敵）")
-                    +
-                    (this.constell() < 2 ? "" :
-                        "<hr>"
-                        +
-                        Widget.selectViewHTML("stacksOfC2Effect",
-                            new Array(4).fill(0).map((e, i) => { return {value: i, label: `攻撃力+${textPercentageFix(0.1 * i, 0)}`}; }),
-                            "2凸効果")
-                    )
-            ));
-        }
-
-    
-        return list;
-    }
-
-
-    toJS() {
-        let obj = super.toJS();
-        obj.useDmgUpEffect = this.useDmgUpEffect();
-        obj.useC1Effect = this.useC1Effect();
-        obj.stacksOfC2Effect = this.stacksOfC2Effect();
-        obj.useC4Effect = this.useC4Effect();
-        obj.useC6Effect = this.useC6Effect();
-        return obj;
-    }
-
-
-    fromJS(obj) {
-        super.fromJS(obj);
-        this.useDmgUpEffect(obj.useDmgUpEffect);
-        this.useC1Effect(obj.useC1Effect);
-        this.stacksOfC2Effect(obj.stacksOfC2Effect);
-        this.useC4Effect(obj.useC4Effect);
-        this.useC6Effect(obj.useC6Effect);
-    }
-}
 
 runUnittest(function(){
     console.assert(Utils.checkUnittestForCharacter(
