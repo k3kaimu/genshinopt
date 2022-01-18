@@ -1,5 +1,6 @@
 import * as Widget from './widget.mjs';
 import * as Calc from './dmg-calc.mjs';
+import { AddTalentRegister } from './characters/base.mjs';
 
 
 export class BufferEffect
@@ -94,21 +95,22 @@ export class ConstantBufferEffectViewModel extends BufferEffectViewModel
 
 export class BufferEffectViewModelFactory extends BufferEffect
 {
-    constructor(id, label, type, fn)
+    constructor(parent, label, type, fn)
     {
-        super(id, label, type);
+        super(parent.id, label, type);
         this.fn = fn;
+        this.parent = parent;
     }
 
 
     newViewModel()
     {
-        return this.fn(this);
+        return this.fn(this.parent);
     }
 }
 
 
-export class CharacterBufferEffectViewModel extends BufferEffectViewModel
+class CharacterBufferEffectViewModelImpl extends BufferEffectViewModel
 {
     constructor(parent)
     {
@@ -143,6 +145,9 @@ export class CharacterBufferEffectViewModel extends BufferEffectViewModel
         this.burstRank(obj.burstRank);
     }
 }
+
+
+export let CharacterBufferEffectViewModel = AddTalentRegister(CharacterBufferEffectViewModelImpl);
 
 
 // 蒸発・溶解ダメージ
