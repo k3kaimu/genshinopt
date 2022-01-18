@@ -30,7 +30,7 @@ export function buildBindAttr(bindAttr)
     let keys = Object.keys(bindAttr);
 
     for(let i = 0; i < keys.length; ++i) {
-        dst += `${keys[i]}: ${bindAttr[keys[i]]}`;
+        dst += `${keys[i]}: ${bindAttr[keys[i]]},`;
     }
 
     return dst;
@@ -76,7 +76,7 @@ export function checkBoxViewHTML(observableStr, labelHTML, otherBindAttr = undef
 {
     return `<div class="form-group m-0">
         <div class="form-check">
-            <label class="form-check-label">
+            <label class="form-check-label" data-bind="${buildBindAttr(otherBindAttr)}">
                 <input class="form-check-input" type="checkbox" data-bind="checked: ${observableStr}, ${buildBindAttr(otherBindAttr)}">
                 ${labelHTML}
             </label>
