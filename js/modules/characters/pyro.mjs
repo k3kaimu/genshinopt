@@ -1342,7 +1342,6 @@ export let BennettViewModel = (Base) => class extends Base
     }
 
 
-    
     maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
     maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
 
@@ -1358,7 +1357,7 @@ export let BennettViewModel = (Base) => class extends Base
             data.baseAtk = this.parent.baseAtk + Weapons.lookupWeapon(this.weaponId()).baseAtk;
         }
 
-        if(data.useAttackUpBurst) {
+        if(data.useBurstAttackUp) {
             calc = calc.applyExtension(Klass => class extends Klass {
                 atk(attackProps) {
                     let scale = Bennett.burstTalentTable[data.burstRank-1][3];
@@ -1379,7 +1378,7 @@ export let BennettViewModel = (Base) => class extends Base
 
             if(data.constell >= 6 && data.useBurstToPyro) {
                 // 元素付与
-                calc = calc.applyDmgCalcImpl(Klass => class extends Klass {
+                calc = calc.applyExtension(Klass => class extends Klass {
                     calculate(dmgScale, attackProps) {
                         if(!attackProps.isPyro &&
                             (this.character.weaponType == 'Sword' || this.character.weaponType == 'Claymore' || this.character.weaponType == 'Polearm'))
@@ -1394,7 +1393,7 @@ export let BennettViewModel = (Base) => class extends Base
                         else
                         {
                             // 元々炎元素だったり，対象外であればそのまま返す
-                            return super.calculate(dmgScale, newProps);
+                            return super.calculate(dmgScale, attackProps);
                         }
                     }
                 });
@@ -1404,6 +1403,39 @@ export let BennettViewModel = (Base) => class extends Base
         return calc;
     }
 }
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Bennett(),
+        {
+            "vm": {
+                "parent_id": "bennett",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "useBurstAttackUp": true,
+                "useBurstToPyro": false,
+                "useC2Effect": true,
+                "reactionType": "isVaporize",
+                "reactionProb": 0
+            },
+            "expected": {
+                "normal_total": 2042.6754695625,
+                "skill_short": 1094.3340013124998,
+                "skill_long1": 1398.3156683437496,
+                "skill_long2": 2511.3562337812496,
+                "burst": 1851.9498483749999,
+                "burst_atk_add": 371.45,
+                "burst_heal": 2438.4939999999997
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Bennett().newViewModel()
+    ));
+});
 
 
 // 香菱
