@@ -425,7 +425,8 @@ $(function(){
 
                     const x0 = [0, 0, 0, 0, 0, 0, 0];
 
-                    if(total_cost == 0) {
+                    // コストが0か，もしくは全部の傾きがゼロなのであれば最適化しない
+                    if(total_cost == 0 || calc.calcUpperBounds(total_cost, objfunc).filter(e => e > 1e-4).length == 0) {
                         results.push({dmg: objfunc(x0).value, calc: calc, setting: setting});
                     } else {
                         let opt = undefined;
