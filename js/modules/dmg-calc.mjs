@@ -641,6 +641,116 @@ export class Attacks
 }
 
 
+/**
+ * 攻撃の特徴を表すオブジェクト
+ */
+export class AttackInfo
+{
+    constructor(scale, props, prob)
+    {
+        this.scale = scale;
+        this.props = props;
+
+        if(typeof prob == "number")
+            this.prob = VGData.constant(prob);
+        else
+            this.prob = prob;
+    }
+
+    /**
+     * @type {number}
+     */
+    scale;
+
+    /**
+     * @type {Object}
+     */
+    props;
+
+    /**
+     * @type {VGData}
+     */
+    prob;
+}
+
+
+/** ダメージ計算式を高速化するために，AttackInfosを圧縮します
+ * @param {AttackInfo[]} attackInfos 
+ * @param {string} level
+ * @param {DamageCalculator | undefined} calc
+ * @return {AttackInfo[]}
+ */
+export function compressAttackInfos(attackInfos, level = "weak", calc = undefined)
+{
+    let probs = attackInfos.map(e => e.prob);
+    let ret = [];
+
+    attackInfos.forEach(e1 => {
+        let lvl = level;
+
+        if(lvl === "strong") {
+            let d1 = calc.increaseDamage(e1.props);
+            let d2 = calc.chainedAttackDmg(e1.props);
+            if(!d1.isConstantZero() || !d2.isConstantZero())
+                lvl = "weak";
+        }
+
+        if(lvl === "strong") {
+            let totalScale = VGData.zero();
+
+            attackInfos.forEach((e2, i2) => {
+                if(isShallowEqualObject(e1.props, e2.props)) {
+                    totalScale = totalScale.add(probs[i2].mul(e2.scale));
+                    probs[i2] = VGData.constant(0);
+                }
+            });
+
+            if(totalScale.value !== 0) {
+                ret.push(new AttackInfo(1, {...e1.props}, totalScale));
+            }
+        } else { 
+            let totalProb = VGData.zero();
+
+            attackInfos.forEach((e2, i2) => {
+                if(e1.scale == e2.scale && isShallowEqualObject(e1.props, e2.props)) {
+                    totalProb = totalProb.add(probs[i2]);
+                    probs[i2] = VGData.constant(0);
+                }
+            });
+
+            if(totalProb.value !== 0) {
+                ret.push(new AttackInfo(e1.scale, {...e1.props}, totalProb));
+            }
+        }
+    });
+
+    return ret;
+}
+
+runUnittest(function(){
+    let input1 = [
+        new AttackInfo(2, {key1: 1}, 1),
+        new AttackInfo(2, {key1: 1}, 0.5),
+    ];
+
+    let output1 = compressAttackInfos(input1);
+    console.assert(output1.length == 1);
+    console.assert(output1[0].prob.value == 1.5);
+    console.assert(output1[0].scale == 2);
+
+
+    let input2 = [
+        new AttackInfo(1, {key1: 1}, 1),
+        new AttackInfo(2, {key1: 1}, 0.5),
+        new AttackInfo(2, {key1: 2}, 0.5),
+    ];
+
+    let output2 = compressAttackInfos(input2);
+    console.assert(output2.length == 3);
+});
+
+
+
 // https://wikiwiki.jp/genshinwiki/%E3%83%80%E3%83%A1%E3%83%BC%E3%82%B8%E8%A8%88%E7%AE%97%E5%BC%8F
 const elementalReactionCoeffTable = [
     [8, 10, 20, 26, 33],        // lv1
