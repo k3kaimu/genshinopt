@@ -584,14 +584,20 @@ export class VGData
     }
 
 
-    isConstantZero()
+    isConstant()
     {
-        if(this.#value !== 0) return false;
+        let check = true;
         this.#grad.forEach(e => {
-            if(e !== 0) return false;
+            if(e !== 0) check = false;
         });
 
-        return true;
+        return check;
+    }
+
+
+    isConstantZero()
+    {
+        return this.#value === 0 && this.isConstant();
     }
 }
 
