@@ -582,6 +582,17 @@ export class VGData
 
         return dst;
     }
+
+
+    isConstantZero()
+    {
+        if(this.#value !== 0) return false;
+        this.#grad.forEach(e => {
+            if(e !== 0) return false;
+        });
+
+        return true;
+    }
 }
 
 
