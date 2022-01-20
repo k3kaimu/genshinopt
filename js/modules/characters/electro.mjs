@@ -417,28 +417,25 @@ export class BeidouViewModel extends Base.CharacterViewModel
         }
 
         if(this.useC4Effect() && this.constell() >= 4) {
-            let CalcType = Object.getPrototypeOf(calc).constructor;
-            let NewCalc = class extends CalcType {
-                chainedAttackDmg(attackProps) {
-                    let superValue = super.chainedAttackDmg(attackProps);
-    
-                    if(attackProps.isNormal || false) {
-                        let newProps = {...attackProps};
+            calc = calc.applyExtension(Klass => class extends Klass {
+                chainedAttackInfos(parentAttackInfo)
+                {
+                    let list = super.chainedAttackInfos(parentAttackInfo);
+
+                    if(parentAttackInfo.props.isNormal || false) {
+                        let newProps = {...parentAttackInfo.props};
                         // 元々の攻撃の属性や攻撃種類を削除する
                         newProps = Calc.deleteAllElementFromAttackProps(newProps);
                         newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
     
                         newProps.isElectro = true;      // 雷攻撃
                         newProps.isChainable = false;   // この攻撃では追撃は発生しない
-                        return superValue.add(super.calculateNormalDmg(0.2, newProps));
-                    } else {
-                        // 通常攻撃ではないので，追撃は発生しない
-                        return superValue;
+                        list.push(new Calc.AttackInfo(0.2, newProps, parentAttackInfo.prob));
                     }
+
+                    return list;
                 }
-            };
-    
-            calc = Object.assign(new NewCalc(), calc);
+            });
         }
 
         if(this.useC6Effect() && this.constell() >= 6) {

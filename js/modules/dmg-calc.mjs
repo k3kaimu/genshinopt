@@ -988,22 +988,64 @@ export class DamageCalculator
     }
 
 
-    // dup() {
-    //     let ctor = Object.getPrototypeOf(this).constructor;
-    //     let newObj = new ctor;
-    //     newObj = Object.assign(newObj, this);
-    //     newObj.postCopyDup();
+    /** 攻撃リストに関連するすべての攻撃を返します．
+     * この関数はオーバーライドしないでください．
+     * @param {AttackInfo[]} attackInfos
+     * @return {AttackInfo[]} 
+     */
+    getAllAttackInfos(attackInfos)
+    {
+        /** @type {AttackInfo[]} */
+        let infos = [];
+        attackInfos.forEach(info => {
+            this.modifyAttackInfo(info).forEach(modinfo => {
+                infos.push(modinfo);
 
-    //     return newObj;
-    // }
+                // この攻撃自体が連鎖攻撃かチェイン不可能ならば連鎖の計算はしない
+                if(modinfo.props.isChained || ("isChainable" in modinfo.props && modinfo.props.isChainable === false))
+                    return;
+
+                this.chainedAttackInfos(modinfo).forEach(e => {
+                    e.props.isChained = true;
+                    infos.push(this.modifyAttackInfo(e));
+                });
+            });
+        });
+
+        return infos.flat(10);
+    }
 
 
-    // copyFrom(rhs) {
-    //     Object.assign(this, rhs);
-    //     this.postCopyDup();
-    // }
+    /** ダメージ自体の特性を変更します．
+     * この関数は継承によって，同一引数に対して複数回呼び出される可能性があるため，
+     * 冪等である必要があります．
+     * @param {AttackInfo} attackInfo 
+     * @return {AttackInfo[]}
+     */
+    modifyAttackInfo(attackInfo)
+    {
+        return [attackInfo];
+    }
+
+    /** あるダメージに起因して発生する追加ダメージの計算をするためのattackPropsと倍率を返します
+     * この関数は継承によって，同一引数に対して複数回呼び出される可能性があるため，
+     * 冪等である必要があります．
+     * @param {AttackInfo} parentAttackInfo 
+     * @return {AttackInfo[]}
+     */
+    chainedAttackInfos(parentAttackInfo)
+    {
+        return [];
+    }
 
 
+    /** ダメージ計算をします．
+     * この関数は継承によって，同一引数に対して複数回呼び出される可能性があるため，
+     * 冪等である必要があります．また，probの和は1である必要があります．
+     * @param {number} dmgScale 
+     * @param {Object} attackProps 
+     * @returns {Attacks}
+     */
     calculate(dmgScale, attackProps)
     {
         let dmg = undefined;
@@ -1098,6 +1140,7 @@ export class DamageCalculator
     // 古華・試作など，一定の条件での追撃
     // attackPropsがisChainable: falseでは発火しない
     // parentAttackPropsは追撃の発生元となった攻撃のattackProps
+    // 非推奨
     chainedAttackDmg(parentAttackProps) {
         return VGData.zero();
     }
@@ -1279,6 +1322,44 @@ export function deleteAllAttackTypeFromAttackProps(props)
     const types = ["isNormal", "isCharged", "isPlunge", "isSkill", "isBurst"];
 
     return deleteProperties(shallowDup(props), types);
+}
+
+
+/**
+ * @param {{prob: number, ...}[]} propsAndProbs 
+ * @return {{prob: number, ...}[]}
+ */
+export function mergeProbabilityObject(valueAndProbs, pred)
+{
+    let probs = valueAndProbs.map(e => e.prob);
+    let ret = [];
+    valueAndProbs.forEach(e1 => {
+        let totalProbs = 0;
+        valueAndProbs.forEach((e2, i2) => {
+            if(pred(e1, e2)) {
+                totalProbs += probs[i2];
+                probs[i2] = 0;
+            }
+        });
+
+        if(totalProbs != 0) {
+            let newObj = {...e1};
+            newObj.prob = totalProbs;
+            ret.push(newObj);
+        }
+    });
+
+    return ret;
+}
+
+
+/**
+ * @param {{attackProps: Object, prob: number}[]} propsAndProbs 
+ * @return {{attackProps: Object, prob: number}[]}
+ */
+export function mergeAttackProps(propsAndProbs)
+{
+    return mergeProbabilityObject(propsAndProbs, (a, b) => isShallowEqualObject(a.attackProps, b.attackProps));
 }
 
 

@@ -37,32 +37,28 @@ export class CryoCharacterViewModel extends Base.CharacterViewModel
         if(prob == 0)
             return calc;
 
-        let CalcType = Object.getPrototypeOf(calc).constructor;
-        let NewCalc = class extends CalcType {
-            reactionProb = prob;
-
-            calculate(dmgScale, attackProps) {
-                if(attackProps.isCryo || false) {
-                    let newProps = Object.assign({}, attackProps);
-        
-                    // 元素反応なし
-                    let dmg1 = super.calculate(dmgScale, newProps);
-
-                    // 元素反応あり
-                    newProps.isMelt = true;
-                    let dmg2 = super.calculate(dmgScale, newProps);
-
-                    let txtReact = "溶解";
-        
-                    return Calc.Attacks.expect([1 - this.reactionProb, this.reactionProb], [dmg1, dmg2], [`${txtReact}反応なし`, `${txtReact}反応あり`]);
-                } else {
-                    // 攻撃が氷ではないので，元素反応なし
-                    return super.calculate(dmgScale, attackProps);
-                }
+        calc = calc.applyExtension(Klass => class extends Klass {
+            modifyAttackInfo(attackInfo) {
+                return super.modifyAttackInfo(attackInfo)
+                    .map(info => {
+                        if("isVaporize" in info.props || "isMelt" in info.props) {
+                            // 冪等性を保つために，info.propsにすでにisVaporizeやisMeltが存在するときには
+                            // 元素反応の計算をせずにそのまま返す
+                            return info;
+                        } else if(info.props.isCryo || false)
+                        {
+                            // 冪等性を保つために，必ず[type]: falseも入れる
+                            return [
+                                new Calc.AttackInfo(info.scale, {...info.props, isMelt: false}, info.prob.mul(1 - prob)),
+                                new Calc.AttackInfo(info.scale, {...info.props, isMelt: true}, info.prob.mul(prob))
+                            ];
+                        } else {
+                            return info;
+                        }
+                    }).flat(10);
             }
-        };
+        });
 
-        calc = Object.assign(new NewCalc(), calc);
         return calc;
     }
 
@@ -439,8 +435,8 @@ export class Shenhe extends Base.CharacterData
         {
             id: "burst_add",
             label: "スキル加算ダメージ（天賦倍率x攻撃力）",
-            dmgScale: vm => 0,
-            attackProps: { isShenheIncreaseDamage: true, isChainable: false }
+            func(calc, vm){ return Shenhe.increaseDamage(vm.skillRank(), calc.atk({})); },
+            attackProps: { }
         }
     ];
 }
@@ -484,17 +480,6 @@ export let ShenheViewModel = (Base) => class extends Base {
         let data = this.toJS();
         let isBuffer = this.isBuffer;
         let ctx = Calc.VGData.context;
-
-        if(!isBuffer) {
-            calc = calc.applyExtension(Base => class extends Base {
-                calculate(dmgScale, attackProps) {
-                    if(attackProps.isShenheIncreaseDamage)
-                        return new Calc.Attacks(Shenhe.increaseDamage(data.skillRank, this.atk(attackProps)).as(ctx));
-                    else
-                        return super.calculate(dmgScale, attackProps);
-                }
-            });
-        }
 
         if(data.useSkillIncDmgEffect) {
             calc = calc.applyExtension(Base => class extends Base {

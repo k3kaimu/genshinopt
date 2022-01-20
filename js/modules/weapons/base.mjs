@@ -130,9 +130,9 @@ export class WeaponWithChainedAttack extends WeaponViewModel
     }
 
 
-    calcChainedAttackDmg(calc, parentAttackProps)
+    makeChainedAttackInfo(parentInfo)
     {
-        return Calc.VGData.zero();
+        return undefined;
     }
 
 
@@ -143,16 +143,14 @@ export class WeaponWithChainedAttack extends WeaponViewModel
         let CalcType = Object.getPrototypeOf(calc).constructor;
         let vm = this;
         let NewCalc = class extends CalcType {
-            #vmWeapon = vm;
+            chainedAttackInfos(attackInfo) {
+                let list = super.chainedAttackInfos(attackInfo);
 
-            chainedAttackDmg(attackProps) {
-                let superValue = super.chainedAttackDmg(attackProps);
-
-                if(this.#vmWeapon.checkChainedAttack(attackProps)) {
-                    return superValue.add(this.#vmWeapon.calcChainedAttackDmg(calc, attackProps));
-                } else {
-                    return superValue;
+                if(vm.checkChainedAttack(attackInfo.props)) {
+                    list.push(vm.makeChainedAttackInfo(attackInfo));
                 }
+
+                return list;
             }
         };
 
@@ -194,16 +192,16 @@ export class LikePrototypeArchaicViewModel extends WeaponWithChainedAttack
     }
 
 
-    calcChainedAttackDmg(calc, attackProps)
+    makeChainedAttackInfo(attackInfo)
     {
-        let newProps = shallowDup(attackProps);
+        let newProps = shallowDup(attackInfo.props);
         // 元々の攻撃の属性や攻撃種類を削除する
         newProps = Calc.deleteAllElementFromAttackProps(newProps);
         newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
 
-        newProps = Object.assign(newProps, this.chainedAttackProps(attackProps));
-        let scale = this.chainedAttackScale(attackProps);
-        return calc.calculateNormalDmg(scale, newProps).div(Number(this.perAttack()));
+        newProps = Object.assign(newProps, this.chainedAttackProps(attackInfo.props));
+        let scale = this.chainedAttackScale(attackInfo.props);
+        return new Calc.AttackInfo(scale, newProps, attackInfo.prob.div(Number(this.perAttack())));
     }
 
 

@@ -43,33 +43,29 @@ export class PyroCharacterViewModel extends Base.CharacterViewModel
         if(prob == 0)
             return calc;
 
-        let CalcType = Object.getPrototypeOf(calc).constructor;
-        let NewCalc = class extends CalcType {
-            reactionProb = prob;
-            reactionType = type;
-
-            calculate(dmgScale, attackProps) {
-                if(attackProps.isPyro || false) {
-                    let newProps = Object.assign({}, attackProps);
-        
-                    // 元素反応なし
-                    let dmg1 = super.calculate(dmgScale, newProps);
-
-                    // 元素反応あり
-                    newProps[this.reactionType] = true;
-                    let dmg2 = super.calculate(dmgScale, newProps);
-
-                    let txtReact = (this.reactionType == "isVaporize") ? "蒸発" : "溶解";
-        
-                    return Calc.Attacks.expect([1 - this.reactionProb, this.reactionProb], [dmg1, dmg2], [`${txtReact}反応なし`, `${txtReact}反応あり`]);
+        calc = calc.applyExtension(Klass => class extends Klass {
+            modifyAttackInfo(attackInfo) {
+                return super.modifyAttackInfo(attackInfo)
+                    .map(info => {
+                        if("isVaporize" in info.props || "isMelt" in info.props) {
+                            // 冪等性を保つために，info.propsにすでにisVaporizeやisMeltが存在するときには
+                            // 元素反応の計算をせずにそのまま返す
+                            return info;
+                        }
+                        else if(info.props.isPyro || false)
+                        {
+                            // 冪等性を保つために，必ず[type]: falseも入れる
+                            return [
+                                new Calc.AttackInfo(info.scale, {...info.props, [type]: false}, info.prob.mul(1 - prob)),
+                                new Calc.AttackInfo(info.scale, {...info.props, [type]: true}, info.prob.mul(prob))
+                            ];
                 } else {
-                    // 攻撃が炎ではないので，元素反応なし
-                    return super.calculate(dmgScale, attackProps);
+                            return info;
                 }
+                    }).flat(10);
             }
-        };
+        });
 
-        calc = Object.assign(new NewCalc(), calc);
         return calc;
     }
 
@@ -1019,24 +1015,20 @@ export class YoimiyaViewModel extends PyroCharacterViewModel
         }
 
         if(this.constell() >= 6 && this.useC6Effect()) {
-            let data = this.toJS();
-            let CalcType = Object.getPrototypeOf(calc).constructor;
-            let NewCalc = class extends CalcType {
-                yoimiyaData = data;
+            calc = calc.applyExtension(Klass => class extends Klass {
+                chainedAttackInfos(parentAttackInfo) {
+                    let list = super.chainedAttackInfos(parentAttackInfo);
 
-                chainedAttackDmg(parentAttackProps) {
-                    let dmg = super.chainedAttackDmg(parentAttackProps);
-
-                    if(hasAllPropertiesWithSameValue(parentAttackProps, {isNowYoimiyaSkill: true, isNormal: true})) {
-                        let newProps = Calc.deleteAllElementFromAttackProps({isChainable: false, ...parentAttackProps});
-                        dmg = dmg.add(this.calculate(0.6, newProps).total().mul(0.5));
+                    if(hasAllPropertiesWithSameValue(parentAttackInfo.props, {isNowYoimiyaSkill: true, isNormal: true})) {
+                        list.push(new Calc.AttackInfo(
+                            parentAttackInfo.scale * 0.6,
+                            {...parentAttackInfo.props, isChainable: false},
+                            parentAttackInfo.prob.mul(0.5)));
                     }
 
-                    return dmg;
+                    return list;
                 }
-            };
-
-            calc = Object.assign(new NewCalc(), calc);
+            });
         }
 
         return calc;
@@ -1118,6 +1110,8 @@ runUnittest(function(){
                 "normalRank": 9,
                 "skillRank": 9,
                 "burstRank": 9,
+                "reactionType": "isVaporize",
+                "reactionProb": 0,
                 "skillStacks": 10,
                 "useC1Effect": true,
                 "useC2Effect": true,
@@ -1127,7 +1121,7 @@ runUnittest(function(){
                 "normal_1": 396.19515636,
                 "full_charged": 1011.8189322899999,
                 "full_charged_additional": 402.80943276000005,
-                "normal_1_skill": 1011.4931130345361,
+                "normal_1_skill": 1185.9626571448969,
                 "burst": 1035.7956842400001,
                 "burst_add": 992.63753073
             }
@@ -1379,22 +1373,23 @@ export let BennettViewModel = (Base) => class extends Base
             if(data.constell >= 6 && data.useBurstToPyro) {
                 // 元素付与
                 calc = calc.applyExtension(Klass => class extends Klass {
-                    calculate(dmgScale, attackProps) {
-                        if(!attackProps.isPyro &&
+                    modifyAttackInfo(attackInfo) {
+                        return super.modifyAttackInfo(attackInfo).map(info => {
+                            if(!info.props.isPyro &&
                             (this.character.weaponType == 'Sword' || this.character.weaponType == 'Claymore' || this.character.weaponType == 'Polearm'))
                         {
                             // 全元素や元素反応を消して，炎元素を付与
-                            let newProps = Calc.deleteAllElementFromAttackProps({...attackProps});
+                            let newProps = Calc.deleteAllElementFromAttackProps({...info.props});
                             newProps.isPyro = true;
 
-                            // もう一度最初からcalculateの継承チェーンをやり直す
-                            return this.calculate(dmgScale, newProps);
+                            return this.modifyAttackInfo(new Calc.AttackInfo(info.scale, newProps, info.prob));
                         }
                         else
                         {
                             // 元々炎元素だったり，対象外であればそのまま返す
-                            return super.calculate(dmgScale, attackProps);
+                                return info;
                         }
+                        }).flat(10);
                     }
                 });
             }
@@ -1818,10 +1813,8 @@ export class YanfeiViewModel extends PyroCharacterViewModel
         let data = this.toJS();
         let CalcType = Object.getPrototypeOf(calc).constructor;
         let NewCalc = class extends CalcType {
-            #yanfeiData = data;
-
             crtRate(attackProps) {
-                if(this.#yanfeiData.constell >= 2 && this.#yanfeiData.useC2Effect
+                if(data.constell >= 2 && data.useC2Effect
                     && hasAllPropertiesWithSameValue(attackProps, {isCharged: true})) {
                     // 2凸効果
                     return super.crtRate(attackProps).add(0.2);
@@ -1830,11 +1823,11 @@ export class YanfeiViewModel extends PyroCharacterViewModel
                 return super.crtRate(attackProps);
             }
 
-            chainedAttackDmg(parentAttackProps) {
-                let dmg = super.chainedAttackDmg(parentAttackProps);
+            chainedAttackInfos(info) {
+                let list = super.chainedAttackInfos(info);
 
-                if(hasAllPropertiesWithSameValue(parentAttackProps, {isCharged: true})) {
-                    let newprops = shallowDup(parentAttackProps);
+                if(hasAllPropertiesWithSameValue(info.props, {isCharged: true})) {
+                    let newprops = shallowDup(info.props);
                     newprops = Calc.deleteAllElementFromAttackProps(newprops);
                     newprops = Calc.deleteAllAttackTypeFromAttackProps(newprops);
                     newprops.isChainable = false;
@@ -1842,10 +1835,10 @@ export class YanfeiViewModel extends PyroCharacterViewModel
                     newprops.isCharged = true;
 
                     // 重撃が会心時に80%の重撃を発生
-                    dmg = dmg.add(this.calculate(0.8, newprops).total().mul(this.crtRate(parentAttackProps)));
+                    list.push(new Calc.AttackInfo(0.8, newprops, info.prob.mul(this.crtRate(info.props)) ));
                 }
 
-                return dmg;
+                return list;
             }
         };
 

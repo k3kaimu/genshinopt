@@ -401,6 +401,8 @@ $(function(){
                     Calc.VGData.doCalcExprText = oldsetting;
 
                     let attackType = setting.attack;
+                    attackType.clearInfoCache();
+                    attackType.setOptimizedMode(true);  // 最適化モード
 
                     function setArg(x) {
                         calc.artRateAtk.value = x[0];
@@ -445,6 +447,9 @@ $(function(){
                         setArg(opt.opt_result.x);
                         results.push({dmg: opt.value, calc: opt.calc, setting: setting});
                     }
+
+                    // 最適化モードを終わる
+                    attackType.setOptimizedMode(false);
 
                     if(results.length % 10 == 0 || this.useGlobalOpt())
                         this.doneOptimizedCount(results.length);

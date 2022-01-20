@@ -1039,10 +1039,7 @@ export class RoyalSpearViewModel extends Base.WeaponViewModel
         } else {
             let incP = RoyalSpear.effectTable[this.rank()];
 
-            let CalcType = Object.getPrototypeOf(calc).constructor;
-            let NewCalc = class extends CalcType {
-                #incRoyal = incP;
-
+            calc = calc.applyExtension(Klass => class extends Klass {
                 crtRate(attackProps)
                 {
                     if(hasAnyProperties(attackProps, ["incCrtRateRoyalSpear"])) {
@@ -1051,20 +1048,20 @@ export class RoyalSpearViewModel extends Base.WeaponViewModel
                         return super.crtRate(attackProps);
                     }
                 }
-    
-                calculate(dmgScale, attackProps)
-                {
-                    if(!hasAnyProperties(attackProps, ["incCrtRateRoyalSpear"])) {
-                        attackProps = {...attackProps};
-                        const cr = this.crtRate(attackProps).value;
-                        attackProps.incCrtRateRoyalSpear = Calc.royalCriticalRate(cr, this.#incRoyal) - cr;
-                    }
 
-                    return super.calculate(dmgScale, attackProps);
+                modifyAttackInfo(attackInfo) {
+                    return super.modifyAttackInfo(attackInfo).map(info => {
+                        if(!hasAnyProperties(info.props, ["incCrtRateRoyalSpear"])) {
+                            const cr = this.crtRate(info.props).value;
+                            const inc = Calc.royalCriticalRate(cr, incP) - cr;
+
+                            return new Calc.AttackInfo(info.scale, {...info.props, incCrtRateRoyalSpear: inc}, info.prob);
+                        } else {
+                            return info;
+                        }
+                    });
                 }
-            };
-    
-            calc = Object.assign(new NewCalc(), calc);
+            });
         }
 
         return calc;
@@ -1411,30 +1408,25 @@ export class CrescentPikeViewModel extends Base.WeaponViewModel
             return calc;
 
         let data = this.toJS();
-        let CalcType = Object.getPrototypeOf(calc).constructor;
-        let NewCalc = class extends CalcType {
-            #dCrescentPike = data;
+        calc = calc.applyExtension(Klass => class extends Klass {
+            chainedAttackInfos(attackInfo) {
+                let list = super.chainedAttackInfos(attackInfo);
 
-            chainedAttackDmg(attackProps) {
-                let superValue = super.chainedAttackDmg(attackProps);
-
-                if(hasAnyPropertiesWithSameValue(attackProps, {isNormal: true, isCharged: true})) {
-                    let newProps = shallowDup(attackProps);
+                if(hasAnyPropertiesWithSameValue(attackInfo.props, {isNormal: true, isCharged: true})) {
+                    let newProps = shallowDup(attackInfo.props);
                     // 元々の攻撃の属性や攻撃種類を削除する
                     newProps = Calc.deleteAllElementFromAttackProps(newProps);
                     newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
 
                     newProps.isPhysical = true;   // 物理攻撃
                     newProps.isChainable = false; // この攻撃では追撃は発生しない
-                    return superValue.add(super.calculateNormalDmg(CrescentPike.effectTable[this.#dCrescentPike.rank], newProps));
-                } else {
-                    // 通常攻撃でも重撃でもないので，追撃は発生しない
-                    return superValue;
+                    list.push(new Calc.AttackInfo(CrescentPike.effectTable[data.rank], newProps, attackInfo.prob));
                 }
-            }
-        };
 
-        calc = Object.assign(new NewCalc(), calc);
+                return list;
+            }
+        });
+
         return calc;
     }
 
@@ -1650,9 +1642,9 @@ export class DragonspineSpearViewModel extends Base.WeaponWithChainedAttack
     }
 
 
-    calcChainedAttackDmg(calc, attackProps)
+    makeChainedAttackInfo(parentInfo)
     {
-        let newProps = shallowDup(attackProps);
+        let newProps = shallowDup(parentInfo.props);
         // 元々の攻撃の属性や攻撃種類を削除する
         newProps = Calc.deleteAllElementFromAttackProps(newProps);
         newProps = Calc.deleteAllAttackTypeFromAttackProps(newProps);
@@ -1661,7 +1653,7 @@ export class DragonspineSpearViewModel extends Base.WeaponWithChainedAttack
         newProps.isChainable = false;
 
         let scale = this.addAttackScale();
-        return calc.calculateNormalDmg(scale, newProps).div(Number(this.perAttack()));
+        return new Calc.AttackInfo(scale, newProps, parentInfo.prob.div(Number(this.perAttack())));
     }
 
 

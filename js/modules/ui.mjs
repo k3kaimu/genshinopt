@@ -713,6 +713,18 @@ export class CompoundedAttackEvaluator extends Data.AttackEvaluator
     }
 
 
+    setOptimizedMode(flag) {
+        super.setOptimizedMode(flag);
+        this.attackEvals.forEach(e => e.setOptimizedMode(flag));
+    }
+
+
+    clearInfoCache() {
+        super.clearInfoCache();
+        this.attackEvals.forEach(e => e.clearInfoCache());
+    }
+
+
     evaluate(calc, additionalProps = {}) {
         let dmg = Calc.VGData.zero();
         this.attackEvals.forEach((aeval, i) => {

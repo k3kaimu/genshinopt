@@ -207,40 +207,38 @@ export class TheWidsithViewModel extends Base.WeaponViewModel
                     return super.mastery(attackProps);
             }
 
-            calculate(dmgScale, attackProps)
+            modifyAttackInfo(attackInfo)
             {
-                if(attackProps.isWidsithAtkUp || attackProps.isWidsithDmgUp || attackProps.isWidsithMryUp || false) {
-                    return super.calculate(dmgScale, attackProps);
-                }
-
-                let dmgs = [];
-                let lbls = [];
-
-                if(this.#dataWidsith.useAtkUp) {
-                    dmgs.push(super.calculate(dmgScale, {...attackProps, isWidsithAtkUp: true}));
-                    lbls.push('流浪楽章::攻撃力UP');
-                }
-
-                if(this.#dataWidsith.useDmgUp) {
-                    dmgs.push(super.calculate(dmgScale, {...attackProps, isWidsithDmgUp: true}));
-                    lbls.push('流浪楽章::ダメージバフUP');
-                }
-
-                if(this.#dataWidsith.useMryUp) {
-                    dmgs.push(super.calculate(dmgScale, {...attackProps, isWidsithMryUp: true}));
-                    lbls.push('流浪楽章::元素熟知UP');
-                }
-
-                if(dmgs.length == 0) {
-                    // 一つも選択されていないので，バフ無しの素の火力を出す
-                    return super.calculate(dmgScale, attackProps);
-                }
-
-                let probs = [];
-                for(let i = 0; i < dmgs.length; ++i)
-                    probs.push(1.0 / dmgs.length);
-
-                return Calc.Attacks.expect(probs, dmgs, lbls);
+                return super.modifyAttackInfo(attackInfo).map(info => {
+                    if(info.props.isWidsithAtkUp || info.props.isWidsithDmgUp || info.props.isWidsithMryUp || false) {
+                        return info;
+                    }
+    
+                    let newprops = [];
+    
+                    if(this.#dataWidsith.useAtkUp) {
+                        newprops.push({...info.props, isWidsithAtkUp: true});
+                        // lbls.push('流浪楽章::攻撃力UP');
+                    }
+    
+                    if(this.#dataWidsith.useDmgUp) {
+                        newprops.push({...info.props, isWidsithDmgUp: true});
+                        // lbls.push('流浪楽章::ダメージバフUP');
+                    }
+    
+                    if(this.#dataWidsith.useMryUp) {
+                        newprops.push({...info.props, isWidsithMryUp: true});
+                        // lbls.push('流浪楽章::元素熟知UP');
+                    }
+    
+                    if(newprops.length == 0) {
+                        return info;
+                    }
+    
+                    let prob = 1.0 / newprops.length;
+    
+                    return newprops.map(p => new Calc.AttackInfo(info.scale, p, info.prob.mul(prob)));
+                }).flat(10);
             }
         };
 

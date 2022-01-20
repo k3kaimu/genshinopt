@@ -36,32 +36,28 @@ export class HydroCharacterViewModel extends Base.CharacterViewModel
         if(prob == 0)
             return calc;
 
-        let CalcType = Object.getPrototypeOf(calc).constructor;
-        let NewCalc = class extends CalcType {
-            reactionProb = prob;
-
-            calculate(dmgScale, attackProps) {
-                if(attackProps.isHydro || false) {
-                    let newProps = Object.assign({}, attackProps);
-        
-                    // 元素反応なし
-                    let dmg1 = super.calculate(dmgScale, newProps);
-
-                    // 元素反応あり
-                    newProps.isVaporize = true;
-                    let dmg2 = super.calculate(dmgScale, newProps);
-
-                    let txtReact = "蒸発";
-        
-                    return Calc.Attacks.expect([1 - this.reactionProb, this.reactionProb], [dmg1, dmg2], [`${txtReact}反応なし`, `${txtReact}反応あり`]);
-                } else {
-                    // 攻撃が水ではないので，元素反応なし
-                    return super.calculate(dmgScale, attackProps);
-                }
+        calc = calc.applyExtension(Klass => class extends Klass {
+            modifyAttackInfo(attackInfo) {
+                return super.modifyAttackInfo(attackInfo)
+                    .map(info => {
+                        if("isVaporize" in info.props || "isMelt" in info.props) {
+                            // 冪等性を保つために，info.propsにすでにisVaporizeやisMeltが存在するときには
+                            // 元素反応の計算をせずにそのまま返す
+                            return info;
+                        } else if(info.props.isHydro || false)
+                        {
+                            // 冪等性を保つために，必ず[type]: falseも入れる
+                            return [
+                                new Calc.AttackInfo(info.scale, {...info.props, isVaporize: false}, info.prob.mul(1 - prob)),
+                                new Calc.AttackInfo(info.scale, {...info.props, isVaporize: true}, info.prob.mul(prob))
+                            ];
+                        } else {
+                            return info;
+                        }
+                    }).flat(10);
             }
-        };
+        });
 
-        calc = Object.assign(new NewCalc(), calc);
         return calc;
     }
 

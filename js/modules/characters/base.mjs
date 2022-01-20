@@ -102,11 +102,91 @@ export class AttackEvaluator
     {
         this.id = id;
         this.label = label;
+
+        /** @type {Calc.AttackInfo[]} */
+        this.cachedInfos = undefined;
     }
+
 
     evaluate(calc, additionalProps = {})
     {
         return Calc.VGData.zero();
+    }
+
+
+    /**
+     * すべてのAttackPropsを返します．計算を高速化するために内部でキャッシュを持ちます
+     * @param {Calc.DamageCalculator} calc
+     * @param {Calc.AttackInfo[]} attackInfos 
+     * @returns {Calc.AttackInfo[]}
+     */
+    getAllCompressedAttackInfos(calc, attackInfos) {
+        if(this.hasCache())
+            return this.cachedInfos;
+
+        let infos = calc.getAllAttackInfos(attackInfos);
+        if(this.cachedInfos !== undefined && this.cachedInfos.length == 0) {
+            // キャッシュしてよいかどうか確認する
+            // すべてのprobが定数であればキャッシュしてよい
+
+            let check = true;
+            infos.forEach(info => {
+                if(!info.prob.isConstant())
+                    check = false;
+            });
+
+            if(check) {
+                // すべて定数だったのでキャッシュする
+                infos = Calc.compressAttackInfos(infos, "strong", calc);
+                this.cachedInfos = infos;
+            } else {
+                // optimizedModeをやめる
+                this.cachedInfos = undefined;
+            }
+        }
+
+        return infos;
+    }
+
+
+    setOptimizedMode(flag) {
+        if(flag)
+            this.cachedInfos = [];
+        else
+            this.cachedInfos = undefined;
+    }
+
+
+    clearInfoCache() {
+        if(this.cachedInfos !== undefined)
+            this.cachedInfos = [];
+    }
+
+
+    hasCache() {
+        if(this.cachedInfos != undefined && this.cachedInfos.length > 0)
+            return true;
+        else
+            return false;
+    }
+
+
+    evaluateWithCache(calc, genInfos) {
+        /** @type {Calc.AttackInfo[]} */
+        let infos;
+        if(this.hasCache()) {
+            infos = this.cachedInfos;
+        } else {
+            infos = genInfos();
+            infos = this.getAllCompressedAttackInfos(calc, infos);
+        }
+
+        let dmg = Calc.VGData.zero();
+        infos.forEach(info => {
+            dmg = dmg.add(calc.calculate(info.scale, info.props).total().mul(info.prob));
+        });
+        
+        return dmg;
     }
 }
 
@@ -143,14 +223,11 @@ export class PresetAttackEvaluator extends AttackEvaluator
      */
     evaluate(calc, additionalProps = {})
     {
-        let scales = [this.dmgScale(this.cvm)].flat(10);
-        let dmg = Calc.VGData.zero();
-        let newProps = {...additionalProps, ...this.attackProps};
-        scales.forEach(s => {
-            dmg = dmg.add(calc.calculate(s, newProps).total());
+        return this.evaluateWithCache(calc, () => {
+            return [this.dmgScale(this.cvm)].flat(10).map(s => {
+                    return new Calc.AttackInfo(s, {...additionalProps, ...this.attackProps}, 1);
+            });
         });
-       
-        return dmg;
     }
 }
 
@@ -163,10 +240,8 @@ export class CompoundedPresetAttackEvaluator extends AttackEvaluator
         this.cvm = vm;
         this.list = presetAttackObject.list;
 
-        this.attackProps = {};
-        presetAttackObject.list.map(e => {
-            this.attackProps = {...this.attackProps, ...e.attackProps};
-        });
+        // 先頭のみを継承する
+        this.attackProps = presetAttackObject.list[0].attackProps;
     }
 
 
@@ -175,16 +250,14 @@ export class CompoundedPresetAttackEvaluator extends AttackEvaluator
      */
     evaluate(calc, additionalProps = {})
     {
-        let dmg = Calc.VGData.zero();
-        this.list.map(e => {
-            let scales = [e.dmgScale(this.cvm)].flat(10);
-            scales.forEach(s => {
-                let newProps = {...additionalProps, ...e.attackProps};
-                dmg = dmg.add(calc.calculate(s, newProps).total());
-            });
+        return this.evaluateWithCache(calc, () => {
+            return this.list.map(e => {
+                let scales = [e.dmgScale(this.cvm)].flat(10);
+                return scales.map(s => {
+                    return new Calc.AttackInfo(s, {...additionalProps, ...e.attackProps}, 1);
+                });
+            }).flat(10);
         });
-
-        return dmg;
     }
 }
 

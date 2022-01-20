@@ -189,32 +189,30 @@ export class VaporizeMeltEffectViewModel extends BufferEffectViewModel
         let prob = Number(this.reactionProb());
         let type = this.reactionType();
 
-        let CalcType = Object.getPrototypeOf(calc).constructor;
-        let NewCalc = class extends CalcType {
-            calculate(dmgScale, attackProps) {
-                if(attackProps.isPyro
-                    || (attackProps.isCryo &&   type == "isMelt")
-                    || (attackProps.isHydro &&  type == "isVaporize")) {
-                    let newProps = Object.assign({}, attackProps);
-        
-                    // 元素反応なし
-                    let dmg1 = super.calculate(dmgScale, newProps);
-
-                    // 元素反応あり
-                    newProps[type] = true;
-                    let dmg2 = super.calculate(dmgScale, newProps);
-
-                    let txtReact = (type == "isVaporize") ? "蒸発" : "溶解";
-        
-                    return Calc.Attacks.expect([1 - prob, prob], [dmg1, dmg2], [`${txtReact}反応なし`, `${txtReact}反応あり`]);
-                } else {
-                    // 攻撃が炎ではないので，元素反応なし
-                    return super.calculate(dmgScale, attackProps);
-                }
+        calc = calc.applyExtension(Klass => class extends Klass {
+            modifyAttackInfo(attackInfo) {
+                return super.modifyAttackInfo(attackInfo)
+                    .map(info => {
+                        if("isVaporize" in info.props || "isMelt" in info.props) {
+                            // 冪等性を保つために，info.propsにすでにisVaporizeやisMeltが存在するときには
+                            // 元素反応の計算をせずにそのまま返す
+                            return info;
+                        } else if(info.props.isPyro
+                            || (info.props.isCryo &&   type == "isMelt")
+                            || (info.props.isHydro &&  type == "isVaporize"))
+                        {
+                            // 冪等性を保つために，必ず[type]: falseも入れる
+                            return [
+                                new Calc.AttackInfo(info.scale, {...info.props, [type]: false}, info.prob.mul(1 - prob)),
+                                new Calc.AttackInfo(info.scale, {...info.props, [type]: true}, info.prob.mul(prob))
+                            ];
+                        } else {
+                            return info;
+                        }
+                    }).flat(10);
             }
-        };
+        });
 
-        calc = Object.assign(new NewCalc(), calc);
         return calc;
     }
 

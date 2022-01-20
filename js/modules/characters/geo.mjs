@@ -1040,8 +1040,8 @@ export class YunJin extends Base.CharacterData
         {
             id: "burst_add",
             label: "爆発加算ダメージ（天賦倍率x防御力）",
-            dmgScale: vm => 0,
-            attackProps: { isYunJinBurstAddDmg: true, isChainable: false }
+            func(calc, vm){ return YunJin.increaseDamage(vm.burstRank(), vm.numElems(), calc.def({})); },
+            attackProps: { }
         }
     ];
 
@@ -1084,14 +1084,6 @@ export class YunJinViewModel extends Base.CharacterViewModel
         let CalcType = Object.getPrototypeOf(calc).constructor;
         let NewCalc = class extends CalcType {
             #dYunjin = data;
-
-            calculate(dmgScale, attackProps)
-            {
-                if(attackProps.isYunJinBurstAddDmg) {
-                    return new Calc.Attacks(YunJin.increaseDamage(this.#dYunjin.burstRank, this.#dYunjin.numElems, this.def(attackProps)).as(ctx));
-                } else
-                    return super.calculate(dmgScale, attackProps);
-            }
 
             increaseDamage(attackProps) {
                 let dst = super.increaseDamage(attackProps);
