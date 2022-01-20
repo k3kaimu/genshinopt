@@ -320,6 +320,8 @@ runUnittest(function(){
 function hasAnyPropertiesWithSameValue(obj, props = {})
 {
     var keys = Object.keys(props);
+    if(keys.length == 0)
+        return true;
 
     for (var i = 0; i < keys.length; i++) {
         if(obj[keys[i]] == props[keys[i]])
