@@ -1146,9 +1146,15 @@ export class DamageCalculator
     }
 
 
-    atk(attackProps) { return this.baseAtk.as('baseAtk').mul(this.rateAtk.add(this.artRateAtk.as('artRateAtk')).as('rateAtk').add(1)).add(this.addAtk.as('addAtk')); }
-    def(attackProps) { return this.baseDef.as('baseDef').mul(this.rateDef.add(this.artRateDef.as('artRateDef')).as('rateDef').add(1)).add(this.addDef.as('addDef')); }
-    hp(attackProps) { return this.baseHP.mul(this.rateHP.add(1).add(this.artRateHP)).add(this.addHP); }
+    atk(attackProps) { return this.baseAtk.as('baseAtk').mul(this.rateAtk_(attackProps).add(1)).add(this.addAtk.as('addAtk')); }
+    rateAtk_(attackProps) { return this.rateAtk.add(this.artRateAtk.as('artRateAtk')).as('rateAtk'); }
+    
+    def(attackProps) { return this.baseDef.as('baseDef').mul(this.rateDef_(attackProps).add(1)).add(this.addDef.as('addDef')); }
+    rateDef_(attackProps) { return this.rateDef.add(this.artRateDef.as('artRateDef')).as('rateDef'); }
+    
+    hp(attackProps) { return this.baseHP.mul(this.rateHP_(attackProps).add(1)).add(this.addHP); }
+    rateHP_(attackProps) { return this.rateHP.add(this.artRateHP); }
+
     crtRate(attackProps) { return this.baseCrtRate.add(this.artCrtRate); }
     crtDmg(attackProps) { return this.baseCrtDmg.add(this.artCrtDmg); }
 
