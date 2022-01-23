@@ -1013,19 +1013,22 @@ export class YunJin extends Base.CharacterData
         {
             id: "skill_short",
             label: "元素スキル（短押し）",
-            dmgScale: vm => 0,
+            dmgScale: vm => YunJin.skillTalentTable[vm.skillRank()-1][0],
+            ref: "def",
             attackProps: { isSkill: true, isGeo: true, isYunJinSkillShort: true },
         },
         {
             id: "skill_long1",
             label: "元素スキル（長押し1段）",
-            dmgScale: vm => 0,
+            dmgScale: vm => YunJin.skillTalentTable[vm.skillRank()-1][1],
+            ref: "def",
             attackProps: { isSkill: true, isGeo: true, isYunJinSkillLong1: true },
         },
         {
             id: "skill_long2",
             label: "元素スキル（長押し2段）",
-            dmgScale: vm => 0,
+            dmgScale: vm => YunJin.skillTalentTable[vm.skillRank()-1][2],
+            ref: "def",
             attackProps: { isSkill: true, isGeo: true, isYunJinSkillLong2: true },
         },
         {
@@ -1084,15 +1087,6 @@ export class YunJinViewModel extends Base.CharacterViewModel
 
             increaseDamage(attackProps) {
                 let dst = super.increaseDamage(attackProps);
-
-                // 雲菫スキルダメージ
-                if(attackProps.isSkill && attackProps.isYunJinSkillShort) {
-                    dst = dst.add(this.def(attackProps).mul(YunJin.skillTalentTable[this.#dYunjin.skillRank-1][0]).as(ctx));
-                } else if(attackProps.isSkill && attackProps.isYunJinSkillLong1) {
-                    dst = dst.add(this.def(attackProps).mul(YunJin.skillTalentTable[this.#dYunjin.skillRank-1][1]).as(ctx));
-                } else if(attackProps.isSkill && attackProps.isYunJinSkillLong2) {
-                    dst = dst.add(this.def(attackProps).mul(YunJin.skillTalentTable[this.#dYunjin.skillRank-1][2]).as(ctx));
-                }
 
                 if(this.#dYunjin.useBurstEffect) {
                     dst = dst.add(YunJin.increaseDamage(this.#dYunjin.burstRank, this.#dYunjin.numElems, this.def(attackProps)).as(ctx));
