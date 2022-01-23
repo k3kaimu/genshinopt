@@ -347,7 +347,8 @@ export class Albedo extends Base.CharacterData
         {
             id: "skill_flower",
             label: "元素スキル：刹那の花",
-            dmgScale(vm) { return 0; },     // increseDmgで計算する
+            dmgScale(vm) { return Albedo.skillTalentTable[vm.skillRank()-1][1]; },
+            ref: "def",
             attackProps: { isSkill: true, isGeo: true, isAlbedoSkillFlower: true }
         },
         {
@@ -409,11 +410,7 @@ export class AlbedoViewModel extends Base.CharacterViewModel
             }
 
             increaseDamage(attackProps) {
-
-                if(attackProps.isSkill && attackProps.isAlbedoSkillFlower) {
-                    // 刹那の花の防御参照ダメージ
-                    return super.increaseDamage(attackProps).add(this.def(attackProps).mul(Albedo.skillTalentTable[this.#dAlbedo.skillRank-1][1]).as(ctx));
-                } else if(attackProps.isBurst && this.#dAlbedo.constell >= 2) {
+                if(attackProps.isBurst && this.#dAlbedo.constell >= 2) {
                     // 2凸効果の爆発ダメージ
                     return super.increaseDamage(attackProps).add(this.def(attackProps).mul(0.3 * Number(this.#dAlbedo.stackOfC2Effect)).as(ctx));
                 } else {
