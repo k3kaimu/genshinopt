@@ -183,7 +183,7 @@ export class AttackEvaluator
 
         let dmg = Calc.VGData.zero();
         infos.forEach(info => {
-            dmg = dmg.add(calc.calculate(info.scale, info.props).total().mul(info.prob));
+            dmg = dmg.add(calc.calculate(info).total().mul(info.prob));
         });
         
         return dmg;
@@ -206,6 +206,11 @@ export class PresetAttackEvaluator extends AttackEvaluator
     attackProps;
 
     /**
+     * @type {string}
+     */
+    ref;
+
+    /**
      * @param {CharacterViewModel} vm
      * @param {{ id: string; label: string; dmgScale: ((vm: CharacterViewModel) => number); attackProps: object; }} presetAttackObject
      */
@@ -215,6 +220,11 @@ export class PresetAttackEvaluator extends AttackEvaluator
         this.cvm = vm;      // ViewModel of character 
         this.dmgScale = presetAttackObject.dmgScale;
         this.attackProps = presetAttackObject.attackProps;
+        
+        if("ref" in presetAttackObject)
+            this.ref = presetAttackObject.ref;
+        else
+            this.ref = "atk";
     }
 
 
@@ -225,7 +235,7 @@ export class PresetAttackEvaluator extends AttackEvaluator
     {
         return this.evaluateWithCache(calc, () => {
             return [this.dmgScale(this.cvm)].flat(10).map(s => {
-                    return new Calc.AttackInfo(s, "atk", {...additionalProps, ...this.attackProps}, 1);
+                    return new Calc.AttackInfo(s, this.ref, {...additionalProps, ...this.attackProps}, 1);
             });
         });
     }
@@ -253,8 +263,13 @@ export class CompoundedPresetAttackEvaluator extends AttackEvaluator
         return this.evaluateWithCache(calc, () => {
             return this.list.map(e => {
                 let scales = [e.dmgScale(this.cvm)].flat(10);
+
+                let ref = "atk";
+                if("ref" in e)
+                    ref = e.ref;
+
                 return scales.map(s => {
-                    return new Calc.AttackInfo(s, "atk", {...additionalProps, ...e.attackProps}, 1);
+                    return new Calc.AttackInfo(s, ref, {...additionalProps, ...e.attackProps}, 1);
                 });
             }).flat(10);
         });

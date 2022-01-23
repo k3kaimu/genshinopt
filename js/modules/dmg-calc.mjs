@@ -1046,36 +1046,35 @@ export class DamageCalculator
     }
 
 
-    /** ダメージ計算をします．
+    /** ダメージ計算をします．引数のAttackInfoのprobは無視されます
      * この関数は継承によって，同一引数に対して複数回呼び出される可能性があるため，
      * 冪等である必要があります．また，probの和は1である必要があります．
-     * @param {number} dmgScale 
-     * @param {Object} attackProps 
+     * @param {AttackInfo} info
      * @returns {Attacks}
      */
-    calculate(dmgScale, attackProps)
+    calculate(info)
     {
         let dmg = undefined;
 
-        if(hasAnyPropertiesWithSameValue(attackProps, {
+        if(hasAnyPropertiesWithSameValue(info.props, {
             isSuperconduct: true, isSwirl: true, isElectroCharged: true,
             isShattered: true, isOverloaded: true
         })) {
             // 溶解・蒸発以外の元素反応ダメージ
-            dmg = this.calculateElementalReactionDmg(attackProps);
+            dmg = this.calculateElementalReactionDmg(info.props);
         } else {
             // 一般のダメージ計算と溶解・蒸発の元素反応ダメージ
-            dmg = this.calculateNormalDmg(dmgScale, attackProps);
+            dmg = this.calculateNormalDmg(info);
         }
 
         let attack = new Attacks(dmg);
 
-        if(hasAllPropertiesWithSameValue(attackProps, {isChainable: false})) {
+        if(hasAllPropertiesWithSameValue(info.props, {isChainable: false})) {
             // 追撃が発生しない
             return attack;
         } else {
             // 追撃の計算
-            attack.addChained(this.chainedAttackDmg(attackProps));
+            attack.addChained(this.chainedAttackDmg(info.props));
             return attack;
         }
     }
@@ -1104,13 +1103,16 @@ export class DamageCalculator
 
     // 一般のダメージ計算（蒸発・融解のボーナスを含む）
     // このメソッドのオーバーライドは非推奨
-    calculateNormalDmg(dmgScale, attackProps) {
+    // 引数のAttackInfoのprobは無視されます
+    calculateNormalDmg(info)
+    {
+        let attackProps = info.props;
         if(attackProps == undefined)
             attackProps = {};
 
         var dmgbuff = this.calculateTotalDmgBuff(attackProps);
 
-        let dmg = this.atk(attackProps).as('ATK').mul(VGData.constant(dmgScale).as('TalentDMGScale'))
+        let dmg = this[info.ref](attackProps).mul(VGData.constant(info.scale).as('TalentDMGScale'))
                     .add(this.increaseDamage(attackProps).as('incDMG'));
 
         if(attackProps.isForcedCritical || false)
