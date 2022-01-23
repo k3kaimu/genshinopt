@@ -2,7 +2,7 @@ import * as Base from './base.mjs';
 import * as Widget from '../widget.mjs';
 import * as Calc from '../dmg-calc.mjs';
 import * as Utils from '../utils.mjs';
-
+import * as TypeDefs from '../typedefs.mjs';
 
 
 export class HydroCharacterViewModel extends Base.CharacterViewModel
@@ -235,5 +235,219 @@ runUnittest(function(){
 
     console.assert(Utils.checkSerializationUnittest(
         new Tartaglia().newViewModel()
+    ));
+});
+
+
+// 行秋
+export class Xingqiu extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "xingqiu",
+            "行秋",
+            4,
+            "Hydro",
+            "Sword",
+            201,        /* bAtk */
+            758,        /* bDef */
+            10222,      /* bHP */
+            "rateAtk",  /* bBonusType */
+            0.240        /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new (XingqiuViewModel(HydroCharacterViewModel))(this, false);
+    }
+
+
+    static normalTalentTable = [
+        // 0-4: 通常5段, 5:重撃, 6:落下, 7:低空, 8:高空
+        [0.466, 0.476, [0.286, 0.286], 0.560, [0.359, 0.359], [0.473, 0.562], 0.639, 1.280, 1.600],
+        [0.504, 0.515, [0.309, 0.309], 0.605, [0.388, 0.388], [0.512, 0.607], 0.691, 1.380, 1.730],
+        [0.542, 0.554, [0.332, 0.332], 0.651, [0.417, 0.417], [0.550, 0.653], 0.743, 1.490, 1.860],
+        [0.596, 0.609, [0.365, 0.365], 0.716, [0.459, 0.459], [0.605, 0.718], 0.818, 1.640, 2.040],
+        [0.634, 0.648, [0.388, 0.388], 0.762, [0.488, 0.488], [0.644, 0.764], 0.870, 1.740, 2.170],
+        [0.678, 0.693, [0.415, 0.415], 0.814, [0.521, 0.521], [0.688, 0.816], 0.929, 1.860, 2.320],
+        [0.737, 0.753, [0.452, 0.452], 0.885, [0.567, 0.567], [0.748, 0.888], 1.010, 2.020, 2.530],
+        [0.797, 0.814, [0.488, 0.488], 0.957, [0.613, 0.613], [0.809, 0.960], 1.093, 2.190, 2.730],
+        [0.856, 0.875, [0.525, 0.525], 1.030, [0.659, 0.659], [0.869, 1.030], 1.175, 2.350, 2.930],
+        [0.921, 0.942, [0.564, 0.564], 1.110, [0.709, 0.709], [0.935, 1.110], 1.264, 2.530, 3.160],
+        [0.996, 1.020, [0.610, 0.610], 1.200, [0.766, 0.766], [1.010, 1.200], 1.353, 2.710, 3.380],
+    ];
+
+    static skillTalentTable = [
+        [1.680, 1.910]
+        [1.810, 2.060],
+        [1.930, 2.200],
+        [2.100, 2.390],
+        [2.230, 2.530],
+        [2.350, 2.680],
+        [2.520, 2.870],
+        [2.690, 3.060],
+        [2.860, 3.250],
+        [3.020, 3.440],
+        [3.190, 3.630],
+        [3.360, 3.820],
+        [3.570, 4.060]
+    ];
+
+
+    static burstTalentTable = [
+        0.543,
+        0.583,
+        0.624,
+        0.678,
+        0.719,
+        0.760,
+        0.814,
+        0.868,
+        0.923,
+        0.977,
+        1.030,
+        1.090,
+        1.150,
+        1.220,
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_total",
+            label: "通常5段累計",
+            dmgScale: vm => Xingqiu.normalTalentTable[vm.normalRank()-1].slice(0, 5),
+            attackProps: { isNormal: true, isPhysical: true }
+        },
+        {
+            id: "skill_2",
+            label: "元素スキルx2",
+            dmgScale(vm) {
+                let c4Scale = 1;
+                if(vm.constell() >= 4 && vm.useC4Effect())
+                    c4Scale = 1.5;
+
+                return Xingqiu.skillTalentTable[vm.skillRank()-1].map(e => e * c4Scale);
+            },
+            attackProps: { isSkill: true, isHydro: true }
+        },
+        {
+            id: "burst_30",
+            label: "元素爆発30本（0/1凸）",
+            dmgScale: vm => new Array(30).fill(Xingqiu.burstTalentTable[vm.burstRank()-1]),
+            attackProps: { isBurst: true, isHydro: true }
+        },
+        {
+            id: "burst_38",
+            label: "元素爆発38本（2/3/4/5凸）",
+            dmgScale: vm => new Array(38).fill(Xingqiu.burstTalentTable[vm.burstRank()-1]),
+            attackProps: { isBurst: true, isHydro: true }
+        },
+        {
+            id: "burst_50",
+            label: "元素爆発50本（6凸）",
+            dmgScale: vm => new Array(50).fill(Xingqiu.burstTalentTable[vm.burstRank()-1]),
+            attackProps: { isBurst: true, isHydro: true }
+        },
+    ];
+}
+
+
+// 行秋
+export let XingqiuViewModel = (Base) => class extends Base {
+    constructor(parent, isBuffer)
+    {
+        super(parent);
+        this.isBuffer = isBuffer;
+
+        if(!isBuffer) {
+            // 固有天賦：虚実の筆
+            this.registerTalent({
+                type: "Other",
+                requiredC: 0,
+                uiList: [],
+                effect: {
+                    cond: (vm) => true,
+                    list: [{
+                        target: TypeDefs.StaticStatusType.hydroDmg,
+                        value: (vm) => 0.20
+                    }]
+                }
+            });
+        }
+
+
+        // 2凸効果での耐性ダウン
+        this.registerTalent({
+            type: "Burst",
+            requiredC: 2,
+            uiList: [{
+                type: "checkbox",
+                name: "useC2Effect",
+                init: true,
+                label: (vm) => "水元素耐性-15%（2凸）"
+            }],
+            effect: {
+                cond: (vm) => vm.useC2Effect(),
+                list: [{
+                    target: TypeDefs.StaticStatusType.hydroResis,
+                    value: (vm) => -0.15
+                }]
+            }
+        });
+
+
+        if(!isBuffer) {
+            // 4凸効果でのスキルダメージ+50%
+            this.registerTalent({
+                type: "Burst",
+                requiredC: 4,
+                uiList: [{
+                    type: "checkbox",
+                    name: "useC4Effect",
+                    init: true,
+                    label: (vm) => "爆発中スキルダメージ1.5倍（4凸）"
+                }],
+                effect: undefined   // presetAttacksで実装
+            });
+        }
+    }
+
+
+    maxSkillTalentRank() { return this.constell() >= 5 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 3 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+};
+
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Xingqiu(),
+        {
+            "vm": {
+                "parent_id": "xingqiu",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "useC2Effect": true,
+                "useC4Effect": true,
+                "reactionProb": 0
+            },
+            "expected": {
+                "normal_total": 1233.7288906499998,
+                "skill_2": 3185.4692335499994,
+                "burst_30": 9102.749543549999,
+                "burst_38": 11530.149421830003,
+                "burst_50": 15171.24923925001
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Xingqiu().newViewModel()
     ));
 });
