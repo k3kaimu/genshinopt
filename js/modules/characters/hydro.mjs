@@ -281,7 +281,7 @@ export class Xingqiu extends Base.CharacterData
     ];
 
     static skillTalentTable = [
-        [1.680, 1.910]
+        [1.680, 1.910],
         [1.810, 2.060],
         [1.930, 2.200],
         [2.100, 2.390],
@@ -330,6 +330,8 @@ export class Xingqiu extends Base.CharacterData
                 if(vm.constell() >= 4 && vm.useC4Effect())
                     c4Scale = 1.5;
 
+                console.log(vm.skillRank());
+                console.log(Xingqiu.skillTalentTable[vm.skillRank()-1]);
                 return Xingqiu.skillTalentTable[vm.skillRank()-1].map(e => e * c4Scale);
             },
             attackProps: { isSkill: true, isHydro: true }
