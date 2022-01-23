@@ -921,7 +921,7 @@ runUnittest(function(){
             },
             "expected": {
                 "normal_total": 1632.371805,
-                "normal_total_C1": 1773.3365549999999,
+                "normal_total_C1": 2055.266055,
                 "skill_dmg": 823.2341399999999,
                 "skill_dmg_finish": 823.2341399999999,
                 "burst_dmg": 3138.4391939999996
