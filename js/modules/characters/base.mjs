@@ -1,5 +1,6 @@
 import * as Calc from '../dmg-calc.mjs';
 import * as Widget from '../widget.mjs';
+import * as TypeDefs from '../typedefs.mjs';
 
 export class CharacterData
 {
@@ -7,12 +8,12 @@ export class CharacterData
      * @param {string} id
      * @param {string} name
      * @param {number} rarity
-     * @param {string} elem
-     * @param {string} weaponType
+     * @param {TypeDefs.Element} elem
+     * @param {TypeDefs.WeaponType} weaponType
      * @param {number} bAtk
      * @param {number} bDef
      * @param {number} bHP
-     * @param {string} bBonusType
+     * @param {TypeDefs.StaticStatusType} bBonusType
      * @param {number} bBonusValue
      */
     constructor(id, name, rarity, elem, weaponType, bAtk, bDef, bHP, bBonusType, bBonusValue) {
