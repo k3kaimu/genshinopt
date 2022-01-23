@@ -225,7 +225,7 @@ export class PresetAttackEvaluator extends AttackEvaluator
     {
         return this.evaluateWithCache(calc, () => {
             return [this.dmgScale(this.cvm)].flat(10).map(s => {
-                    return new Calc.AttackInfo(s, {...additionalProps, ...this.attackProps}, 1);
+                    return new Calc.AttackInfo(s, "atk", {...additionalProps, ...this.attackProps}, 1);
             });
         });
     }
@@ -254,7 +254,7 @@ export class CompoundedPresetAttackEvaluator extends AttackEvaluator
             return this.list.map(e => {
                 let scales = [e.dmgScale(this.cvm)].flat(10);
                 return scales.map(s => {
-                    return new Calc.AttackInfo(s, {...additionalProps, ...e.attackProps}, 1);
+                    return new Calc.AttackInfo(s, "atk", {...additionalProps, ...e.attackProps}, 1);
                 });
             }).flat(10);
         });
@@ -553,6 +553,9 @@ export let AddTalentRegister = (Base) => class extends Base {
 };
 
 
+/**
+ * @typedef {CharacterViewModelImpl} CharacterViewModel
+ */
 export let CharacterViewModel = AddTalentRegister(CharacterViewModelImpl);
 
 

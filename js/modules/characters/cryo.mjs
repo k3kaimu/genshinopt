@@ -49,8 +49,8 @@ export class CryoCharacterViewModel extends Base.CharacterViewModel
                         {
                             // 冪等性を保つために，必ず[type]: falseも入れる
                             return [
-                                new Calc.AttackInfo(info.scale, {...info.props, isMelt: false}, info.prob.mul(1 - prob)),
-                                new Calc.AttackInfo(info.scale, {...info.props, isMelt: true}, info.prob.mul(prob))
+                                new Calc.AttackInfo(info.scale, info.ref, {...info.props, isMelt: false}, info.prob.mul(1 - prob)),
+                                new Calc.AttackInfo(info.scale, info.ref, {...info.props, isMelt: true}, info.prob.mul(prob))
                             ];
                         } else {
                             return info;

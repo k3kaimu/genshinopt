@@ -201,7 +201,7 @@ export class LikePrototypeArchaicViewModel extends WeaponWithChainedAttack
 
         newProps = Object.assign(newProps, this.chainedAttackProps(attackInfo.props));
         let scale = this.chainedAttackScale(attackInfo.props);
-        return new Calc.AttackInfo(scale, newProps, attackInfo.prob.div(Number(this.perAttack())));
+        return new Calc.AttackInfo(scale, "atk", newProps, attackInfo.prob.div(Number(this.perAttack())));
     }
 
 

@@ -203,8 +203,8 @@ export class VaporizeMeltEffectViewModel extends BufferEffectViewModel
                         {
                             // 冪等性を保つために，必ず[type]: falseも入れる
                             return [
-                                new Calc.AttackInfo(info.scale, {...info.props, [type]: false}, info.prob.mul(1 - prob)),
-                                new Calc.AttackInfo(info.scale, {...info.props, [type]: true}, info.prob.mul(prob))
+                                new Calc.AttackInfo(info.scale, info.ref, {...info.props, [type]: false}, info.prob.mul(1 - prob)),
+                                new Calc.AttackInfo(info.scale, info.ref, {...info.props, [type]: true}, info.prob.mul(prob))
                             ];
                         } else {
                             return info;

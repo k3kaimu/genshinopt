@@ -646,9 +646,10 @@ export class Attacks
  */
 export class AttackInfo
 {
-    constructor(scale, props, prob)
+    constructor(scale, ref, props, prob)
     {
         this.scale = scale;
+        this.ref = ref;
         this.props = props;
 
         if(typeof prob == "number")
@@ -661,6 +662,12 @@ export class AttackInfo
      * @type {number}
      */
     scale;
+
+
+    /**
+     * @type {string}
+     */
+    ref = "atk";
 
     /**
      * @type {Object}
@@ -699,27 +706,27 @@ export function compressAttackInfos(attackInfos, level = "weak", calc = undefine
             let totalScale = VGData.zero();
 
             attackInfos.forEach((e2, i2) => {
-                if(isShallowEqualObject(e1.props, e2.props)) {
+                if(isShallowEqualObject(e1.props, e2.props) && e1.ref === e2.ref) {
                     totalScale = totalScale.add(probs[i2].mul(e2.scale));
                     probs[i2] = VGData.constant(0);
                 }
             });
 
             if(totalScale.value !== 0) {
-                ret.push(new AttackInfo(1, {...e1.props}, totalScale));
+                ret.push(new AttackInfo(1, e1.ref, {...e1.props}, totalScale));
             }
         } else { 
             let totalProb = VGData.zero();
 
             attackInfos.forEach((e2, i2) => {
-                if(e1.scale == e2.scale && isShallowEqualObject(e1.props, e2.props)) {
+                if(e1.scale == e2.scale && isShallowEqualObject(e1.props, e2.props) && e1.ref === e2.ref) {
                     totalProb = totalProb.add(probs[i2]);
                     probs[i2] = VGData.constant(0);
                 }
             });
 
             if(totalProb.value !== 0) {
-                ret.push(new AttackInfo(e1.scale, {...e1.props}, totalProb));
+                ret.push(new AttackInfo(e1.scale, e1.ref, {...e1.props}, totalProb));
             }
         }
     });
@@ -729,8 +736,8 @@ export function compressAttackInfos(attackInfos, level = "weak", calc = undefine
 
 runUnittest(function(){
     let input1 = [
-        new AttackInfo(2, {key1: 1}, 1),
-        new AttackInfo(2, {key1: 1}, 0.5),
+        new AttackInfo(2, "atk", {key1: 1}, 1),
+        new AttackInfo(2, "atk", {key1: 1}, 0.5),
     ];
 
     let output1 = compressAttackInfos(input1);
@@ -740,9 +747,9 @@ runUnittest(function(){
 
 
     let input2 = [
-        new AttackInfo(1, {key1: 1}, 1),
-        new AttackInfo(2, {key1: 1}, 0.5),
-        new AttackInfo(2, {key1: 2}, 0.5),
+        new AttackInfo(1, "atk", {key1: 1}, 1),
+        new AttackInfo(2, "atk", {key1: 1}, 0.5),
+        new AttackInfo(2, "atk", {key1: 2}, 0.5),
     ];
 
     let output2 = compressAttackInfos(input2);

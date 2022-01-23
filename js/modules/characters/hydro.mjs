@@ -48,8 +48,8 @@ export class HydroCharacterViewModel extends Base.CharacterViewModel
                         {
                             // 冪等性を保つために，必ず[type]: falseも入れる
                             return [
-                                new Calc.AttackInfo(info.scale, {...info.props, isVaporize: false}, info.prob.mul(1 - prob)),
-                                new Calc.AttackInfo(info.scale, {...info.props, isVaporize: true}, info.prob.mul(prob))
+                                new Calc.AttackInfo(info.scale, info.ref, {...info.props, isVaporize: false}, info.prob.mul(1 - prob)),
+                                new Calc.AttackInfo(info.scale, info.ref, {...info.props, isVaporize: true}, info.prob.mul(prob))
                             ];
                         } else {
                             return info;

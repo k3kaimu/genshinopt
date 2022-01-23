@@ -237,7 +237,7 @@ export class TheWidsithViewModel extends Base.WeaponViewModel
     
                     let prob = 1.0 / newprops.length;
     
-                    return newprops.map(p => new Calc.AttackInfo(info.scale, p, info.prob.mul(prob)));
+                    return newprops.map(p => new Calc.AttackInfo(info.scale, info.ref, p, info.prob.mul(prob)));
                 }).flat(10);
             }
         };

@@ -1055,7 +1055,7 @@ export class RoyalSpearViewModel extends Base.WeaponViewModel
                             const cr = this.crtRate(info.props).value;
                             const inc = Calc.royalCriticalRate(cr, incP) - cr;
 
-                            return new Calc.AttackInfo(info.scale, {...info.props, incCrtRateRoyalSpear: inc}, info.prob);
+                            return new Calc.AttackInfo(info.scale, info.ref, {...info.props, incCrtRateRoyalSpear: inc}, info.prob);
                         } else {
                             return info;
                         }
@@ -1420,7 +1420,7 @@ export class CrescentPikeViewModel extends Base.WeaponViewModel
 
                     newProps.isPhysical = true;   // 物理攻撃
                     newProps.isChainable = false; // この攻撃では追撃は発生しない
-                    list.push(new Calc.AttackInfo(CrescentPike.effectTable[data.rank], newProps, attackInfo.prob));
+                    list.push(new Calc.AttackInfo(CrescentPike.effectTable[data.rank], "atk", newProps, attackInfo.prob));
                 }
 
                 return list;
@@ -1653,7 +1653,7 @@ export class DragonspineSpearViewModel extends Base.WeaponWithChainedAttack
         newProps.isChainable = false;
 
         let scale = this.addAttackScale();
-        return new Calc.AttackInfo(scale, newProps, parentInfo.prob.div(Number(this.perAttack())));
+        return new Calc.AttackInfo(scale, "atk", newProps, parentInfo.prob.div(Number(this.perAttack())));
     }
 
 

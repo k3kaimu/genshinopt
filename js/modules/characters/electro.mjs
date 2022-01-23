@@ -430,7 +430,7 @@ export class BeidouViewModel extends Base.CharacterViewModel
     
                         newProps.isElectro = true;      // 雷攻撃
                         newProps.isChainable = false;   // この攻撃では追撃は発生しない
-                        list.push(new Calc.AttackInfo(0.2, newProps, parentAttackInfo.prob));
+                        list.push(new Calc.AttackInfo(0.2, "atk", newProps, parentAttackInfo.prob));
                     }
 
                     return list;

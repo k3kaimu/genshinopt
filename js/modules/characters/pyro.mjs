@@ -56,8 +56,8 @@ export class PyroCharacterViewModel extends Base.CharacterViewModel
                         {
                             // 冪等性を保つために，必ず[type]: falseも入れる
                             return [
-                                new Calc.AttackInfo(info.scale, {...info.props, [type]: false}, info.prob.mul(1 - prob)),
-                                new Calc.AttackInfo(info.scale, {...info.props, [type]: true}, info.prob.mul(prob))
+                                new Calc.AttackInfo(info.scale, info.ref, {...info.props, [type]: false}, info.prob.mul(1 - prob)),
+                                new Calc.AttackInfo(info.scale, info.ref, {...info.props, [type]: true}, info.prob.mul(prob))
                             ];
                 } else {
                             return info;
@@ -1022,6 +1022,7 @@ export class YoimiyaViewModel extends PyroCharacterViewModel
                     if(hasAllPropertiesWithSameValue(parentAttackInfo.props, {isNowYoimiyaSkill: true, isNormal: true})) {
                         list.push(new Calc.AttackInfo(
                             parentAttackInfo.scale * 0.6,
+                            parentAttackInfo.ref,
                             {...parentAttackInfo.props, isChainable: false},
                             parentAttackInfo.prob.mul(0.5)));
                     }
@@ -1382,7 +1383,7 @@ export let BennettViewModel = (Base) => class extends Base
                             let newProps = Calc.deleteAllElementFromAttackProps({...info.props});
                             newProps.isPyro = true;
 
-                            return this.modifyAttackInfo(new Calc.AttackInfo(info.scale, newProps, info.prob));
+                            return this.modifyAttackInfo(new Calc.AttackInfo(info.scale, info.ref, newProps, info.prob));
                         }
                         else
                         {
@@ -1835,7 +1836,7 @@ export class YanfeiViewModel extends PyroCharacterViewModel
                     newprops.isCharged = true;
 
                     // 重撃が会心時に80%の重撃を発生
-                    list.push(new Calc.AttackInfo(0.8, newprops, info.prob.mul(this.crtRate(info.props)) ));
+                    list.push(new Calc.AttackInfo(0.8, info.ref, newprops, info.prob.mul(this.crtRate(info.props)) ));
                 }
 
                 return list;
