@@ -879,7 +879,7 @@ export let ChongyunViewModel = (Base) => class extends Base
                         if(!info.props.isCryo &&
                         (this.character.weaponType == 'Sword' || this.character.weaponType == 'Claymore' || this.character.weaponType == 'Polearm'))
                     {
-                        // 全元素や元素反応を消して，炎元素を付与
+                        // 全元素や元素反応を消して，氷元素を付与
                         let newProps = Calc.deleteAllElementFromAttackProps({...info.props});
                         newProps.isCryo = true;
 
@@ -887,7 +887,7 @@ export let ChongyunViewModel = (Base) => class extends Base
                     }
                     else
                     {
-                        // 元々炎元素だったり，対象外であればそのまま返す
+                        // 元々氷元素だったり，対象外であればそのまま返す
                             return info;
                     }
                     }).flat(10);
