@@ -63,6 +63,7 @@ export const weapons = [
     // 片手剣, 星5
     new Sword.PrimordialJadeCutter(),
     // 片手剣, 星4
+    new Sword.SacrificialSword(),
     new Sword.CinnabarSpindle(),
 ];
 

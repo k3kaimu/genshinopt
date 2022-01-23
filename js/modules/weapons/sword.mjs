@@ -85,6 +85,50 @@ runUnittest(function(){
 });
 
 
+// 祭礼の剣
+export class SacrificialSword extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "sacrificial_sword",
+            "祭礼の剣",
+            4,
+            "Sword",
+            454,
+            "baseRecharge",
+            0.613
+        );
+    }
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new PrimordialJadeCutter(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "sacrificial_sword",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 256.779,
+                "normal_elem_100": 256.779,
+                "skill_100": 256.779,
+                "burst_100": 256.779
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new PrimordialJadeCutter().newViewModel()
+    ));
+});
+
+
+
+
+
 // シナバースピンドル
 export class CinnabarSpindle extends Base.WeaponData
 {
