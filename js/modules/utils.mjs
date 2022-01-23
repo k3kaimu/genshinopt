@@ -195,7 +195,15 @@ export function makeTalentTable(strtable, toLog=true)
             elems = elems.slice(1);
 
         elems = elems.map(e => {
-            e = e.split("/");
+            e = e.split("x");       // 掛け算（エックス"x"）で区切る
+            if(e.length == 1) {
+                // xなんてなかった場合
+                e = e[0];
+            } else {
+                return "[" + (new Array(Number(e[1]))).fill(percentToNumber(e[0])).join(", ") + "]";
+            }
+
+            e = e.split(/[\/|\+]/); // スラッシュ "/" か プラス "+" で区切る
             if(e.length == 1)
                 return percentToNumber(e[0]);
             else
@@ -221,8 +229,8 @@ function percentToNumber(elems) {
         return '[' + elems.join(', ') + ']';
     }
 
-    if(elems.endsWith('%'))
-        return textNumberFix(Number(elems.replace('%', '')) / 100, 3);
+    if(elems.endsWith("%") || elems.endsWith("％"))
+        return textNumberFix(Number(elems.replace(/[\%|％]/, '')) / 100, 3);
     else
         return elems;
 }
