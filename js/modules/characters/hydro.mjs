@@ -330,8 +330,6 @@ export class Xingqiu extends Base.CharacterData
                 if(vm.constell() >= 4 && vm.useC4Effect())
                     c4Scale = 1.5;
 
-                console.log(vm.skillRank());
-                console.log(Xingqiu.skillTalentTable[vm.skillRank()-1]);
                 return Xingqiu.skillTalentTable[vm.skillRank()-1].map(e => e * c4Scale);
             },
             attackProps: { isSkill: true, isHydro: true }
@@ -441,7 +439,7 @@ runUnittest(function(){
             },
             "expected": {
                 "normal_total": 1233.7288906499998,
-                "skill_2": 3185.4692335499994,
+                "skill_2": 3012.8818911749995,
                 "burst_30": 9102.749543549999,
                 "burst_38": 11530.149421830003,
                 "burst_50": 15171.24923925001
