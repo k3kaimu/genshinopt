@@ -768,15 +768,15 @@ export class Chongyun extends Base.CharacterData
         },
         {
             id: "normal_total_C1",
-            label: "通常4段累計 + 1凸氷ダメージ",
+            label: "通常4段累計 + 1凸氷ダメージx3",
             list: [
                 {
                     dmgScale(vm){ return Chongyun.normalTalentTable[vm.normalRank()-1].slice(0, 4); },
                     attackProps: { isNormal: true, isPhysical: true }
                 },
                 {
-                    dmgScale(vm){ return 0.5; },
-                    attackProps: { isNormal: true, isCryo: true }
+                    dmgScale(vm){ return [0.5, 0.5, 0.5]; },
+                    attackProps: { isCryo: true }
                 }
             ]
         },
