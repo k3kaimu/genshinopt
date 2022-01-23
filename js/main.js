@@ -108,6 +108,15 @@ function textNumber(value, digit=3)
     return new Intl.NumberFormat('ja', {maximumSignificantDigits: digit}).format(value);
 }
 
+function textNumberFix(value, digit=3)
+{
+    return new Intl.NumberFormat(
+        'ja',
+        {   minimumFractionDigits: digit,
+            maximumFractionDigits: digit
+        }).format(value);
+}
+
 
 function isValidNumber(value)
 {

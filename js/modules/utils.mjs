@@ -182,3 +182,47 @@ export function checkSerializationUnittest(vm)
     return ok;
 }
 
+
+/**
+ * @param {string} strtable 
+ * @return {string}
+ */
+export function makeTalentTable(strtable, toLog=true)
+{
+    let table = strtable.split('\n').map(line => {
+        let elems = line.split('\t');
+        if(elems[0].startsWith('Lv.'))
+            elems = elems.slice(1);
+
+        elems = elems.map(e => {
+            e = e.split("/");
+            if(e.length == 1)
+                return percentToNumber(e[0]);
+            else
+                return percentToNumber(e);
+        });
+
+        return elems;
+    });
+
+
+    let result = table.map(row => "[" + row.join(", ") + "]" ).join(",\n");
+
+    if(toLog)
+        console.log(result);
+
+    return result;
+}
+
+
+function percentToNumber(elems) {
+    if(Array.isArray(elems)) {
+        elems = elems.map(e => percentToNumber(e));
+        return '[' + elems.join(', ') + ']';
+    }
+
+    if(elems.endsWith('%'))
+        return textNumberFix(Number(elems.replace('%', '')) / 100, 3);
+    else
+        return elems;
+}
