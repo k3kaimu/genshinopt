@@ -14,6 +14,7 @@ export const bufferEffects = [
     new BuffEffect.ConstantBufferEffect("art_noblesse_oblige_4", "旧貴族のしつけ4：攻撃力+20%", "A", {"rateAtk": 0.2}),
     new BuffEffect.BufferEffectViewModelFactory({id: "vaporize_melt"}, "蒸発・溶解", "E", (parent) => new BuffEffect.VaporizeMeltEffectViewModel(parent)),
     new BuffEffect.BufferEffectViewModelFactory(new Characters.Bennett(), "ベネット", "C", (parent) => new (Characters.BennettViewModel(BuffEffect.CharacterBufferEffectViewModel))(parent, true)),
+    new BuffEffect.BufferEffectViewModelFactory(new Characters.Chongyun(), "重雲", "C", (parent) => new (Characters.ChongyunViewModel(BuffEffect.CharacterBufferEffectViewModel))(parent, true)),
     new BuffEffect.BufferEffectViewModelFactory(new Characters.YunJin(), "雲菫", "C", (parent) => new Characters.YunJinBufferViewModel(parent)),
     new BuffEffect.BufferEffectViewModelFactory(new Characters.Shenhe(), "申鶴", "C", (parent) => new (Characters.ShenheViewModel(BuffEffect.CharacterBufferEffectViewModel))(parent, true)),
 ];

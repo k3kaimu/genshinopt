@@ -21,6 +21,7 @@ export const characters = [
     // new Anemo.TravelerAnemo(),
     new Cryo.Ganyu(),
     new Cryo.Shenhe(),
+    new Cryo.Chongyun(),
     new Electro.RaidenShogun(),
     new Electro.Beidou(),
     // new Electro.TravelerElectro(),

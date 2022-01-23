@@ -3,6 +3,7 @@ import * as Widget from '../widget.mjs';
 import * as Calc from '../dmg-calc.mjs';
 import * as Utils from '../utils.mjs';
 import * as BuffEffect from '../buffeffect.mjs';
+import * as TypeDefs from '../typedefs.mjs';
 
 
 
@@ -677,5 +678,258 @@ runUnittest(function(){
 
     console.assert(Utils.checkSerializationUnittest(
         new Shenhe().newViewModel()
+    ));
+});
+
+
+// 重雲
+export class Chongyun extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "chongyun",
+            "重雲",
+            4,
+            TypeDefs.Element.Cryo,
+            TypeDefs.WeaponType.Claymore,
+            223,
+            648,
+            10984,
+            TypeDefs.StaticStatusType.rateAtk,
+            0.240,
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new (ChongyunViewModel(CryoCharacterViewModel))(this, false);
+    }
+
+
+    static normalTalentTable = [
+        // 0-3: 通常, 4:重撃継続, 5:重撃終了, 6:落下, 7:低空, 8:高空
+        [0.700, 0.631, 0.803, 1.010, 0.563, 1.020, 0.746, 1.490, 1.860],
+        [0.757, 0.683, 0.869, 1.090, 0.609, 1.100, 0.807, 1.610, 2.010],
+        [0.814, 0.734, 0.934, 1.180, 0.654, 1.180, 0.867, 1.730, 2.170],
+        [0.895, 0.807, 1.030, 1.290, 0.720, 1.300, 0.954, 1.910, 2.380],
+        [0.952, 0.859, 1.090, 1.380, 0.766, 1.380, 1.015, 2.030, 2.530],
+        [1.020, 0.918, 1.170, 1.470, 0.818, 1.480, 1.084, 2.170, 2.710],
+        [1.110, 0.998, 1.270, 1.600, 0.890, 1.610, 1.180, 2.360, 2.950],
+        [1.200, 1.080, 1.370, 1.730, 0.962, 1.740, 1.270, 2.550, 3.180],
+        [1.290, 1.160, 1.480, 1.860, 1.030, 1.870, 1.370, 2.740, 3.420],
+        [1.380, 1.250, 1.590, 2.000, 1.110, 2.010, 1.474, 2.950, 3.680],
+        [1.480, 1.340, 1.700, 2.140, 1.190, 2.150, 1.578, 3.160, 3.940]
+    ];
+
+
+    static skillTalentTable = [
+        1.720,
+        1.850,
+        1.980,
+        2.150,
+        2.280,
+        2.410,
+        2.580,
+        2.750,
+        2.920,
+        3.100,
+        3.270,
+        3.440,
+        3.650
+    ];
+
+
+    static burstTalentTable = [
+        1.420,
+        1.530,
+        1.640,
+        1.780,
+        1.890,
+        1.990,
+        2.140,
+        2.280,
+        2.420,
+        2.560,
+        2.710,
+        2.850,
+        3.030,
+        3.200
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_total",
+            label: "通常4段累計",
+            dmgScale(vm){ return Chongyun.normalTalentTable[vm.normalRank()-1].slice(0, 4); },
+            attackProps: { isNormal: true, isPhysical: true }
+        },
+        {
+            id: "normal_total_C1",
+            label: "通常4段累計 + 1凸氷ダメージ",
+            list: [
+                {
+                    dmgScale(vm){ return Chongyun.normalTalentTable[vm.normalRank()-1].slice(0, 4); },
+                    attackProps: { isNormal: true, isPhysical: true }
+                },
+                {
+                    dmgScale(vm){ return 0.5; },
+                    attackProps: { isNormal: true, isCryo: true }
+                }
+            ]
+        },
+        {
+            id: "skill_dmg",
+            label: "元素スキル「霊刃・重華積霜」",
+            dmgScale(vm){ return Chongyun.skillTalentTable[vm.skillRank()-1]; },
+            attackProps: { isSkill: true, isCryo: true }
+        },
+        {
+            id: "skill_dmg_finish",
+            label: "元素スキル「霊刃・重華積霜」消滅時ダメージ",
+            dmgScale(vm){ return Chongyun.skillTalentTable[vm.skillRank()-1]; },
+            attackProps: { isSkill: true, isCryo: true }
+        },
+        {
+            id: "burst_dmg",
+            label: "元素爆発「霊刃・雲開星落」x 3本（6凸時は4本）",
+            dmgScale(vm){
+                    return new Array(vm.constell() >= 6 ? 4 : 3)
+                    .fill(Chongyun.burstTalentTable[vm.burstRank()-1]);
+            },
+            attackProps: { isBurst: true, isCryo: true }
+        }
+    ];
+}
+
+
+// 重雲
+export let ChongyunViewModel = (Base) => class extends Base
+{
+    constructor(parent, isBuffer)
+    {
+        super(parent);
+        this.isBuffer = isBuffer;
+
+        // スキルでの元素付与効果
+        this.registerTalent({
+            type: "Skill",
+            requiredC: 0,
+            uiList: [{
+                type: "checkbox",
+                name: "useToCryoEffect",
+                init: true,
+                label: (vm) => "片手剣/両手剣/長柄武器に氷元素付与",
+            }],
+            effect: undefined   // 効果はapplyDmgCalcImplで実装
+        });
+
+        // スキルでの氷耐性減少効果
+        this.registerTalent({
+            type: "Skill",
+            requiredC: 0,
+            uiList: [{
+                type: "checkbox",
+                name: "useCryoResisDown",
+                init: true,
+                label: (vm) => "氷元素耐性-10%（スキル命中時）",
+            }],
+            effect: {
+                cond: (vm) => vm.useCryoResisDown(),
+                list: [{
+                    target: TypeDefs.StaticStatusType.cryoResis,
+                    value: (vm) => -0.1
+                }]
+            }
+        });
+
+        if(!isBuffer) {
+            // 元素爆発のダメージ増加効果
+            this.registerTalent({
+                type: "Burst",
+                requiredC: 6,
+                uiList: [{
+                    type: "checkbox",
+                    name: "useC6Effect",
+                    init: true,
+                    label: (vm) => "元素爆発ダメージ+15%（HPの割合が重雲より低い敵に）",
+                }],
+                effect: {
+                    cond: (vm) => vm.useC6Effect(),
+                    list: [{
+                        target: TypeDefs.StaticStatusType.burstDmg,
+                        value: (vm) => 0.15
+                    }]
+                }
+            });
+        }
+    }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        if(this.useToCryoEffect()) {
+            calc = calc.applyExtension(Klass => class extends Klass {
+                modifyAttackInfo(attackInfo) {
+                    return super.modifyAttackInfo(attackInfo).map(info => {
+                        if(!info.props.isCryo &&
+                        (this.character.weaponType == 'Sword' || this.character.weaponType == 'Claymore' || this.character.weaponType == 'Polearm'))
+                    {
+                        // 全元素や元素反応を消して，炎元素を付与
+                        let newProps = Calc.deleteAllElementFromAttackProps({...info.props});
+                        newProps.isCryo = true;
+
+                        return this.modifyAttackInfo(new Calc.AttackInfo(info.scale, info.ref, newProps, info.prob));
+                    }
+                    else
+                    {
+                        // 元々炎元素だったり，対象外であればそのまま返す
+                            return info;
+                    }
+                    }).flat(10);
+                }
+            });
+        }
+
+        return calc;
+    }
+
+    
+    maxSkillTalentRank() { return this.constell() >= 5 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 3 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+}
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Chongyun(),
+        {
+            "vm": {
+                "parent_id": "chongyun",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "useToCryoEffect": true,
+                "useCryoResisDown": true,
+                "useC6Effect": true,
+                "reactionProb": 0
+            },
+            "expected": {
+                "normal_total": 1632.371805,
+                "normal_total_C1": 1773.3365549999999,
+                "skill_dmg": 823.2341399999999,
+                "skill_dmg_finish": 823.2341399999999,
+                "burst_dmg": 3138.4391939999996
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Chongyun().newViewModel()
     ));
 });
