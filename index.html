@@ -650,6 +650,12 @@ title: 理想期待値比較
                           <td class="text-right" data-bind="text: optres.status[attackId].burningBonus"></td>
                           <!-- /ko -->
                         </tr>
+                        <tr data-bind="if: optres.isShownStatus.calculateTotalResistanceBonus">
+                          <th scope="row">敵耐性による倍率</th>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].calculateTotalResistanceBonus"></td>
+                          <!-- /ko -->
+                        </tr>
                       </tbody>
                     </table>
                   </div>
