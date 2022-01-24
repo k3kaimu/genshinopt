@@ -164,6 +164,7 @@ export class AttackEvaluator
         let ret = {};
         statusList.forEach(st => {
             let values = infos.map(info => calc[st](info.props));
+            // @ts-ignore
             values = uniqueArray(values, (/** @type {{ value: any; }} */ a, /** @type {{ value: any; }} */ b) => isApproxEqual(a.value, b.value, 1e-4, undefined));
             ret[st] = values.sort((a, b) => a - b);
         });
