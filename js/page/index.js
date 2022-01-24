@@ -1,8 +1,9 @@
 'use strict';
 import * as Data from '/js/modules/data.mjs';
 import * as Calc from '/js/modules/dmg-calc.mjs';
-import * as Migrator from '/js/modules/migrator.mjs'
-import * as UI from '/js/modules/ui.mjs'
+import * as Migrator from '/js/modules/migrator.mjs';
+import * as UI from '/js/modules/ui.mjs';
+import * as TypeDefs from '/js/modules/typedefs.mjs';
 
 
 class CharacterSettingList extends UI.TabListViewModel
@@ -98,6 +99,71 @@ class BundleSettingList extends UI.TabListViewModel
         this.enableExBuff(obj.bExbf);
         super.fromJS(obj.list);
     }
+}
+
+
+// DOMを遅延して構築するために必要
+function EachResultViewModel(optres) {
+    this.isOpen = ko.observable(false);
+    this.toggle = function() {
+        this.isOpen(!this.isOpen());
+    }.bind(this);
+
+    this.doneCalc = false;
+    this.dmgExpected = {};
+    this.dmgCrt = {};
+    this.dmgNonCrt = {};
+    this.status = {};
+    this.attackIds = [];
+    optres.setting.character.presetAttacks().forEach(attackType => {
+        this.dmgExpected[attackType.id] = {};
+        this.dmgCrt[attackType.id] = {};
+        this.dmgNonCrt[attackType.id] = {};
+        this.status[attackType.id] = {};
+        this.attackIds.push(attackType.id);
+    });
+
+    let statusList = [...TypeDefs.dynamicStatusTypes, 'calculateTotalDmgBuff', 'calculateTotalResistanceBonus'];
+
+    this.isShownStatus = {};
+    statusList.forEach(k => {
+        this.isShownStatus[k] = false;
+    });
+
+    this.isOpen.subscribe(function(newVal){
+        if(newVal && !this.doneCalc) {
+            optres.setting.character.presetAttacks().forEach(attackType => {
+                let oldValue = Calc.VGData.doCalcExprText;
+                Calc.VGData.doCalcExprText = true;
+                attackType.setOptimizedMode(false);
+
+                let expected = attackType.evaluate(optres.calc, {});
+                let crt = attackType.evaluate(optres.calc, {isForcedCritical: true});
+                let noncrt = attackType.evaluate(optres.calc, {isForcedNonCritical: true});
+
+                this.dmgExpected[attackType.id] = expected;
+                this.dmgCrt[attackType.id] = crt;
+                this.dmgNonCrt[attackType.id] = noncrt;
+
+                let statusValues = attackType.evaluateStatus(optres.calc, {}, statusList);
+                statusList.forEach(key => {
+                    if(key === "hp" || key === "atk" || key === "def" || key === "mastery") {
+                        this.status[attackType.id][key] = statusValues[key].map(e => e.value).sort().map(e => textInteger(e)).join("/");
+                    } else {
+                        this.status[attackType.id][key] = statusValues[key].map(e => e.value).sort().map(e => textPercentageFix(e, 1)).join("/");
+                    }
+
+                    if(this.status[attackType.id][key] !== "0" && this.status[attackType.id][key] !== "0.0%")
+                        this.isShownStatus[key] = true;
+                });
+                this.status[attackType.id]['totalVaporizeCoeff'] = attackType.evaluateStatus(optres.calc, {isVaporize: true}, ['calculateVaporizeMeltBonus']).calculateVaporizeMeltBonus.map(e => e.value).sort().map(e => textPercentageFix(e, 1)).join("/");
+                this.status[attackType.id]['totalMeltCoeff'] = attackType.evaluateStatus(optres.calc, {isMelt: true}, ['calculateVaporizeMeltBonus']).calculateVaporizeMeltBonus.map(e => e.value).sort().map(e => textPercentageFix(e, 1)).join("/");
+
+                Calc.VGData.doCalcExprText = oldValue;
+            });
+            this.doneCalc = true;
+        }
+    }.bind(this));
 }
 
 
@@ -580,44 +646,6 @@ $(function(){
             let len = arr.length;
             let lim = Number(this.showOptResultsLimit());
             let cond = this.shownOptimizedResultsCondition();
-
-            // DOMを遅延して構築するために必要
-            function EachResultViewModel(e) {
-                this.isOpen = ko.observable(false);
-                this.toggle = function() {
-                    this.isOpen(!this.isOpen());
-                }.bind(this);
-
-                this.doneCalc = false;
-                this.dmgExpected = {};
-                this.dmgCrt = {};
-                this.dmgNonCrt = {};
-                e.setting.character.presetAttacks().forEach(attackType => {
-                    this.dmgExpected[attackType.id] = ko.observable();
-                    this.dmgCrt[attackType.id] = ko.observable();
-                    this.dmgNonCrt[attackType.id] = ko.observable();
-                });
-
-                this.isOpen.subscribe(function(newVal){
-                    if(newVal && !this.doneCalc) {
-                        e.setting.character.presetAttacks().forEach(attackType => {
-                            let oldValue = Calc.VGData.doCalcExprText;
-                            Calc.VGData.doCalcExprText = true;                            
-
-                            let expected = attackType.evaluate(e.calc, {});
-                            let crt = attackType.evaluate(e.calc, {isForcedCritical: true});
-                            let noncrt = attackType.evaluate(e.calc, {isForcedNonCritical: true});
-
-                            this.dmgExpected[attackType.id](expected);
-                            this.dmgCrt[attackType.id](crt);
-                            this.dmgNonCrt[attackType.id](noncrt);
-
-                            Calc.VGData.doCalcExprText = oldValue;
-                        });
-                        this.doneCalc = true;
-                    }
-                }.bind(this));
-            }
 
             if(cond == 'ALL') {
                 // nop

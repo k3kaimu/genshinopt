@@ -431,223 +431,223 @@ title: 理想期待値比較
                         <tr>
                           <th scope="row">ダメージ期待値</th>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textInteger(optres.dmgExpected[attackType.id]().value)"></td>
+                          <td class="text-right" data-bind="text: textInteger(optres.dmgExpected[attackType.id].value)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">会心ダメージ</th>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textInteger(optres.dmgCrt[attackType.id]().value)"></td>
+                          <td class="text-right" data-bind="text: textInteger(optres.dmgCrt[attackType.id].value)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">非会心ダメージ</th>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textInteger(optres.dmgNonCrt[attackType.id]().value)"></td>
+                          <td class="text-right" data-bind="text: textInteger(optres.dmgNonCrt[attackType.id].value)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">HP</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textInteger(optres.calc.hp(attackType.attackProps).value)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].hp"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">攻撃力</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textInteger(optres.calc.atk(attackType.attackProps).value)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].atk"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">防御力</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textInteger(optres.calc.def(attackType.attackProps).value)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].def"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">元素熟知</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textInteger(optres.calc.mastery(attackType.attackProps).value)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].mastery"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">会心率</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.crtRate(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].crtRate"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">会心ダメージ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.crtDmg(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].crtDmg"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">元素チャージ効率</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.recharge(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].recharge"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">累計ダメバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.calculateTotalDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].calculateTotalDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.anemoDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.anemoDmgBuff">
                           <th scope="row">風元素ダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.anemoDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].anemoDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.geoDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.geoDmgBuff">
                           <th scope="row">岩元素ダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.geoDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].geoDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.electroDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.electroDmgBuff">
                           <th scope="row">雷元素ダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.electroDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].electroDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.pyroDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.pyroDmgBuff">
                           <th scope="row">炎元素ダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.pyroDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].pyroDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.hydroDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.hydroDmgBuff">
                           <th scope="row">水元素ダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.hydroDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].hydroDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.cryoDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.cryoDmgBuff">
                           <th scope="row">氷元素ダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.cryoDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].cryoDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.dendroDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.dendroDmgBuff">
                           <th scope="row">草元素ダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.dendroDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].dendroDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.physicalDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.physicalDmgBuff">
                           <th scope="row">物理ダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.physicalDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].physicalDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.allDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.allDmgBuff">
                           <th scope="row">全攻撃ダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.allDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].allDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.normalDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.normalDmgBuff">
                           <th scope="row">通常攻撃ダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.normalDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].normalDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.chargedDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.chargedDmgBuff">
                           <th scope="row">重撃ダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.chargedDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].chargedDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.plungeDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.plungeDmgBuff">
                           <th scope="row">落下ダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.plungeDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].plungeDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.skillDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.skillDmgBuff">
                           <th scope="row">スキルダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.skillDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].skillDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.burstDmgBuff(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.burstDmgBuff">
                           <th scope="row">元素爆発ダメージバフ</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.burstDmgBuff(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].burstDmgBuff"></td>
                           <!-- /ko -->
                         </tr>
                         <tr data-bind="if: optres.setting.character.parent.elem == 'Pyro' || optres.setting.character.parent.elem == 'Hydro'">
                           <th scope="row">蒸発倍率</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textNumber(optres.calc.calculateVaporizeMeltBonus( Object.assign({isVaporize: true}, attackType.attackProps) ).value, 3)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].totalVaporizeCoeff"></td>
                           <!-- /ko -->
                         </tr>
                         <tr data-bind="if: optres.setting.character.parent.elem == 'Pyro' || optres.setting.character.parent.elem == 'Cryo'">
                           <th scope="row">溶解倍率</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textNumber(optres.calc.calculateVaporizeMeltBonus( Object.assign({isMelt: true}, attackType.attackProps) ).value, 3)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].totalMeltCoeff"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.swirlBonus(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.swirlBonus">
                           <th scope="row">拡散ボーナス</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.swirlBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].swirlBonus"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.crystalizeBonus(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.crystalizeBonus">
                           <th scope="row">結晶化ボーナス</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.crystalizeBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].crystalizeBonus"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.vaporizeBonus(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.vaporizeBonus">
                           <th scope="row">蒸発ボーナス</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.vaporizeBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].vaporizeBonus"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.overloadedBonus(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.overloadedBonus">
                           <th scope="row">過負荷ボーナス</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.overloadedBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].overloadedBonus"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.meltBonus(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.meltBonus">
                           <th scope="row">溶解ボーナス</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.meltBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].meltBonus"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.electroChargedBonus(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.electroChargedBonus">
                           <th scope="row">感電ボーナス</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.electroChargedBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].electroChargedBonus"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.frozenBonus(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.frozenBonus">
                           <th scope="row">凍結ボーナス</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.frozenBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].frozenBonus"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.shatteredBonus(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.shatteredBonus">
                           <th scope="row">氷砕きボーナス</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.shatteredBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].shatteredBonus"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.superconductBonus(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.superconductBonus">
                           <th scope="row">超伝導ボーナス</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.superconductBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].superconductBonus"></td>
                           <!-- /ko -->
                         </tr>
-                        <tr data-bind="if: optres.calc.burningBonus(optres.setting.attack.attackProps).value > 1e-3">
+                        <tr data-bind="if: optres.isShownStatus.burningBonus">
                           <th scope="row">燃焼ボーナス</th>
-                          <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.calc.burningBonus(attackType.attackProps).value, 1)"></td>
+                          <!-- ko foreach: { data: optres.attackIds, as: 'attackId'} -->
+                          <td class="text-right" data-bind="text: optres.status[attackId].burningBonus"></td>
                           <!-- /ko -->
                         </tr>
                       </tbody>
@@ -671,49 +671,49 @@ title: 理想期待値比較
                           <th scope="row">攻撃力</th>
                           <td class="text-right">4.7%</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[0]/optres.dmgExpected[attackType.id]().value * 0.047, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id].grad[0]/optres.dmgExpected[attackType.id].value * 0.047, 2)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">会心率</th>
                           <td class="text-right">3.1%</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[3]/optres.dmgExpected[attackType.id]().value * 0.031, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id].grad[3]/optres.dmgExpected[attackType.id].value * 0.031, 2)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">会心ダメージ</th>
                           <td class="text-right">6.2%</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[4]/optres.dmgExpected[attackType.id]().value * 0.062, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id].grad[4]/optres.dmgExpected[attackType.id].value * 0.062, 2)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">防御力</th>
                           <td class="text-right">5.8%</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[1]/optres.dmgExpected[attackType.id]().value * 0.058, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id].grad[1]/optres.dmgExpected[attackType.id].value * 0.058, 2)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">HP</th>
                           <td class="text-right">4.7%</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[2]/optres.dmgExpected[attackType.id]().value * 0.047, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id].grad[2]/optres.dmgExpected[attackType.id].value * 0.047, 2)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">チャージ効率</th>
                           <td class="text-right">5.2%</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[5]/optres.dmgExpected[attackType.id]().value * 0.052, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id].grad[5]/optres.dmgExpected[attackType.id].value * 0.052, 2)"></td>
                           <!-- /ko -->
                         </tr>
                         <tr>
                           <th scope="row">元素熟知</th>
                           <td class="text-right">19</td>
                           <!-- ko foreach: { data: optres.setting.character.presetAttacks(), as: 'attackType'} -->
-                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id]().grad[6]/optres.dmgExpected[attackType.id]().value * 19, 2)"></td>
+                          <td class="text-right" data-bind="text: textPercentageFix(optres.dmgExpected[attackType.id].grad[6]/optres.dmgExpected[attackType.id].value * 19, 2)"></td>
                           <!-- /ko -->
                         </tr>
                       </tbody>

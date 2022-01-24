@@ -125,6 +125,8 @@ export const StaticStatusType = {
     enemyRateDef: "baseEnemyRateDef",
 };
 
+export const staticStatusTypes = Object.values(StaticStatusType);
+
 /** ステータスを表します．StaticStatusTypeと違い，こちらは他のステータスなどから換算して決定されたり，攻撃方法によって値が変わる場合に利用します
  * @enum {string}
  */
@@ -178,6 +180,9 @@ export const DynamicStatusType = {
     enemyRateDef: "enemyRateDef",
     /** ダメージ加算 */             increaseDamage: "increaseDamage",
 };
+
+export const dynamicStatusTypes = Object.values(DynamicStatusType);
+
 
 
 class AttackItem {
