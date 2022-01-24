@@ -104,7 +104,7 @@ export class SacrificialSword extends Base.WeaponData
 
 runUnittest(function(){
     console.assert(Utils.checkUnittestForWeapon(
-        new PrimordialJadeCutter(),
+        new SacrificialSword(),
         "Anemo",
         {
             "vm": {
@@ -121,7 +121,7 @@ runUnittest(function(){
     ));
 
     console.assert(Utils.checkSerializationUnittest(
-        new PrimordialJadeCutter().newViewModel()
+        new SacrificialSword().newViewModel()
     ));
 });
 
