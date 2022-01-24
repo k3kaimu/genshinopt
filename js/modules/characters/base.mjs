@@ -1,6 +1,22 @@
+//@ts-check
 import * as Calc from '../dmg-calc.mjs';
 import * as Widget from '../widget.mjs';
 import * as TypeDefs from '../typedefs.mjs';
+
+
+/**
+ * @typedef {{
+ *  id: string;
+ *  label: string;
+ *  ref?: TypeDefs.DynamicStatusType;
+ *  dmgScale?: (vm: CharacterViewModel) => (number | number[]) | (number | number[])[];
+ *  attackProps?: Object;
+ *  list?: {dmgScale: (vm: CharacterViewModel) => (number | number[]) | (number | number[])[], attackProps: Object, ref?: TypeDefs.DynamicStatusType}[];
+ *  newEvaluator?: (vm: CharacterViewModel, obj: PresetAttackObject) => AttackEvaluator;
+ *  func?: (calc: Calc.DamageCalculator, vm: CharacterViewModel) => (number | Calc.VGData);
+ * }} PresetAttackObject
+ */
+
 
 export class CharacterData
 {
@@ -64,13 +80,13 @@ export class CharacterData
 
     newViewModel()
     {
+        // @ts-ignore
         return new CharacterViewModel(this);
     }
 
 
-
     /**
-     * @type {{id: string; label: string; dmgScale: (vm: CharacterViewModel) => (number | number[]) | (number | number[])[]; attackProps: Object}[]}
+     * @type {PresetAttackObject[]}
      */
     static presetAttacks = [
         {
@@ -99,6 +115,10 @@ export class CharacterData
 
 export class AttackEvaluator
 {
+    /**
+     * @param {string} id
+     * @param {string} label
+     */
     constructor(id, label)
     {
         this.id = id;
@@ -109,6 +129,9 @@ export class AttackEvaluator
     }
 
 
+    /**
+     * @param {Calc.DamageCalculator} calc
+     */
     evaluate(calc, additionalProps = {})
     {
         return this.evaluateWithCache(calc, additionalProps);
@@ -141,7 +164,7 @@ export class AttackEvaluator
         let ret = {};
         statusList.forEach(st => {
             let values = infos.map(info => calc[st](info.props));
-            values = uniqueArray(values, (a, b) => isApproxEqual(a.value, b.value, 1e-4, undefined));
+            values = uniqueArray(values, (/** @type {{ value: any; }} */ a, /** @type {{ value: any; }} */ b) => isApproxEqual(a.value, b.value, 1e-4, undefined));
             ret[st] = values.sort((a, b) => a - b);
         });
 
@@ -188,6 +211,9 @@ export class AttackEvaluator
     }
 
 
+    /**
+     * @param {any} flag
+     */
     setOptimizedMode(flag) {
         if(flag)
             this.cachedInfos = [];
@@ -210,6 +236,9 @@ export class AttackEvaluator
     }
 
 
+    /**
+     * @param {Calc.DamageCalculator} calc
+     */
     evaluateWithCache(calc, additionalProps = {}) {
         /** @type {Calc.AttackInfo[]} */
         let infos;
@@ -251,7 +280,7 @@ export class PresetAttackEvaluator extends AttackEvaluator
 
     /**
      * @param {CharacterViewModel} vm
-     * @param {{ id: string; label: string; dmgScale: ((vm: CharacterViewModel) => number); attackProps: object; }} presetAttackObject
+     * @param {PresetAttackObject} presetAttackObject
      */
     constructor(vm, presetAttackObject)
     {
@@ -267,6 +296,9 @@ export class PresetAttackEvaluator extends AttackEvaluator
     }
 
 
+    /**
+     * @param {Calc.DamageCalculator} calc
+     */
     attackInfos(calc, additionalProps = {})
     {
         return [this.dmgScale(this.cvm)].flat(10).map(s => {
@@ -278,6 +310,10 @@ export class PresetAttackEvaluator extends AttackEvaluator
 
 export class CompoundedPresetAttackEvaluator extends AttackEvaluator
 {
+    /**
+     * @param {CharacterViewModel} vm
+     * @param {PresetAttackObject} presetAttackObject
+     */
     constructor(vm, presetAttackObject)
     {
         super(presetAttackObject.id, presetAttackObject.label);
@@ -289,6 +325,9 @@ export class CompoundedPresetAttackEvaluator extends AttackEvaluator
     }
 
 
+    /**
+     * @param {Calc.DamageCalculator} calc
+     */
     attackInfos(calc, additionalProps = {})
     {
         return this.list.map(e => {
@@ -308,6 +347,10 @@ export class CompoundedPresetAttackEvaluator extends AttackEvaluator
 
 export class FunctionAttackEvaluator extends AttackEvaluator
 {
+    /**
+     * @param {CharacterViewModel} vm
+     * @param {PresetAttackObject} presetAttackObject
+     */
     constructor(vm, presetAttackObject)
     {
         super(presetAttackObject.id, presetAttackObject.label);
@@ -421,6 +464,7 @@ class CharacterViewModelImpl
      * @returns {AttackEvaluator[]}
      */
     presetAttacks() {
+        /** @type {PresetAttackObject[]} */
         let attacks = Object.getPrototypeOf(this.parent).constructor.presetAttacks;
         let ret = [];
         attacks.forEach(a => {
@@ -464,11 +508,14 @@ class CharacterViewModelImpl
 }
 
 
-export let AddTalentRegister = (Base) => class extends Base {
+export let AddTalentRegister = (/** @type {typeof CharacterViewModelImpl} */ Base) => class extends Base {
+    /**
+     * @type {TypeDefs.TalentDefinition[]}
+     */
     talents = [];
 
     /**
-     * @param {{type: string, requiredC: number, uiList: {type: string, name: string, init: any, label: (vm:CharacterViewModel) => string}[], effect: {cond: (vm:CharacterViewModel)=>boolean, list: Object[]}}} obj 
+     * @param {TypeDefs.TalentDefinition} obj 
      */
     registerTalent(obj) {
         this.talents.push(obj);
@@ -481,6 +528,9 @@ export let AddTalentRegister = (Base) => class extends Base {
     }
 
 
+    /**
+     * @param {Calc.DamageCalculator} calc
+     */
     applyDmgCalcImpl(calc)
     {
         calc = super.applyDmgCalcImpl(calc);
@@ -548,7 +598,7 @@ export let AddTalentRegister = (Base) => class extends Base {
                         str += e.html(this);
                         break;
                     default:
-                        console.assert(`Unsupported UI type: ${e.type}`);
+                        console.assert(false, `Unsupported UI type: ${e.type}`);
                 }
             });
 
@@ -576,7 +626,7 @@ export let AddTalentRegister = (Base) => class extends Base {
         let obj = super.toJS();
 
         this.talents.forEach(talent => {
-            talent.uiList?.forEach(e => {
+            talent.uiList?.forEach((/** @type {{ name: string | number; }} */ e) => {
                 if(e == undefined) return;
 
                 if(e.name)
@@ -588,12 +638,15 @@ export let AddTalentRegister = (Base) => class extends Base {
     }
 
 
+    /**
+     * @param {{ [x: string]: any; }} obj
+     */
     fromJS(obj)
     {
         super.fromJS(obj);
 
         this.talents.forEach(talent => {
-            talent.uiList?.forEach(e => {
+            talent.uiList?.forEach((/** @type {{ name: string | number; }} */ e) => {
                 if(e == undefined) return;
 
                 if(e.name)
@@ -677,6 +730,7 @@ export class TestCharacterViewModel extends CharacterViewModel
 
 
     presetAttacks() {
+        /** @type {PresetAttackObject[]} */
         let attacks = Object.getPrototypeOf(this.parent).constructor.presetAttacks.slice(0, 1);
         attacks.push(
         {

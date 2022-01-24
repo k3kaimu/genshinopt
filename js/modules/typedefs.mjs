@@ -64,6 +64,10 @@ export class UIItem
     label;
     /** @type {{label: string, value: any}[]?} */
     options = undefined;
+    /** @type {((vm: CharBase.CharacterViewModel) => Object)?} */
+    other;
+    /** @type {(vm: CharBase.CharacterViewModel) => string} */
+    html;
 }
 
 
@@ -244,7 +248,7 @@ export const TalentType = {
     Other: "isOther",
 };
 
-class TalentDefinition
+export class TalentDefinition
 {
     /** @type {TalentType} */
     type;
