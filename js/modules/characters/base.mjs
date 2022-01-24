@@ -111,17 +111,52 @@ export class AttackEvaluator
 
     evaluate(calc, additionalProps = {})
     {
-        return Calc.VGData.zero();
+        return this.evaluateWithCache(calc, additionalProps);
+    }
+
+
+    /**
+     * @param {Calc.DamageCalculator} calc 
+     * @param {Object} additionalProps 
+     * @returns {Calc.AttackInfo[]}
+     */
+    attackInfos(calc, additionalProps = {})
+    {
+        return [];
+    }
+
+
+    /**
+     * ステータスを評価して返します
+     * @param {Calc.DamageCalculator} calc 
+     * @param {Object} additionalProps 
+     * @param {TypeDefs.DynamicStatusType[]} statusList 
+     * @returns {Object<TypeDefs.DynamicStatusType, Calc.VGData[]>}
+     */
+    evaluateStatus(calc, additionalProps = {}, statusList)
+    {
+        /** @type {Calc.AttackInfo[]} */
+        let infos = this.getAllCompressedAttackInfos(calc, this.attackInfos(calc, additionalProps), "strong");
+
+        let ret = {};
+        statusList.forEach(st => {
+            let values = infos.map(info => calc[st](info.props));
+            values = uniqueArray(values, (a, b) => isApproxEqual(a.value, b.value, 1e-4, undefined));
+            ret[st] = values.sort((a, b) => a - b);
+        });
+
+        return ret;
     }
 
 
     /**
      * すべてのAttackPropsを返します．計算を高速化するために内部でキャッシュを持ちます
      * @param {Calc.DamageCalculator} calc
-     * @param {Calc.AttackInfo[]} attackInfos 
+     * @param {Calc.AttackInfo[]} attackInfos
+     * @param {"strong" | "weak" | "none"} level
      * @returns {Calc.AttackInfo[]}
      */
-    getAllCompressedAttackInfos(calc, attackInfos) {
+    getAllCompressedAttackInfos(calc, attackInfos, level = "strong") {
         if(this.hasCache())
             return this.cachedInfos;
 
@@ -138,7 +173,10 @@ export class AttackEvaluator
 
             if(check) {
                 // すべて定数だったのでキャッシュする
-                infos = Calc.compressAttackInfos(infos, "strong", calc);
+                // levelがnoneの場合は圧縮しない
+                if(level !== "none")
+                    infos = Calc.compressAttackInfos(infos, level, calc);
+
                 this.cachedInfos = infos;
             } else {
                 // optimizedModeをやめる
@@ -172,13 +210,13 @@ export class AttackEvaluator
     }
 
 
-    evaluateWithCache(calc, genInfos) {
+    evaluateWithCache(calc, additionalProps = {}) {
         /** @type {Calc.AttackInfo[]} */
         let infos;
         if(this.hasCache()) {
             infos = this.cachedInfos;
         } else {
-            infos = genInfos();
+            infos = this.attackInfos(additionalProps);
             infos = this.getAllCompressedAttackInfos(calc, infos);
         }
 
@@ -229,15 +267,10 @@ export class PresetAttackEvaluator extends AttackEvaluator
     }
 
 
-    /**
-     * @param {Calc.DamageCalculator} calc
-     */
-    evaluate(calc, additionalProps = {})
+    attackInfos(calc, additionalProps = {})
     {
-        return this.evaluateWithCache(calc, () => {
-            return [this.dmgScale(this.cvm)].flat(10).map(s => {
-                    return new Calc.AttackInfo(s, this.ref, {...additionalProps, ...this.attackProps}, 1);
-            });
+        return [this.dmgScale(this.cvm)].flat(10).map(s => {
+                return new Calc.AttackInfo(s, this.ref, {...additionalProps, ...this.attackProps}, 1);
         });
     }
 }
@@ -256,24 +289,19 @@ export class CompoundedPresetAttackEvaluator extends AttackEvaluator
     }
 
 
-    /**
-     * @param {Calc.DamageCalculator} calc 
-     */
-    evaluate(calc, additionalProps = {})
+    attackInfos(calc, additionalProps = {})
     {
-        return this.evaluateWithCache(calc, () => {
-            return this.list.map(e => {
-                let scales = [e.dmgScale(this.cvm)].flat(10);
+        return this.list.map(e => {
+            let scales = [e.dmgScale(this.cvm)].flat(10);
 
-                let ref = "atk";
-                if("ref" in e)
-                    ref = e.ref;
+            let ref = "atk";
+            if("ref" in e)
+                ref = e.ref;
 
-                return scales.map(s => {
-                    return new Calc.AttackInfo(s, ref, {...additionalProps, ...e.attackProps}, 1);
-                });
-            }).flat(10);
-        });
+            return scales.map(s => {
+                return new Calc.AttackInfo(s, ref, {...additionalProps, ...e.attackProps}, 1);
+            });
+        }).flat(10);
     }
 }
 
@@ -291,6 +319,12 @@ export class FunctionAttackEvaluator extends AttackEvaluator
             this.attackProps = {};
 
         this.func = presetAttackObject.func;
+    }
+
+
+    attackInfos()
+    {
+        return [new Calc.AttackInfo(0, "", {}, 1)];
     }
 
 

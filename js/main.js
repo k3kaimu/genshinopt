@@ -447,3 +447,50 @@ function copyTextToClipboard(text) {
         console.error('Async: Could not copy text: ', err);
     });
 }
+
+
+/**
+ * @param {number} a 
+ * @param {number} b 
+ * @param {number} absMax 
+ * @param {number} relMax 
+ * @return {boolean}
+ */
+function isApproxEqual(a, b, absMax, relMax = undefined)
+{
+    let x = Math.abs(a - b);
+    if(absMax !== undefined && x > absMax) return false;
+
+    if(relMax !== undefined && x/a > relMax) return false;
+
+    return true;
+}
+
+
+
+/**
+ * @template T
+ * @param {T[]} arr 
+ * @param {(a: T, b: T) => boolean } fn 
+ * @returns {T[]}
+ */
+function uniqueArray(arr, fn = undefined)
+{
+    if(fn === undefined) {
+        fn = (a, b) => a === b;
+    }
+
+    let ret = [];
+    arr.forEach(e1 => {
+        let dup = false;
+        ret.forEach(e2 => {
+            if(fn(e1, e2))
+                dup = true;
+        });
+
+        if(!dup)
+            ret.push(e1);
+    });
+
+    return ret;
+}
