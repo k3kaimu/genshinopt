@@ -216,7 +216,7 @@ export class AttackEvaluator
         if(this.hasCache()) {
             infos = this.cachedInfos;
         } else {
-            infos = this.attackInfos(additionalProps);
+            infos = this.attackInfos(calc, additionalProps);
             infos = this.getAllCompressedAttackInfos(calc, infos);
         }
 
