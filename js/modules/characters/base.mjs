@@ -438,7 +438,7 @@ export let AddTalentRegister = (Base) => class extends Base {
      */
     registerTalent(obj) {
         this.talents.push(obj);
-        obj.uiList.forEach(e => {
+        obj.uiList?.forEach(e => {
             if(e == undefined) return;
 
             if(e.name && !(e.name in this))
@@ -486,7 +486,7 @@ export let AddTalentRegister = (Base) => class extends Base {
      * @param {string} target
      */
     viewHTMLList(target) {
-        let uiList = {
+        let list = {
             "Other": [],
             "Skill": [],
             "Burst": [],
@@ -497,7 +497,7 @@ export let AddTalentRegister = (Base) => class extends Base {
                 return;
 
             let str = "";
-            talent.uiList.forEach(e => {
+            talent.uiList?.forEach(e => {
                 if(e == undefined) return;
 
                 switch(e.type) {
@@ -518,19 +518,20 @@ export let AddTalentRegister = (Base) => class extends Base {
                 }
             });
 
-            uiList[talent.type].push(str);
+            if(str.length != 0)
+                list[talent.type].push(str);
         });
 
         let ret = super.viewHTMLList(target).slice(0);
 
-        if(uiList["Skill"].length)
-            ret.push(Widget.buildViewHTML(target, "元素スキル関連効果", uiList["Skill"].join("<hr>")));
+        if(list["Skill"].length)
+            ret.push(Widget.buildViewHTML(target, "元素スキル関連効果", list["Skill"].join("<hr>")));
 
-        if(uiList["Burst"].length)
-            ret.push(Widget.buildViewHTML(target, "元素爆発関連効果", uiList["Burst"].join("<hr>")));
+        if(list["Burst"].length)
+            ret.push(Widget.buildViewHTML(target, "元素爆発関連効果", list["Burst"].join("<hr>")));
 
-        if(uiList["Other"].length)
-            ret.push(Widget.buildViewHTML(target, "その他効果", uiList["Other"].join("<hr>")));
+        if(list["Other"].length)
+            ret.push(Widget.buildViewHTML(target, "その他効果", list["Other"].join("<hr>")));
 
         return ret;
     }
@@ -541,7 +542,7 @@ export let AddTalentRegister = (Base) => class extends Base {
         let obj = super.toJS();
 
         this.talents.forEach(talent => {
-            talent.uiList.forEach(e => {
+            talent.uiList?.forEach(e => {
                 if(e == undefined) return;
 
                 if(e.name)
@@ -558,7 +559,7 @@ export let AddTalentRegister = (Base) => class extends Base {
         super.fromJS(obj);
 
         this.talents.forEach(talent => {
-            talent.uiList.forEach(e => {
+            talent.uiList?.forEach(e => {
                 if(e == undefined) return;
 
                 if(e.name)

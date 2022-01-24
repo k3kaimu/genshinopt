@@ -368,7 +368,7 @@ export let XingqiuViewModel = (Base) => class extends Base {
             this.registerTalent({
                 type: "Other",
                 requiredC: 0,
-                uiList: [],
+                uiList: undefined,
                 effect: {
                     cond: (vm) => true,
                     list: [{
