@@ -1,3 +1,5 @@
+// @ts-check
+/// <reference path="../../main.js" />
 import * as Base from './base.mjs';
 import * as Widget from '../widget.mjs';
 import * as Calc from '../dmg-calc.mjs';
@@ -268,7 +270,7 @@ export class DilucViewModel extends PyroCharacterViewModel
                 label: (vm) => "炎元素ダメージ+20%（爆発後）",
             }],
             effect: {
-                cond: (vm) => vm.useDmgUpEffect(),
+                cond: (vm) => vm["useDmgUpEffect"](),
                 list: [{target: "basePyroDmg", value: (vm) => 0.20}]
             }
         });
@@ -284,7 +286,7 @@ export class DilucViewModel extends PyroCharacterViewModel
                 label: (vm) => "全ダメージ+15%（1凸，HP50%以上の敵に対して）",
             }],
             effect: {
-                cond: (vm) => vm.useC1Effect(),
+                cond: (vm) => vm["useC1Effect"](),
                 list: [{target: "baseAllDmg", value: (vm) => 0.15}]
             }
         });
@@ -318,7 +320,7 @@ export class DilucViewModel extends PyroCharacterViewModel
             }],
             // effect: undefined
             effect: {
-                cond: (vm) => vm.useC4Effect(),
+                cond: (vm) => vm["useC4Effect"](),
                 list: [{
                     target: "skillDmgBuff",
                     dynamic: true,
@@ -339,7 +341,7 @@ export class DilucViewModel extends PyroCharacterViewModel
                 label: (vm) => "通常攻撃ダメージ+30%（6凸）",
             }],
             effect: {
-                cond: (vm) => vm.useC6Effect(),
+                cond: (vm) => vm["useC6Effect"](),
                 list: [{target: "baseNormalDmg", value: (vm) => 0.30}]
             }
         });
@@ -1155,6 +1157,9 @@ export class Bennett extends Base.CharacterData
     }
 
 
+    /**
+     * @returns {PyroCharacterViewModel}
+     */
     newViewModel()
     {
         let Klass = BennettViewModel(PyroCharacterViewModel);
@@ -1263,6 +1268,10 @@ export class Bennett extends Base.CharacterData
 
 
 // ベネット
+/**
+ * @mixins
+ * @returns {*}
+ */
 export let BennettViewModel = (Base) => class extends Base
 {
     // TODO: 4凸効果は未実装

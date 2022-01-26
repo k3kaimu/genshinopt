@@ -52,23 +52,17 @@ export const UIType = {
 }
 
 
-export class UIItem
-{
-    /** @type {UIType} */
-    type;
-    /** @type {string} */
-    name;
-    /** @type {any} */
-    init;
-    /** @type {(vm: CharBase.CharacterViewModel) => string} */
-    label;
-    /** @type {{label: string, value: any}[]?} */
-    options = undefined;
-    /** @type {((vm: CharBase.CharacterViewModel) => Object)?} */
-    other;
-    /** @type {(vm: CharBase.CharacterViewModel) => string} */
-    html;
-}
+/**
+ * @typedef {{
+ *  type: UIType;
+ *  name: string;
+ *  init: any;
+ *  label?: (vm: CharBase.CharacterViewModel) => string;
+ *  options?: {label: string, value: any}[];
+ *  other?: (vm: CharBase.CharacterViewModel) => Object;
+ *  html?: (vm: CharBase.CharacterViewModel) => string;
+ * }} UIItem
+ */
 
 
 /**
@@ -129,6 +123,7 @@ export const StaticStatusType = {
     enemyRateDef: "baseEnemyRateDef",
 };
 
+/** @type {StaticStatusType[]} */
 export const staticStatusTypes = Object.values(StaticStatusType);
 
 /** ステータスを表します．StaticStatusTypeと違い，こちらは他のステータスなどから換算して決定されたり，攻撃方法によって値が変わる場合に利用します
@@ -252,8 +247,8 @@ export class TalentDefinition
 {
     /** @type {TalentType} */
     type;
-    /** @type {string} */
-    label;
+    // /** @type {string} */
+    // label;
     /** @type {number} */
     requiredC;
     /** @type {UIItem[]} */
