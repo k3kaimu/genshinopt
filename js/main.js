@@ -32,7 +32,7 @@ function reload_js(src) {
 }
 
 
-reload_js('/js/nlopt-js.js');
+// reload_js('/js/nlopt-js.js');
 
 if(location.host.startsWith('localhost')) {
     let unittest_functions = [];
