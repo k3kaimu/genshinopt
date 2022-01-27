@@ -1098,25 +1098,6 @@ export class CharacterBaseStats
     }
 
 
-    static ascLevelAtLv(numLv)
-    {
-        if(numLv <= 20)
-            return 0;
-        else if(numLv <= 40)
-            return 1;
-        else if(numLv <= 50)
-            return 2;
-        else if(numLv <= 60)
-            return 3;
-        else if(numLv <= 70)
-            return 4;
-        else if(numLv <= 80)
-            return 5;
-        else
-            return 6;
-    }
-
-
     /**
      * レベルの文字列表現を与えます．たとえば，strLv == "80"は未突破のLv80を表し，strLv == "80+"は突破済みのLv80を表します
      * @param {string} strLv 
