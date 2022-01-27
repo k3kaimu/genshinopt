@@ -402,13 +402,6 @@ class CharacterViewModelImpl
         this.burstRank = ko.observable(9);          // 爆発天賦
     }
 
-    numLevel() {
-        let strlvl = this.level();
-        if(Number(strlvl) + '' == strlvl)
-            return Number(strlvl);
-        else
-            return Number(strlvl.slice(0, strlvl.length - 1));
-    }
 
     maxNormalTalentRank() { return 11; }
     maxSkillTalentRank() { return 10; }
@@ -433,30 +426,33 @@ class CharacterViewModelImpl
      */
     applyDmgCalcImpl(calc)
     {
+        let strLv = this.level();
+        let parsedLv = parseStrLevel(strLv);
+
         calc.character = this.parent;
-        calc.characterLv = this.numLevel();
+        calc.characterLv = parseStrLevel(this.level()).level;
 
-        calc.baseAtk.value += this.parent.baseAtk.atLv(this.level());
-        calc.rateAtk.value += this.parent.rateAtk;
-        calc.baseDef.value += this.parent.baseDef.atLv(this.level());
-        calc.rateDef.value += this.parent.rateDef;
-        calc.baseHP.value += this.parent.baseHP.atLv(this.level());
-        calc.rateHP.value += this.parent.rateHP;
+        calc.baseAtk.value += this.parent.baseAtk.atLv(strLv);
+        calc.rateAtk.value += this.parent.rateAtk * ascensionAdditionalStatusMultiplier[parsedLv.rank];
+        calc.baseDef.value += this.parent.baseDef.atLv(strLv);
+        calc.rateDef.value += this.parent.rateDef * ascensionAdditionalStatusMultiplier[parsedLv.rank];
+        calc.baseHP.value += this.parent.baseHP.atLv(strLv);
+        calc.rateHP.value += this.parent.rateHP * ascensionAdditionalStatusMultiplier[parsedLv.rank];
 
-        calc.baseCrtRate.value += this.parent.baseCrtRate;
-        calc.baseCrtDmg.value += this.parent.baseCrtDmg;
+        calc.baseCrtRate.value += this.parent.baseCrtRate * ascensionAdditionalStatusMultiplier[parsedLv.rank];
+        calc.baseCrtDmg.value += this.parent.baseCrtDmg * ascensionAdditionalStatusMultiplier[parsedLv.rank];
 
-        calc.baseAnemoDmg.value += this.parent.baseAnemoDmg;
-        calc.baseGeoDmg.value += this.parent.baseGeoDmg;
-        calc.baseElectroDmg.value += this.parent.baseElectroDmg;
-        calc.basePyroDmg.value += this.parent.basePyroDmg;
-        calc.baseHydroDmg.value += this.parent.baseHydroDmg;
-        calc.baseCryoDmg.value += this.parent.baseCryoDmg;
-        calc.baseDendroDmg.value += this.parent.baseDendroDmg;
-        calc.basePhysicalDmg.value += this.parent.basePhysicalDmg;
+        calc.baseAnemoDmg.value += this.parent.baseAnemoDmg * ascensionAdditionalStatusMultiplier[parsedLv.rank];
+        calc.baseGeoDmg.value += this.parent.baseGeoDmg * ascensionAdditionalStatusMultiplier[parsedLv.rank];
+        calc.baseElectroDmg.value += this.parent.baseElectroDmg * ascensionAdditionalStatusMultiplier[parsedLv.rank];
+        calc.basePyroDmg.value += this.parent.basePyroDmg * ascensionAdditionalStatusMultiplier[parsedLv.rank];
+        calc.baseHydroDmg.value += this.parent.baseHydroDmg * ascensionAdditionalStatusMultiplier[parsedLv.rank];
+        calc.baseCryoDmg.value += this.parent.baseCryoDmg * ascensionAdditionalStatusMultiplier[parsedLv.rank];
+        calc.baseDendroDmg.value += this.parent.baseDendroDmg * ascensionAdditionalStatusMultiplier[parsedLv.rank];
+        calc.basePhysicalDmg.value += this.parent.basePhysicalDmg * ascensionAdditionalStatusMultiplier[parsedLv.rank];
 
-        calc.baseRecharge.value += this.parent.baseRecharge;
-        calc.baseMastery.value += this.parent.baseMastery;
+        calc.baseRecharge.value += this.parent.baseRecharge * ascensionAdditionalStatusMultiplier[parsedLv.rank];
+        calc.baseMastery.value += this.parent.baseMastery * ascensionAdditionalStatusMultiplier[parsedLv.rank];
 
         return calc;
     }
@@ -988,8 +984,69 @@ export const characterMaxAscensionBonus = {
 
 
 
+/**
+ * 突破によるステータスの乗数
+ */
 export const ascensionBonusMultiplier = [0, 38/182, 65/182, 101/182, 128/182, 155/182, 1];
 
+
+/**
+ * 突破による追加ステータスの乗数
+ */
+export const ascensionAdditionalStatusMultiplier = [0, 0, 0.25, 0.5, 0.5, 0.75, 1];
+
+
+/**
+ * レベルの文字列表現からレベル数値と限界突破ランクを計算する
+ * @param {string} strLv
+ * @return {{level: number, rank: number}}
+ */
+export function parseStrLevel(strLv)
+{
+    let addOne = false;
+    let numLv = 0;
+    if(strLv[strLv.length - 1] === '+') {
+        // 後で+1するフラグ
+        addOne = true;
+        numLv = Number(strLv.slice(0, strLv.length - 1));
+    } else {
+        addOne = false;
+        numLv = Number(strLv);
+    }
+
+    console.assert(!isNaN(numLv), `Illegal argument: strLv="${strLv}"`);
+
+    let ascRank;
+    if(numLv <= 20)
+        ascRank = 0;
+    else if(numLv <= 40)
+        ascRank = 1;
+    else if(numLv <= 50)
+        ascRank = 2;
+    else if(numLv <= 60)
+        ascRank = 3;
+    else if(numLv <= 70)
+        ascRank = 4;
+    else if(numLv <= 80)
+        ascRank = 5;
+    else
+        ascRank = 6;
+
+    if(addOne)
+        ascRank += 1;
+
+    return {level: numLv, rank: ascRank};
+}
+
+runUnittest(function(){
+    console.assert(parseStrLevel("80+").rank == 6);
+    console.assert(parseStrLevel("80+").level == 80);
+    console.assert(parseStrLevel("80").rank == 5);
+    console.assert(parseStrLevel("80").level == 80);
+    console.assert(parseStrLevel("0").rank == 0);
+    console.assert(parseStrLevel("0").level == 0);
+
+});
 
 
 /**
@@ -1020,7 +1077,6 @@ export class CharacterBaseStats
         this.rarity = rarity;
         this.rarityIndex = rarity == 4 ? 0 : 1;
         this.typeIndex = {HP: 0, ATK: 1, DEF: 2}[type];
-
 
         let lv90 = undefined;
 
@@ -1066,19 +1122,9 @@ export class CharacterBaseStats
      * @param {string} strLv 
      */
     atLv(strLv) {
-        let ascLv = 0;
-        let level = 0;
-
-        if(Number(strLv) + '' == strLv) {
-            level = Number(strLv);
-            ascLv = CharacterBaseStats.ascLevelAtLv(Number(level));
-        } else {
-            strLv = strLv.slice(0, strLv.length - 1);       // 最後の一文字を削除する
-            level = Number(strLv);
-            ascLv = CharacterBaseStats.ascLevelAtLv(Number(level)) + 1;
-        }
+        let {rank, level} = parseStrLevel(strLv);
 
         return this.lv01 * characterBaseStatsLevelMultiplier[level-1][this.rarityIndex]
-                + this.ascv * ascensionBonusMultiplier[ascLv];
+                + this.ascv * ascensionBonusMultiplier[rank];
     }
 }
