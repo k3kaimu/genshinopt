@@ -280,3 +280,56 @@ runUnittest(function(){
     console.assert(isApproxEqual(coefs[0], 5.10714));
     console.assert(isApproxEqual(coefs[1], 1.00714));
 });
+
+
+/**
+ * 武器やキャラクターのレベルの文字列表現からレベル数値と限界突破ランクを計算する
+ * @param {string} strLv
+ * @return {{level: number, rank: number}}
+ */
+ export function parseStrLevel(strLv)
+ {
+     let addOne = false;
+     let numLv = 0;
+     if(strLv[strLv.length - 1] === '+') {
+         // 後で+1するフラグ
+         addOne = true;
+         numLv = Number(strLv.slice(0, strLv.length - 1));
+     } else {
+         addOne = false;
+         numLv = Number(strLv);
+     }
+ 
+     console.assert(!isNaN(numLv), `Illegal argument: strLv="${strLv}"`);
+ 
+     let ascRank;
+     if(numLv <= 20)
+         ascRank = 0;
+     else if(numLv <= 40)
+         ascRank = 1;
+     else if(numLv <= 50)
+         ascRank = 2;
+     else if(numLv <= 60)
+         ascRank = 3;
+     else if(numLv <= 70)
+         ascRank = 4;
+     else if(numLv <= 80)
+         ascRank = 5;
+     else
+         ascRank = 6;
+ 
+     if(addOne)
+         ascRank += 1;
+ 
+     return {level: numLv, rank: ascRank};
+ }
+ 
+ runUnittest(function(){
+     console.assert(parseStrLevel("80+").rank == 6);
+     console.assert(parseStrLevel("80+").level == 80);
+     console.assert(parseStrLevel("80").rank == 5);
+     console.assert(parseStrLevel("80").level == 80);
+     console.assert(parseStrLevel("0").rank == 0);
+     console.assert(parseStrLevel("0").level == 0);
+ });
+ 
