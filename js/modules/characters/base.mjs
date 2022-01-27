@@ -402,6 +402,13 @@ class CharacterViewModelImpl
         this.burstRank = ko.observable(9);          // 爆発天賦
     }
 
+    numLevel() {
+        let strlvl = this.level();
+        if(Number(strlvl) + '' == strlvl)
+            return Number(strlvl);
+        else
+            return Number(strlvl.slice(0, strlvl.length - 1));
+    }
 
     maxNormalTalentRank() { return 11; }
     maxSkillTalentRank() { return 10; }
@@ -427,6 +434,7 @@ class CharacterViewModelImpl
     applyDmgCalcImpl(calc)
     {
         calc.character = this.parent;
+        calc.characterLv = this.numLevel();
 
         calc.baseAtk.value += this.parent.baseAtk.atLv(this.level());
         calc.rateAtk.value += this.parent.rateAtk;
@@ -490,7 +498,7 @@ class CharacterViewModelImpl
      */
     toJS() {
         let obj = {};
-        obj.level = this.level;
+        obj.level = this.level();
         obj.parent_id  = this.parent.id;
         obj.constell   = this.constell();
         obj.normalRank = this.normalRank();
