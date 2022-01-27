@@ -380,4 +380,5 @@ runUnittest(function(){
     console.assert(isApproxEqual(obj.atLv("80"), 648, 0.4, 1e-3));
     console.assert(isApproxEqual(obj.atLv("70+"), 586, 0.4, 1e-3));
     console.assert(isApproxEqual(obj.atLv("70"), 555, 0.4, 1e-3));
+    console.assert(isApproxEqual(obj.atLv("1"), 49, 0.4, 1e-3));
 });
