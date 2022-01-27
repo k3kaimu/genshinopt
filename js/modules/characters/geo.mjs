@@ -37,9 +37,9 @@ export class AratakiItto extends Base.CharacterData
             5,
             "Geo",
             "Claymore",
-            227,        /* bAtk */
-            959,        /* bDef */
-            12858,      /* bHP */
+            [18, 46, 92, 118, 148, 174, 200, 227],                  /* bAtk */
+            [75, 194, 386, 496, 622, 734, 846, 959],                /* bDef */
+            [1001, 2597, 5170, 6649, 8341, 9838, 11345, 12858],     /* bHP */
             "baseCrtRate",  /* bBonusType */
             0.192       /* bBonusValue */
         );
@@ -930,9 +930,9 @@ export class YunJin extends Base.CharacterData
             4,
             "Geo",
             "Polearm",
-            191,        /* bAtk */
-            734,        /* bDef */
-            10657,      /* bHP */
+            [16, 41, 79, 101, 126, 148, 169, 191],              /* bAtk */
+            [62, 204, 306, 389, 484, 567, 651, 734],            /* bDef */
+            [894, 2296, 4438, 5651, 7021, 8233, 9445, 10657],   /* bHP */
             "baseRecharge",  /* bBonusType */
             0.267       /* bBonusValue */
         );

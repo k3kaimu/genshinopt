@@ -37,10 +37,10 @@ export class RaidenShogun extends Base.CharacterData
             5,
             "Electro",
             "Polearm",
-            337,        /* bAtk */
-            789,        /* bDef */
-            12907,      /* bHP */
-            "baseRecharge",  /* bBonusType */
+            [26, 68, 136, 175, 219, 258, 297, 337],                 /* bAtk */
+            [61, 159, 317, 408, 512, 604, 696, 789],                /* bDef */
+            [1005, 2606, 5189, 6675, 8373, 9875, 11388, 12907],     /* bHP */
+            "baseRecharge", /* bBonusType */
             0.32        /* bBonusValue */
         )
     }
@@ -176,11 +176,11 @@ export class RaidenShogunViewModel extends Base.CharacterViewModel
             #raidenData = data;
 
             // 2凸効果
-            enemyRateDef(attackProps) {
+            ignoreEnemyDef(attackProps) {
                 if(this.#raidenData.constell >= 2 && (attackProps.isBurst || false))
-                    return super.enemyRateDef(attackProps).mul(1 - 0.6);
+                    return super.ignoreEnemyDef(attackProps).add(0.6);
                 else
-                    return super.enemyRateDef(attackProps);
+                    return super.ignoreEnemyDef(attackProps);
             }
 
 

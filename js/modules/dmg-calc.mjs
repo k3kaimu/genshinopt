@@ -859,6 +859,8 @@ export class DamageCalculator
     {
         this.character = undefined;
         this.weapon = undefined;
+        this.characterLv = 90;
+        this.enemyLv = 90;
 
         this.baseAtk = VGData.zero();
         this.rateAtk = VGData.zero();
@@ -925,6 +927,9 @@ export class DamageCalculator
 
         // 敵の防御の倍率
         this.baseEnemyRateDef = VGData.constant(1);
+
+        // 敵の防御力を無視
+        this.baseIgnoreEnemyDef = VGData.constant(0);
     }
 
 
@@ -992,6 +997,7 @@ export class DamageCalculator
         this.basePhysicalResis = this.basePhysicalResis.dup();
 
         this.baseEnemyRateDef = this.baseEnemyRateDef.dup();
+        this.baseIgnoreEnemyDef = this.baseIgnoreEnemyDef.dup();
     }
 
 
@@ -1136,7 +1142,7 @@ export class DamageCalculator
         
         return dmg
                 .mul(this.calculateVaporizeMeltBonus(attackProps).as('VapMeltBonus'))
-                .mul(this.calcAttenuationByEnemy(attackProps, 90, 90).as('LvlAtt'))
+                .mul(this.calcAttenuationByEnemy(attackProps).as('LvlAtt'))
                 .mul(this.calculateTotalResistanceBonus(attackProps).as('Resis'));
     }
 
@@ -1206,6 +1212,7 @@ export class DamageCalculator
     mastery(attackProps) { return this.baseMastery.add(this.artMastery); }
 
     enemyRateDef(attackProps) { return this.baseEnemyRateDef; }
+    ignoreEnemyDef(attackProps) { return this.baseIgnoreEnemyDef; }
 
     calculateTotalDmgBuff(attackProps) {
         var dmgbuff = this.allDmgBuff(attackProps);
@@ -1307,9 +1314,10 @@ export class DamageCalculator
     }
 
 
-    calcAttenuationByEnemy(attackProps, charLvl, enemyLvl)
+    calcAttenuationByEnemy(attackProps)
     {
-        return (this.enemyRateDef(attackProps).mul(enemyLvl + 100).add(charLvl + 100)).inv().mul(charLvl + 100);
+        let rateDef = this.enemyRateDef(attackProps).mul(VGData.constant(1).sub(this.ignoreEnemyDef(attackProps)));
+        return (rateDef.mul(this.enemyLv + 100).add(this.characterLv + 100)).inv().mul(this.characterLv + 100);
     }
 
 

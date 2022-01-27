@@ -38,7 +38,7 @@ export function checkUnittestForCharacter(character, setting)
     let checkUniqe = {};
     cvm.presetAttacks().forEach(e => {
         let val = e.evaluate(calc).value;
-        ok = ok && ( Math.round(val) == Math.round(setting.expected[e.id]) );
+        ok = ok && (isApproxEqual(val, setting.expected[e.id], undefined, 1e-3));
 
         // presetAttacks()のidがユニークか確認する
         if(e.id in checkUniqe)
@@ -234,3 +234,49 @@ function percentToNumber(elems) {
     else
         return elems;
 }
+
+
+/**
+ * ys = mat * xsのベクトルxsを推定します．ここでxsは2要素ベクトルです．
+ * matの型はnumber[2][ys.length]です．
+ * @param {[number, number][]} mat 
+ * @param {number[]} y
+ * @return {[number, number]}
+ */
+export function estimateTwoParamLeastSquares(mat, ys)
+{
+    let len = ys.length;
+
+    let gram = [[0, 0], [0, 0]];
+    for(let i = 0; i < 2; ++i)
+        for(let j = 0; j < 2; ++j)
+            for(let n = 0; n < len; ++n)
+                gram[i][j] += mat[n][i] * mat[n][j];
+
+
+    let det = gram[0][0] * gram[1][1] - gram[1][0] * gram[0][1];
+    let invgram = [[0, 0], [0, 0]];
+    invgram[0][0] = +gram[1][1] / det;
+    invgram[1][1] = +gram[0][0] / det;
+    invgram[0][1] = -gram[0][1] / det;
+    invgram[1][0] = -gram[1][0] / det;
+
+    let matys = [0, 0];
+    for(let i = 0; i < 2; ++i)
+        for(let n = 0; n < len; ++n)
+            matys[i] += mat[n][i] * ys[n];
+
+    return [
+        invgram[0][0] * matys[0] + invgram[0][1] * matys[1],
+        invgram[1][0] * matys[0] + invgram[1][1] * matys[1]
+    ];
+}
+
+runUnittest(function(){
+    let coefs = estimateTwoParamLeastSquares(
+        [[0.0, 1], [0.2, 1], [0.4, 1], [0.6, 1], [0.8, 1], [1.0, 1], [1.2, 1]],
+        [1.0, 1.9, 3.2, 4.3, 4.8, 6.1, 7.2]);
+
+    console.assert(isApproxEqual(coefs[0], 5.10714));
+    console.assert(isApproxEqual(coefs[1], 1.00714));
+});

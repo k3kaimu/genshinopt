@@ -320,9 +320,9 @@ export class Shenhe extends Base.CharacterData
             5,
             "Cryo",
             "Polearm",
-            304,            /* bAtk */
-            830,            /* bDef */
-            12993,          /* bHP */
+            [23, 61, 122, 157, 197, 232, 268, 304],                 /* bAtk */
+            [65, 168, 334, 429, 538, 635, 732, 830],                /* bDef */
+            [1011, 2624, 5224, 6719, 8429, 9941, 11463, 12993],     /* bHP */
             "rateAtk",      /* bBonusType */
             0.288           /* bBonusValue */
         );
