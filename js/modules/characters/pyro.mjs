@@ -1260,7 +1260,7 @@ export class Bennett extends Base.CharacterData
         {
             id: "burst_heal",
             label: "元素爆発による回復量",
-            func(calc, vm){ return calc.hp({}).mul(Bennett.burstTalentTable[vm.burstRank()-1][1]).add(Bennett.burstTalentTable[vm.burstRank()-1][2]); },
+            func(calc, vm){ return calc.calculateHealing(calc.hp({}).mul(Bennett.burstTalentTable[vm.burstRank()-1][1]).add(Bennett.burstTalentTable[vm.burstRank()-1][2])); },
             attackProps: { }
         },
     ];

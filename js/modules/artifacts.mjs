@@ -1765,7 +1765,7 @@ export function applyDmgCalcArtifactMainStatus(calc, character, statusType)
             break;
 
         case "Heal":
-            // calc.baseHeal.value += 0.359;
+            calc.baseHealingBonus.value += 0.359;
             break;
 
         default:

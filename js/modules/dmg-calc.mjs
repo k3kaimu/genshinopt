@@ -904,6 +904,7 @@ export class DamageCalculator
         this.baseMastery = VGData.zero();       // 元素熟知
 
         this.baseRateShieldStrength = VGData.zero();    // シールド強化
+        this.baseHealingBonus = VGData.zero();          // 与える治癒効果
 
         // 聖遺物サブオプション
         this.artRateAtk = VGData.newRateAtk(0);
@@ -977,6 +978,7 @@ export class DamageCalculator
         this.baseMastery = this.baseMastery.dup();
 
         this.baseRateShieldStrength = this.baseRateShieldStrength.dup();
+        this.baseHealingBonus = this.baseHealingBonus.dup();
 
         this.artRateAtk = this.artRateAtk.dup();
         this.artRateDef = this.artRateDef.dup();
@@ -1276,6 +1278,12 @@ export class DamageCalculator
         } else {
             return VGData.constant(1).div(dmgResis.mul(4).add(1));
         }
+    }
+
+
+    calculateHealing(baseValue)
+    {
+        return this.baseHealingBonus.add(1).mul(baseValue);
     }
 
 
