@@ -15,29 +15,29 @@ export class WeaponData
         */
         this.weaponType = weaponType;
 
-        this.baseAtk = bAtk;
-        this.rateAtk = 0;
-        this.baseDef = 0;
-        this.rateDef = 0;
-        this.baseHP = 0;
-        this.rateHP = 0;
+        this.baseAtk = new WeaponBaseATK(rarity, bAtk);
+        this.rateAtk = new WeaponSubStatus(rarity, 0);
+        this.baseDef = new WeaponSubStatus(rarity, 0);
+        this.rateDef = new WeaponSubStatus(rarity, 0);
+        this.baseHP = new WeaponSubStatus(rarity, 0);
+        this.rateHP = new WeaponSubStatus(rarity, 0);
 
-        this.baseCrtRate = 0;
-        this.baseCrtDmg = 0;
+        this.baseCrtRate = new WeaponSubStatus(rarity, 0);
+        this.baseCrtDmg = new WeaponSubStatus(rarity, 0);
 
-        this.baseAnemoDmg = 0;
-        this.baseGeoDmg = 0;
-        this.baseElectroDmg = 0;
-        this.basePyroDmg = 0;
-        this.baseHydroDmg = 0;
-        this.baseCryoDmg = 0;
-        this.baseDendroDmg = 0;
-        this.basePhysicalDmg = 0;
+        this.baseAnemoDmg = new WeaponSubStatus(rarity, 0);
+        this.baseGeoDmg = new WeaponSubStatus(rarity, 0);
+        this.baseElectroDmg = new WeaponSubStatus(rarity, 0);
+        this.basePyroDmg = new WeaponSubStatus(rarity, 0);
+        this.baseHydroDmg = new WeaponSubStatus(rarity, 0);
+        this.baseCryoDmg = new WeaponSubStatus(rarity, 0);
+        this.baseDendroDmg = new WeaponSubStatus(rarity, 0);
+        this.basePhysicalDmg = new WeaponSubStatus(rarity, 0);
 
-        this.baseRecharge = 0;
-        this.baseMastery = 0;
+        this.baseRecharge = new WeaponSubStatus(rarity, 0);
+        this.baseMastery = new WeaponSubStatus(rarity, 0);
 
-        this[bBonusType] += bBonusValue;
+        this[bBonusType] = new WeaponSubStatus(rarity, bBonusValue);
     }
 
 
@@ -53,6 +53,12 @@ export class WeaponViewModel
     constructor(data)
     {
         this.parent = data;
+
+        if(!!this.parent && (this.parent.rarity == 1 || this.parent.rarity == 2))
+            this.level = ko.observable("70");
+        else
+            this.level = ko.observable("90");
+
         this.rank = ko.observable(0);
     }
 
@@ -68,29 +74,31 @@ export class WeaponViewModel
 
     applyDmgCalcImpl(calc)
     {
+        let lvl = this.level();
+
         calc.weapon = this.parent;
 
-        calc.baseAtk.value += this.parent.baseAtk;
-        calc.rateAtk.value += this.parent.rateAtk;
-        calc.baseDef.value += this.parent.baseDef;
-        calc.rateDef.value += this.parent.rateDef;
-        calc.baseHP.value += this.parent.baseHP;
-        calc.rateHP.value += this.parent.rateHP;
+        calc.baseAtk.value += this.parent.baseAtk.atLv(lvl);
+        calc.rateAtk.value += this.parent.rateAtk.atLv(lvl);
+        calc.baseDef.value += this.parent.baseDef.atLv(lvl);
+        calc.rateDef.value += this.parent.rateDef.atLv(lvl);
+        calc.baseHP.value += this.parent.baseHP.atLv(lvl);
+        calc.rateHP.value += this.parent.rateHP.atLv(lvl);
 
-        calc.baseCrtRate.value += this.parent.baseCrtRate;
-        calc.baseCrtDmg.value += this.parent.baseCrtDmg;
+        calc.baseCrtRate.value += this.parent.baseCrtRate.atLv(lvl);
+        calc.baseCrtDmg.value += this.parent.baseCrtDmg.atLv(lvl);
 
-        calc.baseAnemoDmg.value += this.parent.baseAnemoDmg;
-        calc.baseGeoDmg.value += this.parent.baseGeoDmg;
-        calc.baseElectroDmg.value += this.parent.baseElectroDmg;
-        calc.basePyroDmg.value += this.parent.basePyroDmg;
-        calc.baseHydroDmg.value += this.parent.baseHydroDmg;
-        calc.baseCryoDmg.value += this.parent.baseCryoDmg;
-        calc.baseDendroDmg.value += this.parent.baseDendroDmg;
-        calc.basePhysicalDmg.value += this.parent.basePhysicalDmg;
+        calc.baseAnemoDmg.value += this.parent.baseAnemoDmg.atLv(lvl);
+        calc.baseGeoDmg.value += this.parent.baseGeoDmg.atLv(lvl);
+        calc.baseElectroDmg.value += this.parent.baseElectroDmg.atLv(lvl);
+        calc.basePyroDmg.value += this.parent.basePyroDmg.atLv(lvl);
+        calc.baseHydroDmg.value += this.parent.baseHydroDmg.atLv(lvl);
+        calc.baseCryoDmg.value += this.parent.baseCryoDmg.atLv(lvl);
+        calc.baseDendroDmg.value += this.parent.baseDendroDmg.atLv(lvl);
+        calc.basePhysicalDmg.value += this.parent.basePhysicalDmg.atLv(lvl);
 
-        calc.baseRecharge.value += this.parent.baseRecharge;
-        calc.baseMastery.value += this.parent.baseMastery;
+        calc.baseRecharge.value += this.parent.baseRecharge.atLv(lvl);
+        calc.baseMastery.value += this.parent.baseMastery.atLv(lvl);
 
         return calc;
     }
@@ -105,12 +113,14 @@ export class WeaponViewModel
     toJS() {
         let obj = {};
         obj.parent_id = this.parent.id;
+        obj.level = this.level();
         obj.rank = this.rank();
         return obj;
     }
 
 
     fromJS(obj) {
+        this.level(obj.level || "90");
         this.rank(obj.rank);
     }
 }
@@ -324,8 +334,11 @@ class WeaponBaseATK
             this.rankBaseATKTable = [0, 19.5, 38.9, 58.4, 77.8, 97.3, 116.7];
 
             switch(baseATKLv90){
-                case 448:
+                case 448: // もしかして447と448は誤差？
                     this.levelBaseATKTable = [40, 102, 187, 239, 292, 344, 396, 448];
+                    break;
+                case 447:
+                    this.levelBaseATKTable = [40, 102, 187, 239, 292, 344, 396, 447];
                     break;
                 case 401:
                     this.levelBaseATKTable = [39, 94, 169, 216, 263, 309, 355, 401];
@@ -345,9 +358,15 @@ class WeaponBaseATK
         }
         else
         {
-            this.rankBaseATKTable = [0, 11.7, 23.3, 35.0, 46.7];
-            this.levelBaseATKTable = [23, 56, 102, 130, 158, 185];
-            console.assert(baseATKLv90 === 185, `Illegal baseATKLv90=${baseATKLv90}`);
+            if(baseATKLv90 == 200) {
+                // テスト用武器
+                this.rankBaseATKTable = [0, 11.7, 23.3, 35.0, 46.7];
+                this.levelBaseATKTable = [23, 56, 102, 130, 158, 200];
+            } else {
+                this.rankBaseATKTable = [0, 11.7, 23.3, 35.0, 46.7];
+                this.levelBaseATKTable = [23, 56, 102, 130, 158, 185];
+                console.assert(baseATKLv90 === 185, `Illegal baseATKLv90=${baseATKLv90}`);
+            }
         }
     }
 
@@ -381,4 +400,130 @@ runUnittest(function(){
     console.assert(isApproxEqual(obj.atLv("70+"), 586, 0.4, 1e-3));
     console.assert(isApproxEqual(obj.atLv("70"), 555, 0.4, 1e-3));
     console.assert(isApproxEqual(obj.atLv("1"), 49, 0.4, 1e-3));
+
+    let test = new WeaponBaseATK(1, 200);
+    console.assert(isApproxEqual(test.atLv("70"), 200, 0.4, 1e-3));
 });
+
+
+
+/**
+ * 武器のサブステータスの計算をします
+ * https://genshin-impact.fandom.com/wiki/Level_Scaling/Weapon#Sub_Stat
+ */
+class WeaponSubStatus
+{
+    constructor(rarity, baseLv90)
+    {
+        this.rarity = rarity;
+
+        if(this.rarity == 1 || this.rarity == 2)
+            this.lv01 = baseLv90 / weaponSubStatusLevelMultiplier[70 - 1];
+        else
+            this.lv01 = baseLv90 / weaponSubStatusLevelMultiplier[90 - 1];
+    }
+
+
+    atLv(strLv)
+    {
+        let {rank, level} = Utils.parseStrLevel(strLv);
+        return this.lv01 * weaponSubStatusLevelMultiplier[level - 1];
+    }
+}
+
+
+/**
+ * https://genshin-impact.fandom.com/wiki/Level_Scaling/Weapon#Sub_Stat
+ */
+export const weaponSubStatusLevelMultiplier = [
+    1.000,
+    1.000,
+    1.000,
+    1.000,
+    1.162,
+    1.162,
+    1.162,
+    1.162,
+    1.162,
+    1.363,
+    1.363,
+    1.363,
+    1.363,
+    1.363,
+    1.565,
+    1.565,
+    1.565,
+    1.565,
+    1.565,
+    1.767,
+    1.767,
+    1.767,
+    1.767,
+    1.767,
+    1.969,
+    1.969,
+    1.969,
+    1.969,
+    1.969,
+    2.171,
+    2.171,
+    2.171,
+    2.171,
+    2.171,
+    2.373,
+    2.373,
+    2.373,
+    2.373,
+    2.373,
+    2.575,
+    2.575,
+    2.575,
+    2.575,
+    2.575,
+    2.777,
+    2.777,
+    2.777,
+    2.777,
+    2.777,
+    2.979,
+    2.979,
+    2.979,
+    2.979,
+    2.979,
+    3.181,
+    3.181,
+    3.181,
+    3.181,
+    3.181,
+    3.383,
+    3.383,
+    3.383,
+    3.383,
+    3.383,
+    3.585,
+    3.585,
+    3.585,
+    3.585,
+    3.585,
+    3.786,
+    3.786,
+    3.786,
+    3.786,
+    3.786,
+    3.988,
+    3.988,
+    3.988,
+    3.988,
+    3.988,
+    4.190,
+    4.190,
+    4.190,
+    4.190,
+    4.190,
+    4.392,
+    4.392,
+    4.392,
+    4.392,
+    4.392,
+    4.594,
+];
