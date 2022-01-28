@@ -4,18 +4,84 @@ modules_js: ['/js/page/calc.js']
 title: ダメージ計算（作成中）
 ---
 
-<h4 class="h4">キャラ設定</h4>
-<div class="mb-5" data-bind="with: characterSelector">
-{% include ui/character_selector.html target_from_root="$root.characterSelector" %}
+<div class="mb-4" data-bind="with: bundleSetting">
+  {% include ui/bundle_setting.html id="bundleSetting" target_from_root="$root.bundleSetting" %}
 </div>
 
-<h4 class="h4">武器設定</h4>
-<div class="mb-5" data-bind="with: weaponSelector">
-{% include ui/weapon_selector.html target_from_root="$root.weaponSelector" %}
-</div>
 
-<h4 class="h4">聖遺物設定</h4>
-<div class="mb-5" data-bind="with: artifactSelector">
-{% include ui/artifact_selector.html target_from_root="$root.artifactSelector" %}
-</div>
+<h6>聖遺物詳細</h6>
 
+<p>
+  原神で「キャラクター > 聖遺物 > 聖遺物詳細」で画面に表示されるステータス値を入力してください．
+</p>
+
+<div class="form-row mb-4" data-bind="with: artifactStatus">
+  <div class="col-sm-3 col-6">
+    <label>HP</label>
+    <input type="number" class="form-control" data-bind="value: hp" placeholder="例：1000">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>攻撃力</label>
+    <input type="number" class="form-control" data-bind="value: atk" placeholder="例：200">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>防御力</label>
+    <input type="number" class="form-control" data-bind="value: def" placeholder="例：200">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>元素熟知</label>
+    <input type="number" class="form-control" data-bind="value: mastery" placeholder="例：200">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>会心率(%)</label>
+    <input type="number" class="form-control" data-bind="value: crtRate" placeholder="例：20">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>会心ダメージ(%)</label>
+    <input type="number" class="form-control" data-bind="value: crtDmg" placeholder="例：20">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>与える治癒効果(%)</label>
+    <input type="number" class="form-control" data-bind="value: healingBonus" placeholder="例：20">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>元素チャージ効率(%)</label>
+    <input type="number" class="form-control" data-bind="value: recharge" placeholder="例：20">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>シールド強化(%)</label>
+    <input type="number" class="form-control" data-bind="value: shieldBonus" placeholder="例：20">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>炎元素ダメージ(%)</label>
+    <input type="number" class="form-control" data-bind="value: pyroDmg" placeholder="例：20">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>水元素ダメージ(%)</label>
+    <input type="number" class="form-control" data-bind="value: hydroDmg" placeholder="例：20">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>草元素ダメージ(%)</label>
+    <input type="number" class="form-control" data-bind="value: dendroDmg" placeholder="例：20">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>雷元素ダメージ(%)</label>
+    <input type="number" class="form-control" data-bind="value: electroDmg" placeholder="例：20">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>風元素ダメージ(%)</label>
+    <input type="number" class="form-control" data-bind="value: anemoDmg" placeholder="例：20">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>氷元素ダメージ(%)</label>
+    <input type="number" class="form-control" data-bind="value: cryoDmg" placeholder="例：20">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>岩元素ダメージ(%)</label>
+    <input type="number" class="form-control" data-bind="value: geoDmg" placeholder="例：20">
+  </div>
+  <div class="col-sm-3 col-6">
+    <label>物理元素ダメージ(%)</label>
+    <input type="number" class="form-control" data-bind="value: physicalDmg" placeholder="例：20">
+  </div>
+</div>
