@@ -209,6 +209,11 @@ export function WeaponSelector(selectedChar)
         return !(this.selected() == undefined);
     }.bind(this);
 
+    this.applyDmgCalc = function(calc)
+    {
+        return this.viewModel().applyDmgCalc(calc);
+    }.bind(this);
+
     this.toJS  = function() {
         let obj = {};
         obj.weapon = this.viewModel().toJS();
@@ -275,6 +280,17 @@ export function ArtifactSelector()
 
     this.isValid = function() {
         return !(this.selected1() == undefined || this.selected2() == undefined);
+    }.bind(this);
+
+
+    this.applyDmgCalc = function(calc) {
+        if(this.selected1() != undefined)
+            calc = this.viewModel1().applyDmgCalc(calc);
+
+        if(this.selected2() != undefined)
+            calc = this.viewModel2().applyDmgCalc(calc);
+
+        return calc;
     }.bind(this);
 
 
