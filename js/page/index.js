@@ -75,6 +75,7 @@ class BundleSettingList extends UI.TabListViewModel
             bAttack: this.enableAttack,
             bWeapon: this.enableWeapon,
             bArtifact: this.enableArtifact,
+            bArtifactStatus: false,
             bExternalBuff: this.enableExBuff,
         }));
 

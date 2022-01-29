@@ -37,6 +37,14 @@
 </div>
 <!-- /ko -->
 
+<!-- ko if: enableArtifactStatus -->
+<h6 data-bind="css: {'text-danger': !artifactStatusSetting.isValid()}">聖遺物ステータス詳細</h6>
+<div class="mb-4" data-bind="with: artifactStatusSetting">
+{% assign target = include.target_from_root | append: ".artifactStatusSetting" %}
+{% include ui/artifact_status_setting.html target_from_root=target isList=false %}
+</div>
+<!-- /ko -->
+
 <!-- ko if: enableExBuff -->
 <h6 data-bind="css: {'text-danger': !exbuffSetting.isValid()}">バフ等の設定</h6>
 <div data-bind="with: exbuffSetting">

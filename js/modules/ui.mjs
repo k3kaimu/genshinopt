@@ -327,6 +327,117 @@ export function ArtifactSelector()
 }
 
 
+export class ArtifactStatusSetting
+{
+    constructor()
+    {
+        this.hp = ko.observable(0);
+        this.atk = ko.observable(0);
+        this.def = ko.observable(0);
+        this.mastery = ko.observable(0);
+        this.crtRate = ko.observable(0);
+        this.crtDmg = ko.observable(0);
+        this.healingBonus = ko.observable(0);
+        this.recharge = ko.observable(0);
+        this.shieldBonus = ko.observable(0);
+        this.pyroDmg = ko.observable(0);
+        this.hydroDmg = ko.observable(0);
+        this.dendroDmg = ko.observable(0);
+        this.electroDmg = ko.observable(0);
+        this.anemoDmg = ko.observable(0);
+        this.cryoDmg = ko.observable(0);
+        this.geoDmg = ko.observable(0);
+        this.physicalDmg = ko.observable(0);
+    }
+
+
+    static getValue(v)
+    {
+        let x = Number(v);
+        if(isNaN(x))
+            return 0;
+        else
+            return x;
+    }
+
+
+    /**
+     * @param {Calc.DamageCalculator} calc 
+     */
+    applyDmgCalc(calc)
+    {
+        calc.addHP.value += ArtifactStatusSetting.getValue(this.hp());
+        calc.addAtk.value += ArtifactStatusSetting.getValue(this.atk());
+        calc.addDef.value += ArtifactStatusSetting.getValue(this.def());
+        calc.baseMastery.value += ArtifactStatusSetting.getValue(this.mastery());
+        calc.baseCrtRate.value += ArtifactStatusSetting.getValue(this.crtRate());
+        calc.baseCrtDmg.value += ArtifactStatusSetting.getValue(this.crtDmg());
+        calc.baseHealingBonus.value += ArtifactStatusSetting.getValue(this.healingBonus());
+        calc.baseRecharge.value += ArtifactStatusSetting.getValue(this.recharge());
+        calc.baseRateShieldStrength.value += ArtifactStatusSetting.getValue(this.shieldBonus());
+        calc.basePyroDmg.value += ArtifactStatusSetting.getValue(this.pyroDmg());
+        calc.baseHydroDmg.value += ArtifactStatusSetting.getValue(this.hydroDmg());
+        calc.baseDendroDmg.value += ArtifactStatusSetting.getValue(this.dendroDmg());
+        calc.baseElectroDmg.value += ArtifactStatusSetting.getValue(this.electroDmg());
+        calc.baseAnemoDmg.value += ArtifactStatusSetting.getValue(this.anemoDmg());
+        calc.baseCryoDmg.value += ArtifactStatusSetting.getValue(this.cryoDmg());
+        calc.baseGeoDmg.value += ArtifactStatusSetting.getValue(this.geoDmg());
+        calc.basePhysicalDmg.value += ArtifactStatusSetting.getValue(this.physicalDmg());
+
+        return calc;
+    }
+
+
+    isValid() { return true; }
+
+
+    toJS()
+    {
+        let obj = {};
+        obj.hp = this.hp();
+        obj.atk = this.atk();
+        obj.def = this.def();
+        obj.mastery = this.mastery();
+        obj.crtRate = this.crtRate();
+        obj.crtDmg = this.crtDmg();
+        obj.healingBonus = this.healingBonus();
+        obj.recharge = this.recharge();
+        obj.shieldBonus = this.shieldBonus();
+        obj.pyroDmg = this.pyroDmg();
+        obj.hydroDmg = this.hydroDmg();
+        obj.dendroDmg = this.dendroDmg();
+        obj.electroDmg = this.electroDmg();
+        obj.anemoDmg = this.anemoDmg();
+        obj.cryoDmg = this.cryoDmg();
+        obj.geoDmg = this.geoDmg();
+        obj.physicalDmg = this.physicalDmg();
+        return obj;
+    }
+
+
+    fromJS(obj)
+    {
+        this.hp(ArtifactStatusSetting.getValue(obj.hp));
+        this.atk(ArtifactStatusSetting.getValue(obj.atk));
+        this.def(ArtifactStatusSetting.getValue(obj.def));
+        this.mastery(ArtifactStatusSetting.getValue(obj.mastery));
+        this.crtRate(ArtifactStatusSetting.getValue(obj.crtRate));
+        this.crtDmg(ArtifactStatusSetting.getValue(obj.crtDmg));
+        this.healingBonus(ArtifactStatusSetting.getValue(obj.healingBonus));
+        this.recharge(ArtifactStatusSetting.getValue(obj.recharge));
+        this.shieldBonus(ArtifactStatusSetting.getValue(obj.shieldBonus));
+        this.pyroDmg(ArtifactStatusSetting.getValue(obj.pyroDmg));
+        this.hydroDmg(ArtifactStatusSetting.getValue(obj.hydroDmg));
+        this.dendroDmg(ArtifactStatusSetting.getValue(obj.dendroDmg));
+        this.electroDmg(ArtifactStatusSetting.getValue(obj.electroDmg));
+        this.anemoDmg(ArtifactStatusSetting.getValue(obj.anemoDmg));
+        this.cryoDmg(ArtifactStatusSetting.getValue(obj.cryoDmg));
+        this.geoDmg(ArtifactStatusSetting.getValue(obj.geoDmg));
+        this.physicalDmg(ArtifactStatusSetting.getValue(obj.physicalDmg));
+    }
+}
+
+
 export function ExternalBuffSetting()
 {
     function BuffItem() {
@@ -521,6 +632,8 @@ export class CharacterVMSetting
     constructor(selectedCharacterKO)
     {
         this.selected = selectedCharacterKO;
+
+        /** @type {KnockoutReadonlyComputed<Data.CharacterViewModel>} */
         this.viewModel = ko.pureComputed(function(){
             let char = this.selected();
             if(char == undefined)
@@ -756,17 +869,6 @@ export class BundleSetting
 {
     /**
      * 
-     * @param {*} enableCharacterPicker 
-     * @param {*} selectedCharacterKO 
-     * @param {*} enableCharacter 
-     * @param {*} enableAttack 
-     * @param {*} enableWeapon 
-     * @param {*} enableArtifact 
-     * @param {*} enableExBuff 
-     */
-
-    /**
-     * 
      * @param {{
      *  bCharPicker: bool | KnockoutObservable<bool>,
      *  selectedChar: KnockoutObservable<Data.CharacterData> | undefined,
@@ -774,6 +876,7 @@ export class BundleSetting
      *  bAttack: bool | KnockoutObservable<bool>,
      *  bWeapon: bool | KnockoutObservable<bool>,
      *  bArtifact: bool | KnockoutObservable<bool>,
+     *  bArtifactStatus: bool | KnockoutObservable<bool>,
      *  bExternalBuff: bool | KnockoutObservable<bool>
      * }} setting 
      */
@@ -784,6 +887,7 @@ export class BundleSetting
         this.enableAttack = ko.isObservable(setting.bAttack) ? setting.bAttack : ko.observable(setting.bAttack);
         this.enableWeapon = ko.isObservable(setting.bWeapon) ? setting.bWeapon : ko.observable(setting.bWeapon);
         this.enableArtifact = ko.isObservable(setting.bArtifact) ? setting.bArtifact : ko.observable(setting.bArtifact);
+        this.enableArtifactStatus = ko.isObservable(setting.bArtifactStatus) ? setting.bArtifactStatus : ko.observable(setting.bArtifactStatus);
         this.enableExBuff = ko.isObservable(setting.bExternalBuff) ? setting.bExternalBuff : ko.observable(setting.bExternalBuff);
 
         if(this.enableCharacterPicker())
@@ -796,6 +900,7 @@ export class BundleSetting
 
         this.weaponSelector = new WeaponSelector(setting.selectedChar ?? this.characterPicker.selected);
         this.artifactSelector = new ArtifactSelector();
+        this.artifactStatusSetting = new ArtifactStatusSetting();
         this.exbuffSetting = new ExternalBuffSetting();
     }
 
@@ -808,6 +913,7 @@ export class BundleSetting
         ret = ret && (!this.enableAttack()   || this.attackSetting.isValid());
         ret = ret && (!this.enableWeapon()   || this.weaponSelector.isValid());
         ret = ret && (!this.enableArtifact() || this.artifactSelector.isValid());
+        ret = ret && (!this.enableArtifactStatus() || this.artifactStatusSetting.isValid());
         ret = ret && (!this.enableExBuff()   || this.exbuffSetting.isValid());
         return ret;
     }
@@ -827,6 +933,10 @@ export class BundleSetting
             calc = this.artifactSelector.applyDmgCalc(calc);
         }
 
+        if(this.enableArtifactStatus()) {
+            calc = this.artifactStatusSetting.applyDmgCalc(calc);
+        }
+
         if(this.enableExBuff()) {
             calc = this.exbuffSetting.applyDmgCalc(calc);
         }
@@ -843,6 +953,7 @@ export class BundleSetting
         if(this.enableAttack())             obj.attack = this.attackSetting.toJS();
         if(this.enableWeapon())             obj.wvmStg = this.weaponSelector.toJS();
         if(this.enableArtifact())           obj.avmStg = this.artifactSelector.toJS();
+        if(this.enableArtifactStatus())     obj.astats = this.artifactStatusSetting.toJS();
         if(this.enableExBuff())             obj.exbStg = this.exbuffSetting.toJS();
         return obj;
     }
@@ -883,6 +994,13 @@ export class BundleSetting
             this.artifactSelector.fromJS(obj.avmStg);
         } else {
             this.enableArtifact(false);
+        }
+
+        if(obj.astats) {
+            this.enableArtifactStatus(true);
+            this.artifactStatusSetting.fromJS(obj.astats);
+        } else {
+            this.enableArtifactStatus(false);
         }
 
         if(obj.exbStg) {
