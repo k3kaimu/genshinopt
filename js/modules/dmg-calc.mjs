@@ -1413,7 +1413,6 @@ export function royalCriticalRate(baseCrtRate, incP)
     }
 
     const p5 = p.add(5*x).min_number(1);
-    // ret += r * (1 + 5*p5)/p5;
     ret = ret.add(r.mul(p5.mul(5).add(1)).div(p5));
     return ret.inv();
 }
