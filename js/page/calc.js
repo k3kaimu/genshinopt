@@ -28,45 +28,51 @@ class CalcSetting
         this.setting.fromJS(bundleData);
         this.calc = new Calc.DamageCalculator();
 
-        // 設定をダメージ計算式に反映する
-        this.calc = this.setting.applyDmgCalc(this.calc);
+        let oldValue = Calc.VGData.doCalcExprText;
+        Calc.VGData.doCalcExprText = true;
+        try {
+            // 設定をダメージ計算式に反映する
+            this.calc = this.setting.applyDmgCalc(this.calc);
 
-        this.normalAttacks = [];
-        this.skillAttacks = [];
-        this.burstAttacks = [];
-        this.otherAttacks = [];
+            this.normalAttacks = [];
+            this.skillAttacks = [];
+            this.burstAttacks = [];
+            this.otherAttacks = [];
 
-        // そのキャラクターのすべてのダメージの計算をする
-        let cvm = this.setting.characterVMSetting.viewModel();
-        let attacks = cvm.presetAttacks();
-        attacks.forEach(attack => {
-            let obj = {}
-            obj.id = attack.id;
-            obj.label = attack.label;
-            obj.calc = this.calc;
-            obj.attack = attack;
-            obj.dmg = obj.attack.evaluate(this.calc);
+            // そのキャラクターのすべてのダメージの計算をする
+            let cvm = this.setting.characterVMSetting.viewModel();
+            let attacks = cvm.presetAttacks();
+            attacks.forEach(attack => {
+                let obj = {}
+                obj.id = attack.id;
+                obj.label = attack.label;
+                obj.calc = this.calc;
+                obj.attack = attack;
+                obj.dmg = obj.attack.evaluate(this.calc);
 
-            let pushed = false;
-            if(attack.attackInfos(this.calc).map(a => a.props.isNormal || a.props.isCharged || a.props.isPlunge || false).reduce((a, b) => a || b, false)) {
-                pushed = true;
-                this.normalAttacks.push(obj);
-            }
+                let pushed = false;
+                if(attack.attackInfos(this.calc).map(a => a.props.isNormal || a.props.isCharged || a.props.isPlunge || false).reduce((a, b) => a || b, false)) {
+                    pushed = true;
+                    this.normalAttacks.push(obj);
+                }
 
-            if(attack.attackInfos(this.calc).map(a => a.props.isSkill || false).reduce((a, b) => a || b, false)) {
-                pushed = true;
-                this.skillAttacks.push(obj);
-            }
+                if(attack.attackInfos(this.calc).map(a => a.props.isSkill || false).reduce((a, b) => a || b, false)) {
+                    pushed = true;
+                    this.skillAttacks.push(obj);
+                }
 
-            if(attack.attackInfos(this.calc).map(a => a.props.isBurst || false).reduce((a, b) => a || b, false)) {
-                pushed = true;
-                this.burstAttacks.push(obj);
-            }
+                if(attack.attackInfos(this.calc).map(a => a.props.isBurst || false).reduce((a, b) => a || b, false)) {
+                    pushed = true;
+                    this.burstAttacks.push(obj);
+                }
 
-            if(!pushed) {
-                this.otherAttacks.push(obj);
-            }
-        });
+                if(!pushed) {
+                    this.otherAttacks.push(obj);
+                }
+            });
+        } finally {
+            Calc.VGData.doCalcExprText = oldValue;
+        }
     }
 }
 

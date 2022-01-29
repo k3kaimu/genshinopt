@@ -17,7 +17,11 @@ title: ダメージ計算（作成中）
 <div class="mb-3" data-bind="foreach: normalAttacks">
   <div>
     <h6 class="h6" data-bind="text: label"></h6>
-    <p>ダメージ：<span data-bind="text: textInteger(dmg.value)"></span></p>
+    <p>
+      ダメージ：<span data-bind="text: textInteger(dmg.value)"></span>
+      <br>
+      計算式：<span data-bind="text: dmg.toASTNode().toSimplify().toExprText()"></span>
+    </p>
   </div>
 </div>
 
@@ -25,7 +29,11 @@ title: ダメージ計算（作成中）
 <div class="mb-3" data-bind="foreach: skillAttacks">
   <div>
     <h6 class="h6" data-bind="text: label"></h6>
-    <p>ダメージ：<span data-bind="text: textInteger(dmg.value)"></span></p>
+    <p>
+      ダメージ：<span data-bind="text: textInteger(dmg.value)"></span>
+      <br>
+      計算式：<span data-bind="text: dmg.toASTNode().toSimplify().toExprText()"></span>
+    </p>
   </div>
 </div>
 
@@ -33,7 +41,11 @@ title: ダメージ計算（作成中）
 <div class="mb-3" data-bind="foreach: burstAttacks">
   <div>
     <h6 class="h6" data-bind="text: label"></h6>
-    <p>ダメージ：<span data-bind="text: textInteger(dmg.value)"></span></p>
+    <p>
+      ダメージ：<span data-bind="text: textInteger(dmg.value)"></span>
+      <br>
+      計算式：<span data-bind="text: dmg.toASTNode().toSimplify().toExprText()"></span>
+    </p>
   </div>
 </div>
 
@@ -41,7 +53,11 @@ title: ダメージ計算（作成中）
 <div class="mb-3" data-bind="foreach: otherAttacks">
   <div>
     <h6 class="h6" data-bind="text: label"></h6>
-    <p>ダメージ：<span data-bind="text: textInteger(dmg.value)"></span></p>
+    <p>
+      ダメージ：<span data-bind="text: textInteger(dmg.value)"></span>
+      <br>
+      計算式：<span data-bind="text: dmg.toASTNode().toSimplify().toExprText()"></span>
+    </p>
   </div>
 </div>
 
