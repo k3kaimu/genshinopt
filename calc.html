@@ -9,79 +9,41 @@ title: ダメージ計算（作成中）
 </div>
 
 
-<h6>聖遺物詳細</h6>
+<h4 class="h4">詳細</h4>
 
-<p>
-  原神で「キャラクター > 聖遺物 > 聖遺物詳細」で画面に表示されるステータス値を入力してください．
-</p>
-
-<div class="form-row mb-4" data-bind="with: artifactStatus">
-  <div class="col-sm-3 col-6">
-    <label>HP</label>
-    <input type="number" class="form-control" data-bind="value: hp" placeholder="例：1000">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>攻撃力</label>
-    <input type="number" class="form-control" data-bind="value: atk" placeholder="例：200">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>防御力</label>
-    <input type="number" class="form-control" data-bind="value: def" placeholder="例：200">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>元素熟知</label>
-    <input type="number" class="form-control" data-bind="value: mastery" placeholder="例：200">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>会心率(%)</label>
-    <input type="number" class="form-control" data-bind="value: crtRate" placeholder="例：20">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>会心ダメージ(%)</label>
-    <input type="number" class="form-control" data-bind="value: crtDmg" placeholder="例：20">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>与える治癒効果(%)</label>
-    <input type="number" class="form-control" data-bind="value: healingBonus" placeholder="例：20">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>元素チャージ効率(%)</label>
-    <input type="number" class="form-control" data-bind="value: recharge" placeholder="例：20">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>シールド強化(%)</label>
-    <input type="number" class="form-control" data-bind="value: shieldBonus" placeholder="例：20">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>炎元素ダメージ(%)</label>
-    <input type="number" class="form-control" data-bind="value: pyroDmg" placeholder="例：20">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>水元素ダメージ(%)</label>
-    <input type="number" class="form-control" data-bind="value: hydroDmg" placeholder="例：20">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>草元素ダメージ(%)</label>
-    <input type="number" class="form-control" data-bind="value: dendroDmg" placeholder="例：20">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>雷元素ダメージ(%)</label>
-    <input type="number" class="form-control" data-bind="value: electroDmg" placeholder="例：20">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>風元素ダメージ(%)</label>
-    <input type="number" class="form-control" data-bind="value: anemoDmg" placeholder="例：20">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>氷元素ダメージ(%)</label>
-    <input type="number" class="form-control" data-bind="value: cryoDmg" placeholder="例：20">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>岩元素ダメージ(%)</label>
-    <input type="number" class="form-control" data-bind="value: geoDmg" placeholder="例：20">
-  </div>
-  <div class="col-sm-3 col-6">
-    <label>物理元素ダメージ(%)</label>
-    <input type="number" class="form-control" data-bind="value: physicalDmg" placeholder="例：20">
+<!-- ko if: calculateResult() !== undefined -->
+<div data-bind="with: calculateResult()">
+<h5 class="h5">通常/重撃/落下攻撃</h6>
+<div class="mb-3" data-bind="foreach: normalAttacks">
+  <div>
+    <h6 class="h6" data-bind="text: label"></h6>
+    <p>ダメージ：<span data-bind="text: textInteger(dmg.value)"></span></p>
   </div>
 </div>
+
+<h5>元素スキル攻撃</h5>
+<div class="mb-3" data-bind="foreach: skillAttacks">
+  <div>
+    <h6 class="h6" data-bind="text: label"></h6>
+    <p>ダメージ：<span data-bind="text: textInteger(dmg.value)"></span></p>
+  </div>
+</div>
+
+<h5>元素爆発攻撃</h5>
+<div class="mb-3" data-bind="foreach: burstAttacks">
+  <div>
+    <h6 class="h6" data-bind="text: label"></h6>
+    <p>ダメージ：<span data-bind="text: textInteger(dmg.value)"></span></p>
+  </div>
+</div>
+
+<h5>その他の攻撃</h5>
+<div class="mb-3" data-bind="foreach: otherAttacks">
+  <div>
+    <h6 class="h6" data-bind="text: label"></h6>
+    <p>ダメージ：<span data-bind="text: textInteger(dmg.value)"></span></p>
+  </div>
+</div>
+
+</div>
+<!-- /ko -->
