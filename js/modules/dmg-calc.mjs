@@ -1394,22 +1394,28 @@ export function mergeAttackProps(propsAndProbs)
 }
 
 
+/**
+ * @param {VGData} baseCrtRate
+ * @param {number} incP
+ * @return {VGData}
+ */
 export function royalCriticalRate(baseCrtRate, incP)
 {
     const p = baseCrtRate;
     const x = incP;
 
-    let r = 1;
-    let ret = 0;
+    let r = VGData.constant(1);
+    let ret = VGData.constant(0);
     for(let n = 1; n < 6; ++n) {
-        const q = Math.min(p + (n-1) * x, 1);
-        ret += n * q * r;
-        r *= (1 - q);
+        const q = p.add((n-1) * x).min_number(1);
+        ret = ret.add(q.mul(n).mul(r));
+        r = r.mul(VGData.constant(1).sub(q));
     }
 
-    const p5 = Math.min(p + 5 * x, 1);
-    ret += r * (1 + 5*p5)/p5;
-    return 1/ret;
+    const p5 = p.add(5*x).min_number(1);
+    // ret += r * (1 + 5*p5)/p5;
+    ret = ret.add(r.mul(p5.mul(5).add(1)).div(p5));
+    return ret.inv();
 }
 
 

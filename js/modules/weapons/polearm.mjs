@@ -1052,8 +1052,8 @@ export class RoyalSpearViewModel extends Base.WeaponViewModel
                 modifyAttackInfo(attackInfo) {
                     return super.modifyAttackInfo(attackInfo).map(info => {
                         if(!hasAnyProperties(info.props, ["incCrtRateRoyalSpear"])) {
-                            const cr = this.crtRate(info.props).value;
-                            const inc = Calc.royalCriticalRate(cr, incP) - cr;
+                            const cr = this.crtRate(info.props);
+                            const inc = Calc.royalCriticalRate(cr, incP).sub(cr);
 
                             return new Calc.AttackInfo(info.scale, info.ref, {...info.props, incCrtRateRoyalSpear: inc}, info.prob);
                         } else {
