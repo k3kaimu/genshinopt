@@ -89,7 +89,7 @@ $(function(){
 
             let calc = new Calc.DamageCalculator();
             calc = this.bundleSetting.applyDmgCalc(calc);
-            calc = this.artifacts.applyDmgCalc(calc);
+            calc = this.artifactStatus.applyDmgCalc(calc);
             return new CalcResult({bundle: this.bundleSetting, artifact: this.artifactStatus}, calc);
         }, this);
     }
