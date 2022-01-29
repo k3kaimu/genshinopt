@@ -13,7 +13,7 @@
     class="input-group-prepend"
     {% endif %}
     >
-      <select class="custom-select" data-bind="value: rarity, visible: selected() == undefined">
+      <select class="custom-select" data-bind="value: rarity">
         <option selected value="ALL">星</option>
         <option value="5">星5</option>
         <option value="4">星4</option>
@@ -28,11 +28,17 @@
                       class="custom-select" aria-label="武器選択">
     </select>
 
+    <div class="input-group-prepend input-group-append d-none d-md-block">
+      <select class="custom-select" data-bind="value: viewModel().level">
+        {% include ui/level_options.html %}
+      </select>
+    </div>
+
     <div 
     {% if include.isList %}
-    class="input-group-prepend input-group-append"
+    class="input-group-prepend input-group-append d-none d-md-block"
     {% else %}
-    class="input-group-append"
+    class="input-group-append d-none d-md-block"
     {% endif %}
     >
       
@@ -50,6 +56,27 @@
       <button type="button" class="btn btn-outline-danger" data-bind="click: {{ include.remove }}">-削除</button>
     </div>
     {% endif %}
+</div>
+<!-- 小さい画面用 -->
+<div class="row no-gutters d-md-none">
+  <div class="col">
+    <label>レベル</label>
+    <select class="custom-select rounded-left-only border-right-0" aria-label="凸数" data-bind="value: viewModel().level">
+      {% include ui/level_options.html %}
+    </select>
+  </div>
+  <div class="col">
+    <label>凸数</label>
+    <select class="custom-select rounded-right-only" aria-label="凸数" data-bind="value: viewModel().rank">
+      <option value="0">無凸</option>
+      <option value="1">1凸</option>
+      <option value="2">2凸</option>
+      <option value="3">3凸</option>
+      <option value="4">4凸</option>
+      <option value="5">5凸</option>
+      <option value="6">6凸</option>
+    </select>
+  </div>
 </div>
 <div class="row" data-bind="foreach: viewModel().viewHTMLList(`{{ include.target_from_root }}.viewModel`)">
   <div class="col-lg-6">
