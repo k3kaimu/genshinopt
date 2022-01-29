@@ -80,7 +80,15 @@ class CalcResult
 $(function(){
     function ViewModel()
     {
-        this.bundleSetting = new UI.BundleSetting(true, undefined, true, true, true, true, true);
+        this.bundleSetting = new UI.BundleSetting({
+            bCharPicker: true,
+            selectedChar: undefined,
+            bTalent: true,
+            bAttack: false,
+            bWeapon: true,
+            bArtifact: true,
+            bExternalBuff: true
+        });
         this.artifactStatus = new ArtifactStatus();
 
         this.calculateResult = ko.computed(function(){

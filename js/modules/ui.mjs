@@ -754,24 +754,47 @@ export class CompoundedAttackEvaluator extends Data.AttackEvaluator
 
 export class BundleSetting
 {
-    constructor(enableCharacterPicker, selectedCharacterKO = undefined, enableCharacter, enableAttack, enableWeapon, enableArtifact, enableExBuff)
-    {
-        this.enableCharacterPicker = ko.isObservable(enableCharacterPicker) ? enableCharacterPicker : ko.observable(enableCharacterPicker);
-        this.enableCharacter = ko.isObservable(enableCharacter) ? enableCharacter : ko.observable(enableCharacter);
-        this.enableAttack = ko.isObservable(enableAttack) ? enableAttack : ko.observable(enableAttack);
-        this.enableWeapon = ko.isObservable(enableWeapon) ? enableWeapon : ko.observable(enableWeapon);
-        this.enableArtifact = ko.isObservable(enableArtifact) ? enableArtifact : ko.observable(enableArtifact);
-        this.enableExBuff = ko.isObservable(enableExBuff) ? enableExBuff : ko.observable(enableExBuff);
+    /**
+     * 
+     * @param {*} enableCharacterPicker 
+     * @param {*} selectedCharacterKO 
+     * @param {*} enableCharacter 
+     * @param {*} enableAttack 
+     * @param {*} enableWeapon 
+     * @param {*} enableArtifact 
+     * @param {*} enableExBuff 
+     */
 
-        if(enableCharacterPicker)
+    /**
+     * 
+     * @param {{
+     *  bCharPicker: bool | KnockoutObservable<bool>,
+     *  selectedChar: KnockoutObservable<Data.CharacterData> | undefined,
+     *  bTalent: bool | KnockoutObservable<bool>,
+     *  bAttack: bool | KnockoutObservable<bool>,
+     *  bWeapon: bool | KnockoutObservable<bool>,
+     *  bArtifact: bool | KnockoutObservable<bool>,
+     *  bExternalBuff: bool | KnockoutObservable<bool>
+     * }} setting 
+     */
+    constructor(setting)
+    {
+        this.enableCharacterPicker = ko.isObservable(setting.bCharPicker) ? setting.bCharPicker : ko.observable(setting.bCharPicker);
+        this.enableCharacter = ko.isObservable(setting.bTalent) ? setting.bTalent : ko.observable(setting.bTalent);
+        this.enableAttack = ko.isObservable(setting.bAttack) ? setting.bAttack : ko.observable(setting.bAttack);
+        this.enableWeapon = ko.isObservable(setting.bWeapon) ? setting.bWeapon : ko.observable(setting.bWeapon);
+        this.enableArtifact = ko.isObservable(setting.bArtifact) ? setting.bArtifact : ko.observable(setting.bArtifact);
+        this.enableExBuff = ko.isObservable(setting.bExternalBuff) ? setting.bExternalBuff : ko.observable(setting.bExternalBuff);
+
+        if(this.enableCharacterPicker())
             this.characterPicker = new CharacterPicker();
 
-        this.characterVMSetting = new CharacterVMSetting(selectedCharacterKO ?? this.characterPicker.selected);
+        this.characterVMSetting = new CharacterVMSetting(setting.selectedChar ?? this.characterPicker.selected);
         this.attackSetting = new AttackSetting(ko.pureComputed(function(){
             return [this.characterVMSetting.viewModel()];
         }, this));
 
-        this.weaponSelector = new WeaponSelector(selectedCharacterKO ?? this.characterPicker.selected);
+        this.weaponSelector = new WeaponSelector(setting.selectedChar ?? this.characterPicker.selected);
         this.artifactSelector = new ArtifactSelector();
         this.exbuffSetting = new ExternalBuffSetting();
     }

@@ -1,9 +1,9 @@
 'use strict';
-import * as Data from '/js/modules/data.mjs';
-import * as Calc from '/js/modules/dmg-calc.mjs';
-import * as Migrator from '/js/modules/migrator.mjs';
-import * as UI from '/js/modules/ui.mjs';
-import * as TypeDefs from '/js/modules/typedefs.mjs';
+import * as Data from '../modules/data.mjs';
+import * as Calc from '../modules/dmg-calc.mjs';
+import * as Migrator from '../modules/migrator.mjs';
+import * as UI from '../modules/ui.mjs';
+import * as TypeDefs from '../modules/typedefs.mjs';
 
 
 class CharacterSettingList extends UI.TabListViewModel
@@ -68,14 +68,18 @@ class BundleSettingList extends UI.TabListViewModel
 
 
     addListItem() {
-        this.list.push(new UI.BundleSetting(false, this.selectedChar,
-            this.enableCharacter,
-            this.enableAttack,
-            this.enableWeapon,
-            this.enableArtifact,
-            this.enableExBuff));
+        this.list.push(new UI.BundleSetting({
+            bCharPicker: false,
+            selectedChar: this.selectedChar,
+            bTalent: this.enableCharacter,
+            bAttack: this.enableAttack,
+            bWeapon: this.enableWeapon,
+            bArtifact: this.enableArtifact,
+            bExternalBuff: this.enableExBuff,
+        }));
+
         
-            this.selectListItem(this.list().length - 1);
+        this.selectListItem(this.list().length - 1);
     }
 
 
