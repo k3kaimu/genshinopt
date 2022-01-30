@@ -11,6 +11,7 @@ title: ダメージ計算（作成中）
 
 <h5>敵の耐性/レベル</h5>
 
+<div class="mb-5">
 <div class="form-row" data-bind="with: enemySetting">
   <div class="col-sm-3 col-6">
     <label>レベル</label>
@@ -51,56 +52,24 @@ title: ダメージ計算（作成中）
     <input type="number" class="form-control" data-bind="value: physicalResis" placeholder="例：20">
   </div>
 </div>
+</div>
 
 
 <h4 class="h4">詳細</h4>
 
 <!-- ko if: calculateResult() !== undefined -->
 <div data-bind="with: calculateResult()">
-<h5 class="h5">通常/重撃/落下攻撃</h6>
-<div class="mb-3" data-bind="foreach: normalAttacks">
+<div class="mb-3" data-bind="foreach: attackResults">
   <div>
-    <h6 class="h6" data-bind="text: label"></h6>
+    <h5 class="h5" data-bind="text: label"></h5>
     <p>
-      ダメージ：<span data-bind="text: textInteger(dmg.value)"></span>
+      ダメージ期待値：<span data-bind="text: textInteger(dmg.value)"></span>
       <br>
-      計算式：<span data-bind="text: dmg.toASTNode().toSimplify().toExprText()"></span>
-    </p>
-  </div>
-</div>
-
-<h5>元素スキル攻撃</h5>
-<div class="mb-3" data-bind="foreach: skillAttacks">
-  <div>
-    <h6 class="h6" data-bind="text: label"></h6>
-    <p>
-      ダメージ：<span data-bind="text: textInteger(dmg.value)"></span>
+      非会心ダメージ：<span data-bind="text: textInteger(nonCrtDmg.value)"></span>
       <br>
-      計算式：<span data-bind="text: dmg.toASTNode().toSimplify().toExprText()"></span>
-    </p>
-  </div>
-</div>
-
-<h5>元素爆発攻撃</h5>
-<div class="mb-3" data-bind="foreach: burstAttacks">
-  <div>
-    <h6 class="h6" data-bind="text: label"></h6>
-    <p>
-      ダメージ：<span data-bind="text: textInteger(dmg.value)"></span>
+      会心ダメージ：<span data-bind="text: textInteger(crtDmg.value)"></span>
       <br>
-      計算式：<span data-bind="text: dmg.toASTNode().toSimplify().toExprText()"></span>
-    </p>
-  </div>
-</div>
-
-<h5>その他の攻撃</h5>
-<div class="mb-3" data-bind="foreach: otherAttacks">
-  <div>
-    <h6 class="h6" data-bind="text: label"></h6>
-    <p>
-      ダメージ：<span data-bind="text: textInteger(dmg.value)"></span>
-      <br>
-      計算式：<span data-bind="text: dmg.toASTNode().toSimplify().toExprText()"></span>
+      期待値計算式：<span data-bind="text: dmg.toASTNode().toSimplify().toExprText()"></span>
     </p>
   </div>
 </div>
