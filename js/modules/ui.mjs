@@ -1065,3 +1065,23 @@ export class TabListViewModel
         });
     }
 }
+
+
+export function showToast(title, text, delay = 200000)
+{
+    let newToast = $("#toast_template").clone(false);
+    newToast.removeAttr('id');
+    newToast.find(".toast-title").append(title);
+    newToast.find(".toast-body").append(text);
+    $("#toast_container").append(newToast);
+
+    newToast.toast({
+        delay: delay
+    });
+    newToast.toast('show');
+
+    $('#myToast').on('hidden.bs.toast', function () {
+        newToast.remove();
+    });
+    
+}
