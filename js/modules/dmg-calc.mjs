@@ -28,14 +28,14 @@ export class ASTNode
         {
             let newargs = [];
             newNode.args.forEach(e => {
-                if(newNode.op == '+') {
+                if(newNode.op == '+' || newNode.op == "-") {
                     if(e.value == 0)
                         return;
-                    else if(Math.abs(newNode.value) >= 0.1 && Math.abs(e.value) / newNode.value < 1e-6)
+                    else if(Math.abs(newNode.value) >= 0.1 && Math.abs(e.value) / Math.abs(newNode.value) < 1e-6)
                         return;
                 }
 
-                if(newNode.op == '*') {
+                if(newNode.op == '*' || newNode.op == "/") {
                     if(e.value == 1)
                         return;
                     else if(Math.abs(e.value - 1) < 1e-6)
@@ -122,7 +122,7 @@ export class ASTNode
                 str += ` ${this.op} ${e.toExprText(this.op)}`;
             });
 
-            if(pp == '*' || pp == '/' || pp == '**')
+            if(pp == '-' || pp == '*' || pp == '/' || pp == '**')
                 return '(' + str + ')';
             else
                 return str;
