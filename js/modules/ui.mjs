@@ -1067,7 +1067,7 @@ export class TabListViewModel
 }
 
 
-export function showToast(title, text, delay = 200000)
+export function showToast(title, text, delay = 1000)
 {
     let newToast = $("#toast_template").clone(false);
     newToast.removeAttr('id');

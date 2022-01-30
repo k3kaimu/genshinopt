@@ -94,6 +94,37 @@ class EnemySetting
         calc.basePhysicalResis.value = Number(this.physicalResis()) / 100;
         return calc;
     }
+
+
+    toJS()
+    {
+        let obj = {};
+        obj.level = this.level();
+        obj.pyroResis = this.pyroResis();
+        obj.hydroResis = this.hydroResis();
+        obj.dendroResis = this.dendroResis();
+        obj.electroResis = this.electroResis();
+        obj.anemoResis = this.anemoResis();
+        obj.cryoResis = this.cryoResis();
+        obj.geoResis = this.geoResis();
+        obj.physicalResis = this.physicalResis();
+        return obj;
+    }
+
+    
+    fromJS(obj)
+    {
+        this.level(obj.level);
+        this.pyroResis(obj.pyroResis);
+        this.hydroResis(obj.hydroResis);
+        this.dendroResis(obj.dendroResis);
+        this.electroResis(obj.electroResis);
+        this.anemoResis(obj.anemoResis);
+        this.cryoResis(obj.cryoResis);
+        this.geoResis(obj.geoResis);
+        this.physicalResis(obj.physicalResis);
+    }
+
 }
 
 
@@ -110,16 +141,41 @@ class ViewModel
 
             return new CalcSetting(this.bundleSetting.toJS(), this.enemySetting.newDamageCalculator());
         }, this);
+
+
+        this.savedURL = ko.observable("");
+
+        // calculateResultが変わったらURLも変える
+        this.calculateResult.subscribe(newVal => {
+            if(newVal === undefined) {
+                this.savedURL("");
+                return;
+            }
+
+            const encodedURL = `${location.pathname}?ver=${Migrator.calcDataMigrator.currentVersion()}&data=${encodeToURI(this.toJS())}`;
+            this.savedURL(`${location.protocol}//${location.host}${encodedURL}`);
+            history.replaceState('', '', encodedURL);
+        });
+    }
+
+
+    copySavedURL() {
+        copyTextToClipboard(this.savedURL());
+        UI.showToast("原神OPT", "URLをコピーしました");
     }
 
 
     fromJS(obj) {
-        this.bundleSetting.fromJS(obj);
+        this.bundleSetting.fromJS(obj.own);
+        this.enemySetting.fromJS(obj.enemy);
     }
 
 
     toJS() {
-        return this.bundleSetting.toJS();
+        return {
+            own: this.bundleSetting.toJS(),
+            enemy: this.enemySetting.toJS()
+        };
     }
 }
 

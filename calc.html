@@ -57,6 +57,18 @@ title: ダメージ計算（作成中）
 
 <h4 class="h4">詳細</h4>
 
+<div data-bind="visible: (savedURL() || '').length != 0">
+  <div class="input-group mb-3">
+    <div class="input-group-prepend">
+      <span class="input-group-text" id="basic-addon1">保存&共有用URL</span>
+    </div>
+    <input type="text" class="form-control" id="savedURLTextInput" data-bind="textInput: savedURL()">
+    <div class="input-group-append">
+      <button class="btn btn-outline-primary" type="button" data-bind="click: copySavedURL">Copy!</button>
+    </div>
+  </div>
+</div>
+
 <!-- ko if: calculateResult() !== undefined -->
 <div data-bind="with: calculateResult()">
 <div class="mb-3" data-bind="foreach: attackResults">
