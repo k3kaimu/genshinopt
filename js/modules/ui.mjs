@@ -370,19 +370,19 @@ export class ArtifactStatusSetting
         calc.addAtk.value += ArtifactStatusSetting.getValue(this.atk());
         calc.addDef.value += ArtifactStatusSetting.getValue(this.def());
         calc.baseMastery.value += ArtifactStatusSetting.getValue(this.mastery());
-        calc.baseCrtRate.value += ArtifactStatusSetting.getValue(this.crtRate());
-        calc.baseCrtDmg.value += ArtifactStatusSetting.getValue(this.crtDmg());
-        calc.baseHealingBonus.value += ArtifactStatusSetting.getValue(this.healingBonus());
-        calc.baseRecharge.value += ArtifactStatusSetting.getValue(this.recharge());
-        calc.baseRateShieldStrength.value += ArtifactStatusSetting.getValue(this.shieldBonus());
-        calc.basePyroDmg.value += ArtifactStatusSetting.getValue(this.pyroDmg());
-        calc.baseHydroDmg.value += ArtifactStatusSetting.getValue(this.hydroDmg());
-        calc.baseDendroDmg.value += ArtifactStatusSetting.getValue(this.dendroDmg());
-        calc.baseElectroDmg.value += ArtifactStatusSetting.getValue(this.electroDmg());
-        calc.baseAnemoDmg.value += ArtifactStatusSetting.getValue(this.anemoDmg());
-        calc.baseCryoDmg.value += ArtifactStatusSetting.getValue(this.cryoDmg());
-        calc.baseGeoDmg.value += ArtifactStatusSetting.getValue(this.geoDmg());
-        calc.basePhysicalDmg.value += ArtifactStatusSetting.getValue(this.physicalDmg());
+        calc.baseCrtRate.value += ArtifactStatusSetting.getValue(this.crtRate()) / 100;
+        calc.baseCrtDmg.value += ArtifactStatusSetting.getValue(this.crtDmg()) / 100;
+        calc.baseHealingBonus.value += ArtifactStatusSetting.getValue(this.healingBonus()) / 100;
+        calc.baseRecharge.value += ArtifactStatusSetting.getValue(this.recharge()) / 100;
+        calc.baseRateShieldStrength.value += ArtifactStatusSetting.getValue(this.shieldBonus()) / 100;
+        calc.basePyroDmg.value += ArtifactStatusSetting.getValue(this.pyroDmg()) / 100;
+        calc.baseHydroDmg.value += ArtifactStatusSetting.getValue(this.hydroDmg()) / 100;
+        calc.baseDendroDmg.value += ArtifactStatusSetting.getValue(this.dendroDmg()) / 100;
+        calc.baseElectroDmg.value += ArtifactStatusSetting.getValue(this.electroDmg()) / 100;
+        calc.baseAnemoDmg.value += ArtifactStatusSetting.getValue(this.anemoDmg()) / 100;
+        calc.baseCryoDmg.value += ArtifactStatusSetting.getValue(this.cryoDmg()) / 100;
+        calc.baseGeoDmg.value += ArtifactStatusSetting.getValue(this.geoDmg()) / 100;
+        calc.basePhysicalDmg.value += ArtifactStatusSetting.getValue(this.physicalDmg()) / 100;
 
         return calc;
     }

@@ -22,11 +22,15 @@ function newBundleSetting()
 
 class CalcSetting
 {
-    constructor(bundleData)
+    /**
+     * @param {Object} bundleData 
+     * @param {Calc.DamageCalculator} calc 
+     */
+    constructor(bundleData, calc)
     {
         this.setting = newBundleSetting();
         this.setting.fromJS(bundleData);
-        this.calc = new Calc.DamageCalculator();
+        this.calc = calc;
 
         let oldValue = Calc.VGData.doCalcExprText;
         Calc.VGData.doCalcExprText = true;
@@ -77,17 +81,52 @@ class CalcSetting
 }
 
 
+class EnemySetting
+{
+    constructor()
+    {
+        this.level = ko.observable(90);
+        this.pyroResis = ko.observable(10);
+        this.hydroResis = ko.observable(10);
+        this.dendroResis = ko.observable(10);
+        this.electroResis = ko.observable(10);
+        this.anemoResis = ko.observable(10);
+        this.cryoResis = ko.observable(10);
+        this.geoResis = ko.observable(10);
+        this.physicalResis = ko.observable(10);
+    }
+
+
+    newDamageCalculator()
+    {
+        let calc = new Calc.DamageCalculator();
+        calc.enemyLv = Number(this.level());
+        calc.baseAllResis.value = 0;
+        calc.basePyroResis.value = Number(this.pyroResis()) / 100;
+        calc.baseHydroResis.value = Number(this.hydroResis()) / 100;
+        calc.baseDendroResis.value = Number(this.dendroResis()) / 100;
+        calc.baseElectroResis.value = Number(this.electroResis()) / 100;
+        calc.baseAnemoResis.value = Number(this.anemoResis()) / 100;
+        calc.baseCryoResis.value = Number(this.cryoResis()) / 100;
+        calc.baseGeoResis.value = Number(this.geoResis()) / 100;
+        calc.basePhysicalResis.value = Number(this.physicalResis()) / 100;
+        return calc;
+    }
+}
+
+
 class ViewModel
 {
     constructor()
     {
         this.bundleSetting = newBundleSetting();
+        this.enemySetting = new EnemySetting();
 
         this.calculateResult = ko.computed(function(){
             if(!this.bundleSetting.isValid())
                 return undefined;
 
-            return new CalcSetting(this.bundleSetting.toJS());
+            return new CalcSetting(this.bundleSetting.toJS(), this.enemySetting.newDamageCalculator());
         }, this);
     }
 
