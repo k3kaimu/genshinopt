@@ -1,4 +1,5 @@
 //@ts-check
+/// <reference path="../main.js" />
 import * as Data from '../modules/data.mjs';
 import * as Calc from '../modules/dmg-calc.mjs';
 import * as Migrator from '../modules/migrator.mjs'
