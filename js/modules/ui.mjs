@@ -502,10 +502,8 @@ export function ExternalBuffSetting()
         let ctx = Calc.VGData.context;
         let CalcType = Object.getPrototypeOf(calc).constructor;
         let NewCalc = class extends CalcType {
-            #dExBuffAddIncDmg = addDmgValue;
-
             increaseDamage(attackProps) {
-                return super.increaseDamage(attackProps).add(Calc.VGData.constant(this.#dExBuffAddIncDmg).as(ctx));
+                return super.increaseDamage(attackProps).add(Calc.VGData.constant(addDmgValue).as(ctx));
             }
         };
 
@@ -1067,7 +1065,7 @@ export class TabListViewModel
 }
 
 
-export function showToast(title, text, delay = 1000)
+export function showToast(title, text, delay = 2000)
 {
     let newToast = $("#toast_template").clone(false);
     newToast.removeAttr('id');
