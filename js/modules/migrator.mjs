@@ -1,5 +1,5 @@
 
-class DataObjectMigrator
+export class DataObjectMigrator
 {
     constructor()
     {
