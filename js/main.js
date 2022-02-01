@@ -380,7 +380,12 @@ runUnittest(function(){
 
 function uint8ArrayToBase64(data)
 {
-    return btoa(String.fromCharCode(...new Uint8Array(data)));
+    let str = "";
+    for(let i = 0; i < data.length; i += 1024) {
+        str += String.fromCharCode(...new Uint8Array(data.slice(i, Math.min(i + 1024, data.length))));
+    }
+
+    return btoa(str);
 }
 
 
