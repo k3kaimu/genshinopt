@@ -446,92 +446,101 @@ $(function(){
 
             let tasks = [];
             let results = [];
+            let exceptions = [];
 
             allpatterns.forEach(setting => {
                 async function task(){
-                    let oldsetting = Calc.VGData.doCalcExprText;
-                    Calc.VGData.doCalcExprText = true;
-                    let calc = new Calc.DamageCalculator();
-                    {
-                        calc = setting.character.applyDmgCalc(calc);
-                        calc = setting.weapon.applyDmgCalc(calc);
-                        calc = setting.artifactSet1.applyDmgCalc(calc);
-                        calc = setting.artifactSet2.applyDmgCalc(calc);
+                    try {
+                        let oldsetting = Calc.VGData.doCalcExprText;
+                        Calc.VGData.doCalcExprText = true;
+                        let calc = new Calc.DamageCalculator();
+                        {
+                            calc = setting.character.applyDmgCalc(calc);
+                            calc = setting.weapon.applyDmgCalc(calc);
+                            calc = setting.artifactSet1.applyDmgCalc(calc);
+                            calc = setting.artifactSet2.applyDmgCalc(calc);
 
-                        Calc.VGData.pushContext('Artifact');
-                        calc.addAtk.value += 311;
-                        calc.addHP.value += 4780;
-                        Calc.VGData.popContext();
+                            Calc.VGData.pushContext('Artifact');
+                            calc.addAtk.value += 311;
+                            calc.addHP.value += 4780;
+                            Calc.VGData.popContext();
 
-                        [setting.clock, setting.cup, setting.hat].forEach(e => {
-                            calc = Data.applyDmgCalcArtifactMainStatus(calc, setting.character.parent, e.value);
-                        });
+                            [setting.clock, setting.cup, setting.hat].forEach(e => {
+                                calc = Data.applyDmgCalcArtifactMainStatus(calc, setting.character.parent, e.value);
+                            });
 
-                        calc = setting.exbuff.applyDmgCalc(calc);
-                    }
-                    Calc.VGData.doCalcExprText = oldsetting;
-
-                    let attackType = setting.attack;
-                    attackType.clearInfoCache();
-                    attackType.setOptimizedMode(true);  // 最適化モード
-
-                    function setArg(x) {
-                        calc.artRateAtk.value = x[0];
-                        calc.artRateDef.value = x[1];
-                        calc.artRateHP.value = x[2];
-                        calc.artCrtRate.value = x[3];
-                        calc.artCrtDmg.value = x[4];
-                        calc.artRecharge.value = x[5];
-                        calc.artMastery.value = x[6];
-                    }
-
-                    function objfunc(x) {
-                        setArg(x);
-                        let dmg = attackType.evaluate(calc);
-
-                        if(setting.powRecharge.isEnabled) {
-                            return dmg.mul(calc.recharge(attackType.attackProps ?? {}).pow_number(setting.powRecharge.exp));
-                        } else {
-                            return dmg;
+                            calc = setting.exbuff.applyDmgCalc(calc);
                         }
-                    }
+                        Calc.VGData.doCalcExprText = oldsetting;
 
-                    const x0 = [0, 0, 0, 0, 0, 0, 0];
+                        let attackType = setting.attack;
+                        attackType.clearInfoCache();
+                        attackType.setOptimizedMode(true);  // 最適化モード
 
-                    // コストが0か，もしくは全部の傾きがゼロなのであれば最適化しない
-                    if(total_cost == 0 || calc.calcUpperBounds(total_cost, objfunc).filter(e => e > 1e-4).length == 0) {
-                        results.push({dmg: objfunc(x0).value, calc: calc, setting: setting});
-                    } else {
-                        let opt = undefined;
-                        if(setting.globalOpt.isEnabled) {
-                            opt = await Calc.applyGlobalOptimize(calc, objfunc, total_cost, nlopt.Algorithm.GN_ISRES, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, setting.globalOpt.maxEval, 1000);
-
-                            // 局所最適化のみ
-                            let local = await Calc.applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
-                            if(opt == undefined || !opt.success || opt.value < local.value)
-                                opt = local;    // 局所最適化の方が性能が良かったのでそちらを採用
-                        } else {
-                            opt = await Calc.applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
+                        function setArg(x) {
+                            calc.artRateAtk.value = x[0];
+                            calc.artRateDef.value = x[1];
+                            calc.artRateHP.value = x[2];
+                            calc.artCrtRate.value = x[3];
+                            calc.artCrtDmg.value = x[4];
+                            calc.artRecharge.value = x[5];
+                            calc.artMastery.value = x[6];
                         }
-                        
-                        console.assert(opt.opt_result.success);
-                        setArg(opt.opt_result.x);
-                        results.push({dmg: opt.value, calc: opt.calc, setting: setting});
+
+                        function objfunc(x) {
+                            setArg(x);
+                            let dmg = attackType.evaluate(calc);
+
+                            if(setting.powRecharge.isEnabled) {
+                                return dmg.mul(calc.recharge(attackType.attackProps ?? {}).pow_number(setting.powRecharge.exp));
+                            } else {
+                                return dmg;
+                            }
+                        }
+
+                        const x0 = [0, 0, 0, 0, 0, 0, 0];
+
+                        // コストが0か，もしくは全部の傾きがゼロなのであれば最適化しない
+                        if(total_cost == 0 || calc.calcUpperBounds(total_cost, objfunc).filter(e => e > 1e-4).length == 0) {
+                            results.push({dmg: objfunc(x0).value, calc: calc, setting: setting});
+                        } else {
+                            let opt = undefined;
+                            if(setting.globalOpt.isEnabled) {
+                                opt = await Calc.applyGlobalOptimize(calc, objfunc, total_cost, nlopt.Algorithm.GN_ISRES, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, setting.globalOpt.maxEval, 1000);
+
+                                // 局所最適化のみ
+                                let local = await Calc.applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
+                                if(opt == undefined || !opt.success || opt.value < local.value)
+                                    opt = local;    // 局所最適化の方が性能が良かったのでそちらを採用
+                            } else {
+                                opt = await Calc.applyOptimize(calc, objfunc, total_cost, nlopt.Algorithm.LD_SLSQP, x0, 1e-3, 1000);
+                            }
+                            
+                            console.assert(opt.opt_result.success);
+                            setArg(opt.opt_result.x);
+                            results.push({dmg: opt.value, calc: opt.calc, setting: setting});
+                        }
+
+                        // 最適化モードを終わる
+                        attackType.setOptimizedMode(false);
+
+                        if(results.length % 10 == 0 || this.useGlobalOpt())
+                            this.doneOptimizedCount(results.length);
+                    } catch(ex) {
+                        exceptions.push(JSON.stringify(ex, Object.getOwnPropertyNames(ex)));
+                        console.error(ex);
                     }
-
-                    // 最適化モードを終わる
-                    attackType.setOptimizedMode(false);
-
-                    if(results.length % 10 == 0 || this.useGlobalOpt())
-                        this.doneOptimizedCount(results.length);
                 }
 
                 tasks.push(task.bind(this));
             });
 
             function onFinish() {
+                if(exceptions.length != 0) {
+                    UI.showToast("原神OPT", `${exceptions.length}件の最適化に失敗しました．成功した条件のみ表示しています．`);
+                }
+
                 if(results.length == 0) return;
-                // console.log(results);
 
                 results.sort(function(a, b){
                     return -(a.dmg - b.dmg);
@@ -686,6 +695,7 @@ $(function(){
 
 
         this.copySavedURL = function() {
+            UI.showToast("原神OPT", "クリップボードにURLをコピーしました");
             copyTextToClipboard(this.savedURL());
         }.bind(this);
 
@@ -810,14 +820,19 @@ $(function(){
         }.bind(this);
     }
 
-    window.viewModel = new ViewModel();
+    try {
+        window.viewModel = new ViewModel();
 
-    ko.applyBindings(window.viewModel);
+        ko.applyBindings(window.viewModel);
 
-    // 初期設定
-    {
-        viewModel.setShownResult("ALL");
-        viewModel.bundleList.addListItem();
+        // 初期設定
+        {
+            viewModel.setShownResult("ALL");
+            viewModel.bundleList.addListItem();
+        }
+    } catch(ex) {
+        UI.showToast("原神OPT", "ページの初期化に失敗しました．キャッシュデータが古い可能性があります．");
+        console.error(ex);
     }
 
     function loadDataFromURI(version, uri)
@@ -846,7 +861,8 @@ $(function(){
                 viewModel.optimizeAllCases();
             }
         } catch(ex) {
-
+            UI.showToast("原神OPT", "URLからデータのロードに失敗しました");
+            console.error(ex);
         };
     })();
 
