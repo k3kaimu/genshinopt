@@ -2,8 +2,9 @@
 /// <reference path="../main.js" />
 import * as Data from '../modules/data.mjs';
 import * as Calc from '../modules/dmg-calc.mjs';
-import * as Migrator from '../modules/migrator.mjs'
-import * as UI from '../modules/ui.mjs'
+import * as Migrator from '../modules/migrator.mjs';
+import * as UI from '../modules/ui.mjs';
+import * as History from '../modules/history.mjs';
 
 
 function newBundleSetting()
@@ -156,6 +157,25 @@ class ViewModel
             this.savedURL(`${location.protocol}//${location.host}${encodedURL}`);
             history.replaceState('', '', encodedURL);
         });
+    }
+
+
+    addHistory()
+    {
+        if(this.calculateResult() == undefined)
+            return;
+
+        let newdata = new History.CharacterHistoryData({});
+        let bundledata = this.calculateResult().setting.toJS();
+
+        newdata.character = bundledata.cvmStg;
+        newdata.weapon = bundledata.wvmStg;
+        newdata.artifactSet = bundledata.avmStg;
+        newdata.artifactStat = bundledata.astats;
+        newdata.externalBuff = bundledata.exbStg;
+
+        History.characterHistory.push(newdata);
+        UI.showToast("原神OPT", `履歴に追加しました（${History.characterHistory.cache.length}/${History.characterHistory.limit}）`);
     }
 
 
