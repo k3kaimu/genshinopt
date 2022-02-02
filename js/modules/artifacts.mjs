@@ -1756,6 +1756,17 @@ export function applyDmgCalcArtifactMainStatus(calc, character, statusType)
             }
             break;
 
+        case "AllElmDmg":
+            calc.basePhysicalDmg.value += 0.583;
+            calc.baseAnemoDmg.value +=  0.466;
+            calc.baseCryoDmg.value +=  0.466;
+            calc.baseDendroDmg.value +=  0.466;
+            calc.baseElectroDmg.value +=  0.466;
+            calc.baseGeoDmg.value +=  0.466;
+            calc.baseHydroDmg.value +=  0.466;
+            calc.basePyroDmg.value +=  0.466;
+            break;
+
         case "CrtRate":
             calc.baseCrtRate.value += 0.311;
             break;

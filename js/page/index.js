@@ -296,7 +296,8 @@ $(function(){
             { value: "HP%",     label: "HP%",                   checked: ko.observable(false) },
             { value: "Mastery", label: "元素熟知",              checked: ko.observable(false) },
             { value: "PhyDmg",  label: "物理ダメージ",          checked: ko.observable(false) },
-            { value: "ElmDmg",  label: "キャラ属性ダメージ",    checked: ko.observable(true) },
+            { value: "ElmDmg",  label: "キャラ元素ダメージ",    checked: ko.observable(true) },
+            { value: "AllElmDmg",  label: "物理/全元素ダメージ",    checked: ko.observable(true) },
         ];
 
         this.hatMainStatus = [
