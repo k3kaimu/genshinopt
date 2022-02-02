@@ -13,6 +13,7 @@ export const bufferEffects = [
     new BuffEffect.ConstantBufferEffect("elem_geo", "岩元素共鳴：ダメージ+15%，岩耐性-20%，シールド強化+15%", "E", {"baseAllDmg": 0.15, "baseGeoResis": -0.20, "baseRateShieldStrength": 0.15 }),
     new BuffEffect.ConstantBufferEffect("art_noblesse_oblige_4", "旧貴族のしつけ4：攻撃力+20%", "A", {"rateAtk": 0.2}),
     new BuffEffect.BufferEffectViewModelFactory({id: "vaporize_melt"}, "蒸発・溶解", "E", (parent) => new BuffEffect.VaporizeMeltEffectViewModel(parent)),
+    new BuffEffect.BufferEffectViewModelFactory(new Characters.Mona(), "モナ", "C", (parent) => new (Characters.MonaViewModel(BuffEffect.CharacterBufferEffectViewModel))(parent, true)),
     new BuffEffect.BufferEffectViewModelFactory(new Characters.Bennett(), "ベネット", "C", (parent) => new (Characters.BennettViewModel(BuffEffect.CharacterBufferEffectViewModel))(parent, true)),
     new BuffEffect.BufferEffectViewModelFactory(new Characters.Chongyun(), "重雲", "C", (parent) => new (Characters.ChongyunViewModel(BuffEffect.CharacterBufferEffectViewModel))(parent, true)),
     new BuffEffect.BufferEffectViewModelFactory(new Characters.Xingqiu(), "行秋", "C", (parent) => new (Characters.XingqiuViewModel(BuffEffect.CharacterBufferEffectViewModel))(parent, true)),

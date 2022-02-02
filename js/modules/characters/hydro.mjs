@@ -77,6 +77,281 @@ export class HydroCharacterViewModel extends Base.CharacterViewModel
 }
 
 
+export class Mona extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "mona",
+            "モナ",
+            5,
+            "Hydro",
+            "Catalyst",
+            [22, 58, 115, 148, 186, 219, 253, 287],             /* bAtk */
+            [51, 132, 263, 338, 424, 500, 576, 653],            /* bDef */
+            [810, 2102, 4185, 5383, 6752, 7964, 9184, 10409],   /* bHP */
+            "baseRecharge",  /* bBonusType */
+            0.320       /* bBonusValue */
+        )
+    }
+
+
+    
+    newViewModel()
+    {
+        return new (MonaViewModel(HydroCharacterViewModel))(this, false);
+    }
+
+
+    static normalTalentTable = [
+    //  0-3:通常4段, 4:重撃, 5:落下, 6:低空, 7:高空
+        [0.376, 0.360, 0.448, 0.562, 1.500, 0.568, 1.140, 1.420],
+        [0.404, 0.387, 0.482, 0.604, 1.610, 0.615, 1.230, 1.530],
+        [0.432, 0.414, 0.515, 0.646, 1.720, 0.661, 1.320, 1.650],
+        [0.470, 0.450, 0.560, 0.702, 1.870, 0.727, 1.450, 1.820],
+        [0.498, 0.477, 0.594, 0.744, 1.980, 0.773, 1.550, 1.930],
+        [0.526, 0.504, 0.627, 0.786, 2.100, 0.826, 1.650, 2.060],
+        [0.564, 0.540, 0.672, 0.842, 2.250, 0.899, 1.800, 2.240],
+        [0.602, 0.576, 0.717, 0.899, 2.400, 0.971, 1.940, 2.430],
+        [0.639, 0.612, 0.762, 0.955, 2.550, 1.040, 2.090, 2.610],
+        [0.677, 0.648, 0.806, 1.010, 2.690, 1.120, 2.250, 2.810],
+        [0.714, 0.684, 0.851, 1.070, 2.850, 1.200, 2.400, 3.000]
+    ];
+
+
+    static skillTalentTable = [
+    // 0:継続, 1:爆裂
+        [0.320, 1.330],
+        [0.344, 1.430],
+        [0.368, 1.530],
+        [0.400, 1.660],
+        [0.424, 1.760],
+        [0.448, 1.860],
+        [0.480, 1.990],
+        [0.512, 2.120],
+        [0.544, 2.260],
+        [0.576, 2.390],
+        [0.608, 2.520],
+        [0.640, 2.660],
+        [0.680, 2.820]
+    ];
+
+
+    static burstTalentTable = [
+    // 0:破裂, 1:ダメバフ
+        [4.420, 0.420],
+        [4.760, 0.440],
+        [5.090, 0.460],
+        [5.530, 0.480],
+        [5.860, 0.500],
+        [6.190, 0.520],
+        [6.640, 0.540],
+        [7.080, 0.560],
+        [7.520, 0.580],
+        [7.960, 0.600],
+        [8.410, 0.600],
+        [8.850, 0.600],
+        [9.400, 0.600],
+        [9.940, 0.600]
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_total",
+            label: "通常4段累計",
+            dmgScale(vm){ return vm.normalTalentRow().slice(0, 4); },
+            attackProps: { isNormal: true, isHydro: true }
+        },
+        {
+            id: "charged",
+            label: "重撃",
+            dmgScale(vm){ return vm.normalTalentRow()[4]; },
+            attackProps: { isCharged: true, isHydro: true }
+        },
+        {
+            id: "skill_cont",
+            label: "スキル継続ダメージ",
+            dmgScale(vm){ return vm.skillTalentRow()[0]; },
+            attackProps: { isSkill: true, isHydro: true }
+        },
+        {
+            id: "skill_last",
+            label: "スキル爆裂ダメージ",
+            dmgScale(vm){ return vm.skillTalentRow()[1]; },
+            attackProps: { isSkill: true, isHydro: true }
+        },
+        {
+            id: "burst_dmg",
+            label: "元素爆発爆裂ダメージ",
+            dmgScale(vm){ return vm.burstTalentRow()[0]; },
+            attackProps: { isBurst: true, isHydro: true }
+        },
+    ];
+}
+
+
+export let MonaViewModel = (Klass) => class extends Klass
+{
+    constructor(parent, isBuffer)
+    {
+        super(parent);
+
+        // チャージ効率の20%を水バフへ変換
+        if(!isBuffer) {
+            this.registerTalent({
+                type: "Other",
+                requiredC: 0,
+                uiList: [],
+                effect: {
+                    cond: (vm) => true,
+                    list: [{
+                        target: TypeDefs.DynamicStatusType.hydroDmg,
+                        dynamic: true,
+                        condAttackProps: (attackProps) => true,
+                        value: (vmdata, calc, props) => calc.recharge(props).mul(0.2)
+                    }]
+                }
+            });
+        }
+
+        // 爆発によるダメージ増加
+        this.registerTalent({
+            type: "Burst",
+            requiredC: 0,
+            uiList: [{
+                type: "checkbox",
+                name: "useBurstDmgUp",
+                init: true,
+                label: (vm) => `ダメージ${textPercentageFix(vm.burstTalentRow()[1], 0)}上昇`,
+            }],
+            effect: {
+                cond: (vm) => vm.useBurstDmgUp(),
+                list: [{
+                    target: TypeDefs.StaticStatusType.allDmg,
+                    value: (vm) => vm.burstTalentRow()[1],
+                }]
+            }
+        });
+
+
+        // 1凸効果
+        this.registerTalent({
+            type: "Burst",
+            requiredC: 1,
+            uiList: [{
+                type: "checkbox",
+                name: "useC1Effect",
+                init: true,
+                label: (vm) => `感電+15%/蒸発+15%/水拡散+15%（1凸）`
+            }],
+            effect: {
+                cond: (vm) => vm.useC1Effect(),
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.electroChargedBonus,
+                        value: (vm) => 0.15
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.vaporizeBonus,
+                        value: (vm) => 0.15
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.swirlBonus,
+                        dynamic: true,
+                        condAttackProps: (props) => props.isHydro,
+                        value: (vmdata, calc, props) => 0.15
+                    }
+                ]
+            }
+        });
+
+
+        // 4凸効果
+        this.registerTalent({
+            type: "Burst",
+            requiredC: 4,
+            uiList: [{
+                type: "checkbox",
+                name: "useC4Effect",
+                init: true,
+                label: (vm) => `会心率+15%（4凸）`
+            }],
+            effect: {
+                cond: (vm) => vm.useC4Effect(),
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.crtRate,
+                        value: (vm) => 0.15
+                    }
+                ]
+            }
+        });
+
+
+        // 6凸効果
+        if(!isBuffer) {
+            this.registerTalent({
+                type: "Burst",
+                requiredC: 6,
+                uiList: [{
+                    type: "select",
+                    name: "stacksOfC6Effect",
+                    init: 3,
+                    options: [0, 1, 2, 3].map(e => {return {label: `+${textPercentageFix(e*0.6, 0)}`, value: e};}),
+                    label: (vm) => "重撃ダメージ増加(6凸)",
+                }],
+                effect: {
+                    cond: (vm) => true,
+                    list: [
+                        {
+                            target: TypeDefs.StaticStatusType.chargedDmg,
+                            value: (vm) => 0.6 * Number(vm.stacksOfC6Effect()),
+                        }
+                    ]
+                }
+            });
+        }
+    }
+
+
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Mona(),
+        {
+            "vm": {
+                "level": "90",
+                "parent_id": "mona",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "useBurstDmgUp": true,
+                "useC1Effect": true,
+                "useC4Effect": true,
+                "stacksOfC6Effect": 3,
+                "reactionProb": 0
+            },
+            "expected": {
+                "normal_total": 1379.3171263199997,
+                "charged": 2341.8434744999995,
+                "skill_cont": 252.81284255999995,
+                "skill_last": 1050.2886473999997,
+                "burst_dmg": 3494.765764799999
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Mona().newViewModel()
+    ));
+});
+
+
 // タルタリヤ
 export class Tartaglia extends Base.CharacterData
 {
