@@ -1311,7 +1311,7 @@ export let BennettViewModel = (Base) => class extends Base
                     type: "checkbox",
                     name: "useBurstToPyro",
                     init: false,
-                    label: (vm) => "炎元素付与効果（6凸）",
+                    label: (vm) => "炎元素付与, 炎ダメ+15%（6凸）",
                     other(vm){ return {visible: "constell() >= 6", enable: "useBurstAttackUp()"}; }
                 }
             ],
@@ -1358,7 +1358,7 @@ export let BennettViewModel = (Base) => class extends Base
         data.isBuffer = this.isBuffer;
 
         if(this.isBuffer) {
-            data.baseAtk = this.parent.baseAtk + Weapons.lookupWeapon(this.weaponId()).baseAtk;
+            data.baseAtk = this.parent.baseAtk.atLv("90") + Weapons.lookupWeapon(this.weaponId()).baseAtk.atLv("90");
         }
 
         if(data.useBurstAttackUp) {
@@ -1375,12 +1375,9 @@ export let BennettViewModel = (Base) => class extends Base
                 }
             });
 
-            // 6凸の炎ダメージバフ
-            if(data.constell >= 6) {
-                calc.basePyroDmg.value += 0.15;
-            }
-
             if(data.constell >= 6 && data.useBurstToPyro) {
+                calc.basePyroDmg.value += 0.15;
+
                 // 元素付与
                 calc = calc.applyExtension(Klass => class extends Klass {
                     modifyAttackInfo(attackInfo) {
@@ -1397,7 +1394,7 @@ export let BennettViewModel = (Base) => class extends Base
                         else
                         {
                             // 元々炎元素だったり，対象外であればそのまま返す
-                                return info;
+                            return info;
                         }
                         }).flat(10);
                     }
@@ -1414,6 +1411,7 @@ runUnittest(function(){
         new Bennett(),
         {
             "vm": {
+                "level": "90",
                 "parent_id": "bennett",
                 "constell": 6,
                 "normalRank": 9,
@@ -1427,10 +1425,10 @@ runUnittest(function(){
             },
             "expected": {
                 "normal_total": 2042.6754695625,
-                "skill_short": 1094.3340013124998,
-                "skill_long1": 1398.3156683437496,
-                "skill_long2": 2511.3562337812496,
-                "burst": 1851.9498483749999,
+                "skill_short": 951.5947837499999,
+                "skill_long1": 1215.9266681249999,
+                "skill_long2": 2183.788029375,
+                "burst": 1610.3911724999998,
                 "burst_atk_add": 371.45,
                 "burst_heal": 2438.4939999999997
             }
