@@ -408,6 +408,11 @@ class CharacterViewModelImpl
     maxBurstTalentRank() { return 10; }
 
 
+    normalTalentRow() { return Object.getPrototypeOf(this.parent).constructor.normalTalentTable[this.normalRank()-1]; }
+    skillTalentRow() { return Object.getPrototypeOf(this.parent).constructor.skillTalentTable[this.skillRank()-1]; }
+    burstTalentRow() { return Object.getPrototypeOf(this.parent).constructor.burstTalentTable[this.burstRank()-1]; }
+
+
     /**
      * @param {Calc.DamageCalculator} calc
      */
