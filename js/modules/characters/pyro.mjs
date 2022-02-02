@@ -325,7 +325,7 @@ export class DilucViewModel extends PyroCharacterViewModel
                     target: "skillDmgBuff",
                     dynamic: true,
                     condAttackProps: (attackProps) => attackProps.isDilucSkill2nd3rd,
-                    value: (vm) => 0.4
+                    value: (data, calc, props) => 0.4
                 }]
             }
         });

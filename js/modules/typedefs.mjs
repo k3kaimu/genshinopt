@@ -288,7 +288,7 @@ export class DynamicTalentEffect
     isDynamic = true;
     /** @type {(props: Object) => boolean} */
     condProps;
-    /** @type {(vm: CharBase.CharacterViewModel) => number} */
+    /** @type {(data: any, calc: Calc.DamageCalculator, props: Object) => (number | Calc.VGData)} */
     value;
 }
 

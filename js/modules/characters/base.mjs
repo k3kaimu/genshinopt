@@ -548,6 +548,7 @@ export let AddTalentRegister = (/** @type {typeof CharacterViewModelImpl} */ Bas
     applyDmgCalcImpl(calc)
     {
         calc = super.applyDmgCalcImpl(calc);
+        let vmdata = this.toJS();
 
         this.talents.forEach(talent => {
             if(talent.requiredC > this.constell() || talent.effect == undefined)
@@ -561,11 +562,11 @@ export let AddTalentRegister = (/** @type {typeof CharacterViewModelImpl} */ Bas
                         eval(`calc = calc.applyExtension(Klass => class extends Klass {
                             ${e.target}(attackProps) {
                                 if(e.condAttackProps(attackProps)) {
-                                    let v = e.value(this);
+                                    let v = e.value(vmdata, this, attackProps);
                                     if(typeof v == 'number')
-                                        v = Calc.VGData.constant(v).as(ctx);
+                                        v = Calc.VGData.constant(v);
 
-                                    return super.${e.target}(attackProps).add(v);
+                                    return super.${e.target}(attackProps).add(v.as(ctx));
                                 } else
                                     return super.${e.target}(attackProps);
                             }});`);
