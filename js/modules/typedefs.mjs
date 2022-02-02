@@ -56,6 +56,7 @@ export const UIType = {
  * @typedef {{
  *  type: UIType;
  *  name: string;
+ *  cond?: (vm: CharBase.CharacterViewModel) => boolean;
  *  init: any;
  *  label?: (vm: CharBase.CharacterViewModel) => string;
  *  options?: {label: string, value: any}[];

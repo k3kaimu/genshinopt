@@ -72,6 +72,17 @@ export function textBoxViewHTML(observableStr, labelHTML, otherBindAttr = undefi
 }
 
 
+export function inputNumberViewHTML(observableStr, labelHTML, otherBindAttr = undefined)
+{
+    return `<div class="form-group row m-0">
+        <label class="col-5 mt-2">${labelHTML}</label>
+        <div class="col-7">
+            <input type="number" class="form-control" data-bind="value: ${observableStr}, ${buildBindAttr(otherBindAttr)}">
+        </div>
+    </div>`;
+}
+
+
 export function checkBoxViewHTML(observableStr, labelHTML, otherBindAttr = undefined)
 {
     return `<div class="form-group m-0">
@@ -146,3 +157,55 @@ export function radioViewHTML(observableStr, options, otherBindAttr = undefined)
         ${inputs}
     </div>`;
 }
+
+
+export const levelOptionsForCharWeapon = [
+    {value: "70", label: "70/未突破"},
+    {value: "70+", label: "70/突破"},
+    {value: "71", label: "71"},
+    {value: "72", label: "72"},
+    {value: "73", label: "73"},
+    {value: "74", label: "74"},
+    {value: "75", label: "75"},
+    {value: "76", label: "76"},
+    {value: "77", label: "77"},
+    {value: "78", label: "78"},
+    {value: "79", label: "79"},
+    {value: "80", label: "80/未突破"},
+    {value: "80+", label: "80/突破"},
+    {value: "81", label: "81"},
+    {value: "82", label: "82"},
+    {value: "83", label: "83"},
+    {value: "84", label: "84"},
+    {value: "85", label: "85"},
+    {value: "86", label: "86"},
+    {value: "87", label: "87"},
+    {value: "88", label: "88"},
+    {value: "89", label: "89"},
+    {value: "90", label: "90"},
+];
+
+
+export const levelOptionsForEnemy = [
+    {value: "70", label: "70"},
+    {value: "71", label: "71"},
+    {value: "72", label: "72"},
+    {value: "73", label: "73"},
+    {value: "74", label: "74"},
+    {value: "75", label: "75"},
+    {value: "76", label: "76"},
+    {value: "77", label: "77"},
+    {value: "78", label: "78"},
+    {value: "79", label: "79"},
+    {value: "80", label: "80"},
+    {value: "81", label: "81"},
+    {value: "82", label: "82"},
+    {value: "83", label: "83"},
+    {value: "84", label: "84"},
+    {value: "85", label: "85"},
+    {value: "86", label: "86"},
+    {value: "87", label: "87"},
+    {value: "88", label: "88"},
+    {value: "89", label: "89"},
+    {value: "90", label: "90"},
+];

@@ -598,6 +598,7 @@ export let AddTalentRegister = (/** @type {typeof CharacterViewModelImpl} */ Bas
             let str = "";
             talent.uiList?.forEach(e => {
                 if(e == undefined) return;
+                if(e.cond !== undefined && !e.cond(this)) return;
 
                 switch(e.type) {
                     case "checkbox":
@@ -608,6 +609,9 @@ export let AddTalentRegister = (/** @type {typeof CharacterViewModelImpl} */ Bas
                         str += Widget.selectViewHTML(e.name, e.options,
                                 e.label ? e.label(this) : undefined,
                                 e.other ? e.other(this) : undefined);
+                        break;
+                    case "number":
+                        str += Widget.inputNumberViewHTML(e.name, e.label(this), e.other ? e.other(this) : undefined);
                         break;
                     case "html":
                         str += e.html(this);
