@@ -77,6 +77,7 @@ export class HydroCharacterViewModel extends Base.CharacterViewModel
 }
 
 
+// モナ
 export class Mona extends Base.CharacterData
 {
     constructor()
@@ -191,6 +192,7 @@ export class Mona extends Base.CharacterData
 }
 
 
+// モナ
 export let MonaViewModel = (Klass) => class extends Klass
 {
     constructor(parent, isBuffer)
