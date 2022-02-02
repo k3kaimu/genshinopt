@@ -1295,6 +1295,20 @@ export let BennettViewModel = (Base) => class extends Base
                 },
                 !isBuffer ? undefined : {
                     type: "select",
+                    name: "level",
+                    init: 90,
+                    label: (vm) => "ベネットのレベル",
+                    options: Widget.levelOptionsForCharWeapon,
+                },
+                !isBuffer ? undefined : {
+                    type: "select",
+                    name: "constell",
+                    init: 6,
+                    label: (vm) => "ベネットの命の星座",
+                    options: new Array(7).fill(0).map((e, i) => { return {value: i, label: `${i}凸` };})
+                },
+                !isBuffer ? undefined : {
+                    type: "select",
                     name: "weaponId",
                     options: [
                         {value: "user_input", label: "基礎攻撃力を入力"},
@@ -1361,31 +1375,6 @@ export let BennettViewModel = (Base) => class extends Base
                 this.useBurstToPyro(false);
             }
         });
-
-
-        if(isBuffer) {
-            this.registerTalent({
-                type: "Other",
-                requiredC: 0,
-                uiList: [
-                    {
-                        type: "select",
-                        name: "level",
-                        init: 90,
-                        label: (vm) => "ベネットのレベル",
-                        options: Widget.levelOptionsForCharWeapon,
-                    },
-                    {
-                        type: "select",
-                        name: "constell",
-                        init: 6,
-                        label: (vm) => "ベネットの命の星座",
-                        options: new Array(7).fill(0).map((e, i) => { return {value: i, label: `${i}凸` };})
-                    }
-                ],
-                effect: undefined
-            });
-        }
     }
 
 
