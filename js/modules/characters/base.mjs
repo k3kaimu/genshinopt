@@ -75,6 +75,7 @@ export class CharacterData
 
         this.baseRecharge = 1;      // 元素チャージ効率 
         this.baseMastery = 0;       // 元素熟知
+        this.baseHealingBonus = 0;
         
         this[bBonusType] += bBonusValue;
     }
@@ -458,6 +459,7 @@ class CharacterViewModelImpl
 
         calc.baseRecharge.value += this.parent.baseRecharge * ascensionAdditionalStatusMultiplier[parsedLv.rank];
         calc.baseMastery.value += this.parent.baseMastery * ascensionAdditionalStatusMultiplier[parsedLv.rank];
+        calc.baseHealingBonus.value += this.parent.baseHealingBonus * ascensionAdditionalStatusMultiplier[parsedLv.rank];
 
         return calc;
     }
