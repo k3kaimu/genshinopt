@@ -79,6 +79,222 @@ export class CryoCharacterViewModel extends Base.CharacterViewModel
 }
 
 
+// 七七
+export class Qiqi extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "qiqi",
+            "七七",
+            5,
+            "Cryo",
+            "Sword",
+            [22, 58, 115, 148, 186, 219, 253, 287],             /* bAtk */
+            [72, 186, 371, 477, 598, 706, 814, 922],            /* bDef */
+            [963, 2498, 4973, 6396, 8023, 9463, 10912, 12368],  /* bHP */
+            "baseHealingBonus",   /* bBonusType */
+            0.222           /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new QiqiViewModel(this);
+    }
+
+
+    static normalTalentTable = [
+    //  0-4:通常5段，5:重撃，6:落下，7:低空，8:高空
+        [0.378, 0.389, [0.242, 0.242], [0.247, 0.247], 0.630, [0.643, 0.643], 0.639, 1.280, 1.600],
+        [0.408, 0.420, [0.261, 0.261], [0.267, 0.267], 0.682, [0.696, 0.696], 0.691, 1.380, 1.730],
+        [0.439, 0.452, [0.281, 0.281], [0.287, 0.287], 0.733, [0.748, 0.748], 0.743, 1.490, 1.860],
+        [0.483, 0.497, [0.309, 0.309], [0.316, 0.316], 0.806, [0.823, 0.823], 0.818, 1.640, 2.040],
+        [0.514, 0.529, [0.329, 0.329], [0.336, 0.336], 0.858, [0.875, 0.875], 0.870, 1.740, 2.170],
+        [0.549, 0.565, [0.351, 0.351], [0.359, 0.359], 0.916, [0.935, 0.935], 0.929, 1.860, 2.320],
+        [0.597, 0.615, [0.382, 0.382], [0.390, 0.390], 0.997, [1.020, 1.020], 1.011, 2.020, 2.530],
+        [0.645, 0.664, [0.413, 0.413], [0.422, 0.422], 1.080, [1.100, 1.100], 1.090, 2.190, 2.730],
+        [0.694, 0.714, [0.444, 0.444], [0.453, 0.453], 1.160, [1.180, 1.180], 1.170, 2.350, 2.930],
+        [0.746, 0.768, [0.478, 0.478], [0.488, 0.488], 1.250, [1.270, 1.270], 1.264, 2.530, 3.160],
+        [0.799, 0.823, [0.511, 0.511], [0.522, 0.522], 1.330, [1.360, 1.360], 1.350, 2.710, 3.380]
+    ];
+
+
+    static skillTalentTable = [
+    //  0:ダメージ，1[0]:回復攻撃%，1[1]:回復定数，2[0]:継続回復攻撃%，2[1]:継続回復固定，3:継続ダメージ
+        [0.960, [0.106, 67], [0.696, 451], 0.360],
+        [1.030, [0.113, 74], [0.748, 496], 0.387],
+        [1.100, [0.121, 81], [0.800, 544], 0.414],
+        [1.200, [0.132, 89], [0.870, 597], 0.450],
+        [1.270, [0.140, 98], [0.922, 653], 0.477],
+        [1.340, [0.148, 107], [0.974, 713], 0.504],
+        [1.440, [0.158, 116], [1.044, 777], 0.540],
+        [1.540, [0.169, 126], [1.114, 845], 0.576],
+        [1.630, [0.180, 137], [1.183, 916], 0.612],
+        [1.730, [0.190, 148], [1.253, 991], 0.648],
+        [1.820, [0.201, 160], [1.322, 1070], 0.684],
+        [1.920, [0.211, 172], [1.392, 1153], 0.720],
+        [2.040, [0.224, 185], [1.479, 1239], 0.765]
+    ];
+
+
+    static burstTalentTable = [
+    // 0:ダメージ，1[0]:回復攻撃%，1[1]:回復定数
+        [2.850, [0.900, 577]],
+        [3.060, [0.968, 635]],
+        [3.280, [1.040, 698]],
+        [3.560, [1.130, 765]],
+        [3.770, [1.190, 837]],
+        [3.990, [1.260, 914]],
+        [4.270, [1.350, 996]],
+        [4.560, [1.440, 1083]],
+        [4.840, [1.530, 1174]],
+        [5.130, [1.620, 1270]],
+        [5.410, [1.710, 1371]],
+        [5.700, [1.800, 1477]],
+        [6.050, [1.910, 1588]],
+        [6.410, [2.030, 1703]]
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_total",
+            label: "通常5段累計",
+            dmgScale(vm){ return vm.normalTalentRow().slice(0, 5).flat(10); },
+            attackProps: { isNormal: true, isPhysical: true }
+        },
+        {
+            id: "charged_1",
+            label: "重撃",
+            dmgScale(vm){ return vm.normalTalentRow()[5]; },
+            attackProps: { isCharged: true, isPhysical: true }
+        },
+        {
+            id: "skill_dmg",
+            label: "スキルダメージ",
+            dmgScale(vm){ return vm.skillTalentRow()[0]; },
+            attackProps: { isSkill: true, isCryo: true }
+        },
+        {
+            id: "skill_cont_dmg",
+            label: "スキル継続ダメージ",
+            dmgScale(vm){ return vm.skillTalentRow()[3]; },
+            attackProps: { isSkill: true, isCryo: true }
+        },
+        {
+            id: "skill_hit_heal",
+            label: "スキルヒット時の回復",
+            func(calc, vm){ return calc.calculateHealing(calc.atk({}).mul(vm.skillTalentRow()[1][0]).add(vm.skillTalentRow()[1][1])); },
+            attackProps: { }
+        },
+        {
+            id: "skill_cont_heal",
+            label: "スキル継続回復",
+            func(calc, vm){ return calc.calculateHealing(calc.atk({}).mul(vm.skillTalentRow()[2][0]).add(vm.skillTalentRow()[2][1])); },
+            attackProps: { }
+        },
+        {
+            id: "burst_dmg",
+            label: "元素爆発ダメージ",
+            dmgScale(vm){ return vm.burstTalentRow()[0]; },
+            attackProps: { }
+        },
+        {
+            id: "burst_heal",
+            label: "元素爆発お札回復",
+            func(calc, vm){ return calc.calculateHealing(calc.atk({}).mul(vm.burstTalentRow()[1][0]).add(vm.burstTalentRow()[1][1])); },
+            attackProps: { }
+        },
+    ]
+}
+
+
+// 七七
+export class QiqiViewModel extends CryoCharacterViewModel
+{
+    // TODO: 4凸効果は未実装
+    constructor(parent)
+    {
+        super(parent);
+
+        this.registerTalent({
+            type: "Skill",
+            requiredC: 0,
+            uiList: [{
+                type: "checkbox",
+                name: "useHealedBonusUp",
+                init: true,
+                label: (vm) => "受ける治療効果+20%",
+            }],
+            effect: {
+                cond: (vm) => vm.useHealedBonusUp(),
+                list: [{target: "baseHealedBonus", value: (vm) => 0.20}]
+            }
+        });
+
+
+        this.registerTalent({
+            type: "Other",
+            requiredC: 2,
+            uiList: [{
+                type: "checkbox",
+                name: "useC2Effect",
+                init: true,
+                label: (vm) => "通常/重撃ダメージ+15%",
+            }],
+            effect: {
+                cond: (vm) => vm.useC2Effect(),
+                list: [
+                    {target: "baseNormalDmg", value: (vm) => 0.15},
+                    {target: "baseChargedDmg", value: (vm) => 0.15},
+                ]
+            }
+        });
+    }
+
+
+    maxSkillTalentRank() { return this.constell() >= 5 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 3 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
+}
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new Qiqi(),
+        {
+            "vm": {
+                "level": "90",
+                "parent_id": "qiqi",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "useHealedBonusUp": true,
+                "useC2Effect": true,
+                "reactionProb": 0
+            },
+            "expected": {
+                "normal_total": 1181.7713058749998,
+                "charged_1": 639.3810824999998,
+                "skill_dmg": 384.0055875,
+                "skill_cont_dmg": 144.178785,
+                "skill_hit_heal": 329.441424,
+                "skill_cont_heal": 2188.0462344000002,
+                "burst_dmg": 1140.23745,
+                "burst_heal": 2814.1829040000002
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Qiqi().newViewModel()
+    ));
+});
+
+
+
 // 甘雨
 export class Ganyu extends Base.CharacterData
 {
