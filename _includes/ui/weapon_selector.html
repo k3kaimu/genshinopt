@@ -1,3 +1,4 @@
+<!-- ko let: {cards: viewModel().viewHTMLList(`{{ include.target_from_root }}.viewModel`) } -->
 <div class="input-group">
 
     {% if include.isList %}
@@ -57,29 +58,37 @@
     </div>
     {% endif %}
 </div>
-<!-- 小さい画面用 -->
-<div class="row no-gutters d-md-none">
-  <div class="col">
-    <label>レベル</label>
-    <select class="custom-select rounded-left-only border-right-0" aria-label="レベル" data-bind="value: viewModel().level">
-      {% include ui/level_options.html %}
-    </select>
-  </div>
-  <div class="col">
-    <label>凸数</label>
-    <select class="custom-select rounded-right-only" aria-label="凸数" data-bind="value: viewModel().rank">
-      <option value="0">無凸</option>
-      <option value="1">1凸</option>
-      <option value="2">2凸</option>
-      <option value="3">3凸</option>
-      <option value="4">4凸</option>
-      <option value="5">5凸</option>
-      <option value="6">6凸</option>
-    </select>
+<div class="card" data-bind="css: { 'd-md-none': cards.length == 0 }">
+  <div class="card-body p-2">
+    <!-- 小さい画面用 -->
+    <div class="row no-gutters d-md-none">
+      <div class="col">
+        <label>レベル</label>
+        <select class="custom-select rounded-left-only border-right-0" aria-label="レベル" data-bind="value: viewModel().level">
+          {% include ui/level_options.html %}
+        </select>
+      </div>
+      <div class="col">
+        <label>凸数</label>
+        <select class="custom-select rounded-right-only" aria-label="凸数" data-bind="value: viewModel().rank">
+          <option value="0">無凸</option>
+          <option value="1">1凸</option>
+          <option value="2">2凸</option>
+          <option value="3">3凸</option>
+          <option value="4">4凸</option>
+          <option value="5">5凸</option>
+          <option value="6">6凸</option>
+        </select>
+      </div>
+    </div>
+    <hr class="d-md-none" data-bind="visible: cards.length != 0">
+    <div class="row">
+      <!-- ko foreach: cards -->
+      <div class="col-lg-6">
+        <div data-bind="htmlWithBinding: $data"></div>
+      </div>
+      <!-- /ko -->
+    </div>
   </div>
 </div>
-<div class="row" data-bind="foreach: viewModel().viewHTMLList(`{{ include.target_from_root }}.viewModel`)">
-  <div class="col-lg-6">
-    <div data-bind="htmlWithBinding: $data"></div>
-  </div>
-</div>
+<!-- /ko -->
