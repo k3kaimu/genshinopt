@@ -1,3 +1,4 @@
+import * as TypeDefs from './typedefs.mjs';
 
 
 export class ASTNode
@@ -642,6 +643,15 @@ export class Attacks
 
 
 /**
+ * 攻撃の特徴を表すオブジェクトです．
+ * このオブジェクトは連想配列です．
+ * 予約済みキー以外はデフォルトでは，この攻撃に関連するすべての攻撃に継承されます．
+ * 一方で，この攻撃のみにしか影響しないキー値には末尾に`*`を付ける必要があります．
+ * @typedef {Object} AttackProps
+ */
+
+
+/**
  * 攻撃の特徴を表すオブジェクト
  */
 export class AttackInfo
@@ -670,7 +680,7 @@ export class AttackInfo
     ref = "atk";
 
     /**
-     * @type {Object}
+     * @type {AttackProps}
      */
     props;
 
@@ -1338,7 +1348,37 @@ export class DamageCalculator
     }
 }
 
+/**
+ * AttackPropsを作成します．
+ * @param {AttackProps} props 
+ * @returns {AttackProps}
+ */
+export function newAttackProps(parentProps = {})
+{
+    let ret = deleteAllAttackTypeFromAttackProps(parentProps);
+    ret = deleteAllElementFromAttackProps(ret);
 
+    let keys = Object.keys(ret);
+    keys.forEach(k => {
+        if(k.endsWith('*'))
+            deleteProperties(ret, [k]);
+    });
+
+    return ret;
+}
+
+runUnittest(function(){
+    console.assert(newAttackProps({ isSkill: true }).isSkill === undefined);
+    console.assert(newAttackProps({ isAnemo: true }).isAnemo === undefined);
+    console.assert(newAttackProps({ "isSomeProps": true }).isSomeProps === true);
+    console.assert(newAttackProps({ "isSomeProps*": true }).isSomeProps === undefined);
+});
+
+
+/**
+ * @param {AttackProps} props 
+ * @returns {AttackProps}
+ */
 export function deleteAllElementFromAttackProps(props)
 {
     const elmnt = ["isAnemo", "isGeo", "isElectro", "isPyro", "isHydro", "isCryo", "isDendro", "isPhysical"];
@@ -1350,6 +1390,10 @@ export function deleteAllElementFromAttackProps(props)
 }
 
 
+/**
+ * @param {AttackProps} props 
+ * @returns {AttackProps}
+ */
 export function deleteAllAttackTypeFromAttackProps(props)
 {
     const types = ["isNormal", "isCharged", "isPlunge", "isSkill", "isBurst"];
