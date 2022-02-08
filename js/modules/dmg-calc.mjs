@@ -1346,7 +1346,62 @@ export class DamageCalculator
         let NewCalc = exFn(Calc);
         return Object.assign(new NewCalc(), this);
     }
+
+
+    /**
+     * 
+     * @param {TypeDefs.TalentEffect | TypeDefs.WeaponEffect} effect 
+     * @param {*} viewModel
+     * @returns {Calc.DamageCalculator}
+     */
+    applyEffect(effect, viewModel) {
+        let vmdata = viewModel.toJS();
+        let calc = this;
+
+        if(effect.cond(viewModel)) {
+            effect.list.forEach(e => {
+                if(e.dynamic) {
+                    if(e.target == "addChainedAttackInfo")
+                    {
+                        calc = calc.applyExtension(Klass => class extends Klass {
+                            chainedAttackInfos(props) {
+                                let ret = super.chainedAttackInfos(props);
+
+                                if(e.condAttackProps(props)) {
+                                    let adds = [e.value(vmdata, this, props)].flat(10);
+                                    ret.push(...adds);
+                                } else {
+                                    return ret;
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        // TODO: もっと上手い解決方法はないか？
+                        let ctx = VGData.context;
+                        eval(`calc = calc.applyExtension(Klass => class extends Klass {
+                            ${e.target}(attackProps) {
+                                if(e.condAttackProps(attackProps)) {
+                                    let v = e.value(vmdata, this, attackProps);
+                                    if(typeof v == 'number')
+                                        v = VGData.constant(v);
+
+                                    return super.${e.target}(attackProps).add(v.as(ctx));
+                                } else
+                                    return super.${e.target}(attackProps);
+                            }});`);
+                    }
+                } else {
+                    calc[e.target].value += e.value(viewModel);
+                }
+            });
+        }
+
+        return calc;
+    }
 }
+
 
 /**
  * AttackPropsを作成します．

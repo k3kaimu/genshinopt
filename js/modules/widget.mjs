@@ -1,3 +1,35 @@
+import * as TypeDefs from './typedefs.mjs';
+
+/**
+ * @param {TypeDefs.UIItem} item 
+ * @returns {string?}
+ */
+export function buildUIItem(item)
+{
+    if(item.cond !== undefined && !item.cond(this)) return undefined;
+
+    switch(item.type) {
+        case "checkbox":
+            return checkBoxViewHTML(item.name, item.label(this),
+                    item.other ? item.other(this) : undefined);
+
+        case "select":
+            return selectViewHTML(item.name, item.options,
+                    item.label ? item.label(this) : undefined,
+                    item.other ? item.other(this) : undefined);
+
+        case "number":
+            return inputNumberViewHTML(item.name, item.label(this), item.other ? item.other(this) : undefined);
+
+        case "html":
+            return item.html(this);
+
+        default:
+            console.assert(false, `Unsupported UI type: ${item.type}`);
+    }
+
+    return undefined;
+}
 
 
 export function buildViewHTML(target, title, innerHTML)
@@ -13,12 +45,21 @@ export function buildViewHTML(target, title, innerHTML)
 
 export function buildViewHTMLImpl(target, title, innerHTML)
 {
-    return `<div class="card" data-bind="with: ${target}">
-        <div class="card-header p-2">${title}</div>
-        <div class="card-body p-2">
-            ${innerHTML}
-        </div>
-    </div>`;
+    if(title !== undefined)
+    {
+        return `<div class="card" data-bind="with: ${target}">
+            <div class="card-header p-2">${title}</div>
+            <div class="card-body p-2">
+                ${innerHTML}
+            </div>
+        </div>`;
+    } else {
+        return `<div class="card" data-bind="with: ${target}">
+            <div class="card-body p-2">
+                ${innerHTML}
+            </div>
+        </div>`;
+    }
 }
 
 

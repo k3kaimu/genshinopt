@@ -1,6 +1,7 @@
 import * as Calc from '../dmg-calc.mjs';
 import * as Widget from '../widget.mjs';
 import * as Utils from '../utils.mjs';
+import * as TypeDefs from '../typedefs.mjs';
 
 
 export class WeaponData
@@ -60,6 +61,23 @@ export class WeaponViewModel
             this.level = ko.observable("90");
 
         this.rank = ko.observable(0);
+
+        /** @type {TypeDefs.WeaponEffectDefinition[]} */
+        this.effects = [];
+    }
+
+
+    /**
+     * @param {TypeDefs.WeaponEffectDefinition} obj 
+     */
+    registerEffect(obj) {
+        this.effects.push(obj);
+        obj.uiList?.forEach(e => {
+            if(e == undefined) return;
+
+            if(e.name && !(e.name in this))
+                this[e.name] = ko.observable(e.init);
+        });
     }
 
 
@@ -100,13 +118,44 @@ export class WeaponViewModel
         calc.baseRecharge.value += this.parent.baseRecharge.atLv(lvl);
         calc.baseMastery.value += this.parent.baseMastery.atLv(lvl);
 
+        this.effects.forEach(elem => {
+            if(elem.effect == undefined)
+                return;
+
+            calc = calc.applyEffect(elem.effect, this);
+        });
+
         return calc;
     }
 
 
+    /**
+     * @param {string} target
+     */
     viewHTMLList(target)
     {
-        return [];
+        let list = [];
+        list.push()
+
+        this.effects.forEach(effect => {
+            let str = "";
+            effect.uiList?.forEach(e => {
+                if(e === undefined) return;
+                let uistr = Widget.buildUIItem(e);
+                if(uistr !== undefined)
+                    str += uistr;
+            });
+
+            if(str.length != 0)
+                list.push(str);
+        });
+
+        let ret = [];
+
+        if(list.length)
+            ret.push(Widget.buildViewHTML(target, undefined, list.join("<hr>")));
+
+        return ret;
     }
 
 
@@ -115,13 +164,32 @@ export class WeaponViewModel
         obj.parent_id = this.parent.id;
         obj.level = this.level();
         obj.rank = this.rank();
+
+        this.effects.forEach(effect => {
+            effect.uiList?.forEach(e => {
+                if(e == undefined) return;
+
+                if(e.name)
+                    obj[e.name] = this[e.name]();
+            });
+        });
+
         return obj;
     }
 
 
     fromJS(obj) {
-        this.level(obj.level || "90");
-        this.rank(obj.rank);
+        this.level(obj.level ?? "90");
+        this.rank(obj.rank ?? 0);
+
+        this.effects.forEach(effect => {
+            effect.uiList?.forEach(e => {
+                if(e == undefined) return;
+
+                if(e.name)
+                    this[e.name](obj[e.name] ?? e.init);
+            });
+        });
     }
 }
 

@@ -550,33 +550,12 @@ export let AddTalentRegister = (/** @type {typeof CharacterViewModelImpl} */ Bas
     applyDmgCalcImpl(calc)
     {
         calc = super.applyDmgCalcImpl(calc);
-        let vmdata = this.toJS();
 
         this.talents.forEach(talent => {
             if(talent.requiredC > this.constell() || talent.effect == undefined)
                 return;
 
-            if(talent.effect.cond(this)) {
-                talent.effect.list.forEach(e => {
-                    if(e.dynamic) {
-                        // TODO: もっと上手い解決方法はないか？
-                        let ctx = Calc.VGData.context;
-                        eval(`calc = calc.applyExtension(Klass => class extends Klass {
-                            ${e.target}(attackProps) {
-                                if(e.condAttackProps(attackProps)) {
-                                    let v = e.value(vmdata, this, attackProps);
-                                    if(typeof v == 'number')
-                                        v = Calc.VGData.constant(v);
-
-                                    return super.${e.target}(attackProps).add(v.as(ctx));
-                                } else
-                                    return super.${e.target}(attackProps);
-                            }});`);
-                    } else {
-                        calc[e.target].value += e.value(this);
-                    }
-                });
-            }
+            calc = calc.applyEffect(talent.effect, this);
         });
 
         return calc;
@@ -600,27 +579,9 @@ export let AddTalentRegister = (/** @type {typeof CharacterViewModelImpl} */ Bas
             let str = "";
             talent.uiList?.forEach(e => {
                 if(e == undefined) return;
-                if(e.cond !== undefined && !e.cond(this)) return;
-
-                switch(e.type) {
-                    case "checkbox":
-                        str += Widget.checkBoxViewHTML(e.name, e.label(this),
-                                e.other ? e.other(this) : undefined);
-                        break;
-                    case "select":
-                        str += Widget.selectViewHTML(e.name, e.options,
-                                e.label ? e.label(this) : undefined,
-                                e.other ? e.other(this) : undefined);
-                        break;
-                    case "number":
-                        str += Widget.inputNumberViewHTML(e.name, e.label(this), e.other ? e.other(this) : undefined);
-                        break;
-                    case "html":
-                        str += e.html(this);
-                        break;
-                    default:
-                        console.assert(false, `Unsupported UI type: ${e.type}`);
-                }
+                let uistr = Widget.buildUIItem(e);
+                if(uistr !== undefined)
+                    str += uistr;
             });
 
             if(str.length != 0)
@@ -647,7 +608,7 @@ export let AddTalentRegister = (/** @type {typeof CharacterViewModelImpl} */ Bas
         let obj = super.toJS();
 
         this.talents.forEach(talent => {
-            talent.uiList?.forEach((/** @type {{ name: string | number; }} */ e) => {
+            talent.uiList?.forEach(e => {
                 if(e == undefined) return;
 
                 if(e.name)
@@ -667,11 +628,11 @@ export let AddTalentRegister = (/** @type {typeof CharacterViewModelImpl} */ Bas
         super.fromJS(obj);
 
         this.talents.forEach(talent => {
-            talent.uiList?.forEach((/** @type {{ name: string | number; }} */ e) => {
+            talent.uiList?.forEach(e => {
                 if(e == undefined) return;
 
                 if(e.name)
-                    this[e.name](obj[e.name]);
+                    this[e.name](obj[e.name] ?? e.init);
             });
         });
     }
