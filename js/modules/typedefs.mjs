@@ -1,6 +1,7 @@
 //@ts-check
 import * as Calc from './dmg-calc.mjs';
 import * as CharBase from './characters/base.mjs';
+import * as WeaponBase from './weapons/base.mjs';
 
 
 /**
@@ -244,6 +245,7 @@ export const TalentType = {
     Other: "isOther",
 };
 
+
 export class TalentDefinition
 {
     /** @type {TalentType} */
@@ -259,6 +261,15 @@ export class TalentDefinition
 }
 
 
+export class WeaponEffectDefinition
+{
+    /** @type {UIItem[]} */
+    uiList = [];
+    /** @type {WeaponEffect} */
+    effect;
+}
+
+
 export class TalentEffect
 {
     /** @type {(vm: CharBase.CharacterViewModel) => boolean} */
@@ -270,13 +281,35 @@ export class TalentEffect
 }
 
 
+export class WeaponEffect
+{
+    /** @type {(vm: WeaponBase.WeaponViewModel) => boolean} */
+    cond;
+    /**
+     * @type {(StaticWeaponEffect | DynamicWeaponEffect | )[]}
+     */
+    list;
+}
+
+
 export class StaticTalentEffect
 {
     /** @type {StaticStatusType} */
     target;
     /** @type {boolean} */
     isStatic = true;
-    /** @type {(vm: CharBase.CharacterViewModel) => number} */
+    /** @type {(vm: CharBase.CharacterViewModel) => (number | Calc.AttackInfo[])} */
+    value;
+}
+
+
+export class StaticWeaponEffect
+{
+    /** @type {StaticStatusType} */
+    target;
+    /** @type {boolean} */
+    isStatic = true;
+    /** @type {(vm: WeaponBase.WeaponViewModel) => (number | Calc.AttackInfo[])} */
     value;
 }
 
@@ -289,7 +322,20 @@ export class DynamicTalentEffect
     isDynamic = true;
     /** @type {(props: Object) => boolean} */
     condProps;
-    /** @type {(data: any, calc: Calc.DamageCalculator, props: Object) => (number | Calc.VGData)} */
+    /** @type {(data: any, calc: Calc.DamageCalculator, props: Object) => (number | Calc.VGData | Calc.AttackInfo[])} */
+    value;
+}
+
+
+export class DynamicWeaponEffect
+{
+    /** @type {DynamicStatusType} */
+    target;
+    /** @type {boolean} */
+    isDynamic = true;
+    /** @type {(props: Object) => boolean} */
+    condProps;
+    /** @type {(data: any, calc: Calc.DamageCalculator, props: Object) => (number | Calc.VGData | Calc.AttackInfo[])} */
     value;
 }
 
