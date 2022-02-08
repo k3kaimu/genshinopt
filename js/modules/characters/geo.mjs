@@ -117,13 +117,13 @@ export class AratakiItto extends Base.CharacterData
             id: "sakagesa_cont",
             label: "荒瀧逆袈裟連撃",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][4],
-            attackProps: { isCharged: true, isSakagesa: true, isPhysical: true }
+            attackProps: { isCharged: true, "isSakagesa*": true, isPhysical: true }
         },
         {
             id: "sakagesa_last",
             label: "荒瀧逆袈裟とどめ",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][5],
-            attackProps: { isCharged: true, isSakagesa: true, isPhysical: true }
+            attackProps: { isCharged: true, "isSakagesa*": true, isPhysical: true }
         },
         {
             id: "skill",
@@ -147,13 +147,13 @@ export class AratakiItto extends Base.CharacterData
             id: "sakagesa_cont_burst",
             label: "元素爆発中：荒瀧逆袈裟連撃",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][4],
-            attackProps: { isGeo: true, isNowAratakiBurst: true, isCharged: true, isSakagesa: true }
+            attackProps: { isGeo: true, isNowAratakiBurst: true, isCharged: true, "isSakagesa*": true }
         },
         {
             id: "sakagesa_last_burst",
             label: "元素爆発中：荒瀧逆袈裟とどめ",
             dmgScale: vm => AratakiItto.normalTable[vm.normalRank()-1][5],
-            attackProps: { isGeo: true, isNowAratakiBurst: true, isCharged: true, isSakagesa: true }
+            attackProps: { isGeo: true, isNowAratakiBurst: true, isCharged: true, "isSakagesa*": true }
         },
         {
             id: "skill_burst",
@@ -190,7 +190,7 @@ export class AratakiIttoViewModel extends Base.CharacterViewModel
             increaseDamage(attackProps) {
                 let dmg = super.increaseDamage(attackProps);
 
-                if(attackProps.isSakagesa || false)
+                if(attackProps["isSakagesa*"] || false)
                     dmg = dmg.add(this.def().mul(0.35));
 
                 return dmg;
@@ -349,7 +349,7 @@ export class Albedo extends Base.CharacterData
             label: "元素スキル：刹那の花",
             dmgScale(vm) { return Albedo.skillTalentTable[vm.skillRank()-1][1]; },
             ref: "def",
-            attackProps: { isSkill: true, isGeo: true, isAlbedoSkillFlower: true }
+            attackProps: { isSkill: true, isGeo: true, "isAlbedoSkillFlower*": true }
         },
         {
             id: "burst_total",
@@ -402,7 +402,7 @@ export class AlbedoViewModel extends Base.CharacterViewModel
             #dAlbedo = data;
 
             allDmgBuff(attackProps) {
-                if(attackProps.isAlbedoSkillFlower && this.#dAlbedo.useDmgUpTalent) {
+                if(attackProps["isAlbedoSkillFlower*"] && this.#dAlbedo.useDmgUpTalent) {
                     return super.allDmgBuff(attackProps).add(Calc.VGData.constant(0.25).as(ctx));
                 } else {
                     return super.allDmgBuff(attackProps);
@@ -1015,21 +1015,21 @@ export class YunJin extends Base.CharacterData
             label: "元素スキル（短押し）",
             dmgScale: vm => YunJin.skillTalentTable[vm.skillRank()-1][0],
             ref: "def",
-            attackProps: { isSkill: true, isGeo: true, isYunJinSkillShort: true },
+            attackProps: { isSkill: true, isGeo: true },
         },
         {
             id: "skill_long1",
             label: "元素スキル（長押し1段）",
             dmgScale: vm => YunJin.skillTalentTable[vm.skillRank()-1][1],
             ref: "def",
-            attackProps: { isSkill: true, isGeo: true, isYunJinSkillLong1: true },
+            attackProps: { isSkill: true, isGeo: true },
         },
         {
             id: "skill_long2",
             label: "元素スキル（長押し2段）",
             dmgScale: vm => YunJin.skillTalentTable[vm.skillRank()-1][2],
             ref: "def",
-            attackProps: { isSkill: true, isGeo: true, isYunJinSkillLong2: true },
+            attackProps: { isSkill: true, isGeo: true },
         },
         {
             id: "burst_dmg",

@@ -375,13 +375,13 @@ export class Ganyu extends Base.CharacterData
             id: "charged2",
             label: "霜華の矢",
             dmgScale(vm){ return Ganyu.normalTalentTable[vm.normalRank()-1][8]; },
-            attackProps: { isCharged: true, isCryo: true, isGanyu2ndCharged: true }
+            attackProps: { isCharged: true, isCryo: true, "isGanyu2ndCharged*": true }
         },
         {
             id: "charged2_flower",
             label: "霜華満開",
             dmgScale(vm){ return Ganyu.normalTalentTable[vm.normalRank()-1][9]; },
-            attackProps: { isCharged: true, isCryo: true, isGanyu2ndCharged: true }
+            attackProps: { isCharged: true, isCryo: true, "isGanyu2ndCharged*": true }
         },
         {
             id: "skill_dmg",
@@ -433,7 +433,7 @@ export class GanyuViewModel extends CryoCharacterViewModel
         let CalcType = Object.getPrototypeOf(calc).constructor;
         let NewCalc = class extends CalcType {
             crtRate(attackProps) {
-                if(attackProps.isGanyu2ndCharged || false) {
+                if(attackProps["isGanyu2ndCharged*"] || false) {
                     return super.crtRate(attackProps).add(0.2);
                 } else {
                     return super.crtRate(attackProps);
@@ -629,13 +629,13 @@ export class Shenhe extends Base.CharacterData
             id: "skill_short",
             label: "元素スキル（短押し）",
             dmgScale: vm => Shenhe.skillTalentTable[vm.skillRank()-1][0],
-            attackProps: { isSkill: true, isCryo: true, isShenheSkill: true },
+            attackProps: { isSkill: true, isCryo: true, "isShenheSkill*": true },
         },
         {
             id: "skill_long",
             label: "元素スキル（長押し）",
             dmgScale: vm => Shenhe.skillTalentTable[vm.skillRank()-1][1],
-            attackProps: { isSkill: true, isCryo: true, isShenheSkill: true },
+            attackProps: { isSkill: true, isCryo: true, "isShenheSkill*": true },
         },
         {
             id: "burst_dmg_6",
@@ -749,7 +749,7 @@ export let ShenheViewModel = (Base) => class extends Base {
         if(data.constell >= 4 && !this.isBuffer) {
             calc = calc.applyExtension(Base => class extends Base {
                 skillDmgBuff(attackProps) {
-                    if(attackProps.isShenheSkill)
+                    if(attackProps["isShenheSkill*"])
                         return super.skillDmgBuff(attackProps).add(Calc.VGData.constant(0.05 * data.stacksC4Effect).as(ctx));
                     else
                         return super.skillDmgBuff(attackProps);
