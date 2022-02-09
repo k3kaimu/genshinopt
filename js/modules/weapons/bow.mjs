@@ -2,6 +2,7 @@ import * as Base from './base.mjs';
 import * as Calc from '../dmg-calc.mjs';
 import * as Widget from '../widget.mjs';
 import * as Utils from '../utils.mjs';
+import * as TypeDefs from '../typedefs.mjs';
 
 
 
@@ -22,83 +23,34 @@ export class AmosBow extends Base.WeaponData
     }
 
 
-    newViewModel()
-    {
-        return new AmosBowViewModel(this);
-    }
-
-
     static addNormalChargedDmgInc = [0.12, 0.15, 0.18, 0.21, 0.24];
     static addDmgIncByTime = [0.08, 0.10, 0.12, 0.14, 0.16];
-}
 
 
-// アモスの弓
-export class AmosBowViewModel extends Base.WeaponViewModel
-{
-    constructor(parent)
-    {
-        super(parent);
-        this.stacksDmgInc = ko.observable(5);
-    }
-
-
-    totalDmgInc(nstack) {
-        let rank_ = this.rank();
-        let ret = AmosBow.addNormalChargedDmgInc[rank_];
-        ret += AmosBow.addDmgIncByTime[rank_] * Number(nstack);
+    static totalDmgInc(rank, nstack) {
+        let ret = AmosBow.addNormalChargedDmgInc[rank];
+        ret += AmosBow.addDmgIncByTime[rank] * Number(nstack);
 
         return ret;
     }
 
 
-    applyDmgCalcImpl(calc)
-    {
-        calc = super.applyDmgCalcImpl(calc);
-
-        let dmgInc = this.totalDmgInc(this.stacksDmgInc());
-        calc.baseNormalDmg.value += dmgInc;
-        calc.baseChargedDmg.value += dmgInc;
-
-        return calc;
-    }
-
-
-    viewHTMLList(target)
-    {
-        let dst = super.viewHTMLList(target);
-
-        dst.push(
-            Widget.buildViewHTML(target, "一心不乱",
-                Widget.selectViewHTML("stacksDmgInc", [
-                    {value: 0, label: `通常重撃ダメージ+${textPercentageFix(this.totalDmgInc(0), 0)}（0.0秒後）`},
-                    {value: 1, label: `通常重撃ダメージ+${textPercentageFix(this.totalDmgInc(1), 0)}（0.1秒後）`},
-                    {value: 2, label: `通常重撃ダメージ+${textPercentageFix(this.totalDmgInc(2), 0)}（0.2秒後）`},
-                    {value: 3, label: `通常重撃ダメージ+${textPercentageFix(this.totalDmgInc(3), 0)}（0.3秒後）`},
-                    {value: 4, label: `通常重撃ダメージ+${textPercentageFix(this.totalDmgInc(4), 0)}（0.4秒後）`},
-                    {value: 5, label: `通常重撃ダメージ+${textPercentageFix(this.totalDmgInc(5), 0)}（0.5秒後）`},
-                ])
-            )
-        );
-
-        return dst;
-    }
-
-
-    toJS() {
-        let obj = super.toJS();
-        obj.stacksDmgInc = this.stacksDmgInc();
-
-        return obj;
-    }
-
-
-    fromJS(obj) {
-        super.fromJS(obj);
-        this.stacksDmgInc(obj.stacksDmgInc);
-    }
+    static defineEffects = [
+        {
+            uiList: [{
+                type: "select",
+                name: "stacksDmgInc",
+                init: 5,
+                options: (vm) => iota(0, 6).map((_, i) => {return {value: i, label: `通常/重撃ダメージ+${textPercentageFix(AmosBow.totalDmgInc(vm.rank(), i), 0)}（0.${i}秒後）`};})
+            }],
+            effect: {
+                cond: (vm) => true,
+                list: [{target: "baseNormalDmg", value: (vm) => AmosBow.totalDmgInc(vm.rank(), vm.stacksDmgInc())},
+                       {target: "baseChargedDmg", value: (vm) => AmosBow.totalDmgInc(vm.rank(), vm.stacksDmgInc())}]
+            }
+        }
+    ];
 }
-
 
 
 runUnittest(function(){
@@ -214,6 +166,82 @@ runUnittest(function(){
 
     console.assert(Utils.checkSerializationUnittest(
         new SkywardHarp().newViewModel()
+    ));
+});
+
+
+// 終焉を嘆く詩
+export class ElegyForTheEnd extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "elegy_for_the_end",
+            "終焉を嘆く詩",
+            5,
+            "Bow",
+            608,
+            TypeDefs.StaticStatusType.recharge,
+            0.551
+        );
+    }
+
+
+    static effectTable = {
+        mry1: [60, 75, 90, 105, 120],
+        mry2: [100, 125, 150, 175, 200],
+        atk: [0.20, 0.25, 0.30, 0.35, 0.40],
+    };
+
+
+    static defineEffects = [
+        {
+            uiList: [{
+                type: "checkbox",
+                name: "useEffect",
+                init: true,
+                label: (vm) => `熟知+${textInteger(ElegyForTheEnd.effectTable.mry2[vm.rank()])}，攻撃力+${textPercentageFix(ElegyForTheEnd.effectTable.atk[vm.rank()], 0)}`
+            }],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.mastery,
+                        value: (vm) => vm.useEffect() ? ElegyForTheEnd.effectTable.mry1[vm.rank()] + ElegyForTheEnd.effectTable.mry2[vm.rank()]
+                                                      : ElegyForTheEnd.effectTable.mry1[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.rateAtk,
+                        value: (vm) => vm.useEffect() ? ElegyForTheEnd.effectTable.atk[vm.rank()] : 0
+                    }
+                ]
+            }
+        }
+    ];
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new ElegyForTheEnd(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "elegy_for_the_end",
+                "level": "90",
+                "rank": 0,
+                "useEffect": true
+            },
+            "expected": {
+                "normal_100": 393.78960000000006,
+                "normal_elem_100": 393.78960000000006,
+                "skill_100": 393.78960000000006,
+                "burst_100": 393.78960000000006
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new ElegyForTheEnd().newViewModel()
     ));
 });
 
@@ -447,6 +475,90 @@ runUnittest(function(){
 });
 
 
+// 西風猟弓
+export class FavoniusWarbow extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "favonius_warbow",
+            "西風猟弓",
+            4,
+            "Bow",
+            454,
+            TypeDefs.StaticStatusType.recharge,
+            0.613
+        );
+    }
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new FavoniusWarbow(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "favonius_warbow",
+                "level": "90",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 256.779,
+                "normal_elem_100": 256.779,
+                "skill_100": 256.779,
+                "burst_100": 256.779
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new FavoniusWarbow().newViewModel()
+    ));
+});
+
+
+// 祭礼の弓
+export class SacrificialBow extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "sacrificial_bow",
+            "祭礼の弓",
+            4,
+            "Bow",
+            565,
+            TypeDefs.StaticStatusType.recharge,
+            0.306
+        );
+    }
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new SacrificialBow(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "sacrificial_bow",
+                "level": "90",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 308.2275,
+                "normal_elem_100": 308.2275,
+                "skill_100": 308.2275,
+                "burst_100": 308.2275
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new SacrificialBow().newViewModel()
+    ));
+});
+
+
 // 弓蔵
 export class Rust extends Base.WeaponData
 {
@@ -516,6 +628,262 @@ runUnittest(function(){
         new Rust().newViewModel()
     ));
 });
+
+
+// 絶弦
+export class TheStringless extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "the_stringless",
+            "絶弦",
+            4,
+            "Bow",
+            510,
+            TypeDefs.StaticStatusType.mastery,
+            165
+        );
+    }
+
+
+    static effectTable = [0.24, 0.30, 0.36, 0.42, 0.48];
+
+
+    static defineEffects = [
+        {
+            uiList: [],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.skillDmg,
+                        value: (vm) => TheStringless.effectTable[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.burstDmg,
+                        value: (vm) => TheStringless.effectTable[vm.rank()]
+                    }
+                ]
+            }
+        }
+    ];
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new TheStringless(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "the_stringless",
+                "level": "90",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 282.735,
+                "normal_elem_100": 282.735,
+                "skill_100": 350.5914000000001,
+                "burst_100": 350.5914000000001
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new TheStringless().newViewModel()
+    ));
+});
+
+
+// ダークアレイの狩人
+export class AlleyHunter extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "alley_hunter",
+            "ダークアレイの狩人",
+            4,
+            "Bow",
+            565,
+            TypeDefs.StaticStatusType.rateAtk,
+            0.276
+        );
+    }
+
+    static effectTable = [0.02, 0.025, 0.03, 0.035, 0.04];
+
+    static defineEffects = [{
+        uiList: [{
+            type: "select",
+            name: "numOfStacks",
+            init: 10,
+            options: (vm) => iota(0, 11).map(n => {return {value: n, label: `ダメージ+${textPercentageFix(AlleyHunter.effectTable[vm.rank()] * n, 0)}` };})
+        }],
+        effect: {
+            cond: (vm) => true,
+            list: [{
+                target: TypeDefs.StaticStatusType.allDmg,
+                value: (vm) => AlleyHunter.effectTable[vm.rank()] * Number(vm.numOfStacks())
+            }]
+        }
+    }];
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new AlleyHunter(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "alley_hunter",
+                "level": "90",
+                "rank": 0,
+                "numOfStacks": 10
+            },
+            "expected": {
+                "normal_100": 471.95794799999993,
+                "normal_elem_100": 471.95794799999993,
+                "skill_100": 471.95794799999993,
+                "burst_100": 471.95794799999993
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new AlleyHunter().newViewModel()
+    ));
+});
+
+
+// 旧貴族長弓
+export class RoyalBow extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "royal_bow",
+            "旧貴族長弓",
+            4,
+            "Bow",
+            510,
+            "rateAtk",
+            0.416
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new RoyalBowViewModel(this);
+    }
+
+
+    static effectTable = [0.08, 0.10, 0.12, 0.14, 0.16];
+}
+
+
+// 旧貴族長弓
+export class RoyalBowViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+
+        this.registerEffect({
+            uiList: [
+                {
+                    type: "radio",
+                    name: "selType",
+                    init: "effective",
+                    options: (vm) => [
+                        {value: "effective", label: "実質的な会心率の上昇量を利用"},
+                        {value: "constant", label: "固定の会心率の上昇量を利用"},
+                    ]
+                },
+                {
+                    type: "select",
+                    name: "buffStacks",
+                    init: 1,
+                    options: (vm) => iota(0, 6).map(n => {return {value: n, label: `会心率+${textPercentageFix(this.crtIncrease(n), 0)}`};}),
+                    other: (vm) => {return {visible: "selType() == 'constant'"};}
+                }
+            ],
+            effect: undefined
+        });
+    }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        if(this.selType() == "constant") {
+            calc.baseCrtRate.value += this.crtIncrease(this.buffStacks());
+        } else {
+            let incP = RoyalBow.effectTable[this.rank()];
+
+            calc = calc.applyExtension(Klass => class extends Klass {
+                crtRate(attackProps)
+                {
+                    if(hasAnyProperties(attackProps, ["incCrtRateRoyalBow"])) {
+                        return super.crtRate(attackProps).add(attackProps.incCrtRateRoyalBow);
+                    } else {
+                        return super.crtRate(attackProps);
+                    }
+                }
+
+                modifyAttackInfo(attackInfo) {
+                    return super.modifyAttackInfo(attackInfo).map(info => {
+                        if(!hasAnyProperties(info.props, ["incCrtRateRoyalBow"])) {
+                            const cr = this.crtRate(info.props);
+                            const inc = Calc.royalCriticalRate(cr, incP).sub(cr);
+
+                            return new Calc.AttackInfo(info.scale, info.ref, {...info.props, incCrtRateRoyalBow: inc}, info.prob);
+                        } else {
+                            return info;
+                        }
+                    });
+                }
+            });
+        }
+
+        return calc;
+    }
+
+
+    crtIncrease(numStacks)
+    {
+        return RoyalBow.effectTable[this.rank()] * Number(numStacks);
+    }
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new RoyalBow(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "royal_bow",
+                "level": "90",
+                "rank": 0,
+                "selType": "effective",
+                "buffStacks": 1
+            },
+            "expected": {
+                "normal_100": 440.0379575566927,
+                "normal_elem_100": 440.0379575566927,
+                "skill_100": 440.0379575566927,
+                "burst_100": 440.0379575566927
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new RoyalBow().newViewModel()
+    ));
+});
+
 
 
 // 澹月・試作

@@ -18,10 +18,16 @@ export const weapons = [
     // 弓, 星5
     new Bow.AmosBow(),
     new Bow.SkywardHarp(),
+    new Bow.ElegyForTheEnd(),
     new Bow.ThunderingPulse(),
     new Bow.PolarStar(),
     // 弓, 星4
+    new Bow.FavoniusWarbow(),
+    new Bow.SacrificialBow(),
     new Bow.Rust(),
+    new Bow.TheStringless(),
+    new Bow.AlleyHunter(),
+    new Bow.RoyalBow(),
     new Bow.PrototypeCrescent(),
     new Bow.BlackcliffWarbow(),
     // 法器，星5,
