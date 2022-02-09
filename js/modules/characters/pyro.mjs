@@ -297,7 +297,7 @@ export class DilucViewModel extends PyroCharacterViewModel
             requiredC: 2,
             uiList: [{
                 type: "select",
-                options: new Array(4).fill(0).map((e, i) => { return {value: i, label: `+${textPercentageFix(0.1 * i, 0)}`}; }),
+                options: (vm) => new Array(4).fill(0).map((e, i) => { return {value: i, label: `+${textPercentageFix(0.1 * i, 0)}`}; }),
                 name: "stacksOfC2Effect",
                 init: 3,
                 label: (vm) => "攻撃力増加（2凸効果，被弾時）",
@@ -1298,19 +1298,19 @@ export let BennettViewModel = (Base) => class extends Base
                     name: "level",
                     init: 90,
                     label: (vm) => "ベネットのレベル",
-                    options: Widget.levelOptionsForCharWeapon,
+                    options: (vm) => Widget.levelOptionsForCharWeapon,
                 },
                 !isBuffer ? undefined : {
                     type: "select",
                     name: "constell",
                     init: 6,
                     label: (vm) => "ベネットの命の星座",
-                    options: new Array(7).fill(0).map((e, i) => { return {value: i, label: `${i}凸` };})
+                    options: (vm) => new Array(7).fill(0).map((e, i) => { return {value: i, label: `${i}凸` };})
                 },
                 !isBuffer ? undefined : {
                     type: "select",
                     name: "weaponId",
-                    options: [
+                    options: (vm) => [
                         {value: "user_input", label: "基礎攻撃力を入力"},
                         ...Weapons.weapons.filter(e => e.weaponType == 'Sword').map(e => { return {label: e.name, value: e.id}; })
                     ],
@@ -1321,7 +1321,7 @@ export let BennettViewModel = (Base) => class extends Base
                     type: "select",
                     name: "weaponLevel",
                     cond: (vm) => vm.weaponId() != "user_input",
-                    options: Widget.levelOptionsForCharWeapon,
+                    options: (vm) => Widget.levelOptionsForCharWeapon,
                     init: "90",
                     label: (vm) => "武器レベル"
                 },
@@ -1335,7 +1335,7 @@ export let BennettViewModel = (Base) => class extends Base
                 !isBuffer ? undefined : {
                     type: "select",
                     name: "burstRank",
-                    options: new Array(13).fill(0).map((e, i) => { return { label: `${i+1}`, value: i+1 }; }),
+                    options: (vm) => new Array(13).fill(0).map((e, i) => { return { label: `${i+1}`, value: i+1 }; }),
                     init: 9,
                     label: (vm) => "爆発天賦レベル",
                 },

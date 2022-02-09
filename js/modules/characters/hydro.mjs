@@ -300,7 +300,7 @@ export let MonaViewModel = (Klass) => class extends Klass
                     type: "select",
                     name: "stacksOfC6Effect",
                     init: 3,
-                    options: [0, 1, 2, 3].map(e => {return {label: `+${textPercentageFix(e*0.6, 0)}`, value: e};}),
+                    options: (vm) => [0, 1, 2, 3].map(e => {return {label: `+${textPercentageFix(e*0.6, 0)}`, value: e};}),
                     label: (vm) => "重撃ダメージ増加(6凸)",
                 }],
                 effect: {
