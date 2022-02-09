@@ -57,12 +57,12 @@ export const UIType = {
  * @typedef {{
  *  type: UIType;
  *  name: string;
- *  cond?: (vm: CharBase.CharacterViewModel) => boolean;
+ *  cond?: (vm: any) => boolean;
  *  init: any;
- *  label?: (vm: CharBase.CharacterViewModel) => string;
- *  options?: {label: string, value: any}[];
- *  other?: (vm: CharBase.CharacterViewModel) => Object;
- *  html?: (vm: CharBase.CharacterViewModel) => string;
+ *  label?: (vm: any) => string;
+ *  options?: (vm: any) => {label: string, value: any}[];
+ *  other?: (vm: any) => Object;
+ *  html?: (vm: any) => string;
  * }} UIItem
  */
 
@@ -334,7 +334,7 @@ export class DynamicWeaponEffect
     /** @type {boolean} */
     isDynamic = true;
     /** @type {(props: Object) => boolean} */
-    condProps;
+    condAttackProps;
     /** @type {(data: any, calc: Calc.DamageCalculator, props: Object) => (number | Calc.VGData | Calc.AttackInfo[])} */
     value;
 }
