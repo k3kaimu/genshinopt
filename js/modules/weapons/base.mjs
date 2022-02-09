@@ -64,6 +64,13 @@ export class WeaponViewModel
 
         /** @type {TypeDefs.WeaponEffectDefinition[]} */
         this.effects = [];
+
+
+        if(this.parent) {
+            (Object.getPrototypeOf(this.parent).constructor.defineEffects ?? []).forEach(eff => {
+                this.registerEffect(eff);
+            });
+        }
     }
 
 
