@@ -238,6 +238,7 @@ $(function(){
 
     function ViewModel() {
         this.readyNLopt = ko.observable();
+        this.windowSize = new UI.WindowSizeMeasure();
 
         this.characterPicker = new UI.CharacterPicker();
         this.selectedChar = this.characterPicker.selected;

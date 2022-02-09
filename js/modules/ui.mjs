@@ -1083,3 +1083,79 @@ export function showToast(title, text, delay = 2000)
     });
     
 }
+
+
+export class WindowSizeMeasure
+{
+    constructor()
+    {
+        this.size = ko.observable();
+    }
+
+
+    get width() {
+        return this.size().width;
+    }
+
+
+    get height() {
+        return this.size().height;
+    }
+
+
+    isEq(str) {
+        switch(str) {
+            case 'xs':
+                return this.width < 576;
+            case 'sm':
+                return 576 <= this.width && this.width < 768;
+            case 'sm':
+                return 768 <= this.width && this.width < 992;
+            case 'lg':
+                return 992 <= this.width && this.width < 1200;
+            case 'xl':
+                return 1200 <= this.width;
+            default:
+                console.assert(false, `不正な引数です：str = ${str}`);
+                return undefined;
+        }
+    }
+
+
+    isEqLg(str) {
+        switch(str) {
+            case 'xs':
+                return true;
+            case 'sm':
+                return this.width >= 576;
+            case 'md':
+                return this.width >= 768;
+            case 'lg':
+                return this.width >= 992;
+            case 'xl':
+                return this.width >= 1200;
+            default:
+                console.assert(false, `不正な引数です：str = ${str}`);
+                return undefined;
+        }
+    }
+
+
+    isEqLs(str) {
+        switch(str) {
+            case 'xs':
+                return this.width < 576;
+            case 'sm':
+                return this.width < 768;
+            case 'md':
+                return this.width < 992;
+            case 'lg':
+                return this.width < 1200;
+            case 'xl':
+                return true;
+            default:
+                console.assert(false, `不正な引数です：str = ${str}`);
+                return undefined;
+        }
+    }
+}
