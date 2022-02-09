@@ -1376,6 +1376,20 @@ export class DamageCalculator
                             }
                         });
                     }
+                    else if(e.target == "modifyAttackInfo")
+                    {
+                        calc = calc.applyExtension(Klass => class extends Klass {
+                            modifyAttackInfo(attackInfo) {
+                                return super.modifyAttackInfo(attackInfo).map(info => {
+                                    if(e.condAttackProps(info.props)) {
+                                        return e.value(vmdata, this, info)
+                                    } else {
+                                        return info;
+                                    }
+                                }).flat(10);
+                            }
+                        });
+                    }
                     else
                     {
                         // TODO: もっと上手い解決方法はないか？
