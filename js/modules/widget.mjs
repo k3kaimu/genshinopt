@@ -2,27 +2,32 @@ import * as TypeDefs from './typedefs.mjs';
 
 /**
  * @param {TypeDefs.UIItem} item 
+ * @param {any} vm
  * @returns {string?}
  */
-export function buildUIItem(item)
+export function buildUIItem(item, vm)
 {
-    if(item.cond !== undefined && !item.cond(this)) return undefined;
+    if(item.cond !== undefined && !item.cond(vm)) return undefined;
 
     switch(item.type) {
         case "checkbox":
-            return checkBoxViewHTML(item.name, item.label(this),
-                    item.other ? item.other(this) : undefined);
+            return checkBoxViewHTML(item.name, item.label(vm),
+                    item.other ? item.other(vm) : undefined);
 
         case "select":
-            return selectViewHTML(item.name, item.options,
-                    item.label ? item.label(this) : undefined,
-                    item.other ? item.other(this) : undefined);
+            return selectViewHTML(item.name, item.options(vm),
+                    item.label ? item.label(vm) : undefined,
+                    item.other ? item.other(vm) : undefined);
+        
+        case "radio":
+            return radioViewHTML(item.name, item.options(vm),
+                    item.other ? item.other(vm) : undefined);
 
         case "number":
-            return inputNumberViewHTML(item.name, item.label(this), item.other ? item.other(this) : undefined);
+            return inputNumberViewHTML(item.name, item.label(vm), item.other ? item.other(vm) : undefined);
 
         case "html":
-            return item.html(this);
+            return item.html(vm);
 
         default:
             console.assert(false, `Unsupported UI type: ${item.type}`);
@@ -37,6 +42,15 @@ export function buildViewHTML(target, title, innerHTML)
     // return buildViewHTMLImpl(target, title, innerHTML);
     return DOMPurify.sanitize(
         buildViewHTMLImpl(target, title, innerHTML),
+        {USE_PROFILES: {html: true}}
+    );
+}
+
+
+export function buildViewHTMLWithoutCard(target, innerHTML)
+{
+    return DOMPurify.sanitize(
+        buildViewHTMLWithoutCardImpl(target, innerHTML),
         {USE_PROFILES: {html: true}}
     );
 }
@@ -60,6 +74,14 @@ export function buildViewHTMLImpl(target, title, innerHTML)
             </div>
         </div>`;
     }
+}
+
+
+export function buildViewHTMLWithoutCardImpl(target, innerHTML)
+{
+    return `<div data-bind="with: ${target}">
+            ${innerHTML}
+        </div>`;
 }
 
 
