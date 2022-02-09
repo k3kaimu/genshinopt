@@ -579,7 +579,7 @@ export let AddTalentRegister = (/** @type {typeof CharacterViewModelImpl} */ Bas
             let str = "";
             talent.uiList?.forEach(e => {
                 if(e == undefined) return;
-                let uistr = Widget.buildUIItem(e);
+                let uistr = Widget.buildUIItem(e, this);
                 if(uistr !== undefined)
                     str += uistr;
             });

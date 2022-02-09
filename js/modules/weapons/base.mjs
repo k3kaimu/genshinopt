@@ -141,7 +141,7 @@ export class WeaponViewModel
             let str = "";
             effect.uiList?.forEach(e => {
                 if(e === undefined) return;
-                let uistr = Widget.buildUIItem(e);
+                let uistr = Widget.buildUIItem(e, this);
                 if(uistr !== undefined)
                     str += uistr;
             });
@@ -153,7 +153,7 @@ export class WeaponViewModel
         let ret = [];
 
         if(list.length)
-            ret.push(Widget.buildViewHTML(target, undefined, list.join("<hr>")));
+            ret.push(Widget.buildViewHTMLWithoutCard(target, list.join(`<hr>`)));
 
         return ret;
     }
