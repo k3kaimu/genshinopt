@@ -15,6 +15,20 @@
           }
     };
 
+
+    // https://stackoverflow.com/a/50612544
+    ko.bindingHandlers.winsize = {
+        init: function (element, valueAccessor) {
+            let fn = function () {
+                var value = valueAccessor();
+                value({ width: $(window).width(), height: $(window).height() });
+            };
+
+            fn();
+            $(window).resize(fn);
+        }
+    };
+
     $(document).ready(function() {
         $(".multiselect").each(function(){
             $(this).multiselect();
@@ -496,6 +510,20 @@ function uniqueArray(arr, fn = undefined)
         if(!dup)
             ret.push(e1);
     });
+
+    return ret;
+}
+
+
+/**
+ * iota(a, b) == [a, a+c, a+c*2, ..., a+c*n] where a+c*n < b <= a+c*(n+1)
+ */
+function iota(a, b, c = 1)
+{
+    let ret = [];
+    for(let n = a; n < b; n += c) {
+        ret.push(n);
+    }
 
     return ret;
 }
