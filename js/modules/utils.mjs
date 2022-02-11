@@ -38,11 +38,24 @@ export function checkUnittestForCharacter(character, setting)
     let checkUniqe = {};
     cvm.presetAttacks().forEach(e => {
         let val = e.evaluate(calc).value;
-        ok = ok && (isApproxEqual(val, setting.expected[e.id], undefined, 1e-3));
+
+        if(e.id in setting.expected) {
+            const isEq = isApproxEqual(val, setting.expected[e.id], undefined, 1e-3);
+            ok = ok && isEq;
+
+            if(!isEq) {
+                console.log(`${character.id}: ok=${ok}, e.id=${e.id} val=${val}, exp=${setting.expected[e.id]}`);
+            }
+        } else if(!e.id.startsWith("__")) {
+            console.log(`[warning]: ${character.id} does not have '${e.id}' as preset attacks.`)
+        }
 
         // presetAttacks()のidがユニークか確認する
-        if(e.id in checkUniqe)
+        if(e.id in checkUniqe) {
             ok = false;
+            console.log(`${character.id}: e.id=${e.id} is not Unique.`);
+            console.log(cvm.presetAttacks().map(e => e.id));
+        }
         
         checkUniqe[e.id] = true;
     });
