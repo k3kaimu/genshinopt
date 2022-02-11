@@ -1869,15 +1869,29 @@ export class YanfeiViewModel extends PyroCharacterViewModel
                 let list = super.chainedAttackInfos(info);
 
                 if(hasAllPropertiesWithSameValue(info.props, {isCharged: true})) {
-                    let newprops = shallowDup(info.props);
-                    newprops = Calc.deleteAllElementFromAttackProps(newprops);
-                    newprops = Calc.deleteAllAttackTypeFromAttackProps(newprops);
-                    newprops.isChainable = false;
-                    newprops.isPyro = true;
-                    newprops.isCharged = true;
+                    let chainedProb = undefined;
 
-                    // 重撃が会心時に80%の重撃を発生
-                    list.push(new Calc.AttackInfo(0.8, info.ref, newprops, info.prob.mul(this.crtRate(info.props)) ));
+                    if(info.props.isForcedNonCritical || false) {
+                        // 必ず会心が出ないので，追撃は発生しないので何もしない
+                    } else if(info.props.isForcedCritical || false) {
+                        // 必ず会心なので，元になる攻撃の確率をそのまま継承
+                        chainedProb = info.prob;
+                    } else {
+                        // 会心率を考慮して発生確率を計算
+                        chainedProb = info.prob.mul(this.crtRate(info.props))
+                    }
+
+                    if(chainedProb !== undefined) {
+                        let newprops = shallowDup(info.props);
+                        newprops = Calc.deleteAllElementFromAttackProps(newprops);
+                        newprops = Calc.deleteAllAttackTypeFromAttackProps(newprops);
+                        newprops.isChainable = false;
+                        newprops.isPyro = true;
+                        newprops.isCharged = true;
+
+                        // 重撃が会心時に80%の重撃を発生
+                        list.push(new Calc.AttackInfo(0.8, info.ref, newprops, chainedProb));
+                    }
                 }
 
                 return list;
