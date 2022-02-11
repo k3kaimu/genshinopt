@@ -479,7 +479,89 @@ class CharacterViewModelImpl
      */
     presetAttacks() {
         /** @type {PresetAttackObject[]} */
-        let attacks = Object.getPrototypeOf(this.parent).constructor.presetAttacks;
+        let attacks = Object.getPrototypeOf(this.parent).constructor.presetAttacks.slice(0);
+
+        if(this.parent.elem === TypeDefs.Element.Anemo) {
+            attacks.push(
+                {
+                    id: "__elemReact_Swirl_Cryo__",
+                    label: "氷拡散",
+                    dmgScale: (vm) => 1,
+                    attackProps: { isSwirl: true, isCryo: true }
+                },
+                {
+                    id: "__elemReact_Swirl_Dendro__",
+                    label: "草拡散",
+                    dmgScale: (vm) => 1,
+                    attackProps: { isSwirl: true, isDendro: true }
+                },
+                {
+                    id: "__elemReact_Swirl_Electro__",
+                    label: "雷拡散",
+                    dmgScale: (vm) => 1,
+                    attackProps: { isSwirl: true, isElectro: true }
+                },
+                {
+                    id: "__elemReact_Swirl_Hydro__",
+                    label: "水拡散",
+                    dmgScale: (vm) => 1,
+                    attackProps: { isSwirl: true, isHydro: true }
+                },
+                {
+                    id: "__elemReact_Swirl_Pyro__",
+                    label: "炎拡散",
+                    dmgScale: (vm) => 1,
+                    attackProps: { isSwirl: true, isPyro: true }
+                },
+            );
+        }
+
+        // TODO: 草関連の反応を追加する
+        
+        if(this.parent.elem === TypeDefs.Element.Cryo || this.parent.elem === TypeDefs.Element.Electro) {
+            attacks.push(
+                {
+                    id: "__elemReact_Superconduct__",
+                    label: "超電導",
+                    dmgScale: (vm) => 1,
+                    attackProps: { isSuperconduct: true }
+                }
+            );
+        }
+        
+        if(this.parent.elem === TypeDefs.Element.Electro || this.parent.elem === TypeDefs.Element.Hydro) {
+            attacks.push(
+                {
+                    id: "__elemReact_ElectroCharged__",
+                    label: "感電",
+                    dmgScale: (vm) => 1,
+                    attackProps: { isElectroCharged: true }
+                }
+            );
+        }
+        
+        if(this.parent.elem === TypeDefs.Element.Electro || this.parent.elem === TypeDefs.Element.Pyro) {
+            attacks.push(
+                {
+                    id: "__elemReact_Overloaded__",
+                    label: "過負荷",
+                    dmgScale: (vm) => 1,
+                    attackProps: { isOverloaded: true }
+                }
+            );
+        }
+
+        if(this.parent.elem === TypeDefs.Element.Geo || this.parent.weaponType === TypeDefs.WeaponType.Claymore) {
+            attacks.push(
+                {
+                    id: "__elemReact_Shattered__",
+                    label: "氷砕き",
+                    dmgScale: (vm) => 1,
+                    attackProps: { isShattered: true }
+                }
+            );
+        }
+
         let ret = [];
         attacks.forEach(a => {
             if("newEvaluator" in a)
