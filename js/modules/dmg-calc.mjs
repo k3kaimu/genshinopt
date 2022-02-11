@@ -1105,19 +1105,21 @@ export class DamageCalculator
     {
         var reactType = undefined;
         var bonus = VGData.zero();
-        if(attackProps.isSuperconduct)      { reactType = 0;    bonus = bonus.add(this.superconductBonus()); }
-        if(attackProps.isSwirl)             { reactType = 1;    bonus = bonus.add(this.swirlBonus()); }
-        if(attackProps.isElectroCharged)    { reactType = 2;    bonus = bonus.add(this.electroChargedBonus()); }
-        if(attackProps.isShattered)         { reactType = 3;    bonus = bonus.add(this.shatteredBonus()); }
-        if(attackProps.isOverloaded)        { reactType = 4;    bonus = bonus.add(this.overloadedBonus()); }
+        let resis = undefined;
+        if(attackProps.isSuperconduct)      { reactType = 0; resis = this.calculateTotalResistanceBonus({isCryo: true});        bonus = bonus.add(this.superconductBonus()); }
+        if(attackProps.isSwirl)             { reactType = 1; resis = this.calculateTotalResistanceBonus(attackProps);           bonus = bonus.add(this.swirlBonus()); }
+        if(attackProps.isElectroCharged)    { reactType = 2; resis = this.calculateTotalResistanceBonus({isElectro: true});     bonus = bonus.add(this.electroChargedBonus()); }
+        if(attackProps.isShattered)         { reactType = 3; resis = this.calculateTotalResistanceBonus({isPhysical: true});    bonus = bonus.add(this.shatteredBonus()); }
+        if(attackProps.isOverloaded)        { reactType = 4; resis = this.calculateTotalResistanceBonus({isPyro: true});        bonus = bonus.add(this.overloadedBonus()); }
 
-        // Lv90時の係数を参照
-        var coef = VGData.constant(elementalReactionCoeffTable[90-1][reactType]);
+        // レベルごとの係数を参照
+        var coef = VGData.constant(elementalReactionCoeffTable[this.characterLv - 1][reactType]);
         console.assert(!(reactType == undefined), attackProps + " is not an elemental reaction.");
 
         var masteryBonus = this.mastery().mul(16).div(this.mastery().add(2000));
 
-        return coef.mul(masteryBonus.add(1).add(bonus)).mul(0.5).mul(this.calculateTotalResistanceBonus(attackProps));
+        return coef.mul(masteryBonus.add(1).add(bonus))
+                .mul(resis.as('Resis'));
     }
 
 
