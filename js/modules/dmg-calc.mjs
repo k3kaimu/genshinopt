@@ -1027,9 +1027,10 @@ export class DamageCalculator
         attackInfos.forEach(info => {
             this.modifyAttackInfo(info).forEach(modinfo => {
                 infos.push(modinfo);
+                console.assert(modinfo.props.isAttack !== undefined);
 
                 // この攻撃自体が連鎖攻撃かチェイン不可能ならば連鎖の計算はしない
-                if(modinfo.props.isChained || ("isChainable" in modinfo.props && modinfo.props.isChainable === false))
+                if(modinfo.props.isAttack && (modinfo.props.isChained || ("isChainable" in modinfo.props && modinfo.props.isChainable === false)))
                     return;
 
                 this.chainedAttackInfos(modinfo).forEach(e => {
