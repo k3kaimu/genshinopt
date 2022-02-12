@@ -34,6 +34,7 @@ export const weapons = [
     new Catalyst.SkywardAtlas(),
     new Catalyst.LostPrayerToTheSacredWinds(),
     new Catalyst.MemoryOfDust(),
+    new Catalyst.EverlastingMoonglow(),
     // 法器，星4
     new Catalyst.TheWidsith(),
     new Catalyst.MappaMare(),

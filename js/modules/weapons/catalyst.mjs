@@ -347,6 +347,74 @@ runUnittest(function(){
 });
 
 
+// 不滅の月華
+export class EverlastingMoonglow extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "everlasting_moonglow",
+            "不滅の月華",
+            5,
+            "Catalyst",
+            608,
+            "rateHP",
+            0.496
+        );
+    }
+
+
+    static addHeal = [0.10, 0.125, 0.15, 0.175, 0.20];
+    static addDmgHP = [0.01, 0.015, 0.02, 0.025, 0.03];
+
+
+    static defineEffects = [
+        {
+            uiList: [],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.healingBonus,
+                        value: (vm) => EverlastingMoonglow.addHeal[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.DynamicStatusType.increaseDamage,
+                        isDynamic: true,
+                        condAttackProps: (props) => props.isNormal,
+                        value: (vmdata, calc, props) => calc.hp(props).mul(EverlastingMoonglow.addDmgHP[vmdata.rank])
+                    }
+                ]
+            }
+        }
+    ];
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new EverlastingMoonglow(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "everlasting_moonglow",
+                "level": "90",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 397.49760000000003,
+                "normal_elem_100": 397.49760000000003,
+                "skill_100": 328.158,
+                "burst_100": 328.158
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new EverlastingMoonglow().newViewModel()
+    ));
+});
+
+
 // 流浪楽章
 export class TheWidsith extends Base.WeaponData
 {
