@@ -117,6 +117,7 @@ export const StaticStatusType = {
     recharge: "baseRecharge",
     mastery: "baseMastery",
     rateShieldStrength: "baseRateShieldStrength",
+    healingBonus: "baseHealingBonus",
     allResis: "baseAllResis",
     anemoResis: "baseAnemoResis",
     geoResis: "baseGeoResis",
@@ -323,9 +324,9 @@ export class DynamicTalentEffect
     /** @type {DynamicStatusType} */
     target;
     /** @type {boolean} */
-    dynamic = true;
+    isDynamic = true;
     /** @type {(props: Object) => boolean} */
-    condProps;
+    condAttackProps;
     /** @type {(data: any, calc: Calc.DamageCalculator, props: Object) => (number | Calc.VGData | Calc.AttackInfo[])} */
     value;
 }
