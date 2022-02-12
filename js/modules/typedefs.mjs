@@ -49,6 +49,7 @@ export const AttackType = {
 export const UIType = {
     select: "select",
     checkbox: "checkbox",
+    slider: "slider",
     html: "html",
 }
 
@@ -63,6 +64,9 @@ export const UIType = {
  *  options?: (vm: any) => {label: string, value: any}[];
  *  other?: (vm: any) => Object;
  *  html?: (vm: any) => string;
+ *  min?: number,
+ *  max?: number,
+ *  step: number,
  * }} UIItem
  */
 

@@ -23,6 +23,10 @@ export function buildUIItem(item, vm)
             return radioViewHTML(item.name, item.options(vm),
                     item.other ? item.other(vm) : undefined);
 
+        case "slider":
+            return sliderViewHTML(item.name, item.min, item.max, item.step, item.label(vm),
+                    item.other ? item.other(vm) : undefined)
+
         case "number":
             return inputNumberViewHTML(item.name, item.label(vm), item.other ? item.other(vm) : undefined);
 
