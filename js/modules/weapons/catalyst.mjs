@@ -651,6 +651,156 @@ runUnittest(function(){
 });
 
 
+// 旧貴族秘法録
+export class RoyalGrimoire extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "royal_grimoire",
+            "旧貴族秘法録",
+            4,
+            "Catalyst",
+            565,
+            "rateAtk",
+            0.276
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new RoyalGrimoireViewModel(this);
+    }
+
+
+    static effectTable = [0.08, 0.10, 0.12, 0.14, 0.16];
+}
+
+
+// 旧貴族秘法録
+export class RoyalGrimoireViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.selType = ko.observable("effective");  // effective | constant
+        this.buffStacks = ko.observable(1);         // for this.selType() == "constant"
+    }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        if(this.selType() == "constant") {
+            calc.baseCrtRate.value += this.crtIncrease(this.buffStacks());
+        } else {
+            let incP = RoyalGrimoire.effectTable[this.rank()];
+
+            calc = calc.applyExtension(Klass => class extends Klass {
+                crtRate(attackProps)
+                {
+                    if(hasAnyProperties(attackProps, ["incCrtRateRoyalGrimoire"])) {
+                        return super.crtRate(attackProps).add(attackProps.incCrtRateRoyalGrimoire);
+                    } else {
+                        return super.crtRate(attackProps);
+                    }
+                }
+
+                modifyAttackInfo(attackInfo) {
+                    return super.modifyAttackInfo(attackInfo).map(info => {
+                        if(!hasAnyProperties(info.props, ["incCrtRateRoyalGrimoire"])) {
+                            const cr = this.crtRate(info.props);
+                            const inc = Calc.royalCriticalRate(cr, incP).sub(cr);
+
+                            return new Calc.AttackInfo(info.scale, info.ref, {...info.props, incCrtRateRoyalGrimoire: inc}, info.prob);
+                        } else {
+                            return info;
+                        }
+                    });
+                }
+            });
+        }
+
+        return calc;
+    }
+
+
+    crtIncrease(numStacks)
+    {
+        return RoyalGrimoire.effectTable[this.rank()] * Number(numStacks);
+    }
+
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+
+        dst.push(Widget.buildViewHTML(target, "集中",
+            Widget.radioViewHTML("selType", [
+                {value: "effective", label: "実質的な会心率の上昇量を利用"},
+                {value: "constant", label: "固定の会心率の上昇量を利用"},
+            ])
+            +
+            Widget.selectViewHTML("buffStacks", [
+                {value: 0, label: `会心率+${textPercentageFix(this.crtIncrease(0), 0)}`},
+                {value: 1, label: `会心率+${textPercentageFix(this.crtIncrease(1), 0)}`},
+                {value: 2, label: `会心率+${textPercentageFix(this.crtIncrease(2), 0)}`},
+                {value: 3, label: `会心率+${textPercentageFix(this.crtIncrease(3), 0)}`},
+                {value: 4, label: `会心率+${textPercentageFix(this.crtIncrease(4), 0)}`},
+                {value: 5, label: `会心率+${textPercentageFix(this.crtIncrease(5), 0)}`},
+            ], undefined, {visible: "selType() == 'constant'"})
+        ));
+
+        return dst;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.selType = this.selType();
+        obj.buffStacks = this.buffStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.selType(obj.selType);
+        this.buffStacks(obj.buffStacks);
+    }
+}
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new RoyalGrimoire(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "royal_grimoire",
+                "level": "90",
+                "rank": 0,
+                "selType": "effective",
+                "buffStacks": 1
+            },
+            "expected": {
+                "normal_100": 432.28420916129016,
+                "normal_elem_100": 432.28420916129016,
+                "skill_100": 432.28420916129016,
+                "burst_100": 432.28420916129016
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new RoyalGrimoire().newViewModel()
+    ));
+});
+
+
 // 流浪楽章
 export class TheWidsith extends Base.WeaponData
 {
