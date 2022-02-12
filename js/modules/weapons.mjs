@@ -48,6 +48,7 @@ export const weapons = [
     new Catalyst.SolarPearl(),
     new Catalyst.Frostbearer(),
     new Catalyst.DodocoTales(),
+    new Catalyst.HakushinRing(),
     // 両手剣, 星5
     new Claymore.RedhornStonethresher(),
     // 両手剣, 星4

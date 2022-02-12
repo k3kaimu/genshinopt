@@ -1470,3 +1470,139 @@ runUnittest(function(){
         new DodocoTales().newViewModel()
     ));
 });
+
+
+// 白辰の輪
+export class HakushinRing extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "hakushin_ring",
+            "白辰の輪",
+            4,
+            "Catalyst",
+            565,
+            TypeDefs.StaticStatusType.recharge,
+            0.306
+        );
+    }
+
+
+    static addElementDmg = [0.10, 0.125, 0.15, 0.175, 0.20];
+
+
+    static defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "checkbox",
+                    name: "useAnemoDmgUp",
+                    init: true,
+                    label: (vm) => `風元素ダメージ+${textPercentageFix(HakushinRing.addElementDmg[vm.rank()], 0)}`
+                },
+                {
+                    type: "checkbox",
+                    name: "useCryoDmgUp",
+                    init: true,
+                    label: (vm) => `氷元素ダメージ+${textPercentageFix(HakushinRing.addElementDmg[vm.rank()], 0)}`
+                },
+                {
+                    type: "checkbox",
+                    name: "useDendroDmgUp",
+                    init: true,
+                    label: (vm) => `草元素ダメージ+${textPercentageFix(HakushinRing.addElementDmg[vm.rank()], 0)}`
+                },
+                {
+                    type: "checkbox",
+                    name: "useElectroDmgUp",
+                    init: true,
+                    label: (vm) => `雷元素ダメージ+${textPercentageFix(HakushinRing.addElementDmg[vm.rank()], 0)}`
+                },
+                {
+                    type: "checkbox",
+                    name: "useGeoDmgUp",
+                    init: true,
+                    label: (vm) => `岩元素ダメージ+${textPercentageFix(HakushinRing.addElementDmg[vm.rank()], 0)}`
+                },
+                {
+                    type: "checkbox",
+                    name: "useHydroDmgUp",
+                    init: true,
+                    label: (vm) => `水元素ダメージ+${textPercentageFix(HakushinRing.addElementDmg[vm.rank()], 0)}`
+                },
+                {
+                    type: "checkbox",
+                    name: "usePyroDmgUp",
+                    init: true,
+                    label: (vm) => `炎元素ダメージ+${textPercentageFix(HakushinRing.addElementDmg[vm.rank()], 0)}`
+                },
+            ],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.anemoDmg,
+                        value: (vm) => vm.useAnemoDmgUp() ? HakushinRing.addElementDmg[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.cryoDmg,
+                        value: (vm) => vm.useCryoDmgUp() ? HakushinRing.addElementDmg[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.dendroDmg,
+                        value: (vm) => vm.useDendroDmgUp() ? HakushinRing.addElementDmg[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.electroDmg,
+                        value: (vm) => vm.useElectroDmgUp() ? HakushinRing.addElementDmg[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.geoDmg,
+                        value: (vm) => vm.useGeoDmgUp() ? HakushinRing.addElementDmg[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.hydroDmg,
+                        value: (vm) => vm.useHydroDmgUp() ? HakushinRing.addElementDmg[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.pyroDmg,
+                        value: (vm) => vm.usePyroDmgUp() ? HakushinRing.addElementDmg[vm.rank()] : 0
+                    },
+                ]
+            }
+        }
+    ];
+
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new HakushinRing(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "hakushin_ring",
+                "level": "90",
+                "rank": 0,
+                "useAnemoDmgUp": true,
+                "useCryoDmgUp": true,
+                "useDendroDmgUp": true,
+                "useElectroDmgUp": true,
+                "useGeoDmgUp": true,
+                "useHydroDmgUp": true,
+                "usePyroDmgUp": true
+            },
+            "expected": {
+                "normal_100": 308.2275,
+                "normal_elem_100": 339.05025000000006,
+                "skill_100": 339.05025000000006,
+                "burst_100": 339.05025000000006
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new HakushinRing().newViewModel()
+    ));
+});
