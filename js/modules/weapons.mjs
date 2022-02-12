@@ -36,6 +36,7 @@ export const weapons = [
     new Catalyst.MemoryOfDust(),
     new Catalyst.EverlastingMoonglow(),
     // 法器，星4
+    new Catalyst.FavoniusCodex(),
     new Catalyst.TheWidsith(),
     new Catalyst.MappaMare(),
     // 両手剣, 星5

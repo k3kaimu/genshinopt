@@ -415,6 +415,48 @@ runUnittest(function(){
 });
 
 
+// 西風秘典
+export class FavoniusCodex extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "favonius_codex",
+            "西風秘典",
+            4,
+            "Catalyst",
+            510,
+            TypeDefs.StaticStatusType.recharge,
+            0.459
+        );
+    }
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new FavoniusCodex(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "favonius_codex",
+                "level": "90",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 282.735,
+                "normal_elem_100": 282.735,
+                "skill_100": 282.735,
+                "burst_100": 282.735
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new FavoniusCodex().newViewModel()
+    ));
+});
+
+
 // 流浪楽章
 export class TheWidsith extends Base.WeaponData
 {
