@@ -1041,7 +1041,7 @@ export class YunJin extends Base.CharacterData
             id: "burst_add",
             label: "爆発加算ダメージ（天賦倍率x防御力）",
             func(calc, vm){ return YunJin.increaseDamage(vm.burstRank(), vm.numElems(), calc.def({})); },
-            attackProps: { }
+            attackProps: { isAttack: false, isBurst: true, }
         }
     ];
 

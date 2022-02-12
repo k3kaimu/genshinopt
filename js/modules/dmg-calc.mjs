@@ -1475,7 +1475,7 @@ export function deleteAllElementFromAttackProps(props)
  */
 export function deleteAllAttackTypeFromAttackProps(props)
 {
-    const types = ["isNormal", "isCharged", "isPlunge", "isSkill", "isBurst"];
+    const types = ["isNormal", "isCharged", "isPlunge", "isSkill", "isBurst", "isHeal", "isAttack"];
 
     return deleteProperties(shallowDup(props), types);
 }

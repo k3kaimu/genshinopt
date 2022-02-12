@@ -187,25 +187,25 @@ export class Qiqi extends Base.CharacterData
             id: "skill_hit_heal",
             label: "スキルヒット時の回復",
             func(calc, vm){ return calc.calculateHealing(calc.atk({}).mul(vm.skillTalentRow()[1][0]).add(vm.skillTalentRow()[1][1])); },
-            attackProps: { }
+            attackProps: { isAttack: false, isHeal: true, isSkill: true }
         },
         {
             id: "skill_cont_heal",
             label: "スキル継続回復",
             func(calc, vm){ return calc.calculateHealing(calc.atk({}).mul(vm.skillTalentRow()[2][0]).add(vm.skillTalentRow()[2][1])); },
-            attackProps: { }
+            attackProps: { isAttack: false, isHeal: true, isSkill: true }
         },
         {
             id: "burst_dmg",
             label: "元素爆発ダメージ",
             dmgScale(vm){ return vm.burstTalentRow()[0]; },
-            attackProps: { }
+            attackProps: { isBurst: true, isCryo: true }
         },
         {
             id: "burst_heal",
             label: "元素爆発お札回復",
             func(calc, vm){ return calc.calculateHealing(calc.atk({}).mul(vm.burstTalentRow()[1][0]).add(vm.burstTalentRow()[1][1])); },
-            attackProps: { }
+            attackProps: { isAttack: false, isHeal: true, isBurst: true }
         },
     ]
 }
@@ -653,7 +653,7 @@ export class Shenhe extends Base.CharacterData
             id: "burst_add",
             label: "スキル加算ダメージ（天賦倍率x攻撃力）",
             func(calc, vm){ return Shenhe.increaseDamage(vm.skillRank(), calc.atk({})); },
-            attackProps: { }
+            attackProps: { isAttack: false, isSkill: true }
         }
     ];
 }
