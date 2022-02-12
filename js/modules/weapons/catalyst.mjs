@@ -801,6 +801,73 @@ runUnittest(function(){
 });
 
 
+// 黒岩の緋玉
+export class BlackcliffAgate extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "blackcliff_agate",
+            "黒岩の緋玉",
+            4,
+            "Catalyst",
+            510,
+            TypeDefs.StaticStatusType.crtDmg,
+            0.551
+        );
+    }
+
+
+    static incRateAtk = [0.12, 0.15, 0.18, 0.21, 0.24];
+
+
+    static defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "select",
+                    name: "numOfStacks",
+                    init: 1,
+                    options: (vm) => iota(0, 4).map(e => { return {value: e, label: `攻撃力+${textPercentageFix(e * BlackcliffAgate.incRateAtk[vm.rank()], 0)}` }; })
+                }
+            ],
+            effect: {
+                cond: (vm) => true,
+                list: [{
+                    target: TypeDefs.StaticStatusType.rateAtk,
+                    value: (vm) => Number(vm.numOfStacks()) * BlackcliffAgate.incRateAtk[vm.rank()],
+                }]
+            }
+        }
+    ];
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new BlackcliffAgate(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "blackcliff_agate",
+                "level": "90",
+                "rank": 0,
+                "numOfStacks": 3
+            },
+            "expected": {
+                "normal_100": 394.80456599999997,
+                "normal_elem_100": 394.80456599999997,
+                "skill_100": 394.80456599999997,
+                "burst_100": 394.80456599999997
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new BlackcliffAgate().newViewModel()
+    ));
+});
+
+
 // 流浪楽章
 export class TheWidsith extends Base.WeaponData
 {
