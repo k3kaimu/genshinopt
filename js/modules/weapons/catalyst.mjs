@@ -1237,13 +1237,13 @@ export class SolarPearl extends Base.WeaponData
                     type: "checkbox",
                     name: "useSkillBurstUp",
                     init: true,
-                    label: (vm) => `スキル/爆発ダメージ+${textPercentageFix(SolarPearl.addDmgInc[vm.rank()])}`
+                    label: (vm) => `スキル/爆発ダメージ+${textPercentageFix(SolarPearl.addDmgInc[vm.rank()], 0)}`
                 },
                 {
                     type: "checkbox",
                     name: "useNormalUp",
                     init: true,
-                    label: (vm) => `通常攻撃ダメージ+${textPercentageFix(SolarPearl.addDmgInc[vm.rank()])}`
+                    label: (vm) => `通常攻撃ダメージ+${textPercentageFix(SolarPearl.addDmgInc[vm.rank()], 0)}`
                 }
             ],
             effect: {
@@ -1386,5 +1386,87 @@ runUnittest(function(){
 
     console.assert(Utils.checkSerializationUnittest(
         new Frostbearer().newViewModel()
+    ));
+});
+
+
+// ドドコの物語
+export class DodocoTales extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "dodoco_tales",
+            "ドドコの物語",
+            4,
+            "Catalyst",
+            454,
+            TypeDefs.StaticStatusType.rateAtk,
+            0.551
+        );
+    }
+
+
+    static addChargedDmg = [0.16, 0.20, 0.24, 0.28, 0.32];
+    static addRateAtk = [0.08, 0.10, 0.12, 0.14, 0.16];
+
+
+    static defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "checkbox",
+                    name: "useChargedUp",
+                    init: true,
+                    label: (vm) => `重撃ダメージ+${textPercentageFix(DodocoTales.addChargedDmg[vm.rank()], 0)}`
+                },
+                {
+                    type: "checkbox",
+                    name: "useAtkUp",
+                    init: true,
+                    label: (vm) => `攻撃力+${textPercentageFix(DodocoTales.addRateAtk[vm.rank()], 0)}`
+                }
+            ],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.chargedDmg,
+                        value: (vm) => vm.useChargedUp() ? DodocoTales.addChargedDmg[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.rateAtk,
+                        value: (vm) => vm.useAtkUp() ? DodocoTales.addRateAtk[vm.rank()] : 0
+                    },
+                ]
+            }
+        }
+    ];
+
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new DodocoTales(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "dodoco_tales",
+                "level": "90",
+                "rank": 0,
+                "useChargedUp": true,
+                "useAtkUp": true
+            },
+            "expected": {
+                "normal_100": 418.80654899999996,
+                "normal_elem_100": 418.80654899999996,
+                "skill_100": 418.80654899999996,
+                "burst_100": 418.80654899999996
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new DodocoTales().newViewModel()
     ));
 });
