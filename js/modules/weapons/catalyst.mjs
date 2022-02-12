@@ -499,6 +499,90 @@ runUnittest(function(){
 });
 
 
+// 昭心
+export class EyeOfPerception extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "eye_of_perception",
+            "昭心",
+            4,
+            "Catalyst",
+            454,
+            TypeDefs.StaticStatusType.rateAtk,
+            0.551
+        );
+    }
+
+
+    static addAttackScale = [2.40, 2.70, 3.00, 3.30, 3.60];
+
+
+    static defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "checkbox",
+                    name: "useChainedAttack",
+                    init: false,
+                    label: (vm) => `通常/重撃の${textInteger(vm.perAttack())}回に1回${textPercentageFix(EyeOfPerception.addAttackScale[vm.rank()], 0)}の追加ダメージ x 4回`
+                },
+                {
+                    type: "slider",
+                    name: "perAttack",
+                    init: 6,
+                    min: 1,
+                    max: 20,
+                    step: 1,
+                    label: (vm) => `発生頻度`
+                }
+            ],
+            effect: {
+                cond: (vm) => vm.useChainedAttack(),
+                list: [{
+                    target: "addChainedAttackInfo",
+                    isDynamic: true,
+                    condAttackProps: (props) => props.isNormal || props.isCharged,
+                    value: (vmdata, calc, info) => new Array(4).fill(new Calc.AttackInfo(
+                        EyeOfPerception.addAttackScale[vmdata.rank],
+                        "atk",
+                        {isPhysical: true, ...Calc.newAttackProps(info.props)},
+                        1 / Number(vmdata.perAttack)))
+                }]
+            }
+        }
+    ];
+}
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new EyeOfPerception(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "eye_of_perception",
+                "level": "90",
+                "rank": 0,
+                "useChainedAttack": false,
+                "perAttack": 6
+            },
+            "expected": {
+                "normal_100": 398.2642290000001,
+                "normal_elem_100": 398.2642290000001,
+                "skill_100": 398.2642290000001,
+                "burst_100": 398.2642290000001
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new EyeOfPerception().newViewModel()
+    ));
+});
+
+
 // 流浪楽章
 export class TheWidsith extends Base.WeaponData
 {
