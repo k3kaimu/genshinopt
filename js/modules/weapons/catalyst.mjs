@@ -583,6 +583,74 @@ runUnittest(function(){
 });
 
 
+// ダークアレイの酒と詩
+export class WineAndSong extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "wine_and_song",
+            "ダークアレイの酒と詩",
+            4,
+            "Catalyst",
+            565,
+            TypeDefs.StaticStatusType.recharge,
+            0.306
+        );
+    }
+
+
+    static incRateAtk = [0.20, 0.25, 0.30, 0.35, 0.40];
+
+
+    static defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "checkbox",
+                    name: "useEffect",
+                    init: true,
+                    label: (vm) => `攻撃力+${textPercentageFix(WineAndSong.incRateAtk[vm.rank()], 0)}`
+                }
+            ],
+            effect: {
+                cond: (vm) => vm.useEffect(),
+                list: [{
+                    target: TypeDefs.StaticStatusType.rateAtk,
+                    value: (vm) => WineAndSong.incRateAtk[vm.rank()],
+                }]
+            }
+        }
+    ];
+}
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new WineAndSong(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "wine_and_song",
+                "level": "90",
+                "rank": 0,
+                "useEffect": true
+            },
+            "expected": {
+                "normal_100": 369.87300000000005,
+                "normal_elem_100": 369.87300000000005,
+                "skill_100": 369.87300000000005,
+                "burst_100": 369.87300000000005
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new WineAndSong().newViewModel()
+    ));
+});
+
+
 // 流浪楽章
 export class TheWidsith extends Base.WeaponData
 {

@@ -40,6 +40,7 @@ export const weapons = [
     new Catalyst.SacrificialFragments(),
     new Catalyst.EyeOfPerception(),
     new Catalyst.TheWidsith(),
+    new Catalyst.WineAndSong(),
     new Catalyst.MappaMare(),
     // 両手剣, 星5
     new Claymore.RedhornStonethresher(),
