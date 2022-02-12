@@ -1054,6 +1054,49 @@ runUnittest(function(){
 });
 
 
+// 金珀・試作
+export class PrototypeAmber extends Base.WeaponData
+{
+    // TODO: 元素爆発後のHPやエネルギーの回復効果は未実装
+    constructor()
+    {
+        super(
+            "prototype_amber",
+            "金珀・試作",
+            4,
+            "Catalyst",
+            510,
+            TypeDefs.StaticStatusType.rateHP,
+            0.413
+        );
+    }
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new PrototypeAmber(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "prototype_amber",
+                "level": "90",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 282.735,
+                "normal_elem_100": 282.735,
+                "skill_100": 282.735,
+                "burst_100": 282.735
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new PrototypeAmber().newViewModel()
+    ));
+});
+
+
 // 万国諸海の図譜
 export class MappaMare extends Base.WeaponData
 {

@@ -43,6 +43,7 @@ export const weapons = [
     new Catalyst.WineAndSong(),
     new Catalyst.RoyalGrimoire(),
     new Catalyst.BlackcliffAgate(),
+    new Catalyst.PrototypeAmber(),
     new Catalyst.MappaMare(),
     // 両手剣, 星5
     new Claymore.RedhornStonethresher(),
