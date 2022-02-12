@@ -209,7 +209,7 @@ export let MonaViewModel = (Klass) => class extends Klass
                     cond: (vm) => true,
                     list: [{
                         target: TypeDefs.DynamicStatusType.hydroDmg,
-                        dynamic: true,
+                        isDynamic: true,
                         condAttackProps: (attackProps) => true,
                         value: (vmdata, calc, props) => calc.recharge(props).mul(0.2)
                     }]
@@ -260,7 +260,7 @@ export let MonaViewModel = (Klass) => class extends Klass
                     },
                     {
                         target: TypeDefs.StaticStatusType.swirlBonus,
-                        dynamic: true,
+                        isDynamic: true,
                         condAttackProps: (props) => props.isHydro,
                         value: (vmdata, calc, props) => 0.15
                     }

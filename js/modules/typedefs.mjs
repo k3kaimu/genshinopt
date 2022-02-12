@@ -319,7 +319,7 @@ export class DynamicTalentEffect
     /** @type {DynamicStatusType} */
     target;
     /** @type {boolean} */
-    isDynamic = true;
+    dynamic = true;
     /** @type {(props: Object) => boolean} */
     condProps;
     /** @type {(data: any, calc: Calc.DamageCalculator, props: Object) => (number | Calc.VGData | Calc.AttackInfo[])} */

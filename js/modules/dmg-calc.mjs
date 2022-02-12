@@ -1368,7 +1368,7 @@ export class DamageCalculator
 
         if(effect.cond(viewModel)) {
             effect.list.forEach(e => {
-                if(e.dynamic) {
+                if(e.isDynamic) {
                     if(e.target == "addChainedAttackInfo")
                     {
                         calc = calc.applyExtension(Klass => class extends Klass {
@@ -1381,6 +1381,8 @@ export class DamageCalculator
                                 } else {
                                     return ret;
                                 }
+
+                                return ret;
                             }
                         });
                     }

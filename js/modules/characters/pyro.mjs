@@ -323,7 +323,7 @@ export class DilucViewModel extends PyroCharacterViewModel
                 cond: (vm) => vm["useC4Effect"](),
                 list: [{
                     target: "skillDmgBuff",
-                    dynamic: true,
+                    isDynamic: true,
                     condAttackProps: (attackProps) => attackProps.isDilucSkill2nd3rd,
                     value: (data, calc, props) => 0.4
                 }]
