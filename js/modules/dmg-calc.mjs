@@ -1373,11 +1373,11 @@ export class DamageCalculator
                     if(e.target == "addChainedAttackInfo")
                     {
                         calc = calc.applyExtension(Klass => class extends Klass {
-                            chainedAttackInfos(props) {
-                                let ret = super.chainedAttackInfos(props);
+                            chainedAttackInfos(info) {
+                                let ret = super.chainedAttackInfos(info);
 
-                                if(e.condAttackProps(props)) {
-                                    let adds = [e.value(vmdata, this, props)].flat(10);
+                                if(e.condAttackProps(info.props)) {
+                                    let adds = [e.value(vmdata, this, info)].flat(10);
                                     ret.push(...adds);
                                 } else {
                                     return ret;
