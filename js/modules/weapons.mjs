@@ -32,6 +32,7 @@ export const weapons = [
     new Bow.BlackcliffWarbow(),
     // 法器，星5,
     new Catalyst.SkywardAtlas(),
+    new Catalyst.LostPrayerToTheSacredWinds(),
     new Catalyst.MemoryOfDust(),
     // 法器，星4
     new Catalyst.TheWidsith(),

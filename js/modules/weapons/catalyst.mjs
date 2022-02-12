@@ -126,6 +126,100 @@ runUnittest(function(){
 });
 
 
+// 四風原典
+export class LostPrayerToTheSacredWinds extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "lost_prayer_to_the_sacred_winds",
+            "四風原典",
+            5,
+            "Catalyst",
+            608,
+            TypeDefs.StaticStatusType.crtRate,
+            0.331
+        );
+    }
+
+
+    static addDmgInc = [0.08, 0.10, 0.12, 0.14, 0.16];
+
+
+    static defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "select",
+                    name: "numOfStacks",
+                    init: 4,
+                    options: (vm) => iota(0, 5).map(e => {
+                        return {value: e, label: `全元素ダメージ+${textPercentageFix(e * LostPrayerToTheSacredWinds.addDmgInc[vm.rank()] , 0)}` }; })
+                },
+            ],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.anemoDmg,
+                        value: (vm) => Number(vm.numOfStacks()) * LostPrayerToTheSacredWinds.addDmgInc[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.cryoDmg,
+                        value: (vm) => Number(vm.numOfStacks()) * LostPrayerToTheSacredWinds.addDmgInc[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.dendroDmg,
+                        value: (vm) => Number(vm.numOfStacks()) * LostPrayerToTheSacredWinds.addDmgInc[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.electroDmg,
+                        value: (vm) => Number(vm.numOfStacks()) * LostPrayerToTheSacredWinds.addDmgInc[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.geoDmg,
+                        value: (vm) => Number(vm.numOfStacks()) * LostPrayerToTheSacredWinds.addDmgInc[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.hydroDmg,
+                        value: (vm) => Number(vm.numOfStacks()) * LostPrayerToTheSacredWinds.addDmgInc[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.pyroDmg,
+                        value: (vm) => Number(vm.numOfStacks()) * LostPrayerToTheSacredWinds.addDmgInc[vm.rank()]
+                    }
+                ]
+            }
+        }
+    ];
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new LostPrayerToTheSacredWinds(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "lost_prayer_to_the_sacred_winds",
+                "level": "90",
+                "rank": 0,
+                "numOfStacks": 4
+            },
+            "expected": {
+                "normal_100": 391.43196,
+                "normal_elem_100": 516.6901872000001,
+                "skill_100": 516.6901872000001,
+                "burst_100": 516.6901872000001
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new LostPrayerToTheSacredWinds().newViewModel()
+    ));
+});
+
+
 // 浮世の錠
 export class MemoryOfDust extends Base.WeaponData
 {
