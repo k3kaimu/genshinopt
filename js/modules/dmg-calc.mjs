@@ -1051,6 +1051,10 @@ export class DamageCalculator
      */
     modifyAttackInfo(attackInfo)
     {
+        if(attackInfo.props.isAttack === undefined) {
+            attackInfo.props = {...attackInfo.props, isAttack: true};
+        }
+
         return [attackInfo];
     }
 
@@ -1074,6 +1078,8 @@ export class DamageCalculator
      */
     calculate(info)
     {
+        console.assert(info.props.isAttack === true);
+
         let dmg = undefined;
 
         if(hasAnyPropertiesWithSameValue(info.props, {
