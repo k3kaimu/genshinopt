@@ -457,6 +457,48 @@ runUnittest(function(){
 });
 
 
+// 祭礼の断片
+export class SacrificialFragments extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "sacrificial_fragments",
+            "祭礼の断片",
+            4,
+            "Catalyst",
+            454,
+            TypeDefs.StaticStatusType.mastery,
+            221
+        );
+    }
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new SacrificialFragments(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "sacrificial_fragments",
+                "level": "90",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 256.779,
+                "normal_elem_100": 256.779,
+                "skill_100": 256.779,
+                "burst_100": 256.779
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new SacrificialFragments().newViewModel()
+    ));
+});
+
+
 // 流浪楽章
 export class TheWidsith extends Base.WeaponData
 {
