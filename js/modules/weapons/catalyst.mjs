@@ -2,6 +2,128 @@ import * as Base from './base.mjs'
 import * as Calc from '../dmg-calc.mjs'
 import * as Widget from '../widget.mjs'
 import * as Utils from '../utils.mjs';
+import * as TypeDefs from '../typedefs.mjs';
+
+
+// 天空の巻
+export class SkywardAtlas extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "skyward_atlas",
+            "天空の巻",
+            5,
+            "Catalyst",
+            674,
+            "rateAtk",
+            0.331
+        );
+    }
+
+
+    static addDmgInc = [0.12, 0.15, 0.18, 0.21, 0.24];
+    static addAttackScale = [1.60, 2.00, 2.40, 2.80, 3.20];
+
+
+    static defineEffects = [
+        {
+            uiList: [],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.anemoDmg,
+                        value: (vm) => SkywardAtlas.addDmgInc[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.cryoDmg,
+                        value: (vm) => SkywardAtlas.addDmgInc[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.dendroDmg,
+                        value: (vm) => SkywardAtlas.addDmgInc[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.electroDmg,
+                        value: (vm) => SkywardAtlas.addDmgInc[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.geoDmg,
+                        value: (vm) => SkywardAtlas.addDmgInc[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.hydroDmg,
+                        value: (vm) => SkywardAtlas.addDmgInc[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.pyroDmg,
+                        value: (vm) => SkywardAtlas.addDmgInc[vm.rank()]
+                    }
+                ]
+            }
+        },
+        {
+            uiList: [
+                {
+                    type: "checkbox",
+                    name: "useChainedAttack",
+                    init: false,
+                    label: (vm) => `${textInteger(vm.perAttack())}回に1回${textPercentageFix(SkywardAtlas.addAttackScale[vm.rank()], 0)}の追加ダメージ`
+                },
+                {
+                    type: "slider",
+                    name: "perAttack",
+                    init: 15,
+                    min: 1,
+                    max: 30,
+                    step: 1,
+                    label: (vm) => `発生頻度`
+                }
+            ],
+            effect: {
+                cond: (vm) => vm.useChainedAttack(),
+                list: [{
+                    target: "addChainedAttackInfo",
+                    isDynamic: true,
+                    condAttackProps: (props) => props.isAttack,
+                    value: (vmdata, calc, info) => new Calc.AttackInfo(
+                        SkywardAtlas.addAttackScale[vmdata.rank],
+                        "atk",
+                        {isPhysical: true, ...Calc.newAttackProps(info.props)},
+                        1 / Number(vmdata.perAttack))
+                }]
+            }
+        }
+    ];
+}
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new SkywardAtlas(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "skyward_atlas",
+                "level": "90",
+                "rank": 0,
+                "useChainedAttack": false,
+                "perAttack": 15
+            },
+            "expected": {
+                "normal_100": 477.494919,
+                "normal_elem_100": 534.79430928,
+                "skill_100": 534.79430928,
+                "burst_100": 534.79430928
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new SkywardAtlas().newViewModel()
+    ));
+});
 
 
 // 浮世の錠

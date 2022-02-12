@@ -31,6 +31,7 @@ export const weapons = [
     new Bow.PrototypeCrescent(),
     new Bow.BlackcliffWarbow(),
     // 法器，星5,
+    new Catalyst.SkywardAtlas(),
     new Catalyst.MemoryOfDust(),
     // 法器，星4
     new Catalyst.TheWidsith(),
