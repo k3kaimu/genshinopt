@@ -46,6 +46,7 @@ export const weapons = [
     new Catalyst.PrototypeAmber(),
     new Catalyst.MappaMare(),
     new Catalyst.SolarPearl(),
+    new Catalyst.Frostbearer(),
     // 両手剣, 星5
     new Claymore.RedhornStonethresher(),
     // 両手剣, 星4

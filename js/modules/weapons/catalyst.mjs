@@ -1294,3 +1294,97 @@ runUnittest(function(){
     ));
 });
 
+
+// 冬忍びの実
+export class Frostbearer extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "frostbearer",
+            "冬忍びの実",
+            4,
+            "Catalyst",
+            510,
+            TypeDefs.StaticStatusType.rateAtk,
+            0.413
+        );
+    }
+
+
+    static dmgScale = [0.80, 0.95, 1.10, 1.25, 1.40];
+    static dmgScaleCryo = [2.00, 2.40, 2.80, 3.20, 3.60];
+
+
+    static defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "checkbox",
+                    name: "useChainedAttack",
+                    init: false,
+                    label: (vm) => `通常/重撃の${textInteger(vm.perAttack())}回に1回追加ダメージ`
+                },
+                {
+                    type: "slider",
+                    name: "perAttack",
+                    init: 15,
+                    min: 1,
+                    max: 30,
+                    step: 1,
+                    label: (vm) => `発生頻度`
+                },
+                {
+                    type: "select",
+                    name: "typeOfChainedAttack",
+                    init: "normal",
+                    options: (vm) => [
+                        {value: "normal", label: `攻撃力の${textPercentageFix(Frostbearer.dmgScale[vm.rank()], 0)}のダメージ`},
+                        {value: "cryo",   label: `攻撃力の${textPercentageFix(Frostbearer.dmgScaleCryo[vm.rank()], 0)}のダメージ（氷元素影響下）`}
+                    ]
+                }
+            ],
+            effect: {
+                cond: (vm) => vm.useChainedAttack(),
+                list: [{
+                    target: "addChainedAttackInfo",
+                    isDynamic: true,
+                    condAttackProps: (props) => props.isNormal || props.isCharged,
+                    value: (vmdata, calc, info) => new Calc.AttackInfo(
+                        vmdata.typeOfChainedAttack === "normal" ? Frostbearer.dmgScale[vmdata.rank] : Frostbearer.dmgScaleCryo[vmdata.rank],
+                        "atk",
+                        {isPhysical: true, ...Calc.newAttackProps(info.props)},
+                        1 / Number(vmdata.perAttack))
+                }]
+            }
+        }
+    ];
+}
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new Frostbearer(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "frostbearer",
+                "level": "90",
+                "rank": 0,
+                "useChainedAttack": false,
+                "perAttack": 15,
+                "typeOfChainedAttack": "normal"
+            },
+            "expected": {
+                "normal_100": 399.50455500000004,
+                "normal_elem_100": 399.50455500000004,
+                "skill_100": 399.50455500000004,
+                "burst_100": 399.50455500000004
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Frostbearer().newViewModel()
+    ));
+});
