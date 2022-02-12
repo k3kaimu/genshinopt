@@ -1208,3 +1208,89 @@ runUnittest(function(){
         new MappaMare().newViewModel()
     ));
 });
+
+
+// 匣中日月
+export class SolarPearl extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "solar_pearl",
+            "匣中日月",
+            4,
+            "Catalyst",
+            510,
+            TypeDefs.StaticStatusType.crtRate,
+            0.276
+        );
+    }
+
+
+    static addDmgInc = 	[0.20, 0.25, 0.30, 0.35, 0.40];
+
+
+    static defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "checkbox",
+                    name: "useSkillBurstUp",
+                    init: true,
+                    label: (vm) => `スキル/爆発ダメージ+${textPercentageFix(SolarPearl.addDmgInc[vm.rank()])}`
+                },
+                {
+                    type: "checkbox",
+                    name: "useNormalUp",
+                    init: true,
+                    label: (vm) => `通常攻撃ダメージ+${textPercentageFix(SolarPearl.addDmgInc[vm.rank()])}`
+                }
+            ],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.skillDmg,
+                        value: (vm) => vm.useSkillBurstUp() ? SolarPearl.addDmgInc[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.burstDmg,
+                        value: (vm) => vm.useSkillBurstUp() ? SolarPearl.addDmgInc[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.normalDmg,
+                        value: (vm) => vm.useNormalUp() ? SolarPearl.addDmgInc[vm.rank()] : 0
+                    },
+                ]
+            }
+        }
+    ];
+
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new SolarPearl(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "solar_pearl",
+                "level": "90",
+                "rank": 0,
+                "useSkillBurstUp": true,
+                "useNormalUp": true
+            },
+            "expected": {
+                "normal_100": 393.83064,
+                "normal_elem_100": 393.83064,
+                "skill_100": 393.83064,
+                "burst_100": 393.83064
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new SolarPearl().newViewModel()
+    ));
+});
+
