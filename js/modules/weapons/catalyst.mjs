@@ -415,6 +415,108 @@ runUnittest(function(){
 });
 
 
+// 神楽の真意
+export class KagurasVerity extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "kaguras_verity",
+            "神楽の真意（予想ステータス）",
+            5,
+            "Catalyst",
+            608,
+            TypeDefs.StaticStatusType.crtDmg,
+            0.662
+        );
+    }
+
+
+    static addSkillDmg = [0.12, 0.15, 0.18, 0.21, 0.24];
+    static addElemDmg = [0.12, 0.15, 0.18, 0.21, 0.24];
+
+
+    static defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "select",
+                    name: "numOfStacks",
+                    init: 3,
+                    options: (vm) => [
+                        ...iota(0, 3).map(e => {
+                            return {value: e, label: `スキルダメージ+${textPercentageFix(e * KagurasVerity.addSkillDmg[vm.rank()] , 0)}` }; }),
+                        {value: 3, label: `スキルダメージ+${textPercentageFix(3 * KagurasVerity.addSkillDmg[vm.rank()] , 0)}, 元素ダメージ+${textPercentageFix(KagurasVerity.addElemDmg[vm.rank()] , 0)}`}
+                    ]
+                },
+            ],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.skillDmg,
+                        value: (vm) => KagurasVerity.addSkillDmg[vm.rank()] * vm.numOfStacks(),
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.anemoDmg,
+                        value: (vm) => vm.numOfStacks() == 3 ? KagurasVerity.addElemDmg[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.cryoDmg,
+                        value: (vm) => vm.numOfStacks() == 3 ? KagurasVerity.addElemDmg[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.dendroDmg,
+                        value: (vm) => vm.numOfStacks() == 3 ? KagurasVerity.addElemDmg[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.electroDmg,
+                        value: (vm) => vm.numOfStacks() == 3 ? KagurasVerity.addElemDmg[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.geoDmg,
+                        value: (vm) => vm.numOfStacks() == 3 ? KagurasVerity.addElemDmg[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.hydroDmg,
+                        value: (vm) => vm.numOfStacks() == 3 ? KagurasVerity.addElemDmg[vm.rank()] : 0
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.pyroDmg,
+                        value: (vm) => vm.numOfStacks() == 3 ? KagurasVerity.addElemDmg[vm.rank()] : 0
+                    }
+                ]
+            }
+        }
+    ];
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new KagurasVerity(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "kaguras_verity",
+                "level": "90",
+                "rank": 0,
+                "numOfStacks": 3
+            },
+            "expected": {
+                "normal_100": 338.70366,
+                "normal_elem_100": 379.34809920000004,
+                "skill_100": 501.2814168,
+                "burst_100": 379.34809920000004
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new KagurasVerity().newViewModel()
+    ));
+});
+
+
 // 西風秘典
 export class FavoniusCodex extends Base.WeaponData
 {

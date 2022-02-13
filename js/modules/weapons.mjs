@@ -35,6 +35,7 @@ export const weapons = [
     new Catalyst.LostPrayerToTheSacredWinds(),
     new Catalyst.MemoryOfDust(),
     new Catalyst.EverlastingMoonglow(),
+    new Catalyst.KagurasVerity(),
     // 法器，星4
     new Catalyst.FavoniusCodex(),
     new Catalyst.SacrificialFragments(),
