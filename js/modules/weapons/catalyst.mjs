@@ -26,7 +26,7 @@ export class SkywardAtlas extends Base.WeaponData
     static addAttackScale = [1.60, 2.00, 2.40, 2.80, 3.20];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [],
             effect: {
@@ -146,7 +146,7 @@ export class LostPrayerToTheSacredWinds extends Base.WeaponData
     static addDmgInc = [0.08, 0.10, 0.12, 0.14, 0.16];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [
                 {
@@ -368,7 +368,7 @@ export class EverlastingMoonglow extends Base.WeaponData
     static addDmgHP = [0.01, 0.015, 0.02, 0.025, 0.03];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [],
             effect: {
@@ -436,7 +436,7 @@ export class KagurasVerity extends Base.WeaponData
     static addElemDmg = [0.12, 0.15, 0.18, 0.21, 0.24];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [
                 {
@@ -621,7 +621,7 @@ export class EyeOfPerception extends Base.WeaponData
     static addAttackScale = [2.40, 2.70, 3.00, 3.30, 3.60];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [
                 {
@@ -705,7 +705,7 @@ export class WineAndSong extends Base.WeaponData
     static incRateAtk = [0.20, 0.25, 0.30, 0.35, 0.40];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [
                 {
@@ -923,7 +923,7 @@ export class BlackcliffAgate extends Base.WeaponData
     static incRateAtk = [0.12, 0.15, 0.18, 0.21, 0.24];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [
                 {
@@ -1332,7 +1332,7 @@ export class SolarPearl extends Base.WeaponData
     static addDmgInc = 	[0.20, 0.25, 0.30, 0.35, 0.40];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [
                 {
@@ -1418,7 +1418,7 @@ export class Frostbearer extends Base.WeaponData
     static dmgScaleCryo = [2.00, 2.40, 2.80, 3.20, 3.60];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [
                 {
@@ -1513,7 +1513,7 @@ export class DodocoTales extends Base.WeaponData
     static addRateAtk = [0.08, 0.10, 0.12, 0.14, 0.16];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [
                 {
@@ -1594,7 +1594,7 @@ export class HakushinRing extends Base.WeaponData
     static addElementDmg = [0.10, 0.125, 0.15, 0.175, 0.20];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [
                 {
@@ -1730,7 +1730,7 @@ export class OathswornEye extends Base.WeaponData
     static addRecharge = [0.24, 0.30, 0.36, 0.42, 0.48];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [
                 {
@@ -1800,7 +1800,7 @@ export class EmeraldOrb extends Base.WeaponData
     static addAtk = [0.20, 0.25, 0.30, 0.35, 0.40];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [
                 {
@@ -1870,7 +1870,7 @@ export class MagicGuide extends Base.WeaponData
     static addDmg = [0.12, 0.15, 0.18, 0.21, 0.24];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [
                 {
@@ -1923,7 +1923,7 @@ runUnittest(function(){
 export class ThrillingTalesOfDragonSlayers extends Base.WeaponData
 {
     // 攻撃力バフは他のキャラクターへのバフなので未実装
-    constructor()
+    constructor(isBuffer = false)
     {
         super(
             "thrilling_tales_of_dragon_slayers",
@@ -1934,18 +1934,43 @@ export class ThrillingTalesOfDragonSlayers extends Base.WeaponData
             TypeDefs.StaticStatusType.rateHP,
             0.352
         );
+
+        this.isBuffer = isBuffer;
+
+        if(this.isBuffer) {
+            this.defineEffects = [
+                {
+                    uiList: [
+                        {
+                            type: "select",
+                            name: "rank",
+                            init: 5,
+                            options: (vm) => iota(0, 5).map(e => { return {value: e, label: `精錬ランク${textInteger(e+1)}，攻撃力+${textPercentageFix(ThrillingTalesOfDragonSlayers.rateAtk[e], 0)}`}; })
+                        },
+                    ],
+                    effect: {
+                        cond: (vm) => vm.useEffect(),
+                        list: [
+                            {
+                                target: TypeDefs.StaticStatusType.rateAtk,
+                                value: (vm) => ThrillingTalesOfDragonSlayers.rateAtk[vm.rank()]
+                            }
+                        ]
+                    }
+                }
+            ]
+        } else {
+            this.defineEffects = [];
+        }
     }
 
 
     static rateAtk = [0.24, 0.30, 0.36, 0.42, 0.48];
-
-
-    static defineEffects = [];
 }
 
 runUnittest(function(){
     console.assert(Utils.checkUnittestForWeapon(
-        new ThrillingTalesOfDragonSlayers(),
+        new ThrillingTalesOfDragonSlayers(false),
         "Anemo",
         {
             "vm": {
@@ -1963,7 +1988,7 @@ runUnittest(function(){
     ));
 
     console.assert(Utils.checkSerializationUnittest(
-        new ThrillingTalesOfDragonSlayers().newViewModel()
+        new ThrillingTalesOfDragonSlayers(false).newViewModel()
     ));
 });
 
@@ -1985,7 +2010,7 @@ export class OtherworldlyStory extends Base.WeaponData
     }
 
 
-    static defineEffects = [];
+    defineEffects = [];
 }
 
 runUnittest(function(){
@@ -2034,7 +2059,7 @@ export class TwinNephrite extends Base.WeaponData
     static addAtk = [0.12, 0.14, 0.16, 0.18, 0.20];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [
                 {

@@ -44,16 +44,23 @@ export class WeaponData
 
     newViewModel()
     {
-        return new WeaponViewModel(this);
+        return new WeaponViewModel(this, false);
+    }
+
+
+    newBufferViewModel()
+    {
+        return new WeaponViewModel(this, true);
     }
 }
 
 
 export class WeaponViewModel
 {
-    constructor(data)
+    constructor(data, isBuffer = false)
     {
         this.parent = data;
+        this.isBuffer = isBuffer;
 
         if(!!this.parent && (this.parent.rarity == 1 || this.parent.rarity == 2))
             this.level = ko.observable("70");
@@ -67,7 +74,7 @@ export class WeaponViewModel
 
 
         if(this.parent) {
-            (Object.getPrototypeOf(this.parent).constructor.defineEffects ?? []).forEach(eff => {
+            (this.parent.defineEffects ?? []).forEach(eff => {
                 this.registerEffect(eff);
             });
         }
@@ -101,29 +108,31 @@ export class WeaponViewModel
     {
         let lvl = this.level();
 
-        calc.weapon = this.parent;
+        if(!this.isBuffer) {
+            calc.weapon = this.parent;
 
-        calc.baseAtk.value += this.parent.baseAtk.atLv(lvl);
-        calc.rateAtk.value += this.parent.rateAtk.atLv(lvl);
-        calc.baseDef.value += this.parent.baseDef.atLv(lvl);
-        calc.rateDef.value += this.parent.rateDef.atLv(lvl);
-        calc.baseHP.value += this.parent.baseHP.atLv(lvl);
-        calc.rateHP.value += this.parent.rateHP.atLv(lvl);
+            calc.baseAtk.value += this.parent.baseAtk.atLv(lvl);
+            calc.rateAtk.value += this.parent.rateAtk.atLv(lvl);
+            calc.baseDef.value += this.parent.baseDef.atLv(lvl);
+            calc.rateDef.value += this.parent.rateDef.atLv(lvl);
+            calc.baseHP.value += this.parent.baseHP.atLv(lvl);
+            calc.rateHP.value += this.parent.rateHP.atLv(lvl);
 
-        calc.baseCrtRate.value += this.parent.baseCrtRate.atLv(lvl);
-        calc.baseCrtDmg.value += this.parent.baseCrtDmg.atLv(lvl);
+            calc.baseCrtRate.value += this.parent.baseCrtRate.atLv(lvl);
+            calc.baseCrtDmg.value += this.parent.baseCrtDmg.atLv(lvl);
 
-        calc.baseAnemoDmg.value += this.parent.baseAnemoDmg.atLv(lvl);
-        calc.baseGeoDmg.value += this.parent.baseGeoDmg.atLv(lvl);
-        calc.baseElectroDmg.value += this.parent.baseElectroDmg.atLv(lvl);
-        calc.basePyroDmg.value += this.parent.basePyroDmg.atLv(lvl);
-        calc.baseHydroDmg.value += this.parent.baseHydroDmg.atLv(lvl);
-        calc.baseCryoDmg.value += this.parent.baseCryoDmg.atLv(lvl);
-        calc.baseDendroDmg.value += this.parent.baseDendroDmg.atLv(lvl);
-        calc.basePhysicalDmg.value += this.parent.basePhysicalDmg.atLv(lvl);
+            calc.baseAnemoDmg.value += this.parent.baseAnemoDmg.atLv(lvl);
+            calc.baseGeoDmg.value += this.parent.baseGeoDmg.atLv(lvl);
+            calc.baseElectroDmg.value += this.parent.baseElectroDmg.atLv(lvl);
+            calc.basePyroDmg.value += this.parent.basePyroDmg.atLv(lvl);
+            calc.baseHydroDmg.value += this.parent.baseHydroDmg.atLv(lvl);
+            calc.baseCryoDmg.value += this.parent.baseCryoDmg.atLv(lvl);
+            calc.baseDendroDmg.value += this.parent.baseDendroDmg.atLv(lvl);
+            calc.basePhysicalDmg.value += this.parent.basePhysicalDmg.atLv(lvl);
 
-        calc.baseRecharge.value += this.parent.baseRecharge.atLv(lvl);
-        calc.baseMastery.value += this.parent.baseMastery.atLv(lvl);
+            calc.baseRecharge.value += this.parent.baseRecharge.atLv(lvl);
+            calc.baseMastery.value += this.parent.baseMastery.atLv(lvl);
+        }
 
         this.effects.forEach(elem => {
             if(elem.effect == undefined)

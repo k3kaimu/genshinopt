@@ -35,7 +35,7 @@ export class AmosBow extends Base.WeaponData
     }
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [{
                 type: "select",
@@ -194,7 +194,7 @@ export class ElegyForTheEnd extends Base.WeaponData
     };
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [{
                 type: "checkbox",
@@ -650,7 +650,7 @@ export class TheStringless extends Base.WeaponData
     static effectTable = [0.24, 0.30, 0.36, 0.42, 0.48];
 
 
-    static defineEffects = [
+    defineEffects = [
         {
             uiList: [],
             effect: {
@@ -713,7 +713,7 @@ export class AlleyHunter extends Base.WeaponData
 
     static effectTable = [0.02, 0.025, 0.03, 0.035, 0.04];
 
-    static defineEffects = [{
+    defineEffects = [{
         uiList: [{
             type: "select",
             name: "numOfStacks",
