@@ -50,6 +50,7 @@ export const weapons = [
     new Catalyst.Frostbearer(),
     new Catalyst.DodocoTales(),
     new Catalyst.HakushinRing(),
+    new Catalyst.OathswornEye(),
     // 両手剣, 星5
     new Claymore.RedhornStonethresher(),
     // 両手剣, 星4

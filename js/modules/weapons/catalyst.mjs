@@ -1708,3 +1708,73 @@ runUnittest(function(){
         new HakushinRing().newViewModel()
     ));
 });
+
+
+// 誓いの明瞳
+export class OathswornEye extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "oathsworn_eye",
+            "誓いの明瞳（予想ステータス）",
+            4,
+            "Catalyst",
+            565,
+            TypeDefs.StaticStatusType.rateAtk,
+            0.276
+        );
+    }
+
+
+    static addRecharge = [0.24, 0.30, 0.36, 0.42, 0.48];
+
+
+    static defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "checkbox",
+                    name: "useEffect",
+                    init: true,
+                    label: (vm) => `元素チャージ効率+${textPercentageFix(OathswornEye.addRecharge[vm.rank()], 0)}`
+                },
+            ],
+            effect: {
+                cond: (vm) => vm.useEffect(),
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.recharge,
+                        value: (vm) => OathswornEye.addRecharge[vm.rank()]
+                    }
+                ]
+            }
+        }
+    ];
+
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new OathswornEye(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "oathsworn_eye",
+                "level": "90",
+                "rank": 0,
+                "useEffect": true
+            },
+            "expected": {
+                "normal_100": 393.29828999999995,
+                "normal_elem_100": 393.29828999999995,
+                "skill_100": 393.29828999999995,
+                "burst_100": 393.29828999999995
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new OathswornEye().newViewModel()
+    ));
+});
