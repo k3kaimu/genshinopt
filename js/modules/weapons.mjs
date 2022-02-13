@@ -51,6 +51,12 @@ export const weapons = [
     new Catalyst.DodocoTales(),
     new Catalyst.HakushinRing(),
     new Catalyst.OathswornEye(),
+    // 法器，星3
+    new Catalyst.EmeraldOrb(),
+    new Catalyst.MagicGuide(),
+    new Catalyst.ThrillingTalesOfDragonSlayers(),
+    new Catalyst.OtherworldlyStory(),
+    new Catalyst.TwinNephrite(),
     // 両手剣, 星5
     new Claymore.RedhornStonethresher(),
     // 両手剣, 星4

@@ -1778,3 +1778,306 @@ runUnittest(function(){
         new OathswornEye().newViewModel()
     ));
 });
+
+
+// 翡玉法珠
+export class EmeraldOrb extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "emerald_orb",
+            "翡玉法珠",
+            3,
+            "Catalyst",
+            448,
+            TypeDefs.StaticStatusType.mastery,
+            94
+        );
+    }
+
+
+    static addAtk = [0.20, 0.25, 0.30, 0.35, 0.40];
+
+
+    static defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "checkbox",
+                    name: "useEffect",
+                    init: true,
+                    label: (vm) => `攻撃力+${textPercentageFix(EmeraldOrb.addAtk[vm.rank()], 0)}`
+                },
+            ],
+            effect: {
+                cond: (vm) => vm.useEffect(),
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.rateAtk,
+                        value: (vm) => EmeraldOrb.addAtk[vm.rank()]
+                    }
+                ]
+            }
+        }
+    ];
+
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new EmeraldOrb(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "emerald_orb",
+                "level": "90",
+                "rank": 0,
+                "useEffect": true
+            },
+            "expected": {
+                "normal_100": 304.79760000000005,
+                "normal_elem_100": 304.79760000000005,
+                "skill_100": 304.79760000000005,
+                "burst_100": 304.79760000000005
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new EmeraldOrb().newViewModel()
+    ));
+});
+
+
+// 魔導緒論
+export class MagicGuide extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "magic_guide",
+            "魔導緒論",
+            3,
+            "Catalyst",
+            354,
+            TypeDefs.StaticStatusType.mastery,
+            187
+        );
+    }
+
+
+    static addDmg = [0.12, 0.15, 0.18, 0.21, 0.24];
+
+
+    static defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "checkbox",
+                    name: "useEffect",
+                    init: true,
+                    label: (vm) => `ダメージ+${textPercentageFix(MagicGuide.addDmg[vm.rank()], 0)}（水/雷元素影響下）`
+                },
+            ],
+            effect: {
+                cond: (vm) => vm.useEffect(),
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.allDmg,
+                        value: (vm) => MagicGuide.addDmg[vm.rank()]
+                    }
+                ]
+            }
+        }
+    ];
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new MagicGuide(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "magic_guide",
+                "level": "90",
+                "rank": 0,
+                "useEffect": true
+            },
+            "expected": {
+                "normal_100": 235.68048000000002,
+                "normal_elem_100": 235.68048000000002,
+                "skill_100": 235.68048000000002,
+                "burst_100": 235.68048000000002
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new MagicGuide().newViewModel()
+    ));
+});
+
+
+// 龍殺しの英傑譚
+export class ThrillingTalesOfDragonSlayers extends Base.WeaponData
+{
+    // 攻撃力バフは他のキャラクターへのバフなので未実装
+    constructor()
+    {
+        super(
+            "thrilling_tales_of_dragon_slayers",
+            "龍殺しの英傑譚",
+            3,
+            "Catalyst",
+            401,
+            TypeDefs.StaticStatusType.rateHP,
+            0.352
+        );
+    }
+
+
+    static rateAtk = [0.24, 0.30, 0.36, 0.42, 0.48];
+
+
+    static defineEffects = [];
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new ThrillingTalesOfDragonSlayers(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "thrilling_tales_of_dragon_slayers",
+                "level": "90",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 232.21349999999998,
+                "normal_elem_100": 232.21349999999998,
+                "skill_100": 232.21349999999998,
+                "burst_100": 232.21349999999998
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new ThrillingTalesOfDragonSlayers().newViewModel()
+    ));
+});
+
+
+// 異世界旅行記
+export class OtherworldlyStory extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "otherworldly_story",
+            "異世界旅行記",
+            3,
+            "Catalyst",
+            401,
+            TypeDefs.StaticStatusType.recharge,
+            0.390
+        );
+    }
+
+
+    static defineEffects = [];
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new OtherworldlyStory(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "otherworldly_story",
+                "level": "90",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 232.21349999999998,
+                "normal_elem_100": 232.21349999999998,
+                "skill_100": 232.21349999999998,
+                "burst_100": 232.21349999999998
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new OtherworldlyStory().newViewModel()
+    ));
+});
+
+
+// 特級の宝玉
+export class TwinNephrite extends Base.WeaponData
+{
+    // 攻撃力バフは他のキャラクターへのバフなので未実装
+    constructor()
+    {
+        super(
+            "twin_nephrite",
+            "特級の宝玉",
+            3,
+            "Catalyst",
+            448,
+            TypeDefs.StaticStatusType.crtRate,
+            0.156
+        );
+    }
+
+
+    static addAtk = [0.12, 0.14, 0.16, 0.18, 0.20];
+
+
+    static defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "checkbox",
+                    name: "useEffect",
+                    init: true,
+                    label: (vm) => `攻撃力+${textPercentageFix(TwinNephrite.addAtk[vm.rank()], 0)}`
+                },
+            ],
+            effect: {
+                cond: (vm) => vm.useEffect(),
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.rateAtk,
+                        value: (vm) => TwinNephrite.addAtk[vm.rank()]
+                    }
+                ]
+            }
+        }
+    ];
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new TwinNephrite(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "twin_nephrite",
+                "level": "90",
+                "rank": 0,
+                "useEffect": true
+            },
+            "expected": {
+                "normal_100": 310.32933120000007,
+                "normal_elem_100": 310.32933120000007,
+                "skill_100": 310.32933120000007,
+                "burst_100": 310.32933120000007
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new TwinNephrite().newViewModel()
+    ));
+});
