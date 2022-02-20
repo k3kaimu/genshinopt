@@ -414,7 +414,7 @@ export class YaeMikoViewModel extends Base.CharacterViewModel
                     target: TypeDefs.DynamicStatusType.skillDmg,
                     isDynamic: true,
                     condAttackProps: (props) => true,
-                    value: (vmdata, calc, props) => calc.mastery().mul(0.0015)
+                    value: (vmdata, calc, props) => calc.mastery(props).mul(0.0015)
                 }]
             }
         });
