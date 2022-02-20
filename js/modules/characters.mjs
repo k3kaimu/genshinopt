@@ -24,6 +24,7 @@ export const characters = [
     new Cryo.Shenhe(),
     new Cryo.Chongyun(),
     new Electro.RaidenShogun(),
+    new Electro.YaeMiko(),
     new Electro.Beidou(),
     // new Electro.TravelerElectro(),
     // new Geo.TravelerGeo(),

@@ -2,6 +2,7 @@ import * as Base from './base.mjs';
 import * as Widget from '../widget.mjs';
 import * as Calc from '../dmg-calc.mjs';
 import * as Utils from '../utils.mjs';
+import * as TypeDefs from '../typedefs.mjs';
 
 
 // 旅人（雷）
@@ -271,6 +272,224 @@ runUnittest(function(){
         new RaidenShogun().newViewModel()
     ));
 });
+
+
+// 八重神子
+export class YaeMiko extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "yae_miko",
+            "八重神子",
+            5,
+            "Electro",
+            "Catalyst",
+            [26, 68, 136, 175, 220, 259, 299, 340],             /* bAtk */
+            [44, 115, 229, 294, 369, 435, 502, 569],            /* bDef */
+            [807, 2095, 4170, 5364, 6729, 7936, 9151, 10372],   /* bHP */
+            TypeDefs.StaticStatusType.crtRate,                  /* bBonusType */
+            0.192                                               /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new YaeMikoViewModel(this);
+    }
+
+
+    static normalTalentTable = [
+    //  0-2:通常3段，3:重撃，4:落下，5:低空/高空
+        [0.397, 0.385, 0.569, 1.429, 0.568, [1.140, 1.420]],
+        [0.426, 0.414, 0.612, 1.536, 0.615, [1.230, 1.530]],
+        [0.456, 0.443, 0.654, 1.643, 0.661, [1.320, 1.650]],
+        [0.496, 0.481, 0.711, 1.786, 0.722, [1.450, 1.820]],
+        [0.525, 0.510, 0.754, 1.893, 0.773, [1.550, 1.930]],
+        [0.555, 0.539, 0.796, 2.001, 0.826, [1.650, 2.060]],
+        [0.595, 0.578, 0.853, 2.143, 0.899, [1.800, 2.240]],
+        [0.635, 0.616, 0.910, 2.286, 0.971, [1.940, 2.430]]
+    ];
+
+
+    static skillTalentTable = [
+    //  0:ダメージ階位1, 1:ダメージ階位2, 2:1: ダメージ階位3, 3: ダメージ階位4
+        [0.607, 0.758, 0.948, 1.185],
+        [0.652, 0.815, 1.019, 1.274],
+        [0.698, 0.872, 1.090, 1.363],
+        [0.758, 0.948, 1.185, 1.481],
+        [0.804, 1.005, 1.256, 1.570],
+        [0.849, 1.062, 1.327, 1.659],
+        [0.910, 1.138, 1.422, 1.778],
+        [0.971, 1.213, 1.517, 1.896]
+    ];
+
+
+    static burstTalentTable = [
+    // 0:ダメージ，1:天狐雷霆ダメージ
+        [2.600, 3.340],
+        [2.800, 3.590],
+        [2.990, 3.840],
+        [3.250, 4.170],
+        [3.450, 4.420],
+        [3.640, 4.670],
+        [3.900, 5.010],
+        [4.160, 5.340]
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_total",
+            label: "通常3段累計",
+            dmgScale(vm){ return vm.normalTalentRow().slice(0, 3).flat(10); },
+            attackProps: { isNormal: true, isElectro: true }
+        },
+        {
+            id: "charged_1",
+            label: "重撃",
+            dmgScale(vm){ return vm.normalTalentRow()[3]; },
+            attackProps: { isCharged: true, isElectro: true }
+        },
+        {
+            id: "skill_dmg",
+            label: "スキルダメージ",
+            dmgScale(vm){
+                if(vm.constell() >= 2)
+                    return vm.skillTalentRow()[Number(vm.skillStacks())];
+                else
+                    return vm.skillTalentRow()[Number(vm.skillStacks())-1];
+            },
+            attackProps: { isSkill: true, isElectro: true }
+        },
+        {
+            id: "burst_dmg",
+            label: "元素爆発累計ダメージ",
+            dmgScale(vm){ 
+                let rs = vm.burstTalentRow();
+                return [rs[0], ...new Array(Number(vm.skillStacks())).fill(rs[1])];
+            },
+            attackProps: { isBurst: true, isElectro: true }
+        },
+    ];
+}
+
+
+// 八重神子
+export class YaeMikoViewModel extends Base.CharacterViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+
+        // スキルの株の数
+        this.registerTalent({
+            type: "Skill",
+            requiredC: 0,
+            uiList: [{
+                type: "select",
+                name: "skillStacks",
+                init: 3,
+                options: (vm) => {
+                    let ks = ["", "壱", "弐", "参", "肆"];
+                    if(vm.constell() < 2)
+                        return iota(1, 4).map(e => { return {value: e, label: `殺生櫻${e}本（階位${ks[e]}）` }; });
+                    else
+                        return iota(1, 4).map(e => { return {value: e, label: `殺生櫻${e}本（階位${ks[e+1]}）` }; });
+                }
+            }],
+            effect: undefined
+        });
+
+
+        // 熟知をスキルダメージへ変換
+        this.registerTalent({
+            type: "Skill",
+            requiredC: 0,
+            uiList: [],
+            effect: {
+                cond: (vm) => true,
+                list: [{
+                    target: TypeDefs.DynamicStatusType.skillDmg,
+                    isDynamic: true,
+                    condAttackProps: (props) => true,
+                    value: (vmdata, calc, props) => calc.mastery().mul(0.0015)
+                }]
+            }
+        });
+
+        // 4凸効果
+        this.registerTalent({
+            type: "Skill",
+            requiredC: 4,
+            uiList: [{
+                type: "checkbox",
+                name: "useC4Effect",
+                init: true,
+                label: (vm) => `雷元素ダメージ+20%`
+            }],
+            effect: {
+                cond: (vm) => vm.useC4Effect(),
+                list: [{target: TypeDefs.StaticStatusType.electroDmg, value: (vm) => 0.20}]
+            }
+        });
+
+        // 6凸効果
+        this.registerTalent({
+            type: "Skill",
+            requiredC: 6,
+            uiList: [],
+            effect: {
+                cond: (vm) => true,
+                list: [{
+                    target: TypeDefs.DynamicStatusType.ignoreEnemyDef,
+                    isDynamic: true,
+                    condAttackProps: (props) => props.isSkill,
+                    value: (vmdata, calc, props) => 0.6
+                }]
+            }
+        });
+    }
+
+    
+    // TODO: 8までのデータしかない
+    maxNormalTalentRank() { return 8; }
+    maxSkillTalentRank() { return 8; }
+    maxBurstTalentRank() { return 8; }
+}
+
+
+// runUnittest(function(){
+//     console.assert(Utils.checkUnittestForCharacter(
+//         new YaeMiko(),
+//         {
+//             "vm": {
+//                 "level": "90",
+//                 "parent_id": "yae_miko",
+//                 "constell": 6,
+//                 "normalRank": 8,
+//                 "skillRank": 8,
+//                 "burstRank": 8,
+//                 "skillStacks": 3,
+//                 "useC4Effect": true
+//             },
+//             "expected": {
+//                 "normal_total": 737.9028396,
+//                 "charged_1": 780.5857896,
+//                 "skill_dmg": 924.8785508571427,
+//                 "burst_dmg": 6890.735448,
+//                 "__elemReact_Superconduct__": 650.7,
+//                 "__elemReact_ElectroCharged__": 1562.4,
+//                 "__elemReact_Overloaded__": 2603.7000000000003
+//             }
+//         }
+//     ));
+
+//     console.assert(Utils.checkSerializationUnittest(
+//         new YaeMiko().newViewModel()
+//     ));
+// });
 
 
 // 北斗
