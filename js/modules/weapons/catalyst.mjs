@@ -422,7 +422,7 @@ export class KagurasVerity extends Base.WeaponData
     {
         super(
             "kaguras_verity",
-            "神楽の真意（予想ステータス）",
+            "神楽の真意",
             5,
             "Catalyst",
             608,
@@ -1717,7 +1717,7 @@ export class OathswornEye extends Base.WeaponData
     {
         super(
             "oathsworn_eye",
-            "誓いの明瞳（予想ステータス）",
+            "誓いの明瞳",
             4,
             "Catalyst",
             565,
