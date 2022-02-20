@@ -128,6 +128,7 @@ export const StaticStatusType = {
     dendroResis: "baseDendroResis",
     physicalResis: "basePhysicalResis",
     enemyRateDef: "baseEnemyRateDef",
+    ignoreEnemyDef: "baseIgnoreEnemyDef",
 };
 
 /** @type {StaticStatusType[]} */
@@ -184,6 +185,7 @@ export const DynamicStatusType = {
     recharge: "recharge",
     mastery: "mastery",
     enemyRateDef: "enemyRateDef",
+    ignoreEnemyDef: "ignoreEnemyDef",
     /** ダメージ加算 */             increaseDamage: "increaseDamage",
 };
 
