@@ -7,6 +7,9 @@ export function makeUnittestForCharacter(id)
     let c = Data.lookupCharacter(id);
     let cvm = c.newViewModel();
     cvm.constell(6);
+    if(cvm.normalRank() > cvm.maxNormalTalentRank())    cvm.normalRank(cvm.maxNormalTalentRank());
+    if(cvm.skillRank() > cvm.maxSkillTalentRank())      cvm.skillRank(cvm.maxSkillTalentRank());
+    if(cvm.burstRank() > cvm.maxBurstTalentRank())      cvm.burstRank(cvm.maxBurstTalentRank());
     let cvmobj = cvm.toJS();
 
     let calc = new Calc.DamageCalculator();
