@@ -1662,6 +1662,114 @@ runUnittest(function(){
 });
 
 
+// 辰砂往生録
+export class VermillionHereafter extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            'vermillion_hereafter',
+            "辰砂往生録",
+            "辰砂",
+        );
+    }
+
+
+    newViewModel(type)
+    {
+        return new VermillionHereafterViewModel(this, type);
+    }
+}
+
+
+// 辰砂往生録
+export class VermillionHereafterViewModel extends ArtifactViewModel
+{
+    constructor(parent, bonusType)
+    {
+        super(parent, bonusType);
+        this.buffStacks = ko.observable(4);
+    }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        // calc.rateDef.value += 0.3;
+        calc.rateAtk.value += 0.18;
+
+        if(this.bonusType == '4') {
+            calc.rateAtk.value += 0.08;
+            calc.rateAtk.value += 0.1 * Number(this.buffStacks());
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        var list = [];
+
+        if(this.bonusType == '4') {
+            list.push(
+                Widget.buildViewHTML(target, "4セット効果",
+                    Widget.selectViewHTML("buffStacks", [
+                        {value: 0, label: "攻撃力+8%"},
+                        {value: 1, label: "攻撃力+18%"},
+                        {value: 2, label: "攻撃力+28%"},
+                        {value: 3, label: "攻撃力+38%"},
+                        {value: 4, label: "攻撃力+48%"},
+                    ]))
+                );
+        }
+
+        return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.buffStacks = this.buffStacks();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.buffStacks(obj.buffStacks);
+    }
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new VermillionHereafter(),
+        "Hydro",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "vermillion_hereafter",
+                "bonusType": 4,
+                "buffStacks": 4
+            },
+            "expected": {
+                "normal_100": 244.26900000000003,
+                "normal_elem_100": 244.26900000000003,
+                "skill_100": 244.26900000000003,
+                "burst_100": 244.26900000000003
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new VermillionHereafter().newViewModel(4)
+    ));
+});
+
+
+
 
 export const artifacts = [
     new GladiatorsFinale(),
@@ -1680,6 +1788,7 @@ export const artifacts = [
     new ShimenawaReminiscence(),
     new EmblemOfSeveredFate(),
     new HuskOfOpulentDreams(),
+    new VermillionHereafter(),
 ];
 
 
