@@ -114,7 +114,7 @@ export class HaranGeppakuFutsu extends Base.WeaponData
                     type: "select",
                     name: "numStacks",
                     init: 2,
-                    options: (vm) => { return iota(0, 3).map(e => { return {value: e, label: `通常攻撃ダメージ+${textPercentageFix(HaranGeppakuFutsu.addNormalDmg[vm.rank()] * vm.numStacks())}`} }) }
+                    options: (vm) => { return iota(0, 3).map(e => { return {value: e, label: `通常攻撃ダメージ+${textPercentageFix(HaranGeppakuFutsu.addNormalDmg[vm.rank()] * e)}`} }) }
                 },
             ],
             effect: {
