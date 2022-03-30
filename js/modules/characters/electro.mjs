@@ -322,7 +322,12 @@ export class YaeMiko extends Base.CharacterData
         [0.804, 1.005, 1.256, 1.570],
         [0.849, 1.062, 1.327, 1.659],
         [0.910, 1.138, 1.422, 1.778],
-        [0.971, 1.213, 1.517, 1.896]
+        [0.971, 1.213, 1.517, 1.896],
+        [1.031, 1.289, 1.612, 2.015],
+        [1.092, 1.365, 1.706, 2.133],
+        [1.153, 1.441, 1.801, 2.252],
+        [1.213, 1.517, 1.896, 2.370],
+        [1.289, 1.612, 2.015, 2.518]
     ];
 
 
@@ -335,7 +340,12 @@ export class YaeMiko extends Base.CharacterData
         [3.450, 4.420],
         [3.640, 4.670],
         [3.900, 5.010],
-        [4.160, 5.340]
+        [4.160, 5.340],
+        [4.420, 5.670],
+        [4.680, 6.010],
+        [4.940, 6.340],
+        [5.200, 6.680],
+        [5.530, 7.090]
     ];
 
 
@@ -455,41 +465,41 @@ export class YaeMikoViewModel extends Base.CharacterViewModel
     
     // TODO: 8までのデータしかない
     maxNormalTalentRank() { return 8; }
-    maxSkillTalentRank() { return 8; }
-    maxBurstTalentRank() { return 8; }
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
 }
 
 
-// runUnittest(function(){
-//     console.assert(Utils.checkUnittestForCharacter(
-//         new YaeMiko(),
-//         {
-//             "vm": {
-//                 "level": "90",
-//                 "parent_id": "yae_miko",
-//                 "constell": 6,
-//                 "normalRank": 8,
-//                 "skillRank": 8,
-//                 "burstRank": 8,
-//                 "skillStacks": 3,
-//                 "useC4Effect": true
-//             },
-//             "expected": {
-//                 "normal_total": 737.9028396,
-//                 "charged_1": 780.5857896,
-//                 "skill_dmg": 924.8785508571427,
-//                 "burst_dmg": 6890.735448,
-//                 "__elemReact_Superconduct__": 650.7,
-//                 "__elemReact_ElectroCharged__": 1562.4,
-//                 "__elemReact_Overloaded__": 2603.7000000000003
-//             }
-//         }
-//     ));
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new YaeMiko(),
+        {
+            "vm": {
+                "level": "90",
+                "parent_id": "yae_miko",
+                "constell": 6,
+                "normalRank": 8,
+                "skillRank": 8,
+                "burstRank": 8,
+                "skillStacks": 3,
+                "useC4Effect": true
+            },
+            "expected": {
+                "normal_total": 737.9028396,
+                "charged_1": 780.5857896,
+                "skill_dmg": 924.8785508571427,
+                "burst_dmg": 6890.735448,
+                "__elemReact_Superconduct__": 650.7,
+                "__elemReact_ElectroCharged__": 1562.4,
+                "__elemReact_Overloaded__": 2603.7000000000003
+            }
+        }
+    ));
 
-//     console.assert(Utils.checkSerializationUnittest(
-//         new YaeMiko().newViewModel()
-//     ));
-// });
+    console.assert(Utils.checkSerializationUnittest(
+        new YaeMiko().newViewModel()
+    ));
+});
 
 
 // 北斗
