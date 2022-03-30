@@ -1,6 +1,7 @@
 import * as Base from './base.mjs';
 import * as Utils from '../utils.mjs';
 import * as Calc from '../dmg-calc.mjs';
+import * as TypeDefs from '../typedefs.mjs';
 
 // 磐岩結緑
 export class PrimordialJadeCutter extends Base.WeaponData
@@ -81,6 +82,105 @@ runUnittest(function(){
 
     console.assert(Utils.checkSerializationUnittest(
         new PrimordialJadeCutter().newViewModel()
+    ));
+});
+
+
+// 波乱月白経津
+export class HaranGeppakuFutsu extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "haran_geppaku_futsu",
+            "波乱月白経津",
+            5,
+            "Sword",
+            608,
+            TypeDefs.StaticStatusType.crtRate,
+            0.331
+        );
+    }
+
+
+    static addElemDmg = [0.12, 0.15, 0.18, 0.21, 0.24];
+    static addNormalDmg = [0.20, 0.25, 0.30, 0.35, 0.40];
+
+
+    defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "select",
+                    name: "numStacks",
+                    init: 2,
+                    options: (vm) => { return iota(0, 3).map(e => { return {value: e, label: `通常攻撃ダメージ+${textPercentageFix(HaranGeppakuFutsu.addNormalDmg[vm.rank()] * vm.numStacks())}`} }) }
+                },
+            ],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.normalDmg,
+                        value: (vm) => HaranGeppakuFutsu.addNormalDmg[vm.rank()] * vm.numStacks()
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.anemoDmg,
+                        value: (vm) => HaranGeppakuFutsu.addElemDmg[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.cryoDmg,
+                        value: (vm) => HaranGeppakuFutsu.addElemDmg[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.dendroDmg,
+                        value: (vm) => HaranGeppakuFutsu.addElemDmg[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.electroDmg,
+                        value: (vm) => HaranGeppakuFutsu.addElemDmg[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.geoDmg,
+                        value: (vm) => HaranGeppakuFutsu.addElemDmg[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.hydroDmg,
+                        value: (vm) => HaranGeppakuFutsu.addElemDmg[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.pyroDmg,
+                        value: (vm) => HaranGeppakuFutsu.addElemDmg[vm.rank()]
+                    }
+                ]
+            }
+        }
+    ];
+
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new HaranGeppakuFutsu(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "haran_geppaku_futsu",
+                "level": "90",
+                "rank": 0,
+                "numStacks": 2
+            },
+            "expected": {
+                "normal_100": 548.004744,
+                "normal_elem_100": 594.9765792000001,
+                "skill_100": 438.40379520000005,
+                "burst_100": 438.40379520000005
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new HaranGeppakuFutsu().newViewModel()
     ));
 });
 

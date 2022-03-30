@@ -90,6 +90,7 @@ export const weapons = [
     new Polearm.WhiteTassel(),
     // 片手剣, 星5
     new Sword.PrimordialJadeCutter(),
+    new Sword.HaranGeppakuFutsu(),
     // 片手剣, 星4
     new Sword.SacrificialSword(),
     new Sword.CinnabarSpindle(),
