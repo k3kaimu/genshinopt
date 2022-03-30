@@ -35,6 +35,7 @@ export const characters = [
     new Geo.YunJin(),
     new Hydro.Mona(),
     new Hydro.Tartaglia(),
+    new Hydro.KamisatoAyato(),
     new Hydro.Xingqiu(),
     new Pyro.Diluc(),
     new Pyro.Klee(),

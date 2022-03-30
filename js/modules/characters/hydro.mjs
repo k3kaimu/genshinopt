@@ -516,6 +516,247 @@ runUnittest(function(){
 });
 
 
+// 神里綾人
+export class KamisatoAyato extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "kamisato_ayato",
+            "神里綾人",
+            5,
+            "Hydro",
+            "Sword",
+            [23, 60, 120, 154, 194, 228, 263, 299],                 /* bAtk */
+            [60, 155, 309, 397, 499, 588, 678, 769],                /* bDef */
+            [1068, 2770, 5514, 7092, 8897, 10494, 12101, 13715],    /* bHP */
+            TypeDefs.StaticStatusType.crtDmg,                   /* bBonusType */
+            0.384                                               /* bBonusValue */
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new KamisatoAyatoViewModel(this);
+    }
+
+
+    static normalTalentTable = [
+    //  0-4:通常5段，5:重撃，6:落下，7:低空/高空
+        [0.450, 0.472, 0.586, [0.294, 0.294], 0.756, 1.295, 0.639, [1.280, 1.600]], // lv. 1
+        [0.486, 0.510, 0.634, [0.318, 0.318], 0.818, 1.401, 0.691, [1.380, 1.730]],
+        [0.523, 0.548, 0.682, [0.342, 0.342], 0.879, 1.506, 0.743, [1.490, 1.860]],
+        [0.575, 0.603, 0.750, [0.377, 0.377], 0.967, 1.657, 0.818, [1.640, 2.040]],
+        [0.612, 0.642, 0.797, [0.401, 0.401], 1.029, 1.762, 0.870, [1.740, 2.170]],
+        [0.654, 0.685, 0.852, [0.428, 0.428], 1.099, 1.883, 0.929, [1.860, 2.320]],
+        [0.711, 0.746, 0.927, [0.466, 0.466], 1.196, 2.048, 1.011, [2.020, 2.530]],
+        [0.769, 0.806, 1.002, [0.503, 0.503], 1.292, 2.214, 1.093, [2.190, 2.730]],
+        [0.826, 0.866, 1.077, [0.541, 0.541], 1.389, 2.380, 1.175, [2.350, 2.930]],
+        [0.889, 0.932, 1.159, [0.582, 0.582], 1.495, 2.560, 1.264, [2.530, 3.160]],
+        [0.952, 0.998, 1.240, [0.623, 0.623], 1.600, 2.741, 1.353, [2.710, 3.380]]  // lv. 11
+    ];
+
+
+    static skillTalentTable = [
+        // 0:1段ダメージ, 1:2段ダメージ, 2:3段ダメージ, 3: HP参照ダメージ増加，4:幻影ダメージ
+        [0.529, 0.589, 0.649, 0.56*0.01, 1.015],    // lv. 1
+        [0.572, 0.637, 0.702, 0.61*0.01, 1.097],
+        [0.615, 0.685, 0.755, 0.65*0.01, 1.180],
+        [0.677, 0.754, 0.831, 0.72*0.01, 1.298],
+        [0.720, 0.801, 0.883, 0.76*0.01, 1.381],
+        [0.769, 0.856, 0.944, 0.82*0.01, 1.475],
+        [0.836, 0.932, 1.027, 0.89*0.01, 1.605],
+        [0.904, 1.007, 1.110, 0.96*0.01, 1.735],
+        [0.972, 1.082, 1.193, 1.03*0.01, 1.864],
+        [1.046, 1.165, 1.284, 1.11*0.01, 2.006]     // lv. 10
+    ];
+
+
+    static burstTalentTable = [
+        // 0:ダメージ, 1:通常ダメバフ
+        [0.665, 0.110],
+        [0.714, 0.120],
+        [0.764, 0.130],
+        [0.831, 0.140],
+        [0.881, 0.150],
+        [0.930, 0.160],
+        [0.997, 0.170],
+        [1.063, 0.180],
+        [1.130, 0.190],
+        [1.196, 0.200]
+    ];
+
+
+    static presetAttacks = [
+        {
+            id: "normal_total",
+            label: "通常5段累計",
+            dmgScale(vm){ return vm.normalTalentRow().slice(0, 5).flat(10); },
+            attackProps: { isNormal: true, isPhysical: true }
+        },
+        {
+            id: "charged_1",
+            label: "重撃",
+            dmgScale(vm){ return vm.normalTalentRow()[5]; },
+            attackProps: { isCharged: true, isPhysical: true }
+        },
+        {
+            id: "skill_dmg",
+            label: "スキル3段累計",
+            dmgScale(vm) { return vm.skillTalentRow().slice(0, 3).flat(10); },
+            attackProps: { isNormal: true, isHydro: true, isAyatoShunsuiken: true }
+        },
+        {
+            id: "skill_dmg_C6",
+            label: "6凸効果：450%瞬水剣x2",
+            dmgScale(vm) { return [4.5, 4.5]; },
+            attackProps: { isNormal: true, isHydro: true, isAyatoShunsuiken: true, isAyatoShunsuikenC6: true, }
+        },
+        {
+            id: "burst_dmg",
+            label: "元素爆発ダメージ",
+            dmgScale(vm) { return vm.burstTalentRow()[0]; },
+            attackProps: { isBurst: true, isHydro: true }
+        },
+    ];
+}
+
+
+// 神里綾人
+export class KamisatoAyatoViewModel extends HydroCharacterViewModel
+{
+    // TODO: 4凸効果は未実装
+
+    constructor(parent)
+    {
+        super(parent);
+
+        // スキル：浪閃によるダメージ増加
+        this.registerTalent({
+            type: "Skill",
+            requiredC: 0,
+            uiList: [{
+                type: "select",
+                name: "skillStacks",
+                init: 4,
+                options: (vm) => {
+                    let maxS = 4;
+                    if(vm.constell() >= 2)
+                        maxS = 5;
+
+                    return iota(0, maxS+1).map(e => { return {value: e, label: `浪閃${e}スタック`}; });
+                },
+            }],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.DynamicStatusType.increaseDamage,
+                        isDynamic: true,
+                        condAttackProps: (props) => props.isAyatoShunsuiken && !(props.isAyatoShunsuikenC6),
+                        value: (vmdata, calc, props) => calc.hp(props).mul(KamisatoAyato.skillTalentTable[vmdata.skillRank-1][3])
+                    }
+                ]
+            }
+        });
+
+        // 爆発：通常ダメバフ
+        this.registerTalent({
+            type: "Burst",
+            requiredC: 0,
+            uiList: [{
+                type: "checkbox",
+                name: "useBurstNormalDmgUp",
+                init: true,
+                label: (vm) => "通常ダメージ増加（爆発エリア内）"
+            }],
+            effect: {
+                cond: (vm) => vm.useBurstNormalDmgUp(),
+                list: [{
+                    target: TypeDefs.StaticStatusType.normalDmg,
+                    value: (vm) => KamisatoAyato.burstTalentTable[vm.burstRank()-1][1]
+                }]
+            }
+        });
+
+        // 1凸効果
+        this.registerTalent({
+            type: "Skill",
+            requiredC: 1,
+            uiList: [{
+                type: "checkbox",
+                name: "useC1Effect",
+                init: true,
+                label: (vm) => "瞬水剣ダメージ+40%（1凸，HP50%以下の敵）"
+            }],
+            effect: {
+                cond: (vm) => vm.useC1Effect(),
+                list: [{
+                    target: TypeDefs.DynamicStatusType.allDmg,
+                    isDynamic: true,
+                    condAttackProps: (props) => props.isAyatoShunsuiken,
+                    value: (vmdata, calc, props) => 0.4,
+                }]
+            }
+        });
+
+        // 2凸効果
+        this.registerTalent({
+            type: "Skill",
+            requiredC: 2,
+            uiList: [],
+            effect: {
+                cond: (vm) => vm.skillStacks() >= 3,
+                list: [{
+                    target: TypeDefs.StaticStatusType.rateHP,
+                    value: (vm) => 0.5,
+                }]
+            }
+        });
+    }
+
+    
+    // TODO: 10までのデータしかない
+    maxNormalTalentRank() { return 11; }
+    maxSkillTalentRank() { return 10; }
+    maxBurstTalentRank() { return 10; }
+}
+
+
+// runUnittest(function(){
+//     console.assert(Utils.checkUnittestForCharacter(
+//         new KamisatoAyato(),
+//         {
+//             "vm": {
+//                 "level": "90",
+//                 "parent_id": "kamisato_ayato",
+//                 "constell": 6,
+//                 "normalRank": 9,
+//                 "skillRank": 9,
+//                 "burstRank": 9,
+//                 "skillStacks": 4,
+//                 "useBurstNormalDmgUp": true,
+//                 "useC1Effect": true,
+//                 "reactionProb": 0
+//             },
+//             "expected": {
+//                 "normal_total": 1585.871027748,
+//                 "charged_1": 605.2942853999999,
+//                 "skill_dmg": 1828.1606880017252,
+//                 "skill_dmg_C6": 3639.395472300001,
+//                 "burst_dmg": 287.3876229,
+//                 "__elemReact_ElectroCharged__": 1562.4
+//             }
+//         }
+//     ));
+
+//     console.assert(Utils.checkSerializationUnittest(
+//         new KamisatoAyato().newViewModel()
+//     ));
+// });
+
+
 // 行秋
 export class Xingqiu extends Base.CharacterData
 {
