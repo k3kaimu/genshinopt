@@ -1,6 +1,7 @@
 import * as Calc from './dmg-calc.mjs';
 import * as Widget from './widget.mjs';
 import * as Utils from './utils.mjs';
+import * as TypeDefs from './typedefs.mjs';
 
 
 export class ArtifactData
@@ -1696,7 +1697,6 @@ export class VermillionHereafterViewModel extends ArtifactViewModel
     {
         calc = super.applyDmgCalcImpl(calc);
 
-        // calc.rateDef.value += 0.3;
         calc.rateAtk.value += 0.18;
 
         if(this.bonusType == '4') {
@@ -1769,6 +1769,127 @@ runUnittest(function(){
 });
 
 
+// 来歆の余響
+export class EchoesOfAnOffering extends ArtifactData
+{
+    constructor()
+    {
+        super(
+            'echoes_of_an_offering',
+            "来歆の余響",
+            "来歆",
+        );
+    }
+
+
+    newViewModel(type)
+    {
+        return new EchoesOfAnOfferingViewModel(this, type);
+    }
+}
+
+
+// 来歆の余響
+export class EchoesOfAnOfferingViewModel extends ArtifactViewModel
+{
+    constructor(parent, bonusType)
+    {
+        super(parent, bonusType);
+        this.probability = ko.observable("0.502");
+    }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        calc.rateAtk.value += 0.18;
+
+        if(this.bonusType == '4') {
+            let p = Number(this.probability());
+
+            calc = calc.applyEffect({
+                cond: (vm) => true,
+                list: [
+                    {
+                        isDynamic: true,
+                        target: "modifyAttackInfo",
+                        condAttackProps: (props) => props.isNormal,
+                        value: (vmdata, calc, info) => [new Calc.AttackInfo(info.scale, info.ref, info.props, info.prob.mul(1-p)), new Calc.AttackInfo(info.scale, info.ref, {...info.props, isEchoesOfAnOfferingEffect: true}, info.prob.mul(p))]
+                
+                    },
+                    {
+                        isDynamic: true,
+                        target: TypeDefs.DynamicStatusType.increaseDamage,
+                        condAttackProps: (props) => props.isEchoesOfAnOfferingEffect,
+                        value: (vmdata, calc, info) => calc.atk(info.props).mul(0.7)
+                    }
+                ]
+            }, this);
+        }
+
+        return calc;
+    }
+
+
+    viewHTMLList(target)
+    {
+        var list = [];
+
+        if(this.bonusType == '4') {
+            list.push(
+                Widget.buildViewHTML(target, "確率選択",
+                    Widget.selectViewHTML("probability", [
+                        {value: "0", label: "確率0%（発動しない）"},
+                        {value: "1", label: "確率100%（必ず発動）"},
+                        {value: "0.502", label: "確率50.2%（実質的な確率）"},
+                    ]))
+                );
+        }
+
+        return list;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.probability = this.probability();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.probability(obj.probability);
+    }
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForArtifact(
+        new EchoesOfAnOffering(),
+        "Hydro",
+        "Catalyst",
+        {
+            "vm": {
+                "parent_id": "echoes_of_an_offering",
+                "bonusType": 4,
+                "probability": "0.502"
+            },
+            "expected": {
+                "normal_100": 234.6530418,
+                "normal_elem_100": 234.6530418,
+                "skill_100": 173.637,
+                "burst_100": 173.637
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new EchoesOfAnOffering().newViewModel(4)
+    ));
+});
+
 
 
 export const artifacts = [
@@ -1789,6 +1910,7 @@ export const artifacts = [
     new EmblemOfSeveredFate(),
     new HuskOfOpulentDreams(),
     new VermillionHereafter(),
+    new EchoesOfAnOffering(),
 ];
 
 
