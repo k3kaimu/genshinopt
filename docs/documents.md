@@ -527,3 +527,15 @@ $$
 ちなみに，[プログラムの詳細はこちらから参照できます](https://github.com/k3kaimu/genshinopt/blob/master/program/royal_crtrate/theo_sim.py)．
 
 <img src="{{ site.baseurl }}/program/royal_crtrate/theo_sim.png" class="img-fluid" alt="CrtRate of Royal Weapons">
+
+
+#### 来歆の余響4セット効果の実質的な発動確率
+
+旧貴族武器と同じようにして，来歆の余響4セット効果の実質的な発動確率を計算できます．
+$p_0=0.36, p_1=0.56, p_2=0.76, p_3=0.96, p_4=1$とすれば，実質的な発動確率$P$は以下の通りです．
+
+$$
+P = \left\{p_0 + 2(1-p_0)p_1 + 3(1-p_0)(1-p_1)p_2 + 4(1-p_0)(1-p_1)(1-p_2)p_3 + 5(1-p_0)(1-p_1)(1-p_2)(1-p_3)p_4 \right\}^{-1}
+$$
+
+これを計算すると，$P=0.502$となり，約50%の確率で実質的には発動することを意味します．
