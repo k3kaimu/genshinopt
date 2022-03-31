@@ -93,6 +93,7 @@ export const weapons = [
     new Sword.HaranGeppakuFutsu(),
     // 片手剣, 星4
     new Sword.SacrificialSword(),
+    new Sword.TheBlackSword(),
     new Sword.CinnabarSpindle(),
 ];
 

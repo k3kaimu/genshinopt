@@ -226,6 +226,69 @@ runUnittest(function(){
 });
 
 
+// 黒剣
+export class TheBlackSword extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "the_black_sword",
+            "黒剣",
+            4,
+            "Sword",
+            510,
+            TypeDefs.StaticStatusType.crtRate,
+            0.276
+        );
+    }
+
+
+    static addNormalDmg = [0.20, 0.25, 0.30, 0.35, 0.40];
+
+
+    defineEffects = [
+        {
+            uiList: [],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.normalDmg,
+                        value: (vm) => TheBlackSword.addNormalDmg[vm.rank()]
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.chargedDmg,
+                        value: (vm) => TheBlackSword.addNormalDmg[vm.rank()]
+                    },
+                ]
+            }
+        }
+    ];
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new TheBlackSword(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "the_black_sword",
+                "level": "90",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 393.83064,
+                "normal_elem_100": 393.83064,
+                "skill_100": 328.1922,
+                "burst_100": 328.1922
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new TheBlackSword().newViewModel()
+    ));
+});
 
 
 
