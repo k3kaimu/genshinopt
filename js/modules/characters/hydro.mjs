@@ -655,7 +655,7 @@ export class KamisatoAyatoViewModel extends HydroCharacterViewModel
                         target: TypeDefs.DynamicStatusType.increaseDamage,
                         isDynamic: true,
                         condAttackProps: (props) => props.isAyatoShunsuiken && !(props.isAyatoShunsuikenC6),
-                        value: (vmdata, calc, props) => calc.hp(props).mul(KamisatoAyato.skillTalentTable[vmdata.skillRank-1][3])
+                        value: (vmdata, calc, props) => calc.hp(props).mul(KamisatoAyato.skillTalentTable[vmdata.skillRank-1][3] * Number(vmdata.skillStacks))
                     }
                 ]
             }
