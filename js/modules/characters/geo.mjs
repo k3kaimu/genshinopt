@@ -1155,7 +1155,7 @@ export class YunJinViewModel extends Base.CharacterViewModel
 
     fromJS(obj) {
         super.fromJS(obj);
-        this.useBurstEffect(obj.useBurstEffect || false);
+        this.useBurstEffect(obj.useBurstEffect ?? false);
         this.numElems(obj.numElems);
         this.useC2Effect(obj.useC2Effect);
         this.useC4Effect(obj.useC4Effect);
@@ -1294,10 +1294,10 @@ export class YunJinBufferViewModel extends BuffEffect.BufferEffectViewModel
     fromJS(obj)
     {
         super.fromJS(obj);
-        this.useBurstEffect(obj.useBurstEffect || true);
-        this.burstRank(obj.burstRank || 9);
-        this.numElems(obj.numElems || 4);
-        this.totalDef(obj.totalDef || 2000);
-        this.useC2Effect(obj.useC2Effect || true);
+        this.useBurstEffect(obj.useBurstEffect ?? true);
+        this.burstRank(obj.burstRank ?? 9);
+        this.numElems(obj.numElems ?? 4);
+        this.totalDef(obj.totalDef ?? 2000);
+        this.useC2Effect(obj.useC2Effect ?? true);
     }
 }

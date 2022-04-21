@@ -72,7 +72,7 @@ export class HydroCharacterViewModel extends Base.CharacterViewModel
 
     fromJS(obj) {
         super.fromJS(obj);
-        this.reactionProb(obj.reactionProb || 0);
+        this.reactionProb(obj.reactionProb ?? 0);
     }
 }
 

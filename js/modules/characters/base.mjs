@@ -597,7 +597,7 @@ class CharacterViewModelImpl
      * @param {Object} obj
      */
     fromJS(obj) {
-        this.level(obj.level || "90");
+        this.level(obj.level ?? "90");
         this.constell(obj.constell);
         this.normalRank(obj.normalRank);
         this.skillRank(obj.skillRank);
