@@ -248,7 +248,7 @@ export let KaedeharaKazuhaViewModel = (Base) => class extends Base
                     type: "select",
                     name: "targetElementDmgBuff",
                     init: "isPyro",
-                    label: (vm) => "ダメージバフ対象の元素",
+                    label: (vm) => "バフ対象の元素",
                     options: (vm) => [
                         {label: "炎元素", value: "isPyro"},
                         {label: "氷元素", value: "isCryo"},
