@@ -290,7 +290,11 @@ export class PresetAttackEvaluator extends AttackEvaluator
         super(presetAttackObject.id, presetAttackObject.label);
         this.cvm = vm;      // ViewModel of character 
         this.dmgScale = presetAttackObject.dmgScale;
-        this.attackProps = presetAttackObject.attackProps;
+
+        if(typeof presetAttackObject.attackProps === 'function')
+            this.attackProps = presetAttackObject.attackProps(vm);
+        else
+            this.attackProps = presetAttackObject.attackProps;
         
         if("ref" in presetAttackObject)
             this.ref = presetAttackObject.ref;
@@ -324,7 +328,10 @@ export class CompoundedPresetAttackEvaluator extends AttackEvaluator
         this.list = presetAttackObject.list;
 
         // 先頭のみを継承する
-        this.attackProps = presetAttackObject.list[0].attackProps;
+        if(typeof presetAttackObject.list[0].attackProps === 'function')
+            this.attackProps = presetAttackObject.list[0].attackProps(vm);
+        else
+            this.attackProps = presetAttackObject.list[0].attackProps;
     }
 
 
@@ -360,7 +367,12 @@ export class FunctionAttackEvaluator extends AttackEvaluator
 
         this.cvm = vm;
         if(presetAttackObject.attackProps)
-            this.attackProps = presetAttackObject.attackProps;
+        {
+            if(typeof presetAttackObject.attackProps === 'function')
+                this.attackProps = presetAttackObject.attackProps(vm);
+            else
+                this.attackProps = presetAttackObject.attackProps;
+        }
         else
             this.attackProps = {};
 
