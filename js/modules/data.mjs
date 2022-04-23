@@ -21,6 +21,7 @@ export const bufferEffects = [
     new BuffEffect.BufferEffectViewModelFactory(new Characters.Xingqiu(), "行秋", "C", (parent) => new (Characters.XingqiuViewModel(BuffEffect.CharacterBufferEffectViewModel))(parent, true)),
     new BuffEffect.BufferEffectViewModelFactory(new Characters.YunJin(), "雲菫", "C", (parent) => new Characters.YunJinBufferViewModel(parent)),
     new BuffEffect.BufferEffectViewModelFactory(new Characters.Shenhe(), "申鶴", "C", (parent) => new (Characters.ShenheViewModel(BuffEffect.CharacterBufferEffectViewModel))(parent, true)),
+    new BuffEffect.BufferEffectViewModelFactory(new Characters.KaedeharaKazuha(), "楓原万葉", "C", (parent) => new (Characters.KaedeharaKazuhaViewModel(BuffEffect.CharacterBufferEffectViewModel))(parent, true)),
 ];
 
 

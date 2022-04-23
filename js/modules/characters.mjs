@@ -18,7 +18,7 @@ import * as Pyro from './characters/pyro.mjs';
 
 
 export const characters = [
-    // new Anemo.TravelerAnemo(),
+    new Anemo.KaedeharaKazuha(),
     new Cryo.Qiqi(),
     new Cryo.Ganyu(),
     new Cryo.Shenhe(),
