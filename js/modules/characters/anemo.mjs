@@ -238,24 +238,20 @@ export let KaedeharaKazuhaViewModel = (Base) => class extends Base
             type: "Other",
             requiredC: 0,
             uiList: [
-                {
-                    type: "checkbox",
-                    name: "useElementDmgBuff",
-                    init: true,
-                    label: (vm) => "元素ダメージバフ（拡散後）",
-                },
-                {
-                    type: "select",
-                    name: "targetElementDmgBuff",
-                    init: "isPyro",
-                    label: (vm) => "バフ対象の元素",
-                    options: (vm) => [
-                        {label: "炎元素", value: "isPyro"},
-                        {label: "氷元素", value: "isCryo"},
-                        {label: "水元素", value: "isHydro"},
-                        {label: "雷元素", value: "isElectro"},
-                        {label: "草元素", value: "isDendro"}],
-                },
+                ...([
+                    {label: "炎元素", value: "isPyroDmgBuff"},
+                    {label: "氷元素", value: "isCryoDmgBuff"},
+                    {label: "水元素", value: "isHydroDmgBuff"},
+                    {label: "雷元素", value: "isElectroDmgBuff"},
+                    {label: "草元素", value: "isDendroDmgBuff"}
+                ].map((x) => {
+                    return {
+                        type: "checkbox",
+                        name: x.value,
+                        init: true,
+                        label: (vm) => x.label + "ダメバフ"
+                    };
+                })),
                 !isBuffer ? undefined : {
                     type: "number",
                     name: "masteryKazuha",
@@ -264,37 +260,37 @@ export let KaedeharaKazuhaViewModel = (Base) => class extends Base
                 }
             ],
             effect: {
-                cond: (vm) => vm.useElementDmgBuff(),
+                cond: (vm) => true,
                 list: !isBuffer ? [
                     {
                         target: TypeDefs.DynamicStatusType.pyroDmg,
                         isDynamic: true,
                         condAttackProps: (props) => true,
-                        value: (vmdata, calc, props) => calc.mastery(props).mul(0.0004).mul( vmdata.targetElementDmgBuff == "isPyro" ? 1 : 0)
+                        value: (vmdata, calc, props) => calc.mastery(props).mul(0.0004).mul( vmdata.isPyroDmgBuff ? 1 : 0)
                     },
                     {
                         target: TypeDefs.DynamicStatusType.cryoDmg,
                         isDynamic: true,
                         condAttackProps: (props) => true,
-                        value: (vmdata, calc, props) => calc.mastery(props).mul(0.0004).mul( vmdata.targetElementDmgBuff == "isCryo" ? 1 : 0)
+                        value: (vmdata, calc, props) => calc.mastery(props).mul(0.0004).mul( vmdata.isCryoDmgBuff ? 1 : 0)
                     },
                     {
                         target: TypeDefs.DynamicStatusType.hydroDmg,
                         isDynamic: true,
                         condAttackProps: (props) => true,
-                        value: (vmdata, calc, props) => calc.mastery(props).mul(0.0004).mul( vmdata.targetElementDmgBuff == "isHydro" ? 1 : 0)
+                        value: (vmdata, calc, props) => calc.mastery(props).mul(0.0004).mul( vmdata.isHydroDmgBuff ? 1 : 0)
                     },
                     {
                         target: TypeDefs.DynamicStatusType.electroDmg,
                         isDynamic: true,
                         condAttackProps: (props) => true,
-                        value: (vmdata, calc, props) => calc.mastery(props).mul(0.0004).mul( vmdata.targetElementDmgBuff == "isElectro" ? 1 : 0)
+                        value: (vmdata, calc, props) => calc.mastery(props).mul(0.0004).mul( vmdata.isElectroDmgBuff ? 1 : 0)
                     },
                     {
                         target: TypeDefs.DynamicStatusType.dendroDmg,
                         isDynamic: true,
                         condAttackProps: (props) => true,
-                        value: (vmdata, calc, props) => calc.mastery(props).mul(0.0004).mul( vmdata.targetElementDmgBuff == "isDendro" ? 1 : 0)
+                        value: (vmdata, calc, props) => calc.mastery(props).mul(0.0004).mul( vmdata.isDendroDmgBuff ? 1 : 0)
                     }
                 ]
                 :
@@ -303,31 +299,31 @@ export let KaedeharaKazuhaViewModel = (Base) => class extends Base
                         target: TypeDefs.DynamicStatusType.pyroDmg,
                         isDynamic: true,
                         condAttackProps: (props) => true,
-                        value: (vmdata, calc, props) => vmdata.masteryKazuha * 0.0004 * ( vmdata.targetElementDmgBuff == "isPyro" ? 1 : 0)
+                        value: (vmdata, calc, props) => vmdata.masteryKazuha * 0.0004 * ( vmdata.isPyroDmgBuff ? 1 : 0)
                     },
                     {
                         target: TypeDefs.DynamicStatusType.cryoDmg,
                         isDynamic: true,
                         condAttackProps: (props) => true,
-                        value: (vmdata, calc, props) => vmdata.masteryKazuha * 0.0004 * ( vmdata.targetElementDmgBuff == "isCryo" ? 1 : 0)
+                        value: (vmdata, calc, props) => vmdata.masteryKazuha * 0.0004 * ( vmdata.isCryoDmgBuff ? 1 : 0)
                     },
                     {
                         target: TypeDefs.DynamicStatusType.hydroDmg,
                         isDynamic: true,
                         condAttackProps: (props) => true,
-                        value: (vmdata, calc, props) => vmdata.masteryKazuha * 0.0004 * ( vmdata.targetElementDmgBuff == "isHydro" ? 1 : 0)
+                        value: (vmdata, calc, props) => vmdata.masteryKazuha * 0.0004 * ( vmdata.isHydroDmgBuff ? 1 : 0)
                     },
                     {
                         target: TypeDefs.DynamicStatusType.electroDmg,
                         isDynamic: true,
                         condAttackProps: (props) => true,
-                        value: (vmdata, calc, props) => vmdata.masteryKazuha * 0.0004 * ( vmdata.targetElementDmgBuff == "isElectro" ? 1 : 0)
+                        value: (vmdata, calc, props) => vmdata.masteryKazuha * 0.0004 * ( vmdata.isElectroDmgBuff ? 1 : 0)
                     },
                     {
                         target: TypeDefs.DynamicStatusType.dendroDmg,
                         isDynamic: true,
                         condAttackProps: (props) => true,
-                        value: (vmdata, calc, props) => vmdata.masteryKazuha * 0.0004 * ( vmdata.targetElementDmgBuff == "isDendro" ? 1 : 0)
+                        value: (vmdata, calc, props) => vmdata.masteryKazuha * 0.0004 * ( vmdata.isDendroDmgBuff ? 1 : 0)
                     }
                 ]
             }
