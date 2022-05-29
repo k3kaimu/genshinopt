@@ -169,18 +169,8 @@ export class KaedeharaKazuha extends Base.CharacterData
                     return { isPlunge: true, isPhysical: true };
             }
         },
-        {
-            id: "skill_short",
-            label: "スキル（短押し）",
-            dmgScale(vm) { return vm.skillTalentRow()[0]; },
-            attackProps: { isSkill: true, isAnemo: true }
-        },
-        {
-            id: "skill_long",
-            label: "スキル（長押し）",
-            dmgScale(vm) { return vm.skillTalentRow()[1]; },
-            attackProps: { isSkill: true, isAnemo: true }
-        },
+        Base.makeSkillPresetAttack("skill_short", "スキル（短押し）", 0, {isAnemo: true}),
+        Base.makeSkillPresetAttack("skill_long", "スキル（長押し）", 1, {isAnemo: true}),
         {
             id: "skill_plunge_EA",
             label: "スキル元素変化ダメージ（200%）",
@@ -192,18 +182,8 @@ export class KaedeharaKazuha extends Base.CharacterData
                 return p;
             },
         },
-        {
-            id: "burst_slash_dmg",
-            label: "元素爆発：斬撃ダメージ",
-            dmgScale(vm) { return vm.burstTalentRow()[0]; },
-            attackProps: { isBurst: true, isAnemo: true, }
-        },
-        {
-            id: "burst_const_dmg",
-            label: "元素爆発：継続ダメージ",
-            dmgScale(vm) { return vm.burstTalentRow()[1]; },
-            attackProps: { isBurst: true, isAnemo: true, }
-        },
+        Base.makeBurstPresetAttack("burst_slash_dmg", "元素爆発：斬撃ダメージ", 0, {isAnemo: true}),
+        Base.makeBurstPresetAttack("burst_const_dmg", "元素爆発：継続ダメージ", 1, {isAnemo: true}),
         {
             id: "burst_ea_dmg",
             label: "元素爆発：元素変化ダメージ",
