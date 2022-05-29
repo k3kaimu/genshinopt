@@ -309,7 +309,10 @@ export class YaeMiko extends Base.CharacterData
         [0.525, 0.510, 0.754, 1.893, 0.773, [1.550, 1.930]],
         [0.555, 0.539, 0.796, 2.001, 0.826, [1.650, 2.060]],
         [0.595, 0.578, 0.853, 2.143, 0.899, [1.800, 2.240]],
-        [0.635, 0.616, 0.910, 2.286, 0.971, [1.940, 2.430]]
+        [0.635, 0.616, 0.910, 2.286, 0.971, [1.940, 2.430]],
+        [0.674, 0.655, 0.967, 2.429, 1.040, [2.090, 2.610]],
+        [0.714, 0.693, 1.024, 2.572, 1.120, [2.250, 2.810]],
+        [0.754, 0.732, 1.081, 2.715, 1.200, [2.400, 3.000]]
     ];
 
 
@@ -462,9 +465,7 @@ export class YaeMikoViewModel extends Base.CharacterViewModel
         });
     }
 
-    
-    // TODO: 8までのデータしかない
-    maxNormalTalentRank() { return 8; }
+
     maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
     maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
 }
