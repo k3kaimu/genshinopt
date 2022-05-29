@@ -336,20 +336,20 @@ export class Ganyu extends Base.CharacterData
     ];
 
     static burstTalentTable = [
-        0.70,
-        0.76,
-        0.81,
-        0.88,
-        0.93,
-        0.98,
-        1.05,
-        1.12,
-        1.19,
-        1.26,
-        1.34,
-        1.41,
-        1.49,
-        1.58,
+        [0.70],
+        [0.76],
+        [0.81],
+        [0.88],
+        [0.93],
+        [0.98],
+        [1.05],
+        [1.12],
+        [1.19],
+        [1.26],
+        [1.34],
+        [1.41],
+        [1.49],
+        [1.58],
     ];
 
 
@@ -413,18 +413,8 @@ export class Ganyu extends Base.CharacterData
             dmgScale(vm) { return vm.normalTalentRow()[11][1]; },
             attackProps(vm) { return { isPlunge: true, isPhysical: true }; }
         },
-        {
-            id: "skill_dmg",
-            label: "スキルダメージ",
-            dmgScale(vm){ return Ganyu.skillTalentTable[vm.skillRank()-1][1]; },
-            attackProps: { isSkill: true, isCryo: true }
-        },
-        {
-            id: "burst_dmg",
-            label: "爆発氷柱ダメージ",
-            dmgScale(vm){ return Ganyu.burstTalentTable[vm.burstRank()-1]; },
-            attackProps: { isBurst: true, isCryo: true }
-        }
+        Base.makeSkillPresetAttack("skill_dmg", "スキルダメージ", 1, { isSkill: true, isCryo: true }),
+        Base.makeBurstPresetAttack("burst_dmg", "爆発氷柱ダメージ", 0, { isBurst: true, isCryo: true }),
     ];
 }
 
