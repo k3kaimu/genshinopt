@@ -34,12 +34,7 @@ export function makeNormalPresetAttacks(num)
             id: `normal_${n+1}`,
             label: `通常${n+1}段目`,
             dmgScale(vm) { return vm.normalTalentRow()[n]; },
-            attackProps(vm) {
-                if(vm.useC6Anemo)
-                    return {isNormal: true, isAnemo: true};
-                else
-                    return {isNormal: true, isPhysical: true};
-            }
+            attackProps(vm) { return {isNormal: true, isPhysical: true}; }
         };
     });
 
