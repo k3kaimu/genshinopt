@@ -41,6 +41,10 @@ export function checkUnittestForCharacter(character, setting)
     let checkUniqe = {};
     cvm.presetAttacks().forEach(e => {
         let val = e.evaluate(calc).value;
+        if(isNaN(val)) {
+            ok = false;
+            console.log(`${character.id}: ok=${ok}, e.id=${e.id} val=${val} is NaN.`);
+        }
 
         if(e.id in setting.expected) {
             const isEq = isApproxEqual(val, setting.expected[e.id], undefined, 1e-3);
