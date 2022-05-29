@@ -259,8 +259,19 @@ function percentToNumber(elems) {
         return '[' + elems.join(', ') + ']';
     }
 
-    if(elems.endsWith("%") || elems.endsWith("％"))
-        return textNumberFix(Number(elems.replace(/[\%|％]/, '')) / 100, 3);
+    if(elems.endsWith("%") || elems.endsWith("％")) {
+        elems = elems.replace(/[\%|％]/, '');   // 末尾の%を消す
+
+        for(let dig = 3; dig < 7; ++dig) {
+            let orig = Number(elems);
+            let fixed_str = textNumberFix(orig / 100, dig);
+            let fixed = Number(fixed_str) * 100;
+            if(isApproxEqual(orig, fixed, 1e-5, 1e-5))
+                return fixed_str;
+        }
+
+        return textNumberFix(Number(elems) / 100, 8);
+    }
     else
         return elems;
 }
