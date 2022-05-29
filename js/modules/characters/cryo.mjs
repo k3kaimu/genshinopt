@@ -649,42 +649,12 @@ export class Shenhe extends Base.CharacterData
 
     static presetAttacks = [
         ...Base.makeNormalPresetAttacks(5),
-        {
-            id: "skill_short",
-            label: "元素スキル（短押し）",
-            dmgScale: vm => Shenhe.skillTalentTable[vm.skillRank()-1][0],
-            attackProps: { isSkill: true, isCryo: true, "isShenheSkill*": true },
-        },
-        {
-            id: "skill_long",
-            label: "元素スキル（長押し）",
-            dmgScale: vm => Shenhe.skillTalentTable[vm.skillRank()-1][1],
-            attackProps: { isSkill: true, isCryo: true, "isShenheSkill*": true },
-        },
-        {
-            id: "burst_dmg_0",
-            label: "元素爆発：初撃",
-            dmgScale: vm => Shenhe.burstTalentTable[vm.burstRank()-1][0],
-            attackProps: { isBurst: true, isCryo: true },
-        },
-        {
-            id: "burst_dmg_1",
-            label: "元素爆発：継続ダメージ",
-            dmgScale: vm => Shenhe.burstTalentTable[vm.burstRank()-1][2],
-            attackProps: { isBurst: true, isCryo: true },
-        },
-        {
-            id: "burst_dmg_6",
-            label: "元素爆発（初撃＋継続ダメージ6回）",
-            dmgScale: vm => [Shenhe.burstTalentTable[vm.burstRank()-1][0], ...new Array(6).fill(Shenhe.burstTalentTable[vm.burstRank()-1][2])],
-            attackProps: { isBurst: true, isCryo: true },
-        },
-        {
-            id: "burst_dmg_9",
-            label: "元素爆発（初撃＋継続ダメージ9回）（2凸用）",
-            dmgScale: vm => [Shenhe.burstTalentTable[vm.burstRank()-1][0], ...new Array(9).fill(Shenhe.burstTalentTable[vm.burstRank()-1][2])],
-            attackProps: { isBurst: true, isCryo: true },
-        },
+        Base.makeSkillPresetAttack("skill_short", "元素スキル（短押し）", 0, { isSkill: true, isCryo: true, "isShenheSkill*": true }),
+        Base.makeSkillPresetAttack("skill_long", "元素スキル（長押し）", 1, { isSkill: true, isCryo: true, "isShenheSkill*": true }),
+        Base.makeBurstPresetAttack("burst_dmg_0", "元素爆発：初撃", 0, { isBurst: true, isCryo: true }),
+        Base.makeBurstPresetAttack("burst_dmg_1", "元素爆発：継続ダメージ", 2, { isBurst: true, isCryo: true }),
+        Base.makeBurstPresetAttack("burst_dmg_6", "元素爆発（初撃＋継続ダメージ6回）", [0, ...new Array(6).fill(2)], { isBurst: true, isCryo: true }),
+        Base.makeBurstPresetAttack("burst_dmg_9", "元素爆発（初撃＋継続ダメージ9回）（2凸用）", [0, ...new Array(9).fill(2)], { isBurst: true, isCryo: true }),
         {
             id: "burst_add",
             label: "スキル加算ダメージ（天賦倍率x攻撃力）",
