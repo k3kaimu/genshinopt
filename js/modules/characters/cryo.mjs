@@ -896,61 +896,62 @@ export class Chongyun extends Base.CharacterData
 
     static normalTalentTable = [
         // 0-3: 通常, 4:重撃継続, 5:重撃終了, 6:落下, 7:低空, 8:高空
-        [0.700, 0.631, 0.803, 1.010, 0.563, 1.020, 0.746, 1.490, 1.860],
-        [0.757, 0.683, 0.869, 1.090, 0.609, 1.100, 0.807, 1.610, 2.010],
-        [0.814, 0.734, 0.934, 1.180, 0.654, 1.180, 0.867, 1.730, 2.170],
-        [0.895, 0.807, 1.030, 1.290, 0.720, 1.300, 0.954, 1.910, 2.380],
-        [0.952, 0.859, 1.090, 1.380, 0.766, 1.380, 1.015, 2.030, 2.530],
-        [1.020, 0.918, 1.170, 1.470, 0.818, 1.480, 1.084, 2.170, 2.710],
-        [1.110, 0.998, 1.270, 1.600, 0.890, 1.610, 1.180, 2.360, 2.950],
-        [1.200, 1.080, 1.370, 1.730, 0.962, 1.740, 1.270, 2.550, 3.180],
-        [1.290, 1.160, 1.480, 1.860, 1.030, 1.870, 1.370, 2.740, 3.420],
-        [1.380, 1.250, 1.590, 2.000, 1.110, 2.010, 1.474, 2.950, 3.680],
-        [1.480, 1.340, 1.700, 2.140, 1.190, 2.150, 1.578, 3.160, 3.940]
+        [0.700, 0.631, 0.803, 1.010, 0.563, 1.020, 0.746, [1.490, 1.860]],
+        [0.757, 0.683, 0.869, 1.090, 0.609, 1.100, 0.807, [1.610, 2.010]],
+        [0.814, 0.734, 0.934, 1.180, 0.654, 1.180, 0.867, [1.730, 2.170]],
+        [0.895, 0.807, 1.030, 1.290, 0.720, 1.300, 0.954, [1.910, 2.380]],
+        [0.952, 0.859, 1.090, 1.380, 0.766, 1.380, 1.015, [2.030, 2.530]],
+        [1.020, 0.918, 1.170, 1.470, 0.818, 1.480, 1.084, [2.170, 2.710]],
+        [1.110, 0.998, 1.270, 1.600, 0.890, 1.610, 1.180, [2.360, 2.950]],
+        [1.200, 1.080, 1.370, 1.730, 0.962, 1.740, 1.270, [2.550, 3.180]],
+        [1.290, 1.160, 1.480, 1.860, 1.030, 1.870, 1.370, [2.740, 3.420]],
+        [1.380, 1.250, 1.590, 2.000, 1.110, 2.010, 1.474, [2.950, 3.680]],
+        [1.480, 1.340, 1.700, 2.140, 1.190, 2.150, 1.578, [3.160, 3.940]]
     ];
 
 
     static skillTalentTable = [
-        1.720,
-        1.850,
-        1.980,
-        2.150,
-        2.280,
-        2.410,
-        2.580,
-        2.750,
-        2.920,
-        3.100,
-        3.270,
-        3.440,
-        3.650
+        [1.720],
+        [1.850],
+        [1.980],
+        [2.150],
+        [2.280],
+        [2.410],
+        [2.580],
+        [2.750],
+        [2.920],
+        [3.100],
+        [3.270],
+        [3.440],
+        [3.650]
     ];
 
 
     static burstTalentTable = [
-        1.420,
-        1.530,
-        1.640,
-        1.780,
-        1.890,
-        1.990,
-        2.140,
-        2.280,
-        2.420,
-        2.560,
-        2.710,
-        2.850,
-        3.030,
-        3.200
+        [1.420],
+        [1.530],
+        [1.640],
+        [1.780],
+        [1.890],
+        [1.990],
+        [2.140],
+        [2.280],
+        [2.420],
+        [2.560],
+        [2.710],
+        [2.850],
+        [3.030],
+        [3.200]
     ];
 
 
     static presetAttacks = [
+        ...Base.makeNormalPresetAttacks(TypeDefs.Element.Cryo, TypeDefs.WeaponType.Claymore, 4),
         {
-            id: "normal_total",
-            label: "通常4段累計",
-            dmgScale(vm){ return Chongyun.normalTalentTable[vm.normalRank()-1].slice(0, 4); },
-            attackProps: { isNormal: true, isPhysical: true }
+            id: "c1_dmg",
+            label: "1凸氷ダメージ",
+            dmgScale(vm) { return 0.5; },
+            attackProps: { isCryo: true },
         },
         {
             id: "normal_total_C1",
@@ -966,24 +967,15 @@ export class Chongyun extends Base.CharacterData
                 }
             ]
         },
-        {
-            id: "skill_dmg",
-            label: "元素スキル「霊刃・重華積霜」",
-            dmgScale(vm){ return Chongyun.skillTalentTable[vm.skillRank()-1]; },
-            attackProps: { isSkill: true, isCryo: true }
-        },
-        {
-            id: "skill_dmg_finish",
-            label: "元素スキル「霊刃・重華積霜」消滅時ダメージ",
-            dmgScale(vm){ return Chongyun.skillTalentTable[vm.skillRank()-1]; },
-            attackProps: { isSkill: true, isCryo: true }
-        },
+        Base.makeSkillPresetAttack("skill_dmg", "元素スキル「霊刃・重華積霜」", 0, { isSkill: true, isCryo: true }),
+        Base.makeSkillPresetAttack("skill_dmg_finish", "元素スキル「霊刃・重華積霜」消滅時ダメージ", 0, { isSkill: true, isCryo: true }),
+        Base.makeBurstPresetAttack("burst_dmg_1", "元素爆発「霊刃・雲開星落」", 0, { isBurst: true, isCryo: true }),
         {
             id: "burst_dmg",
             label: "元素爆発「霊刃・雲開星落」x 3本（6凸時は4本）",
             dmgScale(vm){
                     return new Array(vm.constell() >= 6 ? 4 : 3)
-                    .fill(Chongyun.burstTalentTable[vm.burstRank()-1]);
+                    .fill(Chongyun.burstTalentTable[vm.burstRank()-1][0]);
             },
             attackProps: { isBurst: true, isCryo: true }
         }
@@ -1095,6 +1087,7 @@ runUnittest(function(){
         new Chongyun(),
         {
             "vm": {
+                "level": "90",
                 "parent_id": "chongyun",
                 "constell": 6,
                 "normalRank": 9,
@@ -1106,11 +1099,24 @@ runUnittest(function(){
                 "reactionProb": 0
             },
             "expected": {
+                "normal_1": 363.689055,
+                "normal_2": 327.03821999999997,
+                "normal_3": 417.25566,
+                "normal_4": 524.38887,
                 "normal_total": 1632.371805,
+                "normal_charged_con": 290.38738499999994,
+                "normal_charged_fin": 527.208165,
+                "normal_plunge_during": 386.24341499999997,
+                "normal_plunge_low": 772.4868299999999,
+                "normal_plunge_high": 964.1988899999999,
+                "c1_dmg": 140.96474999999998,
                 "normal_total_C1": 2055.266055,
                 "skill_dmg": 823.2341399999999,
                 "skill_dmg_finish": 823.2341399999999,
-                "burst_dmg": 3138.4391939999996
+                "burst_dmg_1": 784.6097984999999,
+                "burst_dmg": 3138.4391939999996,
+                "__elemReact_Superconduct__": 281.92949999999996,
+                "__elemReact_Shattered__": 281.92949999999996
             }
         }
     ));
