@@ -159,7 +159,7 @@ export class Qiqi extends Base.CharacterData
 
 
     static presetAttacks = [
-        ...Base.makeNormalPresetAttacks(5),
+        ...Base.makeNormalPresetAttacks(TypeDefs.Element.Cryo, TypeDefs.WeaponType.Sword, 5),
         Base.makeSkillPresetAttack("skill_dmg", "スキルダメージ", 0, {isSkill: true, isCryo: true}),
         Base.makeSkillPresetAttack("skill_cont_dmg", "スキル継続ダメージ", 3, {isSkill: true, isCryo: true}),
         {
@@ -600,7 +600,7 @@ export class Shenhe extends Base.CharacterData
 
 
     static presetAttacks = [
-        ...Base.makeNormalPresetAttacks(5),
+        ...Base.makeNormalPresetAttacks(TypeDefs.Element.Cryo, TypeDefs.WeaponType.Polearm, 5),
         Base.makeSkillPresetAttack("skill_short", "元素スキル（短押し）", 0, { isSkill: true, isCryo: true, "isShenheSkill*": true }),
         Base.makeSkillPresetAttack("skill_long", "元素スキル（長押し）", 1, { isSkill: true, isCryo: true, "isShenheSkill*": true }),
         Base.makeBurstPresetAttack("burst_dmg_0", "元素爆発：初撃", 0, { isBurst: true, isCryo: true }),
