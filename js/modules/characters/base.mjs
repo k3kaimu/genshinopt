@@ -111,7 +111,7 @@ export function makeBurstPresetAttack(id_, label_, scale_index, props)
     return {
         id: id_,
         label: label_,
-        dmgScale(vm) { return vm.BurstTalentRow()[scale_index]; },
+        dmgScale(vm) { return vm.burstTalentRow()[scale_index]; },
         attackProps(vm) { return props; }
     };
 }
