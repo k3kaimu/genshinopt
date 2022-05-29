@@ -354,65 +354,17 @@ export class Ganyu extends Base.CharacterData
 
 
     static presetAttacks = [
-        ...(
-            Array(6).fill(0).map((_, n_) => {
-                let n = n_;
-                return {
-                    id: `normal_${n+1}`,
-                    label: `通常${n+1}段目`,
-                    dmgScale(vm) { return vm.normalTalentRow()[n]; },
-                    attackProps(vm) { return {isNormal: true, isPhysical: true}; }
-                };
-            })
-        ),
-        {
-            id: `normal_total`,
-            label: `通常6段累計`,
-            dmgScale(vm) { return vm.normalTalentRow().slice(0, 6); },
-            attackProps(vm) { return { isCharged: true, isPhysical: true }; }
-        },
-        {
-            id: `normal_charged`,
-            label: `狙撃`,
-            dmgScale(vm) { return vm.normalTalentRow()[6]; },
-            attackProps(vm) { return { isCharged: true, isPhysical: true }; }
-        },
-        {
-            id: `normal_charged1`,
-            label: `1段チャージ`,
-            dmgScale(vm) { return vm.normalTalentRow()[7]; },
-            attackProps(vm) { return { isCharged: true, isCryo: true }; }
-        },
-        {
-            id: "charged2",
-            label: "霜華の矢",
-            dmgScale(vm){ return Ganyu.normalTalentTable[vm.normalRank()-1][8]; },
-            attackProps: { isCharged: true, isCryo: true, "isGanyu2ndCharged*": true }
-        },
-        {
-            id: "charged2_flower",
-            label: "霜華満開",
-            dmgScale(vm){ return Ganyu.normalTalentTable[vm.normalRank()-1][9]; },
-            attackProps: { isCharged: true, isCryo: true, "isGanyu2ndCharged*": true }
-        },
-        {
-            id: `normal_plunge_during`,
-            label: `落下期間`,
-            dmgScale(vm) { return vm.normalTalentRow()[10]; },
-            attackProps(vm) { return { isPlunge: true, isPhysical: true }; }
-        },
-        {
-            id: `normal_plunge_low`,
-            label: `低空落下`,
-            dmgScale(vm) { return vm.normalTalentRow()[11][0]; },
-            attackProps(vm) { return { isPlunge: true, isPhysical: true }; }
-        },
-        {
-            id: `normal_plunge_high`,
-            label: `高空落下`,
-            dmgScale(vm) { return vm.normalTalentRow()[11][1]; },
-            attackProps(vm) { return { isPlunge: true, isPhysical: true }; }
-        },
+        ...Array(6).fill(0).map((_, n) => {
+                return Base.makePresetAttack("normal", `normal_${n+1}`, `通常${n+1}段目`, n, { isNormal: true, isPhysical: true });
+        }),
+        Base.makePresetAttack("normal", `normal_total`, `通常6段累計`, new Array(6).fill(0).map((_,n) => n), { isNormal: true, isPhysical: true }),
+        Base.makePresetAttack("normal", "normal_charged", "狙撃", 6, { isCharged: true, isPhysical: true }),
+        Base.makePresetAttack("normal", "normal_charged1", "1段チャージ", 7, { isCharged: true, isCryo: true }),
+        Base.makePresetAttack("normal", "charged2", "霜華の矢", 8, { isCharged: true, isCryo: true, "isGanyu2ndCharged*": true }),
+        Base.makePresetAttack("normal", "charged2_flower", "霜華満開", 9, { isCharged: true, isCryo: true, "isGanyu2ndCharged*": true }),
+        Base.makePresetAttack("normal", "normal_plunge_during", "`落下期間", 10, { isPlunge: true, isPhysical: true }),
+        Base.makePresetAttack("normal", "normal_plunge_low", "`低空落下", 11, { isPlunge: true, isPhysical: true }, 0),
+        Base.makePresetAttack("normal", "normal_plunge_high", "`高空落下", 11, { isPlunge: true, isPhysical: true }, 1),
         Base.makeSkillPresetAttack("skill_dmg", "スキルダメージ", 1, { isSkill: true, isCryo: true }),
         Base.makeBurstPresetAttack("burst_dmg", "爆発氷柱ダメージ", 0, { isBurst: true, isCryo: true }),
     ];
