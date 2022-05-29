@@ -20,6 +20,61 @@ import * as Utils from "../utils.mjs";
  */
 
 
+/**
+ * 
+ * @param {number} num 通常攻撃の段数
+ * @returns {PresetAttackObject[]}
+ */
+export function makeNormalPresetAttacks(num)
+{
+    /** @type {PresetAttackObject[]} */
+    let dst = Array(num).fill(0).map((_, n_) => {
+        let n = n_;
+        return {
+            id: `normal_${n+1}`,
+            label: `通常${n+1}段目`,
+            dmgScale(vm) { return vm.normalTalentRow()[n]; },
+            attackProps(vm) {
+                if(vm.useC6Anemo)
+                    return {isNormal: true, isAnemo: true};
+                else
+                    return {isNormal: true, isPhysical: true};
+            }
+        };
+    });
+
+    dst.push({
+        id: `normal_charged`,
+        label: `重撃`,
+        dmgScale(vm) { return vm.normalTalentRow()[num]; },
+        attackProps(vm) { return { isCharged: true, isPhysical: true }; }
+    });
+
+    dst.push({
+        id: `normal_plunge_during`,
+        label: `落下期間`,
+        dmgScale(vm) { return vm.normalTalentRow()[num+1]; },
+        attackProps(vm) { return { isPlunge: true, isPhysical: true }; }
+    });
+
+    dst.push({
+        id: `normal_plunge_low`,
+        label: `低空落下`,
+        dmgScale(vm) { return vm.normalTalentRow()[num+2][0]; },
+        attackProps(vm) { return { isPlunge: true, isPhysical: true }; }
+    });
+
+    dst.push({
+        id: `normal_plunge_high`,
+        label: `高空落下`,
+        dmgScale(vm) { return vm.normalTalentRow()[num+2][1]; },
+        attackProps(vm) { return { isPlunge: true, isPhysical: true }; }
+    });
+
+    return dst;
+}
+
+
 export class CharacterData
 {
     /**
