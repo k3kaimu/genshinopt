@@ -161,12 +161,6 @@ export class Qiqi extends Base.CharacterData
     static presetAttacks = [
         ...Base.makeNormalPresetAttacks(5),
         {
-            id: "normal_total",
-            label: "通常5段累計",
-            dmgScale(vm){ return vm.normalTalentRow().slice(0, 5).flat(10); },
-            attackProps: { isNormal: true, isPhysical: true }
-        },
-        {
             id: "skill_dmg",
             label: "スキルダメージ",
             dmgScale(vm){ return vm.skillTalentRow()[0]; },

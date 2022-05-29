@@ -39,6 +39,13 @@ export function makeNormalPresetAttacks(num)
     });
 
     dst.push({
+        id: `normal_total`,
+        label: `通常${num}段累計`,
+        dmgScale(vm) { return vm.normalTalentRow().slice(0, num); },
+        attackProps(vm) { return { isCharged: true, isPhysical: true }; }
+    });
+
+    dst.push({
         id: `normal_charged`,
         label: `重撃`,
         dmgScale(vm) { return vm.normalTalentRow()[num]; },
