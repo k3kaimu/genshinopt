@@ -928,6 +928,7 @@ runUnittest(function(){
         new Shenhe(),
         {
             "vm": {
+                "level": "90",
                 "parent_id": "shenhe",
                 "constell": 6,
                 "normalRank": 9,
@@ -942,13 +943,24 @@ runUnittest(function(){
                 "stacksC4Effect": 20
             },
             "expected": {
+                "normal_1": 282.93857928000006,
+                "normal_2": 263.00831457600003,
+                "normal_3": 348.7796323200001,
+                "normal_4": 344.508861312,
+                "normal_5": 429.212486304,
                 "normal_total": 1668.4478737920003,
-                "charged": 723.539788272,
+                "normal_charged": 723.539788272,
+                "normal_plunge_during": 418.17966120000006,
+                "normal_plunge_low": 836.3593224000001,
+                "normal_plunge_high": 1042.7799211200002,
                 "skill_short": 2629.10335143456,
                 "skill_long": 3331.0889888169595,
+                "burst_dmg_0": 1174.2635522217602,
+                "burst_dmg_1": 632.4774321902399,
                 "burst_dmg_6": 4969.1281453632,
                 "burst_dmg_9": 6866.560441933919,
-                "burst_add": 503.741952
+                "burst_add": 503.741952,
+                "__elemReact_Superconduct__": 737.46
             }
         }
     ));
