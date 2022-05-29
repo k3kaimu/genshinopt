@@ -22,56 +22,46 @@ import * as Utils from "../utils.mjs";
 
 /**
  * 
+ * @param {"normal" | "skill" | "burst"} type_
+ * @param {string} id_ 
+ * @param {string} label_ 
+ * @param {number | number[]} scale_index 
+ * @param {Object} props 
+ * @param {number?} subindex
+ */
+export function makePresetAttack(type_, id_, label_, scale_index, props, subindex = undefined)
+{
+    return {
+        id: id_,
+        label: label_,
+        attackProps(vm) { return props; },
+        dmgScale(vm) {
+            if(Array.isArray(scale_index))
+                return scale_index.map(e => (typeof subindex) === "undefined" ? vm[`${type_}TalentRow`]()[e] : vm[`${type_}TalentRow`]()[e][subindex]);
+            else
+                return (typeof subindex) === "undefined" ? vm[`${type_}TalentRow`]()[scale_index] : vm[`${type_}TalentRow`]()[scale_index][subindex];
+        },
+    };
+}
+
+
+/**
+ * 
  * @param {number} num 通常攻撃の段数
  * @returns {PresetAttackObject[]}
  */
 export function makeNormalPresetAttacks(num)
 {
     /** @type {PresetAttackObject[]} */
-    let dst = Array(num).fill(0).map((_, n_) => {
-        let n = n_;
-        return {
-            id: `normal_${n+1}`,
-            label: `通常${n+1}段目`,
-            dmgScale(vm) { return vm.normalTalentRow()[n]; },
-            attackProps(vm) { return {isNormal: true, isPhysical: true}; }
-        };
+    let dst = Array(num).fill(0).map((_, n) => {
+        return makePresetAttack("normal", `normal_${n+1}`, `通常${n+1}段目`, n, { isNormal: true, isPhysical: true })
     });
 
-    dst.push({
-        id: `normal_total`,
-        label: `通常${num}段累計`,
-        dmgScale(vm) { return vm.normalTalentRow().slice(0, num); },
-        attackProps(vm) { return { isCharged: true, isPhysical: true }; }
-    });
-
-    dst.push({
-        id: `normal_charged`,
-        label: `重撃`,
-        dmgScale(vm) { return vm.normalTalentRow()[num]; },
-        attackProps(vm) { return { isCharged: true, isPhysical: true }; }
-    });
-
-    dst.push({
-        id: `normal_plunge_during`,
-        label: `落下期間`,
-        dmgScale(vm) { return vm.normalTalentRow()[num+1]; },
-        attackProps(vm) { return { isPlunge: true, isPhysical: true }; }
-    });
-
-    dst.push({
-        id: `normal_plunge_low`,
-        label: `低空落下`,
-        dmgScale(vm) { return vm.normalTalentRow()[num+2][0]; },
-        attackProps(vm) { return { isPlunge: true, isPhysical: true }; }
-    });
-
-    dst.push({
-        id: `normal_plunge_high`,
-        label: `高空落下`,
-        dmgScale(vm) { return vm.normalTalentRow()[num+2][1]; },
-        attackProps(vm) { return { isPlunge: true, isPhysical: true }; }
-    });
+    dst.push(makePresetAttack("normal", "normal_total", `通常${num}段累計`, Array(num).fill(0).map((_,i) => i), { isNormal: true, isPhysical: true }));
+    dst.push(makePresetAttack("normal", "normal_charged", "重撃", num, { isCharged: true, isPhysical: true }));
+    dst.push(makePresetAttack("normal", "normal_plunge_during", "`落下期間", num+1, { isPlunge: true, isPhysical: true }));
+    dst.push(makePresetAttack("normal", "normal_plunge_low", "`低空落下", num+2, { isPlunge: true, isPhysical: true }, 0));
+    dst.push(makePresetAttack("normal", "normal_plunge_high", "`高空落下", num+2, { isPlunge: true, isPhysical: true }, 1));
 
     return dst;
 }
@@ -86,12 +76,7 @@ export function makeSkillPresetAttack(id_, label_, scale_index, props)
         props.isSkill = true;
     }
 
-    return {
-        id: id_,
-        label: label_,
-        dmgScale(vm) { return vm.skillTalentRow()[scale_index]; },
-        attackProps(vm) { return props; }
-    };
+    return makePresetAttack("skill", id_, label_, scale_index, props);
 }
 
 /**
@@ -108,12 +93,7 @@ export function makeBurstPresetAttack(id_, label_, scale_index, props)
         props.isBurst = true;
     }
 
-    return {
-        id: id_,
-        label: label_,
-        dmgScale(vm) { return vm.burstTalentRow()[scale_index]; },
-        attackProps(vm) { return props; }
-    };
+    return makePresetAttack("burst", id_, label_, scale_index, props);
 }
 
 
