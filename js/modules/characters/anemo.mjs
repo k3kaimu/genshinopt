@@ -107,6 +107,23 @@ export class KaedeharaKazuha extends Base.CharacterData
 
 
     static presetAttacks = [
+        // 通常5段の1段ずつ
+        ...(
+            Array(5).fill(0).map((_, n_) => {
+                let n = n_;
+                return {
+                    id: `normal_${n+1}`,
+                    label: `通常攻撃${n+1}段目`,
+                    dmgScale(vm) { return vm.normalTalentRow()[n]; },
+                    attackProps(vm) {
+                        if(vm.useC6Anemo)
+                            return {isNormal: true, isAnemo: true};
+                        else
+                            return {isNormal: true, isPhysical: true};
+                    }
+                };
+            })
+        ),
         {
             id: "normal_total",
             label: "通常5段累計",
@@ -116,6 +133,17 @@ export class KaedeharaKazuha extends Base.CharacterData
                     return {isNormal: true, isAnemo: true};
                 else
                     return {isNormal: true, isPhysical: true};
+            }
+        },
+        {
+            id: "normal_charged",
+            label: "重撃",
+            dmgScale(vm){ return vm.normalTalentRow()[5]; },
+            attackProps(vm){
+                if(vm.useC6Anemo)
+                    return {isCharged: true, isAnemo: true};
+                else
+                    return {isCharged: true, isPhysical: true};
             }
         },
         {
