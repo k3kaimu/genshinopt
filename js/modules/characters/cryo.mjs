@@ -381,7 +381,7 @@ export class Ganyu extends Base.CharacterData
             id: `normal_charged1`,
             label: `1段チャージ`,
             dmgScale(vm) { return vm.normalTalentRow()[7]; },
-            attackProps(vm) { return { isCharged: true, isPhysical: true }; }
+            attackProps(vm) { return { isCharged: true, isCryo: true }; }
         },
         {
             id: "charged2",
@@ -551,7 +551,7 @@ runUnittest(function(){
                 "normal_6": 288.76118355,
                 "normal_total": 1323.5569263,
                 "normal_charged": 219.77480070000001,
-                "normal_charged1": 575.3409795,
+                "normal_charged1": 655.2494488749999,
                 "charged2": 782.6660252500001,
                 "charged2_flower": 1328.37811625,
                 "normal_plunge_during": 284.6710818,
