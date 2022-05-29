@@ -414,6 +414,7 @@ runUnittest(function(){
                 "normal_4": 329.7291519375,
                 "normal_5": 413.41825507500005,
                 "normal_total": 1541.5946807624996,
+                "normal_charged": 519.55572375,
                 "plunge_low_normal": 723.6754874999998,
                 "plunge_high_normal": 901.5890625000001,
                 "skill_short": 783.7814249999999,
