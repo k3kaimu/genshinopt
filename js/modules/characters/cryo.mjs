@@ -160,18 +160,8 @@ export class Qiqi extends Base.CharacterData
 
     static presetAttacks = [
         ...Base.makeNormalPresetAttacks(5),
-        {
-            id: "skill_dmg",
-            label: "スキルダメージ",
-            dmgScale(vm){ return vm.skillTalentRow()[0]; },
-            attackProps: { isSkill: true, isCryo: true }
-        },
-        {
-            id: "skill_cont_dmg",
-            label: "スキル継続ダメージ",
-            dmgScale(vm){ return vm.skillTalentRow()[3]; },
-            attackProps: { isSkill: true, isCryo: true }
-        },
+        Base.makeSkillPresetAttack("skill_dmg", "スキルダメージ", 0, {isSkill: true, isCryo: true}),
+        Base.makeSkillPresetAttack("skill_cont_dmg", "スキル継続ダメージ", 3, {isSkill: true, isCryo: true}),
         {
             id: "skill_hit_heal",
             label: "スキルヒット時の回復",
@@ -184,12 +174,7 @@ export class Qiqi extends Base.CharacterData
             func(calc, vm){ return calc.calculateHealing(calc.atk({}).mul(vm.skillTalentRow()[2][0]).add(vm.skillTalentRow()[2][1])); },
             attackProps: { isAttack: false, isHeal: true, isSkill: true }
         },
-        {
-            id: "burst_dmg",
-            label: "元素爆発ダメージ",
-            dmgScale(vm){ return vm.burstTalentRow()[0]; },
-            attackProps: { isBurst: true, isCryo: true }
-        },
+        Base.makeBurstPresetAttack("burst_dmg", "元素爆発ダメージ", 0, {isBurst: true, isCryo: true}),
         {
             id: "burst_heal",
             label: "元素爆発お札回復",
