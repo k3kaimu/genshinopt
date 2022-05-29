@@ -77,6 +77,46 @@ export function makeNormalPresetAttacks(num)
 }
 
 
+/**
+ * 
+ */
+export function makeSkillPresetAttack(id_, label_, scale_index, props)
+{
+    if(!("isSkill" in props)) {
+        props.isSkill = true;
+    }
+
+    return {
+        id: id_,
+        label: label_,
+        dmgScale(vm) { return vm.skillTalentRow()[scale_index]; },
+        attackProps(vm) { return props; }
+    };
+}
+
+/**
+ * 
+ * @param {string} id_ 
+ * @param {string} label_ 
+ * @param {number} scale_index 
+ * @param {Object} props 
+ * @returns 
+ */
+export function makeBurstPresetAttack(id_, label_, scale_index, props)
+{
+    if(!("isBurst" in props)) {
+        props.isBurst = true;
+    }
+
+    return {
+        id: id_,
+        label: label_,
+        dmgScale(vm) { return vm.BurstTalentRow()[scale_index]; },
+        attackProps(vm) { return props; }
+    };
+}
+
+
 export class CharacterData
 {
     /**
