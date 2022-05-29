@@ -710,14 +710,14 @@ export class AttackSetting
 
         let ret = [];
         let keys = Object.keys(idCount);
+        if(addCompounded && keys.length >= 1) {
+            ret.push({id: '__compounded_by_UI__', label: '複合組合せ設定（攻撃方法と倍率の指定）'});
+        }
+
         keys.forEach(k => {
             if(idCount[k] == cvms.length)
                 ret.push({id: k, label: labels[k]});
         });
-
-        if(addCompounded && ret.length >= 1) {
-            ret.push({id: '__compounded_by_UI__', label: '複合組合せ設定（攻撃方法と倍率の指定）'});
-        }
 
         return ret;
     }
