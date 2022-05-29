@@ -2,6 +2,16 @@ import * as Data from './data.mjs';
 import * as Calc from './dmg-calc.mjs';
 
 
+/**
+ * 
+ * @param {string} str 
+ */
+export function capitalize(str)
+{
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+
 export function makeUnittestForCharacter(id)
 {
     let c = Data.lookupCharacter(id);
