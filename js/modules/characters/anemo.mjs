@@ -107,68 +107,7 @@ export class KaedeharaKazuha extends Base.CharacterData
 
 
     static presetAttacks = [
-        // 通常5段の1段ずつ
-        ...(
-            Array(5).fill(0).map((_, n_) => {
-                let n = n_;
-                return {
-                    id: `normal_${n+1}`,
-                    label: `通常攻撃${n+1}段目`,
-                    dmgScale(vm) { return vm.normalTalentRow()[n]; },
-                    attackProps(vm) {
-                        if(vm.useC6Anemo)
-                            return {isNormal: true, isAnemo: true};
-                        else
-                            return {isNormal: true, isPhysical: true};
-                    }
-                };
-            })
-        ),
-        {
-            id: "normal_total",
-            label: "通常5段累計",
-            dmgScale(vm){ return vm.normalTalentRow().slice(0, 5); },
-            attackProps(vm){
-                if(vm.useC6Anemo)
-                    return {isNormal: true, isAnemo: true};
-                else
-                    return {isNormal: true, isPhysical: true};
-            }
-        },
-        {
-            id: "normal_charged",
-            label: "重撃",
-            dmgScale(vm){ return vm.normalTalentRow()[5]; },
-            attackProps(vm){
-                if(vm.useC6Anemo)
-                    return {isCharged: true, isAnemo: true};
-                else
-                    return {isCharged: true, isPhysical: true};
-            }
-        },
-        {
-            id: "plunge_low_normal",
-            label: "低空落下",
-            dmgScale(vm){ return vm.normalTalentRow()[7][0]; },
-            // attackProps: { isPlunge: true, isPhysical: true }
-            attackProps(vm){
-                if(vm.useAnemoPlunge)
-                    return { isPlunge: true, isAnemo: true };
-                else
-                    return { isPlunge: true, isPhysical: true };
-            }
-        },
-        {
-            id: "plunge_high_normal",
-            label: "高空落下",
-            dmgScale(vm){ return vm.normalTalentRow()[7][1]; },
-            attackProps(vm){
-                if(vm.useAnemoPlunge)
-                    return { isPlunge: true, isAnemo: true };
-                else
-                    return { isPlunge: true, isPhysical: true };
-            }
-        },
+        ...Base.makeNormalPresetAttacks(TypeDefs.Element.Anemo, TypeDefs.WeaponType.Sword, 5),
         Base.makeSkillPresetAttack("skill_short", "スキル（短押し）", 0, {isAnemo: true}),
         Base.makeSkillPresetAttack("skill_long", "スキル（長押し）", 1, {isAnemo: true}),
         {
@@ -237,7 +176,21 @@ export let KaedeharaKazuhaViewModel = (Base) => class extends Base
                     init: true,
                     label: (vm) => "落下攻撃に風元素付与",
                 }],
-                effect: undefined
+                effect: {
+                    cond: (vm) => vm.useAnemoPlunge,
+                    list: [
+                        {
+                            target: "modifyAttackInfo",
+                            isDynamic: true,
+                            condAttackProps: (props) => props.isPlunge && props.isPhysical,
+                            value: (vmdata, calc, info) => {
+                                info.props = Calc.deleteAllElementFromAttackProps(info.props);
+                                info.props.isAnemo = true;
+                                return info;
+                            }
+                        }
+                    ]
+                }
             });
         }
 
@@ -350,12 +303,28 @@ export let KaedeharaKazuhaViewModel = (Base) => class extends Base
                 }],
                 effect: {
                     cond: (vm) => true,
-                    list: [{
-                        target: TypeDefs.DynamicStatusType.normalDmg,
-                        isDynamic: true,
-                        condAttackProps: (props) => true,
-                        value: (vmdata, calc, props) => calc.mastery(props).mul(0.002)
-                    }]
+                    list: [
+                        {
+                            target: TypeDefs.DynamicStatusType.normalDmg,
+                            isDynamic: true,
+                            condAttackProps: (props) => true,
+                            value: (vmdata, calc, props) => calc.mastery(props).mul(0.002)
+                        },
+                        {
+                            target: "modifyAttackInfo",
+                            isDynamic: true,
+                            condAttackProps: (props) => (props.isNormal || props.isCharged || props.isPlunge) && props.isPhysical,
+                            value: (vmdata, calc, info) => {
+                                if(vmdata.useC6Anemo) {
+                                    info.props = Calc.deleteAllElementFromAttackProps(info.props);
+                                    info.props.isAnemo = true;
+                                    return info;
+                                } else {
+                                    return info;
+                                }
+                            }
+                        }
+                    ]
                 }
             });
         }
@@ -395,8 +364,9 @@ runUnittest(function(){
                 "normal_5": 413.41825507500005,
                 "normal_total": 1541.5946807624996,
                 "normal_charged": 519.55572375,
-                "plunge_low_normal": 723.6754874999998,
-                "plunge_high_normal": 901.5890625000001,
+                "normal_plunge_during": 361.35689625,
+                "normal_plunge_low": 723.6754874999998,
+                "normal_plunge_high": 901.5890625000001,
                 "skill_short": 783.7814249999999,
                 "skill_long": 1065.0772124999999,
                 "skill_plunge_EA": 502.966485,
