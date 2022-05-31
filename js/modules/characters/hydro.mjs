@@ -569,13 +569,16 @@ export class KamisatoAyato extends Base.CharacterData
         [0.836, 0.932, 1.027, 0.89*0.01, 1.605],
         [0.904, 1.007, 1.110, 0.96*0.01, 1.735],
         [0.972, 1.082, 1.193, 1.03*0.01, 1.864],
-        [1.046, 1.165, 1.284, 1.11*0.01, 2.006]     // lv. 10
+        [1.046, 1.165, 1.284, 1.11*0.01, 2.006],
+        [1.119, 1.247, 1.374, 1.19*0.01, 2.148],
+        [1.193, 1.329, 1.468, 1.27*0.01, 2.289],
+        [1.267, 1.411, 1.555, 1.34*0.01, 2.431],    // lv. 13
     ];
 
 
     static burstTalentTable = [
         // 0:ダメージ, 1:通常ダメバフ
-        [0.665, 0.110],
+        [0.665, 0.110], // lv. 1
         [0.714, 0.120],
         [0.764, 0.130],
         [0.831, 0.140],
@@ -584,7 +587,10 @@ export class KamisatoAyato extends Base.CharacterData
         [0.997, 0.170],
         [1.063, 0.180],
         [1.130, 0.190],
-        [1.196, 0.200]
+        [1.196, 0.200],
+        [1.263, 0.200],
+        [1.329, 0.200],
+        [1.412, 0.200], // lv. 13
     ];
 
 
@@ -718,43 +724,42 @@ export class KamisatoAyatoViewModel extends HydroCharacterViewModel
 
     
     // TODO: 10までのデータしかない
-    maxNormalTalentRank() { return 11; }
-    maxSkillTalentRank() { return 10; }
-    maxBurstTalentRank() { return 10; }
+    maxSkillTalentRank() { return this.constell() >= 3 ? super.maxSkillTalentRank() + 3 : super.maxSkillTalentRank(); }
+    maxBurstTalentRank() { return this.constell() >= 5 ? super.maxBurstTalentRank() + 3 : super.maxBurstTalentRank(); }
 }
 
 
-// runUnittest(function(){
-//     console.assert(Utils.checkUnittestForCharacter(
-//         new KamisatoAyato(),
-//         {
-//             "vm": {
-//                 "level": "90",
-//                 "parent_id": "kamisato_ayato",
-//                 "constell": 6,
-//                 "normalRank": 9,
-//                 "skillRank": 9,
-//                 "burstRank": 9,
-//                 "skillStacks": 4,
-//                 "useBurstNormalDmgUp": true,
-//                 "useC1Effect": true,
-//                 "reactionProb": 0
-//             },
-//             "expected": {
-//                 "normal_total": 1585.871027748,
-//                 "charged_1": 605.2942853999999,
-//                 "skill_dmg": 1828.1606880017252,
-//                 "skill_dmg_C6": 3639.395472300001,
-//                 "burst_dmg": 287.3876229,
-//                 "__elemReact_ElectroCharged__": 1562.4
-//             }
-//         }
-//     ));
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForCharacter(
+        new KamisatoAyato(),
+        {
+            "vm": {
+                "level": "90",
+                "parent_id": "kamisato_ayato",
+                "constell": 6,
+                "normalRank": 9,
+                "skillRank": 9,
+                "burstRank": 9,
+                "skillStacks": 4,
+                "useBurstNormalDmgUp": true,
+                "useC1Effect": true,
+                "reactionProb": 0
+            },
+            "expected": {
+                "normal_total": 1585.871027748,
+                "charged_1": 605.2942853999999,
+                "skill_dmg": 3373.6037191542005,
+                "skill_dmg_C6": 3639.395472300001,
+                "burst_dmg": 287.3876229,
+                "__elemReact_ElectroCharged__": 1562.4
+            }
+        }
+    ));
 
-//     console.assert(Utils.checkSerializationUnittest(
-//         new KamisatoAyato().newViewModel()
-//     ));
-// });
+    console.assert(Utils.checkSerializationUnittest(
+        new KamisatoAyato().newViewModel()
+    ));
+});
 
 
 // 行秋
