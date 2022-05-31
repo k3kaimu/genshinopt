@@ -76,25 +76,25 @@ export function makeNormalPresetAttacks(elem, wtype, num)
             dst.push(makePresetAttack("normal", "normal_charged", "重撃", num, { isCharged: true, isPhysical: true }));
         }
 
-        dst.push(makePresetAttack("normal", "normal_plunge_during", "`落下期間", num+1, { isPlunge: true, isPhysical: true }));
-        dst.push(makePresetAttack("normal", "normal_plunge_low", "`低空落下", num+2, { isPlunge: true, isPhysical: true }, 0));
-        dst.push(makePresetAttack("normal", "normal_plunge_high", "`高空落下", num+2, { isPlunge: true, isPhysical: true }, 1));
+        dst.push(makePresetAttack("normal", "normal_plunge_during", "落下期間", num+1, { isPlunge: true, isPhysical: true }));
+        dst.push(makePresetAttack("normal", "normal_plunge_low", "低空落下", num+2, { isPlunge: true, isPhysical: true }, 0));
+        dst.push(makePresetAttack("normal", "normal_plunge_high", "高空落下", num+2, { isPlunge: true, isPhysical: true }, 1));
     }
     else if(wtype == TypeDefs.WeaponType.Claymore)
     {
         dst.push(makePresetAttack("normal", "normal_charged_con", "重撃（継続）", num, { isCharged: true, isPhysical: true }));
         dst.push(makePresetAttack("normal", "normal_charged_fin", "重撃（終了）", num+1, { isCharged: true, isPhysical: true }));
-        dst.push(makePresetAttack("normal", "normal_plunge_during", "`落下期間", num+2, { isPlunge: true, isPhysical: true }));
-        dst.push(makePresetAttack("normal", "normal_plunge_low", "`低空落下", num+3, { isPlunge: true, isPhysical: true }, 0));
-        dst.push(makePresetAttack("normal", "normal_plunge_high", "`高空落下", num+3, { isPlunge: true, isPhysical: true }, 1));
+        dst.push(makePresetAttack("normal", "normal_plunge_during", "落下期間", num+2, { isPlunge: true, isPhysical: true }));
+        dst.push(makePresetAttack("normal", "normal_plunge_low", "低空落下", num+3, { isPlunge: true, isPhysical: true }, 0));
+        dst.push(makePresetAttack("normal", "normal_plunge_high", "高空落下", num+3, { isPlunge: true, isPhysical: true }, 1));
     }
     else if(wtype == TypeDefs.WeaponType.Bow)
     {
         dst.push(makePresetAttack("normal", "normal_charged_con", "狙撃", num, { isCharged: true, isPhysical: true }));
         dst.push(makePresetAttack("normal", "normal_charged_fin", "フルチャージ狙撃", num+1, { isCharged: true, [`is${Utils.capitalize(elem)}`]: true }));
-        dst.push(makePresetAttack("normal", "normal_plunge_during", "`落下期間", num+2, { isPlunge: true, isPhysical: true }));
-        dst.push(makePresetAttack("normal", "normal_plunge_low", "`低空落下", num+3, { isPlunge: true, isPhysical: true }, 0));
-        dst.push(makePresetAttack("normal", "normal_plunge_high", "`高空落下", num+3, { isPlunge: true, isPhysical: true }, 1));
+        dst.push(makePresetAttack("normal", "normal_plunge_during", "落下期間", num+2, { isPlunge: true, isPhysical: true }));
+        dst.push(makePresetAttack("normal", "normal_plunge_low", "低空落下", num+3, { isPlunge: true, isPhysical: true }, 0));
+        dst.push(makePresetAttack("normal", "normal_plunge_high", "高空落下", num+3, { isPlunge: true, isPhysical: true }, 1));
     }
     else
         console.assert(false, `invalid weaponType: ${wtype}`);
