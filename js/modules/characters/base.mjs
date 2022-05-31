@@ -34,7 +34,7 @@ export function makePresetAttack(type_, id_, label_, scale_index, props, subinde
     return {
         id: id_,
         label: label_,
-        attackProps(vm) { return props; },
+        attackProps: props,
         dmgScale(vm) {
             if(Array.isArray(scale_index))
                 return scale_index.map(e => (typeof subindex) === "undefined" ? vm[`${type_}TalentRow`]()[e] : vm[`${type_}TalentRow`]()[e][subindex]);
@@ -54,9 +54,17 @@ export function makePresetAttack(type_, id_, label_, scale_index, props, subinde
 export function makeNormalPresetAttacks(elem, wtype, num)
 {
     /** @type {PresetAttackObject[]} */
-    let dst = Array(num).fill(0).map((_, n) => {
+    let dst;
+    
+    if(wtype == TypeDefs.WeaponType.Catalyst) {
+        dst = Array(num).fill(0).map((_, n) => {
+            return makePresetAttack("normal", `normal_${n+1}`, `通常${n+1}段目`, n, { isNormal: true, [`is${Utils.capitalize(elem)}`]: true })
+        });
+    } else {
+        dst = Array(num).fill(0).map((_, n) => {
         return makePresetAttack("normal", `normal_${n+1}`, `通常${n+1}段目`, n, { isNormal: true, isPhysical: true })
     });
+    }
 
     dst.push(makePresetAttack("normal", "normal_total", `通常${num}段累計`, Array(num).fill(0).map((_,i) => i), { isNormal: true, isPhysical: true }));
 
