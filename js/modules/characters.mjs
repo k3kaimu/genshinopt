@@ -36,6 +36,7 @@ export const characters = [
     new Hydro.Mona(),
     new Hydro.Tartaglia(),
     new Hydro.KamisatoAyato(),
+    new Hydro.Yelan(),
     new Hydro.Xingqiu(),
     new Pyro.Diluc(),
     new Pyro.Klee(),

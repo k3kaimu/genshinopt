@@ -762,6 +762,251 @@ runUnittest(function(){
 });
 
 
+
+// 夜蘭
+export class Yelan extends Base.CharacterData
+{
+    constructor()
+    {
+        super(
+            "yelan",
+            "夜蘭",
+            5,
+            "Hydro",
+            "Bow",
+            [19, 50, 98, 126, 159, 187, 216, 244],             /* bAtk */
+            [43, 111, 220, 283, 355, 419, 483, 548],            /* bDef */
+            [1125, 2918, 5810, 7472, 9374, 11056, 12749, 14450],   /* bHP */
+            TypeDefs.StaticStatusType.crtRate,  /* bBonusType */
+            0.192       /* bBonusValue */
+        )
+    }
+
+
+    
+    newViewModel()
+    {
+        return new (YelanViewModel(HydroCharacterViewModel))(this, false);
+    }
+
+
+    static normalTalentTable = [
+    //  0-3:通常4段, 4:狙撃, 5:フルチャージ, 6:落下, 7-0:低空, 7-1:高空, 8: 打破の矢
+        [0.407, 0.390, 0.516, [0.325, 0.325], 0.439, 1.240, 0.568, [1.140, 1.420], 0.1158], // lv.1
+        [0.440, 0.422, 0.558, [0.352, 0.352], 0.474, 1.330, 0.615, [1.230, 1.530], 0.1244],
+        [0.473, 0.454, 0.600, [0.378, 0.378], 0.510, 1.430, 0.661, [1.320, 1.650], 0.1331],
+        [0.520, 0.499, 0.660, [0.416, 0.416], 0.561, 1.550, 0.727, [1.450, 1.820], 0.1447],
+        [0.553, 0.531, 0.702, [0.442, 0.442], 0.597, 1.640, 0.773, [1.550, 1.930], 0.1534],
+        [0.591, 0.568, 0.750, [0.473, 0.473], 0.638, 1.740, 0.826, [1.650, 2.060], 0.1621],
+        [0.643, 0.617, 0.816, [0.514, 0.514], 0.694, 1.860, 0.899, [1.800, 2.240], 0.1736],
+        [0.695, 0.667, 0.882, [0.556, 0.556], 0.750, 1.980, 0.971, [1.940, 2.430], 0.1852], // lv. 8
+    ];
+
+
+    static skillTalentTable = [
+    // 0:ダメージ
+        [0.226],    // lv. 1
+        [0.243],
+        [0.260],
+        [0.283],
+        [0.300],
+        [0.317],
+        [0.339],
+        [0.362],
+        [0.384],    // lv. 9
+    ];
+
+
+    static burstTalentTable = [
+    // 0:ダメージ, 1:玲瓏一擲
+        [0.0731, 0.0487],   // lv. 1
+        [0.0786, 0.0524],
+        [0.0840, 0.0560],
+        [0.0914, 0.0609],
+        [0.0968, 0.0646],
+        [0.1023, 0.0682],
+        [0.1096, 0.0731],
+        [0.1169, 0.0780],
+        [0.1242, 0.0828],
+        [0.1315, 0.0877],   // lv. 10
+    ];
+
+
+    static presetAttacks = [
+        ...Base.makeNormalPresetAttacks(TypeDefs.Element.Hydro, TypeDefs.WeaponType.Bow, 4),
+        {
+            id: "skill_dmg",
+            label: "元素スキルダメージ",
+            ref: TypeDefs.DynamicStatusType.hp,
+            dmgScale: (vm) => vm.skillTalentRow()[0],
+            attackProps: { isSkill: true, isHydro: true }
+        },
+        {
+            id: "burst_dmg_first",
+            label: "元素爆発：初撃",
+            ref: TypeDefs.DynamicStatusType.hp,
+            dmgScale: (vm) => vm.burstTalentRow()[0],
+            attackProps: { isBurst: true, isHydro: true },
+        },
+        {
+            id: "burst_dmg_cont",
+            label: "元素爆発：追撃",
+            ref: TypeDefs.DynamicStatusType.hp,
+            dmgScale: (vm) => vm.burstTalentRow()[1],
+            attackProps: { isBurst: true, isHydro: true },
+        },
+        {
+            id: "c2_additional_dmg",
+            label: "元素爆発：2凸追加",
+            ref: TypeDefs.DynamicStatusType.hp,
+            dmgScale: (vm) => 0.14,
+            attackProps: { isBurst: true, isHydro: true }
+        },
+        {
+            id: "c6_normal_charged",
+            label: "元素爆発：6凸通常攻撃",
+            ref: TypeDefs.DynamicStatusType.hp,
+            dmgScale: (vm) => vm.normalTalentRow()[8] * 1.56,
+            attackProps: { isCharged: true, isHydro: true }
+        }
+    ];
+}
+
+
+// 夜蘭
+export let YelanViewModel = (Klass) => class extends Klass
+{
+    constructor(parent, isBuffer)
+    {
+        super(parent);
+
+        // チーム内の元素数によるHP増加
+        if(!isBuffer) {
+            this.registerTalent({
+                type: "Other",
+                requiredC: 0,
+                uiList: [{
+                    type: "select",
+                    name: "numTeamElem",
+                    init: 4,
+                    label: (vm) => "チーム内元素数に応じたHP増加",
+                    options: (vm) => [
+                        {label: "0種類：+0%", value: 0},
+                        {label: "1種類：+6%", value: 1},
+                        {label: "2種類：+12%", value: 2},
+                        {label: "3種類：+18%", value: 3},
+                        {label: "4種類：+30%", value: 4}],
+                }],
+                effect: {
+                    cond: (vm) => true,
+                    list: [{
+                        target: TypeDefs.StaticStatusType.rateHP,
+                        value: (vm) => [0, 0.06, 0.12, 0.18, 0.30][Number(vm.numTeamElem())]
+                    }]
+                }
+            });
+        }
+
+
+        // 爆発中のチームへのダメージバフ
+        this.registerTalent({
+            type: "Burst",
+            requiredC: 0,
+            uiList: [{
+                type: "slider",
+                name: "dmgBuffBurst",
+                init: 0.25,
+                min: 0.0,
+                max: 0.50,
+                step: 0.01,
+                label: (vm) => `全ダメ+${textPercentageFix(Number(vm.dmgBuffBurst()), 1)}`
+            }],
+            effect: {
+                cond: (vm) => true,
+                list: [{
+                    target: TypeDefs.StaticStatusType.allDmg,
+                    value: (vm) => Number(vm.dmgBuffBurst())
+                }]
+            }
+        });
+
+
+        // 4凸効果，HPアップ
+        this.registerTalent({
+            type: "Burst",
+            requiredC: 4,
+            uiList: [{
+                type: "select",
+                name: "hpBuffC4Effect",
+                init: 0.40,
+                label: (vm) => "HP上昇（4凸）",
+                options: (vm) => [
+                    {label: "+0%", value: 0},
+                    {label: "+10%", value: 0.1},
+                    {label: "+20%", value: 0.2},
+                    {label: "+30%", value: 0.3},
+                    {label: "+40%", value: 0.4}],
+            }],
+            effect: {
+                cond: (vm) => true,
+                list: [{
+                    target: TypeDefs.StaticStatusType.rateHP,
+                    value: (vm) => Number(vm.hpBuffC4Effect())
+                }]
+            }
+        });
+
+    }
+
+
+    maxNormalTalentRank() { return 8; }
+    maxSkillTalentRank() { return 9; }
+    maxBurstTalentRank() { return 10; }
+}
+
+// runUnittest(function(){
+//     console.assert(Utils.checkUnittestForCharacter(
+//         new Yelan(),
+//         {
+//             "vm": {
+//                 "level": "90",
+//                 "parent_id": "yelan",
+//                 "constell": 6,
+//                 "normalRank": 8,
+//                 "skillRank": 9,
+//                 "burstRank": 9,
+//                 "numTeamElem": 4,
+//                 "dmgBuffBurst": 0.25,
+//                 "hpBuffC4Effect": 0.4,
+//                 "reactionProb": 0
+//             },
+//             "expected": {
+//                 "normal_1": 203.25778875,
+//                 "normal_2": 195.06898575000005,
+//                 "normal_3": 257.94729450000005,
+//                 "normal_4": 325.2124620000001,
+//                 "normal_total": 981.486531,
+//                 "normal_charged_con": 219.34293750000003,
+//                 "normal_charged_fin": 579.0653550000001,
+//                 "normal_plunge_during": 283.97598975000005,
+//                 "normal_plunge_low": 567.367065,
+//                 "normal_plunge_high": 710.6711175,
+//                 "skill_dmg": 6213.372840000001,
+//                 "burst_dmg_first": 2009.6377779375,
+//                 "burst_dmg_cont": 1339.758518625,
+//                 "c2_additional_dmg": 2265.2921812500003,
+//                 "c6_normal_charged": 4674.786390495,
+//                 "__elemReact_ElectroCharged__": 1562.4
+//             }
+//         }
+//     ));
+
+//     console.assert(Utils.checkSerializationUnittest(
+//         new Yelan().newViewModel()
+//     ));
+// });
+
+
 // 行秋
 export class Xingqiu extends Base.CharacterData
 {
