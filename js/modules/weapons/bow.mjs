@@ -475,6 +475,99 @@ runUnittest(function(){
 });
 
 
+// 若水
+export class AquaSimulacra extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "aqua_simulacra",
+            "若水",
+            5,
+            "Bow",
+            542,
+            TypeDefs.StaticStatusType.crtDmg,
+            0.882
+        );
+    }
+
+
+    newViewModel()
+    {
+        return new AquaSimulacraViewModel(this);
+    }
+
+
+    static subSkill = [
+        {dmg: 0.20, hp: 0.16},
+        {dmg: 0.25, hp: 0.20},
+        {dmg: 0.30, hp: 0.24},
+        {dmg: 0.35, hp: 0.28},
+        {dmg: 0.40, hp: 0.32},
+    ];
+}
+
+
+// 若水
+export class AquaSimulacraViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        
+        this.registerEffect({
+            uiList: [
+                {
+                    type: "checkbox",
+                    name: "useEffect",
+                    init: true,
+                    label: (vm) => `全ダメバフ+${textPercentageFix(AquaSimulacra.subSkill[vm.rank()].dmg, 0)}`
+                }
+            ],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.allDmg,
+                        value: (vm) => vm.useEffect() ? AquaSimulacra.subSkill[vm.rank()].dmg : 0,
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.rateHP,
+                        value: (vm) => AquaSimulacra.subSkill[vm.rank()].hp
+                    },
+                ]
+            }
+        });
+    }
+}
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new AquaSimulacra(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "aqua_simulacra",
+                "level": "90",
+                "rank": 0,
+                "useEffect": true
+            },
+            "expected": {
+                "normal_100": 372.36898800000006,
+                "normal_elem_100": 372.36898800000006,
+                "skill_100": 372.36898800000006,
+                "burst_100": 372.36898800000006
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new AquaSimulacra().newViewModel()
+    ));
+});
+
+
 // 西風猟弓
 export class FavoniusWarbow extends Base.WeaponData
 {

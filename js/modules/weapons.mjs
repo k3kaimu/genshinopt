@@ -21,6 +21,7 @@ export const weapons = [
     new Bow.ElegyForTheEnd(),
     new Bow.ThunderingPulse(),
     new Bow.PolarStar(),
+    new Bow.AquaSimulacra(),
     // 弓, 星4
     new Bow.FavoniusWarbow(),
     new Bow.SacrificialBow(),
