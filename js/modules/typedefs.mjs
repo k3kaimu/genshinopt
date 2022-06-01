@@ -66,7 +66,7 @@ export const UIType = {
  *  html?: (vm: any) => string;
  *  min?: number,
  *  max?: number,
- *  step: number,
+ *  step?: number,
  * }} UIItem
  */
 
