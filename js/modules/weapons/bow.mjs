@@ -1183,3 +1183,69 @@ runUnittest(function(){
         new BlackcliffWarbow().newViewModel()
     ));
 });
+
+
+// 弾弓
+export class Slingshot extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "slingshot",
+            "弾弓",
+            3,
+            "Bow",
+            354,
+            "baseCrtRate",
+            0.312
+        );
+    }
+
+    newViewModel()
+    {
+        return new SlingshotViewModel(this);
+    }
+
+    static damageBuff = [0.36, 0.42, 0.48, 0.54, 0.60];
+}
+
+// 弾弓viewmodel
+export class SlingshotViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+    }
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+        calc.baseNormalDmg.value += Slingshot.damageBuff[this.rank()];
+        return calc;
+    }
+}
+
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new Slingshot(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "slingshot",
+                "level": "90",
+                "rank": 0
+            },
+            "expected": {
+                "normal_100": 338.19658559999993,
+                "normal_elem_100": 338.19658559999993,
+                "skill_100": 248.67396,
+                "burst_100": 248.67396
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new Slingshot().newViewModel()
+    ));
+});
