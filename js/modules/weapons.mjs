@@ -98,6 +98,7 @@ export const weapons = [
     new Sword.SacrificialSword(),
     new Sword.TheBlackSword(),
     new Sword.CinnabarSpindle(),
+    new Sword.PrototypeRancour(),
 ];
 
 
