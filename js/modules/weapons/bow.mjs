@@ -1194,35 +1194,45 @@ export class Slingshot extends Base.WeaponData
             "slingshot",
             "弾弓",
             3,
-            "Bow",
+            TypeDefs.WeaponType.Bow,
             354,
-            "baseCrtRate",
+            TypeDefs.StaticStatusType.crtRate,
             0.312
         );
     }
 
-    newViewModel()
-    {
-        return new SlingshotViewModel(this);
-    }
 
     static damageBuff = [0.36, 0.42, 0.48, 0.54, 0.60];
-}
 
-// 弾弓viewmodel
-export class SlingshotViewModel extends Base.WeaponViewModel
-{
-    constructor(parent)
-    {
-        super(parent);
-    }
 
-    applyDmgCalcImpl(calc)
-    {
-        calc = super.applyDmgCalcImpl(calc);
-        calc.baseNormalDmg.value += Slingshot.damageBuff[this.rank()];
-        return calc;
-    }
+    defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "radio",
+                    name: "selShortLong",
+                    init: "short",
+                    options: (vm) => { return [
+                        {value: "short", label: `通常攻撃/重撃+${textPercentageFix(Slingshot.damageBuff[vm.rank()], 0)}`},
+                        {value: "long",  label: `通常攻撃/重撃-10%`}
+                    ];}
+                },
+            ],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.normalDmg,
+                        value: (vm) => vm.selShortLong() == "short" ? Slingshot.damageBuff[vm.rank()] : -0.1
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.chargedDmg,
+                        value: (vm) => vm.selShortLong() == "short" ? Slingshot.damageBuff[vm.rank()] : -0.1
+                    },
+                ]
+            }
+        }
+    ];
 }
 
 
@@ -1234,7 +1244,8 @@ runUnittest(function(){
             "vm": {
                 "parent_id": "slingshot",
                 "level": "90",
-                "rank": 0
+                "rank": 0,
+                "selShortLong": "short"
             },
             "expected": {
                 "normal_100": 338.19658559999993,
