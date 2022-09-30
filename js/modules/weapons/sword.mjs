@@ -386,73 +386,56 @@ export class PrototypeRancour extends Base.WeaponData
             "prototype_rancour",
             "斬岩・試作",
             4,
-            "Sword",
+            TypeDefs.WeaponType.Sword,
             565,
-            "basePhysicalDmg",
+            TypeDefs.StaticStatusType.physicalDmg,
             0.345
         );
     }
 
-    newViewModel()
-    {
-        return new PrototypeRancourViewModel(this);
-    }
 
     static atkDefInc = [0.04, 0.05, 0.06, 0.07, 0.08];
+
+
+    static incRateAtkDef(rank, numStacks)
+    {
+        return Number(numStacks) * PrototypeRancour.atkDefInc[rank];
+    }
+
+
+    defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "select",
+                    name: "effectStacks",
+                    init: 4,
+                    options: (vm) => { return [
+                        {value: 0, label: `攻撃力と防御力+${textPercentageFix(PrototypeRancour.incRateAtkDef(vm.rank(), 0), 0)}`},
+                        {value: 1, label: `攻撃力と防御力+${textPercentageFix(PrototypeRancour.incRateAtkDef(vm.rank(), 1), 0)}`},
+                        {value: 2, label: `攻撃力と防御力+${textPercentageFix(PrototypeRancour.incRateAtkDef(vm.rank(), 2), 0)}`},
+                        {value: 3, label: `攻撃力と防御力+${textPercentageFix(PrototypeRancour.incRateAtkDef(vm.rank(), 3), 0)}`},
+                        {value: 4, label: `攻撃力と防御力+${textPercentageFix(PrototypeRancour.incRateAtkDef(vm.rank(), 4), 0)}`}
+                    ];}
+                }
+            ],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        target: TypeDefs.StaticStatusType.rateAtk,
+                        value: (vm) => PrototypeRancour.incRateAtkDef(vm.rank(), vm.effectStacks())
+                    },
+                    {
+                        target: TypeDefs.StaticStatusType.rateDef,
+                        value: (vm) => PrototypeRancour.incRateAtkDef(vm.rank(), vm.effectStacks())
+                    },
+                ]
+            }
+        }
+    ]
 }
 
-export class PrototypeRancourViewModel extends Base.WeaponViewModel
-{
-    constructor(parent)
-    {
-        super(parent);
-        this.effectStacks = ko.observable(4);
-    }
-
-    incRateAtkDef(numStacks)
-    {
-        return Number(numStacks) * PrototypeRancour.atkDefInc[this.rank()];
-    }
-
-    applyDmgCalcImpl(calc)
-    {
-        //todo
-        calc = super.applyDmgCalcImpl(calc);
-        calc.rateAtk.value += this.incRateAtkDef(this.effectStacks());
-        calc.rateDef.value += this.incRateAtkDef(this.effectStacks());
-        return calc;
-    }
-
-    viewHTMLList(target)
-    {
-        let dst = super.viewHTMLList(target);
-        dst.push(
-            Widget.buildViewHTML(target, "岩砕き",
-                Widget.selectViewHTML("effectStacks", [
-                    {value: 0, label: `攻撃力と防御力+${textPercentageFix(this.incRateAtkDef(0), 0)}`},
-                    {value: 1, label: `攻撃力と防御力+${textPercentageFix(this.incRateAtkDef(1), 0)}`},
-                    {value: 2, label: `攻撃力と防御力+${textPercentageFix(this.incRateAtkDef(2), 0)}`},
-                    {value: 3, label: `攻撃力と防御力+${textPercentageFix(this.incRateAtkDef(3), 0)}`},
-                    {value: 4, label: `攻撃力と防御力+${textPercentageFix(this.incRateAtkDef(4), 0)}`}
-                ])
-            )
-        );
-        return dst;
-    }
-
-    toJS()
-    {
-        let obj = super.toJS();
-        obj.effectStacks = this.effectStacks();
-        return obj;
-    }
-
-    fromJS(obj)
-    {
-        super.fromJS(obj);
-        this.effectStacks(obj.effectStacks);
-    }
-}
 
 runUnittest(function(){
     console.assert(Utils.checkUnittestForWeapon(
