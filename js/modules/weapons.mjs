@@ -31,6 +31,8 @@ export const weapons = [
     new Bow.RoyalBow(),
     new Bow.PrototypeCrescent(),
     new Bow.BlackcliffWarbow(),
+    // 弓, 星3
+    new Bow.Slingshot(),
     // 法器，星5,
     new Catalyst.SkywardAtlas(),
     new Catalyst.LostPrayerToTheSacredWinds(),
@@ -96,6 +98,7 @@ export const weapons = [
     new Sword.SacrificialSword(),
     new Sword.TheBlackSword(),
     new Sword.CinnabarSpindle(),
+    new Sword.PrototypeRancour(),
 ];
 
 

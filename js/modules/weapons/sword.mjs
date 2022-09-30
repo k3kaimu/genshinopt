@@ -1,6 +1,7 @@
 import * as Base from './base.mjs';
-import * as Utils from '../utils.mjs';
 import * as Calc from '../dmg-calc.mjs';
+import * as Widget from '../widget.mjs';
+import * as Utils from '../utils.mjs';
 import * as TypeDefs from '../typedefs.mjs';
 
 // 磐岩結緑
@@ -372,5 +373,108 @@ runUnittest(function(){
 
     console.assert(Utils.checkSerializationUnittest(
         new CinnabarSpindle().newViewModel()
+    ));
+});
+
+
+// 斬岩・試作
+export class PrototypeRancour extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "prototype_rancour",
+            "斬岩・試作",
+            4,
+            "Sword",
+            565,
+            "basePhysicalDmg",
+            0.345
+        );
+    }
+
+    newViewModel()
+    {
+        return new PrototypeRancourViewModel(this);
+    }
+
+    static atkDefInc = [0.04, 0.05, 0.06, 0.07, 0.08];
+}
+
+export class PrototypeRancourViewModel extends Base.WeaponViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.effectStacks = ko.observable(4);
+    }
+
+    incRateAtkDef(numStacks)
+    {
+        return Number(numStacks) * PrototypeRancour.atkDefInc[this.rank()];
+    }
+
+    applyDmgCalcImpl(calc)
+    {
+        //todo
+        calc = super.applyDmgCalcImpl(calc);
+        calc.rateAtk.value += this.incRateAtkDef(this.effectStacks());
+        calc.rateDef.value += this.incRateAtkDef(this.effectStacks());
+        return calc;
+    }
+
+    viewHTMLList(target)
+    {
+        let dst = super.viewHTMLList(target);
+        dst.push(
+            Widget.buildViewHTML(target, "岩砕き",
+                Widget.selectViewHTML("effectStacks", [
+                    {value: 0, label: `攻撃力と防御力+${textPercentageFix(this.incRateAtkDef(0), 0)}`},
+                    {value: 1, label: `攻撃力と防御力+${textPercentageFix(this.incRateAtkDef(1), 0)}`},
+                    {value: 2, label: `攻撃力と防御力+${textPercentageFix(this.incRateAtkDef(2), 0)}`},
+                    {value: 3, label: `攻撃力と防御力+${textPercentageFix(this.incRateAtkDef(3), 0)}`},
+                    {value: 4, label: `攻撃力と防御力+${textPercentageFix(this.incRateAtkDef(4), 0)}`}
+                ])
+            )
+        );
+        return dst;
+    }
+
+    toJS()
+    {
+        let obj = super.toJS();
+        obj.effectStacks = this.effectStacks();
+        return obj;
+    }
+
+    fromJS(obj)
+    {
+        super.fromJS(obj);
+        this.effectStacks(obj.effectStacks);
+    }
+}
+
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new PrototypeRancour(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "prototype_rancour",
+                "level": "90",
+                "rank": 0,
+                "effectStacks": 4
+            },
+            "expected": {
+                "normal_100": 480.89654550000006,
+                "normal_elem_100": 357.5439,
+                "skill_100": 357.5439,
+                "burst_100": 357.5439
+            }
+        }
+    ));
+
+    console.assert(Utils.checkSerializationUnittest(
+        new PrototypeRancour().newViewModel()
     ));
 });
