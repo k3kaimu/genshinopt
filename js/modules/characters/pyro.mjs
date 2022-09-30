@@ -941,7 +941,6 @@ export class Yoimiya extends Base.CharacterData
         [270/100, 259/100],
     ];
 
-
     static presetAttacks = [
         {
             id: "normal_1",
@@ -965,6 +964,12 @@ export class Yoimiya extends Base.CharacterData
             id: "normal_1_skill",
             label: "スキル中通常1段目",
             dmgScale(vm){ return Yoimiya.normalTalentTable[vm.normalRank()-1][0] * Yoimiya.skillTalentTable[vm.skillRank()-1]; },
+            attackProps: { isPyro: true, isNormal: true, isNowYoimiyaSkill: true }
+        },
+        {
+            id: "normal_total_skill",
+            label: "スキル中通常5段累計",
+            dmgScale(vm){ return Yoimiya.normalTalentTable[vm.normalRank()-1].slice(0, 5).map(function(x){ return x * Yoimiya.skillTalentTable[vm.skillRank()-1] }); },
             attackProps: { isPyro: true, isNormal: true, isNowYoimiyaSkill: true }
         },
         {
@@ -1108,6 +1113,7 @@ runUnittest(function(){
         new Yoimiya(),
         {
             "vm": {
+                "level": "90",
                 "parent_id": "yoimiya",
                 "constell": 6,
                 "normalRank": 9,
@@ -1125,6 +1131,7 @@ runUnittest(function(){
                 "full_charged": 1011.8189322899999,
                 "full_charged_additional": 402.80943276000005,
                 "normal_1_skill": 1185.9626571448969,
+                "normal_total_skill": 7112.806086465847,
                 "burst": 1035.7956842400001,
                 "burst_add": 992.63753073
             }
