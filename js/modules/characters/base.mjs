@@ -687,6 +687,50 @@ class CharacterViewModelImpl
             );
         }
 
+        if(this.parent.elem === TypeDefs.Element.Dendro || this.parent.elem === TypeDefs.Element.Hydro) {
+            attacks.push(
+                {
+                    id: "__elemReact_Bloom__",
+                    label: "開花",
+                    dmgScale: (vm) => 1,
+                    attackProps: { isBloom: true }
+                }
+            );
+        }
+
+        if(this.parent.elem === TypeDefs.Element.Electro) {
+            attacks.push(
+                {
+                    id: "__elemReact_Hyperbloom__",
+                    label: "超開花",
+                    dmgScale: (vm) => 1,
+                    attackProps: { isHyperbloom: true }
+                }
+            );
+        }
+
+        if(this.parent.elem === TypeDefs.Element.Pyro) {
+            attacks.push(
+                {
+                    id: "__elemReact_Burgeon__",
+                    label: "烈開花",
+                    dmgScale: (vm) => 1,
+                    attackProps: { isBurgeon: true }
+                }
+            );
+        }
+
+        if(this.parent.elem === TypeDefs.Element.Dendro || this.parent.elem === TypeDefs.Element.Pyro) {
+            attacks.push(
+                {
+                    id: "__elemReact_Burning__",
+                    label: "燃焼",
+                    dmgScale: (vm) => 1,
+                    attackProps: { isBurning: true }
+                }
+            );
+        }
+
         let ret = [];
         attacks.forEach(a => {
             if("newEvaluator" in a)
