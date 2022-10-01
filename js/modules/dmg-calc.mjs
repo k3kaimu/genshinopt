@@ -1235,8 +1235,8 @@ export class DamageCalculator
         if(attackProps.isOverloaded)        { reactType = 4; resis = this.calculateTotalResistanceBonus({isPyro: true});        bonus = bonus.add(this.overloadedBonus(attackProps)); }
         if(attackProps.isBurning)           { reactType = 10; resis = this.calculateTotalResistanceBonus({isPyro: true});       bonus = bonus.add(this.burningBonus(attackProps)); }
         if(attackProps.isBloom)             { reactType = 11; resis = this.calculateTotalResistanceBonus({isDendro: true});     bonus = bonus.add(this.bloomBonus(attackProps)); }
-        if(attackProps.isHyperbloom)        { reactType = 12; resis = this.calculateTotalResistanceBonus({isElectro: true});    bonus = bonus.add(this.hyperbloomBonus(attackProps)); }
-        if(attackProps.isBurgeon)           { reactType = 13; resis = this.calculateTotalResistanceBonus({isPyro: true});       bonus = bonus.add(this.burgeonBonus(attackProps)); }
+        if(attackProps.isHyperbloom)        { reactType = 12; resis = this.calculateTotalResistanceBonus({isDendro: true});    bonus = bonus.add(this.hyperbloomBonus(attackProps)); }
+        if(attackProps.isBurgeon)           { reactType = 13; resis = this.calculateTotalResistanceBonus({isDendro: true});       bonus = bonus.add(this.burgeonBonus(attackProps)); }
 
         // レベルごとの係数を参照
         var coef = VGData.zero();
