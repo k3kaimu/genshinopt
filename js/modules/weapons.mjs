@@ -74,6 +74,7 @@ export const weapons = [
     new Polearm.StaffOfHoma(),
     new Polearm.EngulfingLightning(),
     new Polearm.CalamityQueller(),
+    new Polearm.StaffOfTheScarletSands(),
     // 長柄武器, 星4
     new Polearm.FavoniusLance(),
     new Polearm.DragonsBane(),

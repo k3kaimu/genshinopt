@@ -779,28 +779,30 @@ export class StaffOfTheScarletSands extends Base.WeaponData
     ];
 }
 
-// runUnittest(function(){
-//     console.assert(Utils.checkUnittestForWeapon(
-//         new FavoniusLance(),
-//         "Anemo",
-//         {
-//             "vm": {
-//                 "parent_id": "favonius_lance",
-//                 "rank": 0
-//             },
-//             "expected": {
-//                 "normal_100": 308.2275,
-//                 "normal_elem_100": 308.2275,
-//                 "skill_100": 308.2275,
-//                 "burst_100": 308.2275
-//             }
-//         }
-//     ));
+runUnittest(function(){
+    console.assert(Utils.checkUnittestForWeapon(
+        new StaffOfTheScarletSands(),
+        "Anemo",
+        {
+            "vm": {
+                "parent_id": "staff_of_the_scarlet_sands",
+                "level": "90",
+                "rank": 0,
+                "effectStacks": 3
+            },
+            "expected": {
+                "normal_100": 374.00994000000003,
+                "normal_elem_100": 374.00994000000003,
+                "skill_100": 374.00994000000003,
+                "burst_100": 374.00994000000003
+            }
+        }
+    ));
 
-//     console.assert(Utils.checkSerializationUnittest(
-//         new FavoniusLance().newViewModel()
-//     ));
-// });
+    console.assert(Utils.checkSerializationUnittest(
+        new StaffOfTheScarletSands().newViewModel()
+    ));
+});
 
 
 
