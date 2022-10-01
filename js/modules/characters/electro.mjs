@@ -5,6 +5,79 @@ import * as Utils from '../utils.mjs';
 import * as TypeDefs from '../typedefs.mjs';
 
 
+export class ElectroCharacterViewModel extends Base.CharacterViewModel
+{
+    constructor(parent)
+    {
+        super(parent);
+        this.reactionProb = ko.observable(0);
+    }
+
+
+    viewHTMLList(target){
+        let dst = super.viewHTMLList(target);
+
+        dst.push(
+            Widget.buildViewHTML(target, "超激化",
+                Widget.sliderViewHTML("reactionProb", 0, 1, 0.1,
+                    `反応確率：` + Widget.spanPercentage("reactionProb()", 2))
+            )
+        );
+
+        return dst;
+    }
+
+
+    applyDmgCalcImpl(calc)
+    {
+        calc = super.applyDmgCalcImpl(calc);
+
+        let prob = Number(this.reactionProb());
+        if(prob == 0)
+            return calc;
+
+        calc = calc.applyExtension(Klass => class extends Klass {
+            modifyAttackInfo(attackInfo) {
+                return super.modifyAttackInfo(attackInfo)
+                    .map(info => {
+                        if("isAggravate" in info.props) {
+                            // 冪等性を保つために，info.propsにすでにisAggravateが存在するときには
+                            // 元素反応の計算をせずにそのまま返す
+                            return info;
+                        }
+                        else if(info.props.isElectro || false)
+                        {
+                            // 冪等性を保つために，必ず"isAggravate": falseも入れる
+                            return [
+                                new Calc.AttackInfo(info.scale, info.ref, {...info.props, isAggravate: false}, info.prob.mul(1 - prob)),
+                                new Calc.AttackInfo(info.scale, info.ref, {...info.props, isAggravate: true}, info.prob.mul(prob))
+                            ];
+                        } else {
+                            return info;
+                        }
+                    }).flat(10);
+            }
+        });
+
+        return calc;
+    }
+
+
+    toJS() {
+        let obj = super.toJS();
+        obj.reactionProb = this.reactionProb();
+
+        return obj;
+    }
+
+
+    fromJS(obj) {
+        super.fromJS(obj);
+        this.reactionProb(obj.reactionProb ?? 0);
+    }
+}
+
+
 // 旅人（雷）
 export class TravelerElectro extends Base.CharacterData
 {
@@ -164,7 +237,7 @@ export class RaidenShogun extends Base.CharacterData
 
 
 // 雷電将軍
-export class RaidenShogunViewModel extends Base.CharacterViewModel
+export class RaidenShogunViewModel extends ElectroCharacterViewModel
 {
     constructor(parent)
     {
@@ -273,7 +346,8 @@ runUnittest(function(){
                 "skillRank": 9,
                 "burstRank": 9,
                 "chakraStacks": 60,
-                "useSkillEffect": true
+                "useSkillEffect": true,
+                "reactionProb": 0,
             },
             "expected": {
                 "normal_1": 189.11529,
@@ -426,7 +500,7 @@ export class YaeMiko extends Base.CharacterData
 
 
 // 八重神子
-export class YaeMikoViewModel extends Base.CharacterViewModel
+export class YaeMikoViewModel extends ElectroCharacterViewModel
 {
     constructor(parent)
     {
@@ -519,7 +593,8 @@ runUnittest(function(){
                 "skillRank": 8,
                 "burstRank": 8,
                 "skillStacks": 3,
-                "useC4Effect": true
+                "useC4Effect": true,
+                "reactionProb": 0,
             },
             "expected": {
                 "normal_total": 737.9028396,
@@ -658,7 +733,7 @@ export class Beidou extends Base.CharacterData
 
 
 // 北斗
-export class BeidouViewModel extends Base.CharacterViewModel
+export class BeidouViewModel extends ElectroCharacterViewModel
 {
     constructor(parent)
     {
@@ -775,7 +850,8 @@ runUnittest(function(){
                 "burstRank": 9,
                 "useC4Effect": true,
                 "useC6Effect": true,
-                "useDmgUpEffect": true
+                "useDmgUpEffect": true,
+                "reactionProb": 0,
             },
             "expected": {
                 "normal_1": 2153.434625,
