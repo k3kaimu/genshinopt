@@ -382,6 +382,8 @@ export class ThunderingFuryViewModel extends ArtifactViewModel
             calc.baseOverloadedBonus.value += 0.40;
             calc.baseElectroChargedBonus.value += 0.40;
             calc.baseSuperconductBonus.value += 0.40;
+            calc.baseHyperbloomBonus.value += 0.40;
+            calc.baseAggravateBonus.value += 0.20;
         }
 
         return calc;
