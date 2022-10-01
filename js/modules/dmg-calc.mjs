@@ -1200,7 +1200,9 @@ export class DamageCalculator
 
         if(hasAnyPropertiesWithSameValue(info.props, {
             isSuperconduct: true, isSwirl: true, isElectroCharged: true,
-            isShattered: true, isOverloaded: true
+            isShattered: true, isOverloaded: true,
+            isBloom: true, isHyperbloom: true, isBurgeon: true,
+            isBurning: true,
         })) {
             // 溶解・蒸発以外の元素反応ダメージ
             dmg = this.calculateElementalReactionDmg(info.props);
