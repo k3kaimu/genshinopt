@@ -862,6 +862,111 @@ const elementalReactionCoeffTable = [
     [723, 868, 1736, 2170, 2893]];  // lv90
 
 
+// https://genshin-impact.fandom.com/wiki/Level_Scaling/Reaction#Level_Multiplier
+const elementLevelMultiplierTable = [
+    [1, 17.17, 17.17, 91.18],       // lv1
+    [2, 18.54, 18.54, 98.71],
+    [3, 19.90, 19.90, 106.24],
+    [4, 21.27, 21.27, 113.76],
+    [5, 22.65, 22.65, 121.29],
+    [6, 24.65, 24.65, 128.82],
+    [7, 26.64, 26.64, 136.35],
+    [8, 28.87, 28.87, 143.88],
+    [9, 31.37, 31.37, 151.41],
+    [10, 34.14, 34.14, 158.94],
+    [11, 37.20, 37.20, 169.99],
+    [12, 40.66, 40.66, 181.08],
+    [13, 44.45, 44.45, 192.19],
+    [14, 48.56, 48.56, 204.05],
+    [15, 53.75, 53.75, 215.94],
+    [16, 59.08, 59.08, 227.86],
+    [17, 64.42, 64.42, 247.69],
+    [18, 69.72, 69.72, 267.54],
+    [19, 75.12, 75.12, 287.43],
+    [20, 80.58, 80.58, 303.83],
+    [21, 86.11, 86.11, 320.23],
+    [22, 91.70, 91.70, 336.63],
+    [23, 97.24, 97.24, 352.32],
+    [24, 102.81, 102.81, 368.01],
+    [25, 108.41, 108.41, 383.70],
+    [26, 113.20, 113.20, 394.43],
+    [27, 118.10, 118.10, 405.18],
+    [28, 122.98, 122.98, 415.95],
+    [29, 129.73, 129.73, 426.74],
+    [30, 136.29, 136.29, 437.54],
+    [31, 142.67, 142.67, 450.60],
+    [32, 149.03, 149.03, 463.70],
+    [33, 155.42, 155.42, 476.85],
+    [34, 161.83, 161.83, 491.13],
+    [35, 169.11, 169.11, 502.55],
+    [36, 176.52, 176.52, 514.01],
+    [37, 184.07, 184.07, 531.41],
+    [38, 191.71, 191.71, 549.98],
+    [39, 199.56, 199.56, 568.58],
+    [40, 207.38, 207.38, 585.00],
+    [41, 215.40, 215.40, 605.67],
+    [42, 224.17, 224.17, 626.39],
+    [43, 233.50, 233.50, 646.05],
+    [44, 243.35, 243.35, 665.76],
+    [45, 256.06, 256.06, 685.50],
+    [46, 268.54, 268.54, 700.84],
+    [47, 281.53, 281.53, 723.33],
+    [48, 295.01, 295.01, 745.87],
+    [49, 309.07, 309.07, 768.44],
+    [50, 323.60, 323.60, 786.79],
+    [51, 336.76, 336.76, 809.54],
+    [52, 350.53, 350.53, 832.33],
+    [53, 364.48, 364.48, 855.16],
+    [54, 378.62, 378.62, 878.04],
+    [55, 398.60, 398.60, 899.48],
+    [56, 416.40, 416.40, 919.36],
+    [57, 434.39, 434.39, 946.04],
+    [58, 452.57, 452.95, 974.76],
+    [59, 471.43, 472.61, 1003.58],
+    [60, 490.48, 492.88, 1030.08],
+    [61, 509.50, 513.57, 1056.64],
+    [62, 532.77, 539.10, 1085.25],
+    [63, 556.39, 565.51, 1113.92],
+    [64, 580.10, 592.54, 1149.26],
+    [65, 607.89, 624.44, 1178.06],
+    [66, 630.20, 651.47, 1200.22],
+    [67, 652.87, 679.50, 1227.66],
+    [68, 675.19, 707.79, 1257.24],
+    [69, 697.78, 736.67, 1284.92],
+    [70, 720.17, 765.64, 1314.75],
+    [71, 742.45, 794.77, 1342.67],
+    [72, 765.21, 824.68, 1372.75],
+    [73, 784.37, 851.16, 1396.32],
+    [74, 803.40, 877.74, 1427.31],
+    [75, 830.92, 914.23, 1458.37],
+    [76, 854.40, 946.75, 1482.34],
+    [77, 877.76, 979.41, 1511.91],
+    [78, 900.12, 1011.22, 1541.55],
+    [79, 923.77, 1044.79, 1569.15],
+    [80, 946.37, 1077.44, 1596.81],
+    [81, 968.63, 1110.00, 1622.42],
+    [82, 991.03, 1142.98, 1648.07],
+    [83, 1013.53, 1176.37, 1666.38],
+    [84, 1036.13, 1210.18, 1684.68],
+    [85, 1066.62, 1253.84, 1702.98],
+    [86, 1089.96, 1288.95, 1726.10],
+    [87, 1114.96, 1325.48, 1754.67],
+    [88, 1141.66, 1363.46, 1785.87],
+    [89, 1171.94, 1405.10, 1817.14],
+    [90, 1202.81, 1446.85, 1851.06],
+    [91, 1233.94, 1488.22, 1885.07],
+    [92, 1264.70, 1528.44, 1921.75],
+    [93, 1305.69, 1580.37, 1958.52],
+    [94, 1346.08, 1630.85, 2006.19],
+    [95, 1411.74, 1711.20, 2041.57],
+    [96, 1468.87, 1780.45, 2054.47],
+    [97, 1524.04, 1847.32, 2065.98],
+    [98, 1576.97, 1911.47, 2174.72],
+    [99, 1627.61, 1972.86, 2186.77],
+    [100, 1674.81, 2030.07, 2198.81],   // lv100
+]
+
+
 // 防御補正と元素耐性補正を除いた部分の期待値計算を行う
 export class DamageCalculator
 {
@@ -908,7 +1013,12 @@ export class DamageCalculator
         this.baseFrozenBonus = VGData.zero();           // 凍結ボーナス
         this.baseSuperconductBonus = VGData.zero();     // 超伝導ボーナス
         this.baseShatteredBonus = VGData.zero();        // 氷砕き
+        this.baseBloomBonus = VGData.zero();            // 開花
+        this.baseHyperbloomBonus = VGData.zero();       // 超開花
+        this.baseBurgeonBonus = VGData.zero();          // 烈開花
         this.baseBurningBonus = VGData.zero();          // 燃焼ボーナス
+        this.baseAggravateBonus = VGData.zero();        // 超激化ボーナス
+        this.baseSpreadBonus = VGData.zero();           // 草激化ボーナス
 
         this.baseRecharge = VGData.zero();      // 元素チャージ効率
         this.baseMastery = VGData.zero();       // 元素熟知
@@ -983,7 +1093,12 @@ export class DamageCalculator
         this.baseFrozenBonus = this.baseFrozenBonus.dup();
         this.baseSuperconductBonus = this.baseSuperconductBonus.dup();
         this.baseShatteredBonus = this.baseShatteredBonus.dup();
+        this.baseBloomBonus = this.baseBloomBonus.dup();
+        this.baseHyperbloomBonus = this.baseHyperbloomBonus.dup();
+        this.baseBurgeonBonus = this.baseBurgeonBonus.dup();
         this.baseBurningBonus = this.baseBurningBonus.dup();
+        this.baseAggravateBonus = this.baseAggravateBonus.dup();
+        this.baseSpreadBonus = this.baseSpreadBonus.dup();
 
         this.baseRecharge = this.baseRecharge.dup();
         this.baseMastery = this.baseMastery.dup();
@@ -1107,20 +1222,34 @@ export class DamageCalculator
     }
 
 
-    // 蒸発・融解以外の元素反応のダメージ計算
+    // 蒸発・融解・激化反応以外の元素反応のダメージ計算
     calculateElementalReactionDmg(attackProps)
     {
         var reactType = undefined;
         var bonus = VGData.zero();
         let resis = undefined;
-        if(attackProps.isSuperconduct)      { reactType = 0; resis = this.calculateTotalResistanceBonus({isCryo: true});        bonus = bonus.add(this.superconductBonus()); }
-        if(attackProps.isSwirl)             { reactType = 1; resis = this.calculateTotalResistanceBonus(attackProps);           bonus = bonus.add(this.swirlBonus()); }
-        if(attackProps.isElectroCharged)    { reactType = 2; resis = this.calculateTotalResistanceBonus({isElectro: true});     bonus = bonus.add(this.electroChargedBonus()); }
-        if(attackProps.isShattered)         { reactType = 3; resis = this.calculateTotalResistanceBonus({isPhysical: true});    bonus = bonus.add(this.shatteredBonus()); }
-        if(attackProps.isOverloaded)        { reactType = 4; resis = this.calculateTotalResistanceBonus({isPyro: true});        bonus = bonus.add(this.overloadedBonus()); }
+        if(attackProps.isSuperconduct)      { reactType = 0; resis = this.calculateTotalResistanceBonus({isCryo: true});        bonus = bonus.add(this.superconductBonus(attackProps)); }
+        if(attackProps.isSwirl)             { reactType = 1; resis = this.calculateTotalResistanceBonus(attackProps);           bonus = bonus.add(this.swirlBonus(attackProps)); }
+        if(attackProps.isElectroCharged)    { reactType = 2; resis = this.calculateTotalResistanceBonus({isElectro: true});     bonus = bonus.add(this.electroChargedBonus(attackProps)); }
+        if(attackProps.isShattered)         { reactType = 3; resis = this.calculateTotalResistanceBonus({isPhysical: true});    bonus = bonus.add(this.shatteredBonus(attackProps)); }
+        if(attackProps.isOverloaded)        { reactType = 4; resis = this.calculateTotalResistanceBonus({isPyro: true});        bonus = bonus.add(this.overloadedBonus(attackProps)); }
+        if(attackProps.isBurning)           { reactType = 10; resis = this.calculateTotalResistanceBonus({isPyro: true});       bonus = bonus.add(this.burningBonus(attackProps)); }
+        if(attackProps.isBloom)             { reactType = 11; resis = this.calculateTotalResistanceBonus({isDendro: true});     bonus = bonus.add(this.bloomBonus(attackProps)); }
+        if(attackProps.isHyperbloom)        { reactType = 12; resis = this.calculateTotalResistanceBonus({isElectro: true});    bonus = bonus.add(this.hyperbloomBonus(attackProps)); }
+        if(attackProps.isBurgeon)           { reactType = 13; resis = this.calculateTotalResistanceBonus({isPyro: true});       bonus = bonus.add(this.burgeonBonus(attackProps)); }
 
         // レベルごとの係数を参照
-        var coef = VGData.constant(elementalReactionCoeffTable[this.characterLv - 1][reactType]);
+        var coef = VGData.zero();
+        if(reactType < 10) {
+            coef = VGData.constant(elementalReactionCoeffTable[this.characterLv - 1][reactType]);
+        } else {
+            if(reactType == 10)
+                coef = VGData.constant(elementLevelMultiplierTable[this.characterLv - 1][1] * 0.25);
+            else if(reactType == 11)
+                coef = VGData.constant(elementLevelMultiplierTable[this.characterLv - 1][1] * 2);
+            else if(reactType == 12 || reactType == 13)
+                coef = VGData.constant(elementLevelMultiplierTable[this.characterLv - 1][1] * 3);
+        }
         console.assert(!(reactType == undefined), attackProps + " is not an elemental reaction.");
 
         var masteryBonus = this.mastery().mul(16).div(this.mastery().add(2000));
@@ -1130,7 +1259,7 @@ export class DamageCalculator
     }
 
 
-    // 一般のダメージ計算（蒸発・融解のボーナスを含む）
+    // 一般のダメージ計算（蒸発・融解や激化反応のボーナスを含む）
     // このメソッドのオーバーライドは非推奨
     // 引数のAttackInfoのprobは無視されます
     calculateNormalDmg(info)
@@ -1142,7 +1271,8 @@ export class DamageCalculator
         var dmgbuff = this.calculateTotalDmgBuff(attackProps);
 
         let dmg = this[info.ref](attackProps).mul(VGData.constant(info.scale).as('TalentDMGScale'))
-                    .add(this.increaseDamage(attackProps).as('incDMG'));
+                    .add(this.increaseDamage(attackProps).as('incDMG'))
+                    .add(this.increaseDamageByCatalyze(attackProps).as('incCatalyzeDMG'));
 
         if(attackProps.isForcedCritical || false)
         {
@@ -1173,6 +1303,26 @@ export class DamageCalculator
     // シナバースビンドルなどの，そもそものダメージを増加させる効果
     increaseDamage(attackProps) {
         return VGData.zero();
+    }
+
+
+    // 激化反応によるダメージ上昇ボーナス
+    increaseDamageByCatalyze(attackProps) {
+        var incdmg = 0;
+        var bonus = VGData.zero();
+        if(attackProps.isAggravate) {   // 超激化
+            incdmg = elementLevelMultiplierTable[this.characterLv - 1][1] * 1.15;
+            bonus = this.aggravateBonus(attackProps);
+        } else if(attackProps.isSpread) {   // 草激化
+            incdmg = elementLevelMultiplierTable[this.characterLv - 1][1] * 1.25;
+            bonus = this.spreadBonus(attackProps);
+        } else {
+            return VGData.zero();
+        }
+
+        bonus = bonus.add(1);
+
+        return this.mastery(attackProps).mul(5).div(this.mastery(attackProps).add(1200)).add(1).mul(incdmg).mul(bonus);
     }
 
     // 古華・試作など，一定の条件での追撃
@@ -1219,7 +1369,12 @@ export class DamageCalculator
     frozenBonus(attackProps) { return this.baseFrozenBonus; }
     shatteredBonus(attackProps) { return this.baseShatteredBonus; }
     superconductBonus(attackProps) { return this.baseSuperconductBonus; }
+    bloomBonus(attackProps) { return this.baseBloomBonus; }
+    hyperbloomBonus(attackProps) { return this.baseHyperbloomBonus; }
+    burgeonBonus(attackProps) { return this.baseBurgeonBonus; }
     burningBonus(attackProps) { return this.baseBurningBonus; }
+    aggravateBonus(attackProps) { return this.baseAggravateBonus; }
+    spreadBonus(attackProps) { return this.baseSpreadBonus; }
 
     allResis(attackProps) { return this.baseAllResis; }
     anemoResis(attackProps) { return this.baseAnemoResis; }
