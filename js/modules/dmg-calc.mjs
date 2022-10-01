@@ -1254,7 +1254,7 @@ export class DamageCalculator
         }
         console.assert(!(reactType == undefined), attackProps + " is not an elemental reaction.");
 
-        var masteryBonus = this.mastery().mul(16).div(this.mastery().add(2000));
+        var masteryBonus = this.mastery(attackProps).mul(16).div(this.mastery(attackProps).add(2000));
 
         return coef.mul(masteryBonus.add(1).add(bonus))
                 .mul(resis.as('Resis'));
