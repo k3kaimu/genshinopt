@@ -1246,11 +1246,11 @@ export class DamageCalculator
             coef = VGData.constant(elementalReactionCoeffTable[this.characterLv - 1][reactType]);
         } else {
             if(reactType == 10)
-                coef = VGData.constant(elementLevelMultiplierTable[this.characterLv - 1][1] * 0.25);
+                coef = VGData.constant(elementLevelMultiplierTable[this.characterLv - 1][2] * 0.25);
             else if(reactType == 11)
-                coef = VGData.constant(elementLevelMultiplierTable[this.characterLv - 1][1] * 2);
+                coef = VGData.constant(elementLevelMultiplierTable[this.characterLv - 1][2] * 2);
             else if(reactType == 12 || reactType == 13)
-                coef = VGData.constant(elementLevelMultiplierTable[this.characterLv - 1][1] * 3);
+                coef = VGData.constant(elementLevelMultiplierTable[this.characterLv - 1][2] * 3);
         }
         console.assert(!(reactType == undefined), attackProps + " is not an elemental reaction.");
 
@@ -1313,10 +1313,10 @@ export class DamageCalculator
         var incdmg = 0;
         var bonus = VGData.zero();
         if(attackProps.isAggravate) {   // 超激化
-            incdmg = elementLevelMultiplierTable[this.characterLv - 1][1] * 1.15;
+            incdmg = elementLevelMultiplierTable[this.characterLv - 1][2] * 1.15;
             bonus = this.aggravateBonus(attackProps);
         } else if(attackProps.isSpread) {   // 草激化
-            incdmg = elementLevelMultiplierTable[this.characterLv - 1][1] * 1.25;
+            incdmg = elementLevelMultiplierTable[this.characterLv - 1][2] * 1.25;
             bonus = this.spreadBonus(attackProps);
         } else {
             return VGData.zero();

@@ -2,6 +2,7 @@ import * as Calc from '../dmg-calc.mjs';
 import * as Base from './base.mjs';
 import * as Widget from '../widget.mjs';
 import * as Utils from '../utils.mjs';
+import * as TypeDefs from '../typedefs.mjs';
 
 // 和璞鳶
 export class PrimordialJadeWingedSpear extends Base.WeaponData
@@ -720,6 +721,86 @@ runUnittest(function(){
         new CalamityQueller().newViewModel()
     ));
 });
+
+
+export class StaffOfTheScarletSands extends Base.WeaponData
+{
+    constructor()
+    {
+        super(
+            "staff_of_the_scarlet_sands",
+            "赤砂の杖",
+            5,
+            TypeDefs.WeaponType.Polearm,
+            542,
+            TypeDefs.StaticStatusType.crtRate,
+            0.441
+        );
+    }
+
+
+    static atkUp1 = [0.52, 0.65, 0.78, 0.91, 1.04];
+    static atkUp2 = [0.28, 0.35, 0.42, 0.49, 0.56];
+
+
+    static calcAtkUp(rank, numstacks)
+    {
+        return StaffOfTheScarletSands.atkUp1[Number(rank)] +  StaffOfTheScarletSands.atkUp2[Number(rank)] * Number(numstacks);
+    }
+
+
+    defineEffects = [
+        {
+            uiList: [
+                {
+                    type: "select",
+                    name: "effectStacks",
+                    init: 3,
+                    options: (vm) => { return [
+                        {value: 0, label: `熟知の${textPercentageFix(StaffOfTheScarletSands.calcAtkUp(vm.rank(), 0), 0)}だけ攻撃力加算`},
+                        {value: 1, label: `熟知の${textPercentageFix(StaffOfTheScarletSands.calcAtkUp(vm.rank(), 1), 0)}だけ攻撃力加算`},
+                        {value: 2, label: `熟知の${textPercentageFix(StaffOfTheScarletSands.calcAtkUp(vm.rank(), 2), 0)}だけ攻撃力加算`},
+                        {value: 3, label: `熟知の${textPercentageFix(StaffOfTheScarletSands.calcAtkUp(vm.rank(), 3), 0)}だけ攻撃力加算`},
+                    ];}
+                }
+            ],
+            effect: {
+                cond: (vm) => true,
+                list: [
+                    {
+                        isDynamic: true,
+                        target: TypeDefs.DynamicStatusType.addAtk,
+                        condAttackProps: (props) => true,
+                        value: (vmdata, calc, props) => calc.mastery(props).mul(StaffOfTheScarletSands.calcAtkUp(vmdata.rank, vmdata.effectStacks))
+                    },
+                ]
+            }
+        }
+    ];
+}
+
+// runUnittest(function(){
+//     console.assert(Utils.checkUnittestForWeapon(
+//         new FavoniusLance(),
+//         "Anemo",
+//         {
+//             "vm": {
+//                 "parent_id": "favonius_lance",
+//                 "rank": 0
+//             },
+//             "expected": {
+//                 "normal_100": 308.2275,
+//                 "normal_elem_100": 308.2275,
+//                 "skill_100": 308.2275,
+//                 "burst_100": 308.2275
+//             }
+//         }
+//     ));
+
+//     console.assert(Utils.checkSerializationUnittest(
+//         new FavoniusLance().newViewModel()
+//     ));
+// });
 
 
 
